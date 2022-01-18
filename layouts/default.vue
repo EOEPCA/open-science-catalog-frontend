@@ -11,17 +11,99 @@
     >
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
+          to="/"
           router
           exact
         >
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon>mdi-home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title>
+              Home
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-group
+          prepend-icon="mdi-plus-circle-outline"
+          no-action
+        >
+          <template #activator>
+            <v-list-item-content>
+              <v-list-item-title>
+                Contribute
+              </v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+            to="/new-record"
+            router
+            exact
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-clipboard-text</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              New record
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            to="/new-project"
+            router
+            exact
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-wallet</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              New project
+            </v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-item
+          to="/metrics"
+          router
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>mdi-chart-bar</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>
+              Metrics
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          to="/search"
+          router
+          exact
+        >
+          <v-list-item-action>
+            <v-icon>mdi-magnify</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>
+              Search
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item
+          href="https://opensciencedata.esa.int/api/docs/"
+          target="_blank"
+        >
+          <v-list-item-action>
+            <v-icon>mdi-file-document</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>
+              API Documentation
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -39,9 +121,7 @@
       <img src="/img/ESA_Logo.svg">
     </v-app-bar>
     <v-main>
-      <v-container>
-        <Nuxt />
-      </v-container>
+      <Nuxt />
     </v-main>
     <v-footer
       :absolute="!fixed"
@@ -62,13 +142,6 @@ export default {
       clipped: false,
       drawer: false,
       fixed: false,
-      items: [
-        {
-          icon: 'mdi-home',
-          title: 'Home',
-          to: '/'
-        }
-      ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
