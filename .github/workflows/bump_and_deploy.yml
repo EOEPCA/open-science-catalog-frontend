@@ -1,0 +1,66 @@
+name: Bump version and deploy
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  bump-and-deploy:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+        with:  
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+
+      - name: Cache node_modules 📦
+        uses: actions/cache@v2.1.7
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies 👨🏻‍💻
+        run: npm ci --prefer-offline --no-audit
+
+      - name: cat package.json 🔎
+        run: cat ./package.json
+
+      - name: Automated Version Bump ⏫
+        id: version-bump
+        uses: phips28/gh-action-bump-version@master
+        with:
+          tag-prefix: "v"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: cat package.json 🔎
+        run: cat ./package.json
+
+      - name: Output Step 🎉
+        env:
+          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
+        run: echo "new tag $NEW_TAG"
+
+      - name: Generate ⚙️
+        run: npm run generate
+
+      - name: Deploy 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
