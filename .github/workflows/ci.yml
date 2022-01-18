@@ -1,4 +1,5 @@
-name: ci
+name: Test and Deploy
+description: "Runs tests and pushes generated bundle to GitHub Pages"
 
 on:
   push:
@@ -11,7 +12,7 @@ on:
       - master
 
 jobs:
-  ci:
+  deploy:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -45,3 +46,12 @@ jobs:
 
       - name: Run tests 🧪
         run: npm run test
+
+      - name: Generate ⚙️
+        run: npm run generate
+
+      - name: Deploy 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
