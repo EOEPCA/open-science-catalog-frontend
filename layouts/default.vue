@@ -2,8 +2,6 @@
   <v-app dark>
     <v-navigation-drawer
       v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
       color="secondary"
       dark
       fixed
@@ -135,9 +133,9 @@
       <Nuxt />
     </v-main>
     <v-footer
-      :absolute="!fixed"
       color="primary"
       dark
+      fixed
       app
     >
       <span>&copy; {{ new Date().getFullYear() }}</span>
@@ -150,12 +148,7 @@ export default {
   name: 'DefaultLayout',
   data () {
     return {
-      clipped: false,
       drawer: false,
-      fixed: false,
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
       search: '',
       title: 'Open science catalog'
     }
