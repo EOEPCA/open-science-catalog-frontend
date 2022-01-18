@@ -3,7 +3,7 @@ name: Bump version and deploy
 on:
   push:
     branches:
-      - "**"
+      - "main"
 
 jobs:
   bump-and-deploy:
@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎
-        uses: 'actions/checkout@v2'
+        uses: actions/checkout@v2
         with:  
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -37,19 +37,18 @@ jobs:
       - name: Install dependencies 👨🏻‍💻
         run: npm ci --prefer-offline --no-audit
 
-      - name: cat package.json
+      - name: cat package.json 🔎
         run: cat ./package.json
 
       - name: Automated Version Bump ⏫
         id: version-bump
-        uses: 'phips28/gh-action-bump-version@master'
+        uses: phips28/gh-action-bump-version@master
         with:
-          skip-commit:  "true"
-          skip-tag: "true"
+          tag-prefix: "v"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'cat package.json'
+      - name: cat package.json 🔎
         run: cat ./package.json
 
       - name: Output Step 🎉
