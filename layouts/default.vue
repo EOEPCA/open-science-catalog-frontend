@@ -107,7 +107,6 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar
-      :clipped-left="clipped"
       color="primary"
       dark
       fixed
@@ -155,3 +154,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.v-list-item--active {
+  color: white !important;
+}
+</style>
