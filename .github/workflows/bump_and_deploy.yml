@@ -1,18 +1,12 @@
-name: Test and Deploy
-description: "Runs tests and pushes generated bundle to GitHub Pages"
+name: Bump version and deploy
 
 on:
   push:
     branches:
       - main
-      - master
-  pull_request:
-    branches:
-      - main
-      - master
 
 jobs:
-  deploy:
+  bump-and-deploy:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,7 +16,9 @@ jobs:
 
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@master
+        uses: 'actions/checkout@v2'
+        with:  
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup node env 🏗
         uses: actions/setup-node@v2.5.1
@@ -41,11 +37,24 @@ jobs:
       - name: Install dependencies 👨🏻‍💻
         run: npm ci --prefer-offline --no-audit
 
-      - name: Run linter 👀
-        run: npm run lint
+      - name: cat package.json
+        run: cat ./package.json
 
-      - name: Run tests 🧪
-        run: npm run test
+      - name: Automated Version Bump ⏫
+        id: version-bump
+        uses: 'phips28/gh-action-bump-version@master'
+        with:
+          tag-prefix: 'v'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'cat package.json'
+        run: cat ./package.json
+
+      - name: Output Step 🎉
+        env:
+          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
+        run: echo "new tag $NEW_TAG"
 
       - name: Generate ⚙️
         run: npm run generate
