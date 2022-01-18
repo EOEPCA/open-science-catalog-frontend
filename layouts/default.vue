@@ -118,6 +118,17 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      <v-text-field
+        v-model="search"
+        class="mr-4"
+        hide-details
+        solo
+        single-line
+        background-color="secondary"
+        style="width: 250px !important; flex-grow: 0"
+        label="Search..."
+        prepend-inner-icon="mdi-magnify"
+      />
       <img src="/img/ESA_Logo.svg">
     </v-app-bar>
     <v-main>
@@ -145,6 +156,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
+      search: '',
       title: 'Open science catalog'
     }
   }
