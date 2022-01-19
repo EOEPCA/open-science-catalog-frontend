@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <h2 class="text-h2 mt-3 mb-5">
-      Search
+    <h2 class="text-h2 mt-3 mb-5 text-capitalize">
+      {{ theme }}
     </h2>
     <item-grid :items="items" />
   </v-container>
@@ -11,9 +11,13 @@
 import ItemGrid from '@/components/ItemGrid.vue'
 
 export default {
-  name: 'Search',
+  name: 'ThemeSingle',
   components: {
     ItemGrid
+  },
+  asyncData ({ params }) {
+    const theme = params.theme
+    return { theme }
   },
   data () {
     return {

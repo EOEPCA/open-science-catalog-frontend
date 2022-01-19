@@ -152,7 +152,7 @@
       />
       <img src="/img/ESA_Logo.svg">
     </v-app-bar>
-    <v-main>
+    <v-main class="grey lighten-3">
       <Nuxt />
     </v-main>
     <v-footer

@@ -6,15 +6,20 @@
       no-gutters
     >
       <v-col v-for="theme in themes" :key="theme.name" cols="6" class="pa-1">
-        <v-img
-          :src="`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`"
-          height="300"
-          class="elevation-2 rounded-sm"
+        <nuxt-link
+          :to="`/themes/${theme.name.toLowerCase()}`"
         >
-          <span class="h1 imageLabel elavation-2">
-            {{ theme.name }}
-          </span>
-        </v-img>
+          <v-img
+            :src="`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`"
+            height="300"
+            class="elevation-2 rounded"
+            style="border-bottom: 0.25em solid rgb(51, 94, 111);"
+          >
+            <span class="h1 imageLabel elevation-2">
+              {{ theme.name }}
+            </span>
+          </v-img>
+        </nuxt-link>
       </v-col>
     </v-row>
   </v-container>
@@ -60,9 +65,9 @@ export default {
   position: relative;
   text-transform: uppercase;
   padding: 3px 10px;
-  top: 30%;
-  left: 20%;
-  font-size: 25px;
+  top: 37%;
+  left: 13%;
+  font-size: 22px;
   font-weight: bold;
 }
 </style>
