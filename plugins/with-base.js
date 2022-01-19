@@ -13,3 +13,5 @@ const mixin = {
 }
 
 Vue.mixin(mixin)
+
+export default mixin
