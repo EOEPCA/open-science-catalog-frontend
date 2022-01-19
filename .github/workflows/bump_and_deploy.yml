@@ -57,7 +57,7 @@ jobs:
         run: echo "new tag $NEW_TAG"
 
       - name: Generate ⚙️
-        run: npm run generate
+        run: ROUTER_BASE=/${{ github.repository }}/ npm run generate
 
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3
