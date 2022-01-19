@@ -10,8 +10,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - open-science-catalog-frontend',
-    title: 'open-science-catalog-frontend',
+    titleTemplate: '%s | ESA Open Science Data',
+    title: 'ESA Open Science Data',
     htmlAttrs: {
       lang: 'en'
     },

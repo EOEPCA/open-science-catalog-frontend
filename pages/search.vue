@@ -68,6 +68,9 @@ export default {
         }
       ]
     }
+  },
+  head: {
+    title: 'Search'
   }
 }
 </script>

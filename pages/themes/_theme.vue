@@ -15,12 +15,9 @@ export default {
   components: {
     ItemGrid
   },
-  asyncData ({ params }) {
-    const theme = params.theme
-    return { theme }
-  },
   data () {
     return {
+      theme: this.$route.params.theme,
       items: [
         {
           title: 'ADDTID: An Alternative Tool for Studying Earthquake/Tsunami Signatures in the Ionosphere_Japan_SWARM',
@@ -71,6 +68,11 @@ export default {
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
         }
       ]
+    }
+  },
+  head () {
+    return {
+      title: this.theme.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   }
 }

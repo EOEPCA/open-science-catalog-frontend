@@ -63,6 +63,9 @@ export default {
       ]
     }
   },
+  head: {
+    titleTemplate: 'ESA Open Science Data'
+  },
   options: {
     customProperties: true
   }

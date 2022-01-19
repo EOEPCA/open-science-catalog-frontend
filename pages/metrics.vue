@@ -6,6 +6,9 @@
 
 <script>
 export default {
-  name: 'Metrics'
+  name: 'Metrics',
+  head: {
+    title: 'Metrics'
+  }
 }
 </script>

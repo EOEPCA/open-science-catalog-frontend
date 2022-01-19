@@ -6,6 +6,9 @@
 
 <script>
 export default {
-  name: 'NewProject'
+  name: 'NewProject',
+  head: {
+    title: 'New Project'
+  }
 }
 </script>

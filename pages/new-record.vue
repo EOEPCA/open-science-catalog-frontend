@@ -6,6 +6,9 @@
 
 <script>
 export default {
-  name: 'NewRecord'
+  name: 'NewRecord',
+  head: {
+    title: 'New Record'
+  }
 }
 </script>
