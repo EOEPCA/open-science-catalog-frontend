@@ -150,7 +150,7 @@
         label="Search..."
         prepend-inner-icon="mdi-magnify"
       />
-      <img src="/img/ESA_Logo.svg">
+      <img :src="withBase('/img/ESA_Logo.svg')">
     </v-app-bar>
     <v-main class="grey lighten-3">
       <Nuxt />

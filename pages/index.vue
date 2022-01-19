@@ -10,7 +10,7 @@
           :to="`/themes/${theme.name.toLowerCase()}`"
         >
           <v-img
-            :src="`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`"
+            :src="withBase(`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`)"
             height="300"
             class="elevation-2 rounded"
             style="border-bottom: 0.25em solid rgb(51, 94, 111);"
