@@ -60,7 +60,8 @@ export default {
       themes: {
         light: {
           primary: '#003247',
-          secondary: '#335E6F'
+          secondary: '#335E6F',
+          background: '#0F2733'
         }
       }
     }
