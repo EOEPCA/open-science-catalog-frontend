@@ -36,13 +36,13 @@ export default {
           name: 'Land'
         },
         {
-          name: 'Magnetic ionosphere'
+          name: 'Magnetic Ionosphere'
         },
         {
           name: 'Oceans'
         },
         {
-          name: 'Solid earth'
+          name: 'Solid Earth'
         }
       ]
     }
