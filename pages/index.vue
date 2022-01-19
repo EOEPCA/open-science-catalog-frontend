@@ -5,20 +5,31 @@
       align="center"
       no-gutters
     >
-      <v-col v-for="theme in themes" :key="theme.name" cols="6" class="pa-1">
+      <v-col
+        v-for="theme in themes"
+        :key="theme.name"
+        cols="12"
+        md="6"
+        class="pa-1"
+      >
         <nuxt-link
           :to="`/themes/${theme.name.toLowerCase()}`"
         >
-          <v-img
-            :src="withBase(`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`)"
-            height="300"
-            class="elevation-2 rounded"
-            style="border-bottom: 0.25em solid rgb(51, 94, 111);"
+          <div
+            class="d-flex align-center elevation-2 rounded"
+            style="position: relative; height: 300px; overflow: hidden;
+              border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
-            <span class="h1 imageLabel elevation-2">
+            <img
+              :src="withBase(`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`)"
+              width="100%"
+            >
+            <span
+              class="h1 imageLabel elevation-2"
+            >
               {{ theme.name }}
             </span>
-          </v-img>
+          </div>
         </nuxt-link>
       </v-col>
     </v-row>
@@ -62,12 +73,12 @@ export default {
 .imageLabel {
   background: #003247;
   color: white;
-  position: relative;
+  position: absolute;
   text-transform: uppercase;
-  padding: 3px 10px;
+  padding: 1px 10px;
   top: 37%;
-  left: 13%;
-  font-size: 22px;
+  left: 15%;
+  font-size: 21px;
   font-weight: bold;
 }
 </style>
