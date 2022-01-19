@@ -2,12 +2,31 @@
   <v-app dark>
     <v-navigation-drawer
       v-model="drawer"
-      color="secondary"
+      color="background"
       dark
       fixed
       app
     >
-      <v-list>
+      <v-list
+        class="pt-0"
+      >
+        <div
+          class="d-flex align-center"
+          style="height: 64px"
+          @click.stop="drawer = !drawer"
+        >
+          <v-spacer />
+          <v-btn
+            icon
+            large
+            class="ma-1"
+          >
+            <v-icon>
+              mdi-chevron-left
+            </v-icon>
+          </v-btn>
+        </div>
+        <v-divider />
         <v-list-item
           to="/"
           router
@@ -39,6 +58,7 @@
             to="/new-record"
             router
             exact
+            class="pl-10 primary"
           >
             <v-list-item-icon>
               <v-icon>mdi-clipboard-text</v-icon>
@@ -51,6 +71,7 @@
             to="/new-project"
             router
             exact
+            class="pl-10 primary"
           >
             <v-list-item-icon>
               <v-icon>mdi-wallet</v-icon>
@@ -67,7 +88,7 @@
           exact
         >
           <v-list-item-action>
-            <v-icon>mdi-chart-bar</v-icon>
+            <v-icon>mdi-poll</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>
@@ -112,7 +133,10 @@
       fixed
       app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-app-bar-nav-icon
+        v-if="!drawer"
+        @click.stop="drawer = !drawer"
+      />
       <v-toolbar-title v-text="title" />
       <v-spacer />
       <v-text-field
