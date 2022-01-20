@@ -1,3 +1,8 @@
+const webpack = require('webpack') // eslint-disable-line
+const fs = require('fs') // eslint-disable-line
+
+const packageJson = fs.readFileSync('./package.json')
+const version = JSON.parse(packageJson).version || 0
 const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
@@ -75,5 +80,12 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          PACKAGE_VERSION: `"${version}"`
+        }
+      })
+    ]
   }
 }
