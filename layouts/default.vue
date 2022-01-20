@@ -180,6 +180,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'DefaultLayout',
   data () {
@@ -188,6 +190,11 @@ export default {
       search: '',
       title: 'Open science catalog'
     }
+  },
+  computed: {
+    ...mapGetters([
+      'appVersion'
+    ])
   }
 }
 </script>
