@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/themes/oceans", {data:[{}],fetch:{},mutations:[]});

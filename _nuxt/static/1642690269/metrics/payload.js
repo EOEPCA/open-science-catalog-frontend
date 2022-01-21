@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/metrics", {data:[{}],fetch:{},mutations:void 0});
