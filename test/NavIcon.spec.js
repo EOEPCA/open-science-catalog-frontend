@@ -1,4 +1,5 @@
 import Vuetify from 'vuetify'
+import Vuex from 'vuex'
 
 import { createLocalVue, mount } from '@vue/test-utils'
 import DefaultLayout from '@/layouts/default.vue'
@@ -13,8 +14,15 @@ describe('DefaultLayout', () => {
     vuetify = new Vuetify()
   })
   it('reveals sidebar', () => {
+    const getters = {
+      appVersion: () => '0.0.1'
+    }
+    const mockStore = new Vuex.Store({
+      getters
+    })
     wrapper = mount(DefaultLayout, {
       localVue,
+      store: mockStore,
       vuetify
     })
     // console.log(wrapper.html())

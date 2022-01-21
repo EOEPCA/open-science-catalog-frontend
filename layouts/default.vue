@@ -161,12 +161,27 @@
       fixed
       app
     >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <small class="justify-right">
+        <span>&copy; {{ new Date().getFullYear() }} by </span>
+        <a href="https://www.esa.int/" target="_blank" class="white--text">ESA</a>
+      </small>
+      <v-spacer />
+      <small class="justify-right">
+        <a href="https://github.com/EOEPCA/open-science-catalog-frontend" target="_blank" class="white--text">open-science-catalog</a>
+        <span> v{{ `${$store.getters.appVersion
+          .split('.')[0]}.${$store.getters.appVersion
+          .split('.')[1]}` }} by</span>
+        <a href="https://eox.at" target="_blank" class="white--text mx-1">
+          <img :src="withBase('/img/EOX_Logo_weiss.svg')" height="11px" class="my-0">
+        </a>
+      </small>
     </v-footer>
   </v-app>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'DefaultLayout',
   data () {
@@ -175,6 +190,11 @@ export default {
       search: '',
       title: 'Open science catalog'
     }
+  },
+  computed: {
+    ...mapGetters([
+      'appVersion'
+    ])
   }
 }
 </script>
