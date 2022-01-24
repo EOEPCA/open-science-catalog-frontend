@@ -86,7 +86,7 @@ export default {
     plugins: [
       new webpack.DefinePlugin({
         'process.env': {
-          ROUTER_BASE: routerBase,
+          ROUTER_BASE: `"${routerBase}"`,
           PACKAGE_VERSION: `"${version}"`
         }
       })
