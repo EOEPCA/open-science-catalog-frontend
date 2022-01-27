@@ -28,12 +28,21 @@
           <td class="nameCell">
             {{ item.name }}
           </td>
-          <td v-for="year in headers" :key="`${item.id}-${year}`">
+          <td v-for="(year, index) in headers" :key="`${item.id}-${year}`">
             <v-progress-linear
               v-if="item.years.includes(year)"
-              color="primary"
-              height="25"
-              buffer-value="100"
+              color="secondary"
+              height="15"
+              value="100"
+              :style="`border-radius: ${
+                !item.years.includes(headers[index - 1]) ? 5 : 0
+              }px ${
+                !item.years.includes(headers[index + 1]) ? 5 : 0
+              }px ${
+                !item.years.includes(headers[index + 1]) ? 5 : 0
+              }px ${
+                !item.years.includes(headers[index - 1]) ? 5 : 0
+              }px`"
             />
           </td>
           <td class="coverageCell">
