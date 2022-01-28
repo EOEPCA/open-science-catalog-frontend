@@ -58,8 +58,14 @@
 export default {
   name: 'MetricsTable',
   props: {
-    headers: [],
-    items: []
+    headers: {
+      type: Array,
+      default: () => ([])
+    },
+    items: {
+      type: Array,
+      default: () => ([])
+    }
   }
 }
 </script>

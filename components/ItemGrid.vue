@@ -2,7 +2,7 @@
   <v-row>
     <v-col
       v-for="item in items"
-      :key="item.title"
+      :key="item.id"
       cols="12"
       sm="6"
       md="4"
@@ -20,10 +20,10 @@
           </v-chip>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
-          {{ item.title }}
+          {{ item.name }}
         </v-card-title>
         <v-card-text>
-          {{ item.content }}
+          {{ item.recordsNumber }} Records
         </v-card-text>
       </v-card>
     </v-col>
