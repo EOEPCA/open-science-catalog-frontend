@@ -186,6 +186,17 @@ export default {
       )
     }
   },
+  watch: {
+    dialog(newDialog) {
+      if (newDialog) return;
+      if (this.recordsChart) {
+        this.recordsChart.destroy()
+      }
+      if (this.variablePie) {
+        this.variablePie.destroy()
+      }
+    }
+  },
   head: {
     title: 'Metrics'
   }
