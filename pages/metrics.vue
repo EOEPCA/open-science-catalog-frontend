@@ -116,6 +116,9 @@ export default {
     return {
       dialog: false,
       records: null,
+      variablesTextLabel: null,
+      variablesNumberLabel: null,
+      variablesLabelColor: null,
     }
   },
   methods: {
@@ -140,14 +143,16 @@ export default {
           type: 'bar',
           data: {
             labels: this.metrics.years,
-            datasets: [{
-              label: 'Number of records',
-              data: Object.values(recordsDataset),
-              backgroundColor: [
-                'rgb(111, 184, 144)'
-              ],
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: 'Number of records',
+                data: Object.values(recordsDataset),
+                backgroundColor: [
+                  'rgb(111, 184, 144)'
+                ],
+                borderWidth: 1
+              },
+            ]
           },
           options: {
             scales: {
@@ -161,29 +166,111 @@ export default {
 
       const variableDataset = {}
       this.metrics.variables.forEach(item => {
-        variableDataset[item.name] = item.numberOfRecords
+        if (item.numberOfRecords > 0) {
+          variableDataset[item.name] = item.numberOfRecords
+        }
       })
+      let sortedVariables = Object.values(variableDataset)
+      sortedVariables = sortedVariables.sort((a, b) => {
+        return a - b
+      })
+
+      const hoverLabel = {
+        id: "hoverLabel",
+        afterDraw(chart, args, options) {
+          const {
+            ctx,
+            chartArea: { left, right, top, bottom, width, height }
+          } = chart;
+          ctx.save();
+          if (chart._active.length > 0) {
+            this.variablesTextLabel = chart.config.data.labels[chart._active[0].index];
+            this.variablesNumberLabel =
+              chart.config.data.datasets[chart._active[0].datasetIndex].data[
+                chart._active[0].index
+              ];
+            this.variablesLabelColor =
+              chart.config.data.datasets[chart._active[0].datasetIndex]
+                .hoverBackgroundColor[chart._active[0].index];
+          }
+
+          ctx.font = "bolder 10px Arial";
+          ctx.fillStyle = this.variablesLabelColor;
+          ctx.textAlign = "center";
+          ctx.fillText(this.variablesTextLabel || "", width / 2, 15);
+
+          ctx.font = "bolder 10px Arial";
+          ctx.fillStyle = "black";
+          ctx.textAlign = "center";
+          ctx.fillText(
+            this.variablesNumberLabel ? `${this.variablesNumberLabel} records` : "",
+            width / 2,
+            height / 2 + top
+          );
+          ctx.restore();
+        }
+      };
+
       this.variablePie = new Chart(
         document.getElementById('variablePie'),
         {
+          plugins: [hoverLabel],
           type: 'doughnut',
           data: {
             labels: Object.keys(variableDataset),
-            datasets: [{
-              label: 'Dataset',
-              data: Object.values(variableDataset),
-              backgroundColor: [
-                'rgb(111, 184, 144)'
-              ]
-            }]
+            datasets: [
+              {
+                data: sortedVariables,
+                backgroundColor: "white",
+                hoverBackgroundColor: ['rgb(111, 184, 144)'],
+                hoverBorderWidth: 0,
+                innerText: sortedVariables[0],
+                radius: 120,
+                cutout: 128
+              },
+              {
+                data: sortedVariables,
+                backgroundColor: ['rgb(111, 184, 144)'],
+                hoverBackgroundColor: ['rgb(111, 184, 144)'],
+                hoverBorderWidth: 0,
+                innerText: sortedVariables[0],
+                radius: 150,
+                cutout: 65
+              }
+            ]
           },
           options: {
+            responsive: true,
+            events: [],
             plugins: {
-              legend: false,
-            }
-          }
+              legend: {
+                display: false
+              },
+              tooltip: {
+                enabled: false
+              }
+            },
+          },
         }
       )
+      document.getElementById("variablePie").addEventListener("mousemove", (e) => {
+      const points = this.variablePie.getElementsAtEventForMode(
+        e,
+        "nearest",
+        { intersect: true },
+        true
+      );
+      if (points.length > 0 && points[0].datasetIndex > 0) {
+
+        this.variablePie.setActiveElements([
+          {
+            datasetIndex: 0,
+            index: points[0].index
+          }
+        ]);
+        this.variablePie.update();
+      }
+    });
     }
   },
   watch: {
