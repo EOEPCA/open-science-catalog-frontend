@@ -13,8 +13,8 @@
       <template #activator="{ on, attrs }">
         <v-btn
           icon
-          @click="fetchVariables"
           v-bind="attrs"
+          @click="fetchVariables"
           v-on="on"
         >
           <v-icon>mdi-chart-bar</v-icon>
@@ -65,7 +65,7 @@
                     style="max-height: 300px"
                     class="overflow-y-auto"
                   >
-                    <v-list-item v-for="variable in metrics.variables" :key="variable.id">
+                    <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
                       {{ variable.name }}: {{ variable.numberOfRecords }}
                     </v-list-item>
                   </v-list>
@@ -73,6 +73,7 @@
                 <v-col>
                   <canvas
                     id="variablePie"
+                    @mousemove="hoverHandler"
                   />
                 </v-col>
               </v-row>
@@ -114,20 +115,37 @@ export default {
     this.recordsChart = null
     this.variablePie = null
     return {
-      dialog: false,
-      records: null,
-      variablesTextLabel: null,
-      variablesNumberLabel: null,
-      variablesLabelColor: null,
+      dialog: false
+    }
+  },
+  head: {
+    title: 'Metrics'
+  },
+  computed: {
+    nonEmptyVariables () {
+      return this.metrics.variables
+        .filter(variable => variable.numberOfRecords > 0)
+        .sort((a, b) => b.numberOfRecords - a.numberOfRecords)
+    }
+  },
+  watch: {
+    dialog (newDialog) {
+      if (newDialog) { return }
+      if (this.recordsChart) {
+        this.recordsChart.destroy()
+      }
+      if (this.variablePie) {
+        this.variablePie.destroy()
+      }
     }
   },
   methods: {
-    async fetchVariables() {
+    async fetchVariables () {
       const response = await this.$axios.$get('/variables/metrics')
-      this.records = response.variables
 
+      // Number of records bar chart setup
       const recordsDataset = {}
-      this.records.forEach((record) => {
+      response.variables.forEach((record) => {
         record.years.forEach((year) => {
           if (recordsDataset[year]) {
             recordsDataset[year] += 1
@@ -151,7 +169,7 @@ export default {
                   'rgb(111, 184, 144)'
                 ],
                 borderWidth: 1
-              },
+              }
             ]
           },
           options: {
@@ -164,64 +182,27 @@ export default {
         }
       )
 
+      // Variable distribution doughnut chart setup
       const variableDataset = {}
-      this.metrics.variables.forEach(item => {
-        if (item.numberOfRecords > 0) {
-          variableDataset[item.name] = item.numberOfRecords
-        }
+      this.nonEmptyVariables.forEach((item) => {
+        variableDataset[item.name] = item.numberOfRecords
       })
       let sortedVariables = Object.values(variableDataset)
       sortedVariables = sortedVariables.sort((a, b) => {
         return a - b
       })
 
-      const hoverLabel = {
-        id: "hoverLabel",
-        afterDraw(chart, args, options) {
-          const {
-            ctx,
-            chartArea: { left, right, top, bottom, width, height }
-          } = chart;
-          ctx.save();
-          if (chart._active.length > 0) {
-            this.variablesTextLabel = chart.config.data.labels[chart._active[0].index];
-            this.variablesNumberLabel =
-              chart.config.data.datasets[chart._active[0].datasetIndex].data[
-                chart._active[0].index
-              ];
-            this.variablesLabelColor =
-              chart.config.data.datasets[chart._active[0].datasetIndex]
-                .hoverBackgroundColor[chart._active[0].index];
-          }
-
-          ctx.font = "bolder 10px Arial";
-          ctx.fillStyle = this.variablesLabelColor;
-          ctx.textAlign = "center";
-          ctx.fillText(this.variablesTextLabel || "", width / 2, 15);
-
-          ctx.font = "bolder 10px Arial";
-          ctx.fillStyle = "black";
-          ctx.textAlign = "center";
-          ctx.fillText(
-            this.variablesNumberLabel ? `${this.variablesNumberLabel} records` : "",
-            width / 2,
-            height / 2 + top
-          );
-          ctx.restore();
-        }
-      };
-
       this.variablePie = new Chart(
         document.getElementById('variablePie'),
         {
-          plugins: [hoverLabel],
+          plugins: [this.hoverLabel()],
           type: 'doughnut',
           data: {
             labels: Object.keys(variableDataset),
             datasets: [
               {
                 data: sortedVariables,
-                backgroundColor: "white",
+                backgroundColor: 'white',
                 hoverBackgroundColor: ['rgb(111, 184, 144)'],
                 hoverBorderWidth: 0,
                 innerText: sortedVariables[0],
@@ -249,43 +230,69 @@ export default {
               tooltip: {
                 enabled: false
               }
-            },
-          },
+            }
+          }
         }
       )
-      document.getElementById("variablePie").addEventListener("mousemove", (e) => {
+    },
+    hoverHandler (e) {
       const points = this.variablePie.getElementsAtEventForMode(
         e,
-        "nearest",
+        'nearest',
         { intersect: true },
         true
-      );
+      )
       if (points.length > 0 && points[0].datasetIndex > 0) {
-
         this.variablePie.setActiveElements([
           {
             datasetIndex: 0,
             index: points[0].index
           }
-        ]);
-        this.variablePie.update();
+        ])
+        this.variablePie.update()
       }
-    });
+    },
+    hoverLabel () {
+      let variablesTextLabel = null
+      let variablesNumberLabel = null
+      let variablesLabelColor = null
+
+      return {
+        id: 'hoverLabel',
+        afterDraw (chart) {
+          const {
+            ctx,
+            chartArea: { top, width, height }
+          } = chart
+          ctx.save()
+          if (chart._active.length > 0) {
+            variablesTextLabel = chart.config.data.labels[chart._active[0].index]
+            variablesNumberLabel =
+              chart.config.data.datasets[chart._active[0].datasetIndex].data[
+                chart._active[0].index
+              ]
+            variablesLabelColor =
+              chart.config.data.datasets[chart._active[0].datasetIndex]
+                .hoverBackgroundColor[chart._active[0].index]
+          }
+
+          ctx.font = 'bolder 10px Arial'
+          ctx.fillStyle = variablesLabelColor
+          ctx.textAlign = 'center'
+          ctx.fillText(variablesTextLabel || '', width / 2, 15)
+
+          ctx.font = 'bolder 10px Arial'
+          ctx.fillStyle = 'black'
+          ctx.textAlign = 'center'
+          ctx.fillText(
+            variablesNumberLabel ? `${variablesNumberLabel} records` : '',
+            width / 2,
+            height / 2 + top
+          )
+          ctx.restore()
+        }
+      }
     }
-  },
-  watch: {
-    dialog(newDialog) {
-      if (newDialog) return;
-      if (this.recordsChart) {
-        this.recordsChart.destroy()
-      }
-      if (this.variablePie) {
-        this.variablePie.destroy()
-      }
-    }
-  },
-  head: {
-    title: 'Metrics'
   }
 }
 </script>
