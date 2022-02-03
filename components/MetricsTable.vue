@@ -56,11 +56,9 @@
                 <span v-else style="visibility: hidden">no data</span>
               </td>
               <td class="px-4 subCell">
-                <v-icon
-                  color="success"
-                >
-                  mdi-map-marker
-                </v-icon>
+                <Coverage
+                  :record="record"
+                />
               </td>
             </tr>
           </tbody>
@@ -88,19 +86,22 @@
         }px`"
       />
     </template>
-    <template #[`item.coverage`]>
-      <v-icon
-        color="primary"
-      >
-        mdi-earth
-      </v-icon>
+    <template #[`item.coverage`]="{ item }">
+      <Coverage
+        :variable="item"
+      />
     </template>
   </v-data-table>
 </template>
 
 <script>
+import Coverage from '@/components/Coverage.vue'
+
 export default {
   name: 'MetricsTable',
+  components: {
+    Coverage
+  },
   props: {
     headers: {
       type: Array,

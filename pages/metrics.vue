@@ -8,7 +8,7 @@
     <v-dialog
       v-model="dialog"
       scrollable
-      width="700"
+      width="1000"
     >
       <template #activator="{ on, attrs }">
         <v-btn
@@ -17,13 +17,15 @@
           @click="fetchVariables"
           v-on="on"
         >
-          <v-icon>mdi-chart-bar</v-icon>
+          <v-icon>mdi-poll</v-icon>
         </v-btn>
       </template>
       <v-card>
-        <v-card-title class="text-h5">
-          <v-icon>mdi-chart-bar</v-icon>
-          <span class="ml-3">All stats</span>
+        <v-card-title class="text-h6">
+          <v-icon color="success" left>
+            mdi-poll
+          </v-icon>
+          <span>All stats</span>
           <v-spacer />
           <v-btn
             icon

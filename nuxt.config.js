@@ -43,7 +43,8 @@ export default {
   plugins: [
     '~/plugins/with-base',
     // TEMP plugin for intercepting fake api calls
-    '~/plugins/axios'
+    '~/plugins/axios',
+    { src: '~plugins/ol', ssr: false }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
