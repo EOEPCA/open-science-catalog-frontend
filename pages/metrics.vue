@@ -1,7 +1,33 @@
 <template>
   <v-container>
+    <div class="d-flex" style="background-color:white">
+      <v-tabs
+        v-model="selectedTab"
+      >
+        <v-tab>
+          All
+        </v-tab>
+        <v-tab v-for="theme in themes" :key="theme.id">
+          <div>
+            {{ theme.name }}
+          </div>
+        </v-tab>
+      </v-tabs>
+      <v-spacer />
+      <v-col cols="3">
+        <v-text-field 
+          v-model="filter"
+          hide-details
+          solo
+          single-line
+          outlined
+          placeholder="Filter by keywords..."
+          prepend-inner-icon="mdi-magnify"
+        />
+      </v-col>
+    </div>
     <MetricsTable
-      :themes="themes"
+      :filter="filter"
       :headers="metrics.years"
       :items="metrics.variables"
     />
@@ -120,7 +146,9 @@ export default {
     this.recordsChart = null
     this.variablePie = null
     return {
-      dialog: false
+      dialog: false,
+      filter: '',
+      selectedTab: 0,
     }
   },
   head: {
@@ -297,6 +325,9 @@ export default {
           ctx.restore()
         }
       }
+    },
+    filterItems (e) {
+      console.log(e)
     }
   }
 }
