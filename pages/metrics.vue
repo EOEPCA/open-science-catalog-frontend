@@ -8,13 +8,109 @@
         <v-tab>
           All
         </v-tab>
-        <v-tab v-for="theme in themes" :key="theme.id">
+        <v-tab
+          v-for="theme in themes"
+          :key="theme.id"
+        >
           <div>
             {{ theme.name }}
           </div>
         </v-tab>
       </v-tabs>
       <v-spacer />
+      <v-dialog
+        v-model="dialog"
+        scrollable
+        width="1000"
+      >
+        <template #activator="{ on, attrs }">
+          <v-btn
+            icon
+            v-bind="attrs"
+            @click="fetchVariables"
+            v-on="on"
+            class="align-self-center"
+          >
+            <v-icon>mdi-poll</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="text-h6">
+            <v-icon color="success" left>
+              mdi-poll
+            </v-icon>
+            <span>All stats</span>
+            <v-spacer />
+            <v-btn
+              icon
+              @click="dialog = false"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+
+          <v-divider />
+
+          <v-card-text class="py-4 black--text">
+            <v-container>
+              <div class="d-flex mx-6">
+                <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
+                <v-spacer />
+                <span>Number of records: {{ metrics.summary.records }}</span>
+              </div>
+
+              <div style="text-align: center" class="ma-6">
+                Temporal coverage
+              </div>
+              <canvas
+                id="recordsChart"
+              />
+            </v-container>
+
+            <v-divider />
+
+            <v-container>
+              <div style="text-align: center" class="ma-6">
+                Variable distribution
+              </div>
+              <v-container>
+                <v-row style="height: 300px">
+                  <v-col>
+                    Variable list
+                    <v-list
+                      style="max-height: 300px"
+                      class="overflow-y-auto"
+                    >
+                      <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
+                        {{ variable.name }}: {{ variable.numberOfRecords }}
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  <v-col>
+                    <canvas
+                      id="variablePie"
+                      @mousemove="hoverHandler"
+                    />
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-container>
+          </v-card-text>
+
+          <v-divider />
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="primary"
+              text
+              @click="dialog = false"
+            >
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-col cols="3">
         <v-text-field
           v-model="filter"
@@ -32,98 +128,6 @@
       :headers="metrics.years"
       :items="metrics.variables"
     />
-    <v-dialog
-      v-model="dialog"
-      scrollable
-      width="1000"
-    >
-      <template #activator="{ on, attrs }">
-        <v-btn
-          icon
-          v-bind="attrs"
-          @click="fetchVariables"
-          v-on="on"
-        >
-          <v-icon>mdi-poll</v-icon>
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-title class="text-h6">
-          <v-icon color="success" left>
-            mdi-poll
-          </v-icon>
-          <span>All stats</span>
-          <v-spacer />
-          <v-btn
-            icon
-            @click="dialog = false"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-
-        <v-divider />
-
-        <v-card-text class="py-4 black--text">
-          <v-container>
-            <div class="d-flex mx-6">
-              <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
-              <v-spacer />
-              <span>Number of records: {{ metrics.summary.records }}</span>
-            </div>
-
-            <div style="text-align: center" class="ma-6">
-              Temporal coverage
-            </div>
-            <canvas
-              id="recordsChart"
-            />
-          </v-container>
-
-          <v-divider />
-
-          <v-container>
-            <div style="text-align: center" class="ma-6">
-              Variable distribution
-            </div>
-            <v-container>
-              <v-row style="height: 300px">
-                <v-col>
-                  Variable list
-                  <v-list
-                    style="max-height: 300px"
-                    class="overflow-y-auto"
-                  >
-                    <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                      {{ variable.name }}: {{ variable.numberOfRecords }}
-                    </v-list-item>
-                  </v-list>
-                </v-col>
-                <v-col>
-                  <canvas
-                    id="variablePie"
-                    @mousemove="hoverHandler"
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-container>
-        </v-card-text>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            text
-            @click="dialog = false"
-          >
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
