@@ -49,6 +49,7 @@
                   <template #activator="{ on }">
                     <v-btn
                       icon
+                      small
                       color="success"
                       v-on="on"
                     >
@@ -60,7 +61,7 @@
                   <span>Go to {{ record.name }} record</span>
                 </v-tooltip>
               </td>
-              <td class="px-4 subCell">
+              <td class="px-4 py-2 subCell">
                 <v-tooltip
                   top
                 >
@@ -310,6 +311,9 @@ export default {
 
 .subCell {
   border-bottom: thin solid rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  line-height: initial;
+  overflow-wrap: break-word;
 }
 ::v-deep table > tbody > tr:hover:not(.v-data-table__empty-wrapper) {
   background: #eee !important;
