@@ -36,6 +36,7 @@
       <td
         :colspan="transformedHeaders.length + 1"
         class="pa-0"
+        style="z-index: 0 !important"
       >
         <table style="width: 100%; border-spacing: 0;">
           <tbody>
