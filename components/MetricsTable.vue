@@ -14,17 +14,23 @@
     <template #[`header.name`]="{ header }">
       {{ header.text }}
       <!-- It's kinda hacky to put this here - is there a better place? -->
-      <v-btn
-        icon
-        style="position: absolute; left: -60px; top: 5px"
-        @click="expanded = expanded.length === items.length ? [] : items"
-      >
-        <v-icon>
-          {{ expanded.length === items.length
-            ? 'mdi-arrow-collapse-vertical'
-            : 'mdi-arrow-expand-vertical' }}
-        </v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <template #activator="{ on }">
+          <v-btn
+            icon
+            style="position: absolute; left: -60px; top: 5px"
+            v-on="on"
+            @click="expanded = expanded.length === items.length ? [] : items"
+          >
+            <v-icon>
+              {{ expanded.length === items.length
+                ? 'mdi-arrow-collapse-vertical'
+                : 'mdi-arrow-expand-vertical' }}
+            </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ expanded.length === items.length ? 'Close all' : 'Expand all' }}</span>
+      </v-tooltip>
     </template>
     <template #expanded-item>
       <td
@@ -39,37 +45,64 @@
               style="line-height: 3;"
             >
               <td class="px-4 text-start subCell">
-                <v-icon
-                  color="success"
-                >
-                  mdi-open-in-new
-                </v-icon>
+                <v-tooltip top>
+                  <template #activator="{ on }">
+                    <v-btn
+                      icon
+                      color="success"
+                      v-on="on"
+                    >
+                      <v-icon>
+                        mdi-open-in-new
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Go to {{ record.name }} record</span>
+                </v-tooltip>
               </td>
               <td class="px-4 subCell">
-                <small>{{ record.name }}</small>
+                <v-tooltip
+                  top
+                >
+                  <template #activator="{ on }">
+                    <small
+                      style="cursor: pointer"
+                      v-on="on"
+                    >{{ record.name }}</small>
+                  </template>
+                  <span>Go to {{ record.name }} record</span>
+                </v-tooltip>
               </td>
               <td
                 v-for="(year, index) in headers"
                 :key="year"
                 class="subCell"
               >
-                <v-progress-linear
-                  v-if="record.years.includes(year)"
+                <v-tooltip
                   :key="year"
-                  color="success"
-                  height="15"
-                  value="100"
-                  :style="`border-radius: ${
-                    !record.years.includes(headers[index - 1]) ? 5 : 0
-                  }px ${
-                    !record.years.includes(headers[index + 1]) ? 5 : 0
-                  }px ${
-                    !record.years.includes(headers[index + 1]) ? 5 : 0
-                  }px ${
-                    !record.years.includes(headers[index - 1]) ? 5 : 0
-                  }px`"
-                />
-                <span v-else style="visibility: hidden">no data</span>
+                  top
+                >
+                  <template #activator="{ on }">
+                    <v-progress-linear
+                      v-if="record.years.includes(year)"
+                      color="success"
+                      height="15"
+                      value="100"
+                      :style="`border-radius: ${
+                        !record.years.includes(headers[index - 1]) ? 5 : 0
+                      }px ${
+                        !record.years.includes(headers[index + 1]) ? 5 : 0
+                      }px ${
+                        !record.years.includes(headers[index + 1]) ? 5 : 0
+                      }px ${
+                        !record.years.includes(headers[index - 1]) ? 5 : 0
+                      }px`"
+                      v-on="on"
+                    />
+                    <span v-else style="visibility: hidden">no data</span>
+                  </template>
+                  <span>{{ year }}</span>
+                </v-tooltip>
               </td>
               <td class="px-4 subCell">
                 <Coverage
@@ -85,22 +118,44 @@
       v-for="(year, index) in headers"
       #[`item.${year}`]="{ item }"
     >
-      <v-progress-linear
-        v-if="item.years.includes(year)"
+      <v-tooltip
         :key="year"
-        color="secondary"
-        height="15"
-        value="100"
-        :style="`border-radius: ${
-          !item.years.includes(headers[index - 1]) ? 5 : 0
-        }px ${
-          !item.years.includes(headers[index + 1]) ? 5 : 0
-        }px ${
-          !item.years.includes(headers[index + 1]) ? 5 : 0
-        }px ${
-          !item.years.includes(headers[index - 1]) ? 5 : 0
-        }px`"
-      />
+        top
+      >
+        <template #activator="{ on }">
+          <v-progress-linear
+            v-if="item.years.includes(year)"
+            color="secondary"
+            height="15"
+            value="100"
+            :style="`z-index: 1; border-radius: ${
+              !item.years.includes(headers[index - 1]) ? 5 : 0
+            }px ${
+              !item.years.includes(headers[index + 1]) ? 5 : 0
+            }px ${
+              !item.years.includes(headers[index + 1]) ? 5 : 0
+            }px ${
+              !item.years.includes(headers[index - 1]) ? 5 : 0
+            }px`"
+            v-on="on"
+          />
+        </template>
+        <span>{{ year }}</span>
+      </v-tooltip>
+    </template>
+    <template #[`item.name`]="{ item }">
+      <v-tooltip
+        :key="year"
+        top
+      >
+        <template #activator="{ on }">
+          <small
+            style="cursor: pointer"
+            v-on="on"
+          >{{ item.name }}</small>
+        </template>
+        <span>Go to {{ item.name }} variable</span>
+      </v-tooltip>
     </template>
     <template #[`item.coverage`]="{ item }">
       <Coverage
@@ -256,6 +311,8 @@ export default {
 
 .subCell {
   border-bottom: thin solid rgba(0, 0, 0, 0.12);
-  background-color: #eee !important;
+}
+::v-deep table > tbody > tr:hover:not(.v-data-table__empty-wrapper) {
+  background: #eee !important;
 }
 </style>

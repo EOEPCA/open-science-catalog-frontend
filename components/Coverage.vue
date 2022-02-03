@@ -5,14 +5,24 @@
     width="1000"
   >
     <template #activator="{ on, attrs }">
-      <v-btn
-        icon
-        v-bind="attrs"
-        :color="record.name ? 'success' : 'primary'"
-        v-on="on"
+      <v-tooltip
+        v-model="showActivatorTooltip"
+        top
       >
-        <v-icon>{{ record.name ? 'mdi-map-marker' : 'mdi-earth' }}</v-icon>
-      </v-btn>
+        <template #activator="{}">
+          <v-btn
+            icon
+            v-bind="attrs"
+            :color="record.name ? 'success' : 'primary'"
+            v-on="on"
+            @mouseover="showActivatorTooltip = true"
+            @mouseleave="showActivatorTooltip = false"
+          >
+            <v-icon>{{ record.name ? 'mdi-map-marker' : 'mdi-earth' }}</v-icon>
+          </v-btn>
+        </template>
+        <span>Coverage</span>
+      </v-tooltip>
     </template>
     <v-card>
       <v-card-title class="text-h6">
@@ -117,7 +127,8 @@ export default {
   },
   data () {
     return {
-      dialog: false
+      dialog: false,
+      showActivatorTooltip: false
     }
   }
 }
