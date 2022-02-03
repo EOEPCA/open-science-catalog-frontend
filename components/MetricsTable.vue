@@ -3,6 +3,7 @@
     :headers="transformedHeaders"
     :items="items"
     :items-per-page="-1"
+    :search="filter"
     disable-sort
     height="60vh"
     fixed-header
@@ -175,6 +176,10 @@ export default {
     Coverage
   },
   props: {
+    filter: {
+      type: String,
+      default: () => ('')
+    },
     headers: {
       type: Array,
       default: () => ([])

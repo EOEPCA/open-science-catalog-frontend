@@ -1,7 +1,34 @@
 <template>
   <v-container>
-    <h1>Metrics page</h1>
+    <div class="d-flex" style="background-color:white">
+      <v-tabs
+        v-model="selectedTab"
+        @change="filterItems"
+      >
+        <v-tab>
+          All
+        </v-tab>
+        <v-tab v-for="theme in themes" :key="theme.id">
+          <div>
+            {{ theme.name }}
+          </div>
+        </v-tab>
+      </v-tabs>
+      <v-spacer />
+      <v-col cols="3">
+        <v-text-field
+          v-model="filter"
+          hide-details
+          solo
+          single-line
+          outlined
+          placeholder="Filter by keywords..."
+          prepend-inner-icon="mdi-magnify"
+        />
+      </v-col>
+    </div>
     <MetricsTable
+      :filter="filter"
       :headers="metrics.years"
       :items="metrics.variables"
     />
@@ -109,15 +136,20 @@ export default {
   name: 'Metrics',
   async asyncData ({ $axios }) {
     const metrics = await $axios.$get('/metrics')
+    const themes = await $axios.$get('/themes')
+
     return {
-      metrics
+      metrics,
+      themes
     }
   },
   data () {
     this.recordsChart = null
     this.variablePie = null
     return {
-      dialog: false
+      dialog: false,
+      filter: '',
+      selectedTab: 0
     }
   },
   head: {
@@ -294,6 +326,13 @@ export default {
           ctx.restore()
         }
       }
+    },
+    async filterItems (e) {
+      if (e === 0) {
+        this.metrics = await this.$axios.$get('/metrics')
+        return
+      }
+      this.metrics = await this.$axios.$get('/metrics/atmosphere/metrics')
     }
   }
 }
