@@ -113,7 +113,7 @@ export default {
     variable: {
       type: Object,
       default: () => ({})
-    },
+    }
   },
   data () {
     return {

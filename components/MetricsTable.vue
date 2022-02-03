@@ -6,11 +6,27 @@
     :search="filter"
     disable-sort
     height="60vh"
+    fixed-header
     hide-default-footer
     show-expand
     :expanded.sync="expanded"
     :mobile-breakpoint="0"
   >
+    <template #[`header.name`]="{ header }">
+      {{ header.text }}
+      <!-- It's kinda hacky to put this here - is there a better place? -->
+      <v-btn
+        icon
+        style="position: absolute; left: -60px; top: 5px"
+        @click="expanded = expanded.length === items.length ? [] : items"
+      >
+        <v-icon>
+          {{ expanded.length === items.length
+            ? 'mdi-arrow-collapse-vertical'
+            : 'mdi-arrow-expand-vertical' }}
+        </v-icon>
+      </v-btn>
+    </template>
     <template #expanded-item>
       <td
         :colspan="transformedHeaders.length + 1"
@@ -174,7 +190,7 @@ export default {
         value: h
       }))
       newHeaders.unshift({
-        text: 'name',
+        text: 'Name',
         value: 'name'
       })
       newHeaders.push({
@@ -208,7 +224,16 @@ export default {
 ::v-deep table td:last-child {
   position: sticky;
   background: white;
-  z-index: 1;
+}
+::v-deep table td:first-child,
+::v-deep table td:nth-child(2),
+::v-deep table td:last-child {
+  z-index: 3 !important;
+}
+::v-deep table th:first-child,
+::v-deep table th:nth-child(2),
+::v-deep table th:last-child {
+  z-index: 4 !important;
 }
 ::v-deep table th:first-child,
 ::v-deep table td:first-child {
