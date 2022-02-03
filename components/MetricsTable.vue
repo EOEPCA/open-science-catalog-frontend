@@ -325,3 +325,25 @@ export default {
   background: #eee !important;
 }
 </style>
+
+<style>
+::-webkit-scrollbar {
+  width: 5px;
+  height: 9px;
+  margin-left: 5px;
+}
+::-webkit-scrollbar-button {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(225, 225, 225);
+  border: 0px none rgb(255, 255, 255);
+  border-radius: 47px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border: 0px none transparent;
+  border-radius: 42px;
+}
+</style>
