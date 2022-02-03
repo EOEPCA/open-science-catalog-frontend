@@ -145,7 +145,6 @@
     </template>
     <template #[`item.name`]="{ item }">
       <v-tooltip
-        :key="year"
         top
       >
         <template #activator="{ on }">
