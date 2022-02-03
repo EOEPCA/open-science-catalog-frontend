@@ -15,6 +15,7 @@
             v-bind="attrs"
             :color="record.name ? 'success' : 'primary'"
             v-on="on"
+            :disabled="disable"
             @mouseover="showActivatorTooltip = true"
             @mouseleave="showActivatorTooltip = false"
           >
@@ -123,6 +124,10 @@ export default {
     variable: {
       type: Object,
       default: () => ({})
+    },
+    disable: {
+      type: Boolean,
+      default: () => (false)
     }
   },
   data () {

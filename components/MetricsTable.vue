@@ -33,6 +33,28 @@
         <span>{{ expanded.length === items.length ? 'Close all' : 'Expand all' }}</span>
       </v-tooltip>
     </template>
+    <template #[`item.data-table-expand`]="{ item, isExpanded, expand }">
+      <v-btn
+        @click="expand(true)"
+        icon
+        v-if="item.numberOfRecords && !isExpanded"
+      >
+        <v-icon>mdi-chevron-up</v-icon>
+      </v-btn>
+      <v-btn
+        @click="expand(false)"
+        icon
+        v-else-if="item.numberOfRecords && isExpanded"
+      >
+        <v-icon>mdi-chevron-down</v-icon>
+      </v-btn>
+      <div
+        class="noAvailableProduct"
+        v-else
+      >
+        No products available
+      </div>
+    </template>
     <template #expanded-item>
       <td
         :colspan="transformedHeaders.length + 1"
@@ -162,6 +184,7 @@
     <template #[`item.coverage`]="{ item }">
       <Coverage
         :variable="item"
+        :disable="!item.numberOfRecords"
       />
     </template>
   </v-data-table>
@@ -323,6 +346,20 @@ export default {
 }
 ::v-deep table > tbody > tr:hover:not(.v-data-table__empty-wrapper) {
   background: #eee !important;
+}
+
+.noAvailableProduct {
+  font-size: 10px;
+  margin: 4px;
+  padding: 3px;
+  background: rgb(182, 126, 52);
+  border-radius: 5px;
+  color: white;
+  width: 50px;
+  text-align: center;
+}
+::v-deep table td {
+  padding: 0 10px !important;
 }
 </style>
 
