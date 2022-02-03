@@ -3,6 +3,7 @@
     <div class="d-flex" style="background-color:white">
       <v-tabs
         v-model="selectedTab"
+        @change="filterItems"
       >
         <v-tab>
           All
@@ -15,7 +16,7 @@
       </v-tabs>
       <v-spacer />
       <v-col cols="3">
-        <v-text-field 
+        <v-text-field
           v-model="filter"
           hide-details
           solo
@@ -148,7 +149,7 @@ export default {
     return {
       dialog: false,
       filter: '',
-      selectedTab: 0,
+      selectedTab: 0
     }
   },
   head: {
@@ -326,8 +327,12 @@ export default {
         }
       }
     },
-    filterItems (e) {
-      console.log(e)
+    async filterItems (e) {
+      if (e === 0) {
+        this.metrics = await this.$axios.$get('/metrics')
+        return
+      }
+      this.metrics = await this.$axios.$get('/metrics/atmosphere/metrics')
     }
   }
 }
