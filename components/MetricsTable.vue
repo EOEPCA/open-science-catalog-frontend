@@ -3,6 +3,7 @@
     :headers="transformedHeaders"
     :items="items"
     :items-per-page="-1"
+    :search="filter"
     disable-sort
     height="60vh"
     hide-default-footer
@@ -91,6 +92,34 @@
         :variable="item"
       />
     </template>
+    <template v-slot:top>
+      <div style="background-color: white;" class="d-flex">
+        <v-tabs
+          v-model="selectedTab"
+        >
+          <v-tab>
+            All
+          </v-tab>
+          <v-tab v-for="theme in themes" :key="theme.id">
+            <div>
+              {{ theme.name }}
+            </div>
+          </v-tab>
+        </v-tabs>
+        <v-spacer />
+        <v-col cols="3">
+          <v-text-field 
+            v-model="filter"
+            hide-details
+            solo
+            single-line
+            outlined
+            placeholder="Filter by keywords..."
+            prepend-inner-icon="mdi-magnify"
+          />
+        </v-col>
+      </div>
+    </template>
   </v-data-table>
 </template>
 
@@ -103,6 +132,10 @@ export default {
     Coverage
   },
   props: {
+    themes: {
+      type: Array,
+      default: () => ([])
+    },
     headers: {
       type: Array,
       default: () => ([])
@@ -115,6 +148,8 @@ export default {
   data () {
     return {
       expanded: [],
+      filter: '',
+      selectedTab: 0,
       records: [
         {
           name: 'Bathymetry_Arctic_Cryosat',

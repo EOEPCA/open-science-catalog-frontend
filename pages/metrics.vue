@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <h1>Metrics page</h1>
     <MetricsTable
+      :themes="themes"
       :headers="metrics.years"
       :items="metrics.variables"
     />
@@ -109,8 +109,11 @@ export default {
   name: 'Metrics',
   async asyncData ({ $axios }) {
     const metrics = await $axios.$get('/metrics')
+    const themes = await $axios.$get('/themes')
+
     return {
-      metrics
+      metrics,
+      themes
     }
   },
   data () {
