@@ -35,22 +35,22 @@
     </template>
     <template #[`item.data-table-expand`]="{ item, isExpanded, expand }">
       <v-btn
-        @click="expand(true)"
-        icon
         v-if="item.numberOfRecords && !isExpanded"
+        icon
+        @click="expand(true)"
       >
         <v-icon>mdi-chevron-up</v-icon>
       </v-btn>
       <v-btn
-        @click="expand(false)"
-        icon
         v-else-if="item.numberOfRecords && isExpanded"
+        icon
+        @click="expand(false)"
       >
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
       <div
-        class="noAvailableProduct"
         v-else
+        class="noAvailableProduct"
       >
         No products available
       </div>

@@ -14,8 +14,8 @@
             icon
             v-bind="attrs"
             :color="record.name ? 'success' : 'primary'"
-            v-on="on"
             :disabled="disable"
+            v-on="on"
             @mouseover="showActivatorTooltip = true"
             @mouseleave="showActivatorTooltip = false"
           >

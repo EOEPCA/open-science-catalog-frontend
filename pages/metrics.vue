@@ -27,9 +27,9 @@
           <v-btn
             icon
             v-bind="attrs"
+            class="align-self-center"
             @click="fetchVariables"
             v-on="on"
-            class="align-self-center"
           >
             <v-icon>mdi-poll</v-icon>
           </v-btn>
