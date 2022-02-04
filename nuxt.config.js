@@ -36,6 +36,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '@/assets/global.scss',
     '@/assets/esa.scss'
   ],
 
@@ -81,7 +82,8 @@ export default {
         light: {
           primary: '#003247',
           secondary: '#335E6F',
-          background: '#0F2733'
+          background: '#0F2733',
+          applications: '#00B19D'
         }
       }
     }

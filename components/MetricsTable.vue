@@ -74,7 +74,7 @@
                     <v-btn
                       icon
                       small
-                      color="success"
+                      color="applications"
                       v-on="on"
                     >
                       <v-icon>
@@ -110,7 +110,7 @@
                   <template #activator="{ on }">
                     <v-progress-linear
                       v-if="record.years.includes(year)"
-                      color="success"
+                      color="applications"
                       height="15"
                       value="100"
                       :style="`border-radius: ${

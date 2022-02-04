@@ -13,7 +13,7 @@
           <v-btn
             icon
             v-bind="attrs"
-            :color="record.name ? 'success' : 'primary'"
+            :color="record.name ? 'applications' : 'primary'"
             :disabled="disable"
             v-on="on"
             @mouseover="showActivatorTooltip = true"
@@ -27,7 +27,7 @@
     </template>
     <v-card>
       <v-card-title class="text-h6">
-        <v-icon color="success" left>
+        <v-icon color="applications" left>
           {{ record.name ? 'mdi-map-marker' : 'mdi-earth' }}
         </v-icon>
         <span>{{ record.name || variable.name }} Coverage</span>

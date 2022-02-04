@@ -1,133 +1,145 @@
 <template>
   <v-container>
-    <div class="d-flex" style="background-color:white">
-      <v-tabs
-        v-model="selectedTab"
-        @change="filterItems"
-      >
-        <v-tab>
-          All
-        </v-tab>
-        <v-tab
-          v-for="theme in themes"
-          :key="theme.id"
+    <v-row class="px-0 white">
+      <v-col cols="12" sm="8" lg="9">
+        <v-tabs
+          v-model="selectedTab"
+          @change="filterItems"
         >
-          <div>
-            {{ theme.name }}
-          </div>
-        </v-tab>
-      </v-tabs>
-      <v-spacer />
-      <v-dialog
-        v-model="dialog"
-        scrollable
-        width="1000"
-      >
-        <template #activator="{ on, attrs }">
-          <v-btn
-            icon
-            v-bind="attrs"
-            class="align-self-center"
-            @click="fetchVariables"
-            v-on="on"
+          <v-tab>
+            All
+          </v-tab>
+          <v-tab
+            v-for="theme in themes"
+            :key="theme.id"
           >
-            <v-icon>mdi-poll</v-icon>
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-title class="text-h6">
-            <v-icon color="success" left>
-              mdi-poll
-            </v-icon>
-            <span>All stats</span>
-            <v-spacer />
-            <v-btn
-              icon
-              @click="dialog = false"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-card-title>
-
-          <v-divider />
-
-          <v-card-text class="py-4 black--text">
-            <v-container>
-              <div class="d-flex mx-6">
-                <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
-                <v-spacer />
-                <span>Number of records: {{ metrics.summary.records }}</span>
-              </div>
-
-              <div style="text-align: center" class="ma-6">
-                Temporal coverage
-              </div>
-              <canvas
-                id="recordsChart"
-              />
-            </v-container>
-
-            <v-divider />
-
-            <v-container>
-              <div style="text-align: center" class="ma-6">
-                Variable distribution
-              </div>
-              <v-container>
-                <v-row style="height: 300px">
-                  <v-col>
-                    Variable list
-                    <v-list
-                      style="max-height: 300px"
-                      class="overflow-y-auto"
-                    >
-                      <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                        {{ variable.name }}: {{ variable.numberOfRecords }}
-                      </v-list-item>
-                    </v-list>
-                  </v-col>
-                  <v-col>
-                    <canvas
-                      id="variablePie"
-                      @mousemove="hoverHandler"
-                    />
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-container>
-          </v-card-text>
-
-          <v-divider />
-
-          <v-card-actions>
-            <v-spacer />
-            <v-btn
-              color="primary"
-              text
-              @click="dialog = false"
-            >
-              Close
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-col cols="3">
+            <div>
+              {{ theme.name }}
+            </div>
+          </v-tab>
+        </v-tabs>
+      </v-col>
+      <v-spacer />
+      <v-col cols="12" sm="4" lg="3" class="d-flex pa-2">
         <v-text-field
           v-model="filter"
           hide-details
           solo
           single-line
           outlined
+          dense
           placeholder="Filter by keywords..."
           prepend-inner-icon="mdi-magnify"
         />
       </v-col>
-    </div>
-    <MetricsTable
-      :filter="filter"
-      :headers="metrics.years"
-      :items="metrics.variables"
-    />
+      <v-col cols="12" class="px-0">
+        <MetricsTable
+          :filter="filter"
+          :headers="metrics.years"
+          :items="metrics.variables"
+        />
+      </v-col>
+      <v-col cols="12" class="text-right">
+        <v-dialog
+          v-model="dialog"
+          scrollable
+          width="1000"
+        >
+          <template #activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              class="align-self-center"
+              color="applications"
+              dark
+              :block="$vuetify.breakpoint.xsOnly"
+              @click="fetchVariables"
+              v-on="on"
+            >
+              <v-icon left>
+                mdi-poll
+              </v-icon>
+              Statistics
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="text-h6">
+              <v-icon color="applications" left>
+                mdi-poll
+              </v-icon>
+              <span>All stats</span>
+              <v-spacer />
+              <v-btn
+                icon
+                @click="dialog = false"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-card-title>
+
+            <v-divider />
+
+            <v-card-text class="py-4 black--text">
+              <v-container>
+                <div class="d-flex mx-6">
+                  <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
+                  <v-spacer />
+                  <span>Number of records: {{ metrics.summary.records }}</span>
+                </div>
+
+                <div style="text-align: center" class="ma-6">
+                  Temporal coverage
+                </div>
+                <canvas
+                  id="recordsChart"
+                />
+              </v-container>
+
+              <v-divider />
+
+              <v-container>
+                <div style="text-align: center" class="ma-6">
+                  Variable distribution
+                </div>
+                <v-container>
+                  <v-row style="height: 300px">
+                    <v-col>
+                      Variable list
+                      <v-list
+                        style="max-height: 300px"
+                        class="overflow-y-auto"
+                      >
+                        <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
+                          {{ variable.name }}: {{ variable.numberOfRecords }}
+                        </v-list-item>
+                      </v-list>
+                    </v-col>
+                    <v-col>
+                      <canvas
+                        id="variablePie"
+                        @mousemove="hoverHandler"
+                      />
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-container>
+            </v-card-text>
+
+            <v-divider />
+
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                color="primary"
+                text
+                @click="dialog = false"
+              >
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -204,7 +216,7 @@ export default {
                 label: 'Number of records',
                 data: Object.values(recordsDataset),
                 backgroundColor: [
-                  'rgb(111, 184, 144)'
+                  this.$vuetify.theme.themes.light.applications
                 ],
                 borderWidth: 1
               }
@@ -241,16 +253,16 @@ export default {
               {
                 data: sortedVariables,
                 backgroundColor: 'white',
-                hoverBackgroundColor: ['rgb(111, 184, 144)'],
+                hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
                 hoverBorderWidth: 0,
                 innerText: sortedVariables[0],
-                radius: 120,
-                cutout: 128
+                radius: 110,
+                cutout: 180
               },
               {
                 data: sortedVariables,
-                backgroundColor: ['rgb(111, 184, 144)'],
-                hoverBackgroundColor: ['rgb(111, 184, 144)'],
+                backgroundColor: [this.$vuetify.theme.themes.light.applications],
+                hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
                 hoverBorderWidth: 0,
                 innerText: sortedVariables[0],
                 radius: 150,
@@ -341,3 +353,19 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.v-tabs {
+  ::v-deep {
+    .v-tab {
+      min-width: 0;
+      text-transform: unset;
+      padding: 0 10px;
+      font-size: 80%;
+    }
+    .v-tabs-slider-wrapper {
+      transition: none;
+    }
+  }
+}
+</style>
