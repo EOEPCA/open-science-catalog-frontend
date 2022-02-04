@@ -39,14 +39,14 @@
         icon
         @click="expand(true)"
       >
-        <v-icon>mdi-chevron-up</v-icon>
+        <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
       <v-btn
         v-else-if="item.numberOfRecords && isExpanded"
         icon
         @click="expand(false)"
       >
-        <v-icon>mdi-chevron-down</v-icon>
+        <v-icon>mdi-chevron-up</v-icon>
       </v-btn>
       <div
         v-else
