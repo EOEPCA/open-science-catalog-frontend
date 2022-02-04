@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/themes/cryosphere", {data:[{}],fetch:{},mutations:[]});

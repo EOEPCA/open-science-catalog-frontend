@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/themes/solid%20earth", {data:[{}],fetch:{},mutations:[]});
