@@ -6,7 +6,6 @@
     :search="filter"
     disable-sort
     height="60vh"
-    class="pa-2"
     fixed-header
     hide-default-footer
     show-expand
@@ -366,22 +365,18 @@ export default {
 
 <style>
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 8px;
-  margin-left: 5px;
+  width: 18px;
+  height: 18px;
 }
-::-webkit-scrollbar-button {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
   background: rgb(225, 225, 225);
-  border: 0px none rgb(255, 255, 255);
+  border: 5px solid white;
   border-radius: 47px;
+  background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: grey;
-  border: 0px none rgb(255, 255, 255);
 }
 ::-webkit-scrollbar-track {
   background: transparent;
