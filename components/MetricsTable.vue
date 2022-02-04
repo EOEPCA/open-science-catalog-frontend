@@ -19,11 +19,15 @@
         <template #activator="{ on }">
           <v-btn
             icon
-            style="position: absolute; left: -60px; top: 5px"
+            :style="`position: absolute; left: ${$vuetify.breakpoint.xsOnly
+              ? -34
+              : -60}px; top: 5px`"
             v-on="on"
             @click="expanded = expanded.length === items.length ? [] : items"
           >
-            <v-icon>
+            <v-icon
+              :small="$vuetify.breakpoint.xsOnly ? true : false"
+            >
               {{ expanded.length === items.length
                 ? 'mdi-arrow-collapse-vertical'
                 : 'mdi-arrow-expand-vertical' }}
@@ -313,24 +317,30 @@ export default {
 @media (max-width: 800px) {
   ::v-deep table th:first-child,
   ::v-deep table td:first-child {
-    width: 40px;
-    min-width: 40px;
-    max-width: 40px;
+    width: 34px;
+    min-width: 34px;
+    max-width: 34px;
+    padding: 0 !important;
   }
 
   ::v-deep table th:nth-child(2),
   ::v-deep table td:nth-child(2) {
-    left: 40px;
-    width: 100px;
-    min-width: 100px;
-    max-width: 100px;
+    left: 34px;
+    width: 90px;
+    min-width: 90px;
+    max-width: 90px;
+    padding: 0 2px !important;
   }
 
   ::v-deep table th:last-child,
   ::v-deep table td:last-child {
-    width: 70px;
-    min-width: 70px;
-    max-width: 70px;
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    padding: 0 2px !important;
+    text-align: right !important;
   }
 }
 
@@ -360,27 +370,5 @@ export default {
 }
 ::v-deep table td {
   padding: 0 10px !important;
-}
-</style>
-
-<style>
-::-webkit-scrollbar {
-  width: 18px;
-  height: 18px;
-}
-::-webkit-scrollbar-thumb,
-::-webkit-scrollbar-thumb:hover {
-  background: rgb(225, 225, 225);
-  border: 5px solid white;
-  border-radius: 47px;
-  background-clip: padding-box;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: grey;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-  border: 0px none transparent;
-  border-radius: 42px;
 }
 </style>

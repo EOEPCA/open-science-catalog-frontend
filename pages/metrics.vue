@@ -366,6 +366,10 @@ export default {
     .v-tabs-slider-wrapper {
       transition: none;
     }
+    .v-tabs-bar--is-mobile > .v-slide-group__prev,
+    .v-tabs-bar--is-mobile > .v-slide-group__next {
+      display: none !important;
+    }
   }
 }
 </style>
