@@ -140,6 +140,7 @@
       <v-toolbar-title v-text="title" />
       <v-spacer />
       <v-text-field
+        v-if="$vuetify.breakpoint.smAndAbove"
         v-model="search"
         class="mr-4"
         hide-details

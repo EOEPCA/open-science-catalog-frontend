@@ -1,0 +1,29 @@
+html {
+  overflow-y: auto !important;
+}
+
+::-webkit-scrollbar {
+  width: 18px;
+  height: 18px;
+}
+@media (max-width: 800px) {
+  ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+  }
+}
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(225, 225, 225);
+  border: 5px solid white;
+  border-radius: 47px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border: 0px none transparent;
+  border-radius: 42px;
+}

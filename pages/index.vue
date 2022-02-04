@@ -21,7 +21,7 @@
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
             <img
-              :src="withBase(`/img/EO_${theme.name.replace(/\s/g, '')}.jpeg`)"
+              :src="withBase(theme.image.replace('/static/', '/'))"
               width="100%"
             >
             <span
@@ -39,35 +39,14 @@
 <script>
 export default {
   name: 'IndexPage',
-  data () {
+  async asyncData ({ $axios }) {
+    const themes = await $axios.$get('/themes')
     return {
-      themes: [
-        {
-          name: 'Atmosphere'
-        },
-        {
-          name: 'Cryosphere'
-        },
-        {
-          name: 'Land'
-        },
-        {
-          name: 'Magnetic Ionosphere'
-        },
-        {
-          name: 'Oceans'
-        },
-        {
-          name: 'Solid Earth'
-        }
-      ]
+      themes
     }
   },
   head: {
     titleTemplate: 'ESA Open Science Data'
-  },
-  options: {
-    customProperties: true
   }
 }
 </script>
