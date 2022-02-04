@@ -6,6 +6,7 @@
     :search="filter"
     disable-sort
     height="60vh"
+    class="pa-2"
     fixed-header
     hide-default-footer
     show-expand
@@ -365,8 +366,8 @@ export default {
 
 <style>
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 9px;
+  width: 7px;
+  height: 8px;
   margin-left: 5px;
 }
 ::-webkit-scrollbar-button {
@@ -377,6 +378,10 @@ export default {
   background: rgb(225, 225, 225);
   border: 0px none rgb(255, 255, 255);
   border-radius: 47px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+  border: 0px none rgb(255, 255, 255);
 }
 ::-webkit-scrollbar-track {
   background: transparent;
