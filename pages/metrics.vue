@@ -34,12 +34,14 @@
       </v-col>
       <v-col cols="12" class="px-0">
         <MetricsTable
+          v-if="metrics"
           :filter="filter"
           :headers="metrics.years"
           :items="metrics.variables"
         />
+        <v-progress-linear v-else indeterminate />
       </v-col>
-      <v-col cols="12" class="text-right">
+      <v-col v-if="metrics" cols="12" class="text-right">
         <v-dialog
           v-model="dialog"
           scrollable
@@ -151,11 +153,9 @@ Chart.register(annotationPlugin)
 export default {
   name: 'Metrics',
   async asyncData ({ $axios }) {
-    const metrics = await $axios.$get('/metrics')
     const themes = await $axios.$get('/themes')
 
     return {
-      metrics,
       themes
     }
   },
@@ -165,7 +165,8 @@ export default {
     return {
       dialog: false,
       filter: '',
-      selectedTab: 0
+      selectedTab: 0,
+      metrics: null
     }
   },
   head: {
@@ -188,6 +189,9 @@ export default {
         this.variablePie.destroy()
       }
     }
+  },
+  async mounted () {
+    this.metrics = await this.$axios.$get('/metrics')
   },
   methods: {
     async fetchVariables () {
