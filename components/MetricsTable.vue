@@ -107,31 +107,23 @@
                 :key="year"
                 class="subCell"
               >
-                <v-tooltip
+                <v-progress-linear
+                  v-if="record.years.includes(year)"
                   :key="year"
-                  top
-                >
-                  <template #activator="{ on }">
-                    <v-progress-linear
-                      v-if="record.years.includes(year)"
-                      color="applications"
-                      height="15"
-                      value="100"
-                      :style="`border-radius: ${
-                        !record.years.includes(headers[index - 1]) ? 5 : 0
-                      }px ${
-                        !record.years.includes(headers[index + 1]) ? 5 : 0
-                      }px ${
-                        !record.years.includes(headers[index + 1]) ? 5 : 0
-                      }px ${
-                        !record.years.includes(headers[index - 1]) ? 5 : 0
-                      }px`"
-                      v-on="on"
-                    />
-                    <span v-else style="visibility: hidden">no data</span>
-                  </template>
-                  <span>{{ year }}</span>
-                </v-tooltip>
+                  color="applications"
+                  height="15"
+                  value="100"
+                  :style="`border-radius: ${
+                    !record.years.includes(headers[index - 1]) ? 5 : 0
+                  }px ${
+                    !record.years.includes(headers[index + 1]) ? 5 : 0
+                  }px ${
+                    !record.years.includes(headers[index + 1]) ? 5 : 0
+                  }px ${
+                    !record.years.includes(headers[index - 1]) ? 5 : 0
+                  }px`"
+                />
+                <span v-else style="visibility: hidden">no data</span>
               </td>
               <td class="px-4 subCell">
                 <Coverage
@@ -147,31 +139,23 @@
       v-for="(year, index) in headers"
       #[`item.${year}`]="{ item }"
     >
-      <v-tooltip
+      <v-progress-linear
+        v-if="item.years.includes(year)"
         :key="year"
-        top
-      >
-        <template #activator="{ on }">
-          <v-progress-linear
-            v-if="item.years.includes(year)"
-            color="secondary"
-            height="15"
-            value="100"
-            :style="`z-index: 1; border-radius: ${
-              !item.years.includes(headers[index - 1]) ? 5 : 0
-            }px ${
-              !item.years.includes(headers[index + 1]) ? 5 : 0
-            }px ${
-              !item.years.includes(headers[index + 1]) ? 5 : 0
-            }px ${
-              !item.years.includes(headers[index - 1]) ? 5 : 0
-            }px`"
-            v-on="on"
-          />
-        </template>
-        <span>{{ year }}</span>
-      </v-tooltip>
-    </template>
+        color="secondary"
+        height="15"
+        value="100"
+        :style="`border-radius: ${
+          !item.years.includes(headers[index - 1]) ? 5 : 0
+        }px ${
+          !item.years.includes(headers[index + 1]) ? 5 : 0
+        }px ${
+          !item.years.includes(headers[index + 1]) ? 5 : 0
+        }px ${
+          !item.years.includes(headers[index - 1]) ? 5 : 0
+        }px;`"
+      />
+       </template>
     <template #[`item.name`]="{ item }">
       <v-tooltip
         top
