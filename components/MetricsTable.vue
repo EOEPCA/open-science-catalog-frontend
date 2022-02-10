@@ -240,6 +240,19 @@ export default {
   mounted () {
     this.$nextTick(() => {
       document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
+      document.querySelector('table').addEventListener('mouseover', (e) => {
+        const hoveredCell = e.target
+        const allCells = hoveredCell.parentNode.children
+        const itemIndex = Array.prototype.indexOf.call(allCells, hoveredCell)
+        document.querySelectorAll('.hoverCell').forEach(cell => {
+          cell.classList.remove('hoverCell')
+        })
+        if (itemIndex != 0 && itemIndex != 1 && itemIndex != allCells.length - 1) {
+          document.querySelectorAll(`td:nth-child(${itemIndex + 1})`).forEach(cell => {
+            cell.classList.add('hoverCell')
+          })
+        }
+      })
     })
   }
 }
@@ -354,5 +367,14 @@ export default {
 }
 ::v-deep table td {
   padding: 0 10px !important;
+}
+
+::v-deep .hoverCell {
+  background-color: #eee !important;
+}
+
+::v-deep th span,
+::v-deep .v-progress-linear {
+  pointer-events: none;
 }
 </style>
