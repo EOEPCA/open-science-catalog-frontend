@@ -107,31 +107,23 @@
                 :key="year"
                 class="subCell"
               >
-                <v-tooltip
+                <v-progress-linear
+                  v-if="record.years.includes(year)"
                   :key="year"
-                  top
-                >
-                  <template #activator="{ on }">
-                    <v-progress-linear
-                      v-if="record.years.includes(year)"
-                      color="applications"
-                      height="15"
-                      value="100"
-                      :style="`border-radius: ${
-                        !record.years.includes(headers[index - 1]) ? 5 : 0
-                      }px ${
-                        !record.years.includes(headers[index + 1]) ? 5 : 0
-                      }px ${
-                        !record.years.includes(headers[index + 1]) ? 5 : 0
-                      }px ${
-                        !record.years.includes(headers[index - 1]) ? 5 : 0
-                      }px`"
-                      v-on="on"
-                    />
-                    <span v-else style="visibility: hidden">no data</span>
-                  </template>
-                  <span>{{ year }}</span>
-                </v-tooltip>
+                  color="applications"
+                  height="15"
+                  value="100"
+                  :style="`border-radius: ${
+                    !record.years.includes(headers[index - 1]) ? 5 : 0
+                  }px ${
+                    !record.years.includes(headers[index + 1]) ? 5 : 0
+                  }px ${
+                    !record.years.includes(headers[index + 1]) ? 5 : 0
+                  }px ${
+                    !record.years.includes(headers[index - 1]) ? 5 : 0
+                  }px`"
+                />
+                <span v-else style="visibility: hidden">no data</span>
               </td>
               <td class="px-4 subCell">
                 <Coverage
@@ -147,30 +139,22 @@
       v-for="(year, index) in headers"
       #[`item.${year}`]="{ item }"
     >
-      <v-tooltip
+      <v-progress-linear
+        v-if="item.years.includes(year)"
         :key="year"
-        top
-      >
-        <template #activator="{ on }">
-          <v-progress-linear
-            v-if="item.years.includes(year)"
-            color="secondary"
-            height="15"
-            value="100"
-            :style="`z-index: 1; border-radius: ${
-              !item.years.includes(headers[index - 1]) ? 5 : 0
-            }px ${
-              !item.years.includes(headers[index + 1]) ? 5 : 0
-            }px ${
-              !item.years.includes(headers[index + 1]) ? 5 : 0
-            }px ${
-              !item.years.includes(headers[index - 1]) ? 5 : 0
-            }px`"
-            v-on="on"
-          />
-        </template>
-        <span>{{ year }}</span>
-      </v-tooltip>
+        color="secondary"
+        height="15"
+        value="100"
+        :style="`border-radius: ${
+          !item.years.includes(headers[index - 1]) ? 5 : 0
+        }px ${
+          !item.years.includes(headers[index + 1]) ? 5 : 0
+        }px ${
+          !item.years.includes(headers[index + 1]) ? 5 : 0
+        }px ${
+          !item.years.includes(headers[index - 1]) ? 5 : 0
+        }px;`"
+      />
     </template>
     <template #[`item.name`]="{ item }">
       <v-tooltip
@@ -256,6 +240,19 @@ export default {
   mounted () {
     this.$nextTick(() => {
       document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
+      document.querySelector('table').addEventListener('mouseover', (e) => {
+        const hoveredCell = e.target
+        const allCells = hoveredCell.parentNode.children
+        const itemIndex = Array.prototype.indexOf.call(allCells, hoveredCell)
+        document.querySelectorAll('.hoverCell').forEach((cell) => {
+          cell.classList.remove('hoverCell')
+        })
+        if (itemIndex !== 0 && itemIndex !== 1 && itemIndex !== allCells.length - 1) {
+          document.querySelectorAll(`td:nth-child(${itemIndex + 1})`).forEach((cell) => {
+            cell.classList.add('hoverCell')
+          })
+        }
+      })
     })
   }
 }
@@ -370,5 +367,14 @@ export default {
 }
 ::v-deep table td {
   padding: 0 10px !important;
+}
+
+::v-deep .hoverCell {
+  background-color: #eee !important;
+}
+
+::v-deep th span,
+::v-deep .v-progress-linear {
+  pointer-events: none;
 }
 </style>

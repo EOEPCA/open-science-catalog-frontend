@@ -21,7 +21,7 @@
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
             <img
-              :src="withBase(theme.image.replace('/static/', '/'))"
+              :src="withBase(theme.image.replace('/static/', '/')).slice(0, -3) + 'webp'"
               width="100%"
             >
             <span
