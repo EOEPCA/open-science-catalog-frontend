@@ -155,7 +155,7 @@
           !item.years.includes(headers[index - 1]) ? 5 : 0
         }px;`"
       />
-       </template>
+    </template>
     <template #[`item.name`]="{ item }">
       <v-tooltip
         top
@@ -244,11 +244,11 @@ export default {
         const hoveredCell = e.target
         const allCells = hoveredCell.parentNode.children
         const itemIndex = Array.prototype.indexOf.call(allCells, hoveredCell)
-        document.querySelectorAll('.hoverCell').forEach(cell => {
+        document.querySelectorAll('.hoverCell').forEach((cell) => {
           cell.classList.remove('hoverCell')
         })
-        if (itemIndex != 0 && itemIndex != 1 && itemIndex != allCells.length - 1) {
-          document.querySelectorAll(`td:nth-child(${itemIndex + 1})`).forEach(cell => {
+        if (itemIndex !== 0 && itemIndex !== 1 && itemIndex !== allCells.length - 1) {
+          document.querySelectorAll(`td:nth-child(${itemIndex + 1})`).forEach((cell) => {
             cell.classList.add('hoverCell')
           })
         }
