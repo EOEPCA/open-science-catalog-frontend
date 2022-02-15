@@ -198,6 +198,10 @@ export default {
     items: {
       type: Array,
       default: () => ([])
+    },
+    visibleHeaders: {
+      type: String,
+      default: () => ('')
     }
   },
   data () {
@@ -237,6 +241,11 @@ export default {
       return newHeaders
     }
   },
+  watch: {
+    visibleHeaders(newHeaders) {
+      this.updateHeaderClasses(newHeaders)
+    }
+  },
   mounted () {
     this.$nextTick(() => {
       document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
@@ -253,10 +262,32 @@ export default {
           })
         }
       })
+      this.updateHeaderClasses(this.visibleHeaders)
     })
+  },
+  methods: {
+    updateHeaderClasses(newHeaders) {
+      document.querySelectorAll('th').forEach((header) => {
+        header.classList.remove('visibleHeader')
+        header.children[0].classList.remove('visibleHeaderSpan')
+      })
+      document.querySelectorAll(`th:nth-child(${newHeaders === 'All' ? 1 : parseInt(this.headers.length / newHeaders)}n)`).forEach((header) => {
+        header.classList.add('visibleHeader')
+        header.children[0].classList.add('visibleHeaderSpan')
+      })
+    }
   }
 }
 </script>
+
+<style>
+.visibleHeader {
+  z-index: 2 !important;
+}
+.visibleHeaderSpan {
+  visibility: visible !important;
+}
+</style>
 
 <style scoped>
 ::v-deep table {
@@ -377,4 +408,38 @@ export default {
 ::v-deep .v-progress-linear {
   pointer-events: none;
 }
+
+/* otherwise it breaks if there is too much space to take, not sure about the correct pixel values */
+/* currently they are different for first, 2nd and last child */
+::v-deep th:first-child, ::v-deep th:nth-child(2), ::v-deep th:last-child,
+::v-deep td:first-child, ::v-deep td:nth-child(2), ::v-deep td:last-child{
+  width: 5px !important;
+  min-width: 5px !important;
+  max-width: 5px !important;
+}
+
+::v-deep th:not(:first-child, :nth-child(2), :last-child),
+::v-deep td:not(:first-child, :nth-child(2), :last-child) {
+  /* 1px --> minimum slider value */
+  width: 1px;
+  min-width: 1px;
+  max-width: 1px;
+  /* 60px or 100px --> maximum slider value
+ 
+  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
+  /* width: 100px;
+  min-width: 100px;
+  max-width: 100px; */
+}
+
+::v-deep th:not(:first-child, :nth-child(2), :last-child) {
+  z-index: 2 !important;
+}
+::v-deep th:not(:first-child, :nth-child(2), :last-child) > span {
+  visibility: hidden;
+}
+
+/* probably it will be enough to do some settings for e.g. 300px width, 500px, 750px, 1000px and above */
 </style>
