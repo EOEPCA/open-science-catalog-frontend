@@ -11,6 +11,7 @@
     show-expand
     :expanded.sync="expanded"
     :mobile-breakpoint="0"
+    :style="cssProps"
   >
     <template #[`header.name`]="{ header }">
       {{ header.text }}
@@ -202,6 +203,10 @@ export default {
     visibleHeaders: {
       type: String,
       default: () => ('')
+    },
+    tableZoom: {
+      type: Number,
+      default: 100
     }
   },
   data () {
@@ -239,11 +244,22 @@ export default {
         value: 'coverage'
       })
       return newHeaders
+    },
+    cssProps () {
+      return {
+        '--table-percent': `${this.tableZoom}px`
+      }
     }
   },
   watch: {
     visibleHeaders(newHeaders) {
       this.updateHeaderClasses(newHeaders)
+    },
+    tableZoom () {
+      // TODO this keeps the table scrolled right, but ideally it stays at the current center point
+      this.$nextTick(() => {
+        document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
+      })
     }
   },
   mounted () {
@@ -411,19 +427,18 @@ export default {
 
 /* otherwise it breaks if there is too much space to take, not sure about the correct pixel values */
 /* currently they are different for first, 2nd and last child */
-::v-deep th:first-child, ::v-deep th:nth-child(2), ::v-deep th:last-child,
+/* ::v-deep th:first-child, ::v-deep th:nth-child(2), ::v-deep th:last-child,
 ::v-deep td:first-child, ::v-deep td:nth-child(2), ::v-deep td:last-child{
   width: 5px !important;
   min-width: 5px !important;
   max-width: 5px !important;
-}
-
+} */
 ::v-deep th:not(:first-child, :nth-child(2), :last-child),
 ::v-deep td:not(:first-child, :nth-child(2), :last-child) {
   /* 1px --> minimum slider value */
-  width: 1px;
-  min-width: 1px;
-  max-width: 1px;
+  width: var(--table-percent);
+  min-width: var(--table-percent);
+  max-width: var(--table-percent);
   /* 60px or 100px --> maximum slider value
  
   width: 60px;

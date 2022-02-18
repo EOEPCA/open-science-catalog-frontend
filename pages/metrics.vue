@@ -39,11 +39,25 @@
           :headers="metrics.years"
           :items="metrics.variables"
           :visibleHeaders="selectedHeaderNumber"
+          :table-zoom="tableZoom"
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
       <v-col v-if="metrics" cols="12" class="text-right">
         <v-row justify="end" align="center">
+          <v-col cols="2" class="d-flex align-center">
+            <v-slider
+              v-model="tableZoom"
+              hide-details
+              min="35"
+              max="95"
+              step="30"
+              ticks="always"
+              tick-size="4"
+              :prepend-icon="'mdi-magnify-minus-outline'"
+              :append-icon="'mdi-magnify-plus-outline'"
+            />
+          </v-col>
           <v-dialog
             v-model="dialog"
             scrollable
@@ -180,7 +194,8 @@ export default {
       selectedTab: 0,
       metrics: null,
       headerNumber: ['5', '10', '15', 'All'],
-      selectedHeaderNumber: '5'
+      selectedHeaderNumber: '5',
+      tableZoom: 100
     }
   },
   head: {
