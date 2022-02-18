@@ -7,7 +7,7 @@
         class="mx-5 pt-2 navigationBreadcrumb"
         :items="navigationBreadcrumb"
       >
-        <template v-slot:item="{ item }">
+        <template #item="{ item }">
           <v-breadcrumbs-item
             :href="item.href"
             :disabled="item.disabled"
@@ -101,12 +101,12 @@ export default {
   async asyncData ({ params }) {
     let variable
     // todo handle variable names divided by '_'
-    await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/variables/${params.variable}.json`).then(res => {
+    await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/variables/${params.variable}.json`).then((res) => {
       variable = res.data
-    }).catch(err => {
+    }).catch((err) => {
       console.log(err)
     })
-    
+
     return {
       variable
     }
