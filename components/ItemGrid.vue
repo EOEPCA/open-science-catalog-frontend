@@ -8,7 +8,10 @@
       md="4"
       lg="3"
     >
-      <v-card outlined>
+      <v-card
+        :to="`/${type}/${item.id}`"
+        outlined
+      >
         <v-card-title>
           <v-chip
             small
