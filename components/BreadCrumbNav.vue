@@ -79,7 +79,7 @@ export default {
     }
   },
   methods: {
-    getColor(type) {
+    getColor (type) {
       switch (type) {
         case 'theme': {
           return 'grey'
