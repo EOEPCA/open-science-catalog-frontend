@@ -9,7 +9,7 @@
       lg="3"
     >
       <v-card
-        :to="`/${type}/${type === 'variables' ? item.name.toLowerCase() : item.properties.title}`"
+        :to="`/${type}/${type === 'variables' ? item.name.replace(/\s+/g, '-').toLowerCase() : item.id}`"
         outlined
       >
         <v-card-title>
