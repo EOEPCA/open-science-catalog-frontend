@@ -94,15 +94,13 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'VariableSingle',
-  async asyncData ({ params }) {
+  async asyncData ({ $axios, params }) {
     let variable
     // todo handle variable names divided by '_'
-    await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/variables/${params.variable}.json`).then((res) => {
-      variable = res.data
+    await $axios.$get(`variables/${params.variable}`).then((res) => {
+      variable = res
     }).catch((err) => {
       console.log(err)
     })
