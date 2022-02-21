@@ -9,7 +9,7 @@
       lg="3"
     >
       <v-card
-        :to="`/${type}/${type === 'variables' ? item.name.replace(/\s+/g, '-').toLowerCase() : item.id}`"
+        :to="`/${type}/${type === 'variables' ? slugify(item.name) : item.id}`"
         outlined
       >
         <v-card-title>
@@ -49,6 +49,11 @@ export default {
     type: {
       type: String,
       default: () => ''
+    }
+  },
+  methods: {
+    slugify (string) {
+      return string.replace(/[^a-zA-Z ]/g, '').replaceAll(' ', '_').toLowerCase()
     }
   }
 }
