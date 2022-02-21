@@ -13,7 +13,7 @@
         class="pa-1"
       >
         <nuxt-link
-          :to="`/themes/${theme.name.toLowerCase()}`"
+          :to="`/themes/${slugify(theme.name)}`"
         >
           <div
             class="d-flex align-center elevation-2 rounded"

@@ -1,30 +1,12 @@
 <template>
   <div>
+    <bread-crumb-nav
+      :theme="variable['osc:theme']"
+      :variable="variable.id"
+    />
     <div
       class="pb-4 variableHeaderContainer"
     >
-      <v-breadcrumbs
-        class="mx-5 pt-2 navigationBreadcrumb"
-        :items="navigationBreadcrumb"
-      >
-        <template #item="{ item }">
-          <v-breadcrumbs-item
-            :href="item.href"
-            :disabled="item.disabled"
-          >
-            <v-chip
-              v-if="navigationBreadcrumb.indexOf(item) === navigationBreadcrumb.length - 1"
-              color="green"
-              dark
-              small
-              class="mr-2"
-            >
-              Variable
-            </v-chip>
-            {{ item.text }}
-          </v-breadcrumbs-item>
-        </template>
-      </v-breadcrumbs>
       <v-container>
         <v-row class="ml-2">
           <span class="mt-3 mb-5 text-h2">
@@ -94,8 +76,13 @@
 </template>
 
 <script>
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+
 export default {
   name: 'VariableSingle',
+  components: {
+    BreadCrumbNav
+  },
   async asyncData ({ $axios, params }) {
     let variable
     // todo handle variable names divided by '_'
@@ -111,13 +98,6 @@ export default {
   },
   data () {
     return {
-      navigationBreadcrumb: [
-        {
-          text: 'ESA EO Catalogue',
-          disabled: false,
-          href: '/'
-        }
-      ],
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
@@ -128,18 +108,6 @@ export default {
     return {
       title: this.$route.params.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
-  },
-  created () {
-    this.navigationBreadcrumb.push({
-      text: this.variable['osc:theme'],
-      disabled: false,
-      href: `/themes/${this.variable['osc:theme']}`
-    })
-    this.navigationBreadcrumb.push({
-      text: this.variable.id,
-      disabled: false,
-      href: `/variables/${this.variable.id.toLowerCase()}`
-    })
   }
 }
 </script>

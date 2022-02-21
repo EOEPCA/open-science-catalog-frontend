@@ -43,6 +43,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/with-base',
+    '~/plugins/slugify',
     // TEMP plugin for intercepting fake api calls
     '~/plugins/axios',
     { src: '~plugins/ol', ssr: false }

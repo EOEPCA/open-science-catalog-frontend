@@ -1,5 +1,8 @@
 <template>
   <div>
+    <bread-crumb-nav
+      :theme="theme.id"
+    />
     <div
       ref="themeBanner"
       :style="`backgroundImage: url('${withBase(`img//EO_${theme.id}.webp`)}');
@@ -8,28 +11,6 @@
         background-position: center center;`"
       class="pb-4"
     >
-      <v-breadcrumbs
-        class="mx-5 pt-0 navigationBreadcrumb"
-        :items="navigationBreadcrumb"
-      >
-        <template #item="{ item }">
-          <v-breadcrumbs-item
-            :href="item.href"
-            :disabled="item.disabled"
-          >
-            <v-chip
-              v-if="navigationBreadcrumb.indexOf(item) === navigationBreadcrumb.length - 1"
-              color="rgb(124, 69, 86)"
-              dark
-              small
-              class="mr-2"
-            >
-              THEME
-            </v-chip>
-            {{ item.text }}
-          </v-breadcrumbs-item>
-        </template>
-      </v-breadcrumbs>
       <v-container>
         <v-row class="ml-2">
           <span class="mt-3 mb-5 themeTitle">
@@ -148,11 +129,13 @@
 
 <script>
 import axios from 'axios'
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
 
 export default {
   name: 'ThemeSingle',
   components: {
+    BreadCrumbNav,
     ItemGrid
   },
   async asyncData ({ $axios, params }) {
@@ -188,13 +171,6 @@ export default {
       tab: 0,
       variablesSearch: '',
       projectsSearch: '',
-      navigationBreadcrumb: [
-        {
-          text: 'ESA EO Catalogue',
-          disabled: false,
-          href: '/'
-        }
-      ],
       projectDetails: [],
       projectsDetailsFilter: 'Name',
       projectsDetailsOrder: 'Ascending',
@@ -207,12 +183,6 @@ export default {
     }
   },
   created () {
-    this.navigationBreadcrumb.push({
-      text: this.theme.id,
-      disabled: false,
-      href: `/themes/${this.theme.id.toLowerCase()}`
-    })
-
     this.theme.links.forEach(async (link) => {
       if (link.rel === 'item') {
         const projectResponse = await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/themes/${link.href}`)
@@ -245,14 +215,5 @@ export default {
 
 .themeDescription a {
   color: white;
-}
-
-.navigationBreadcrumb {
-  background: rgba(255, 255, 255, 0.667);
-  padding: 3px;
-}
-
-.navigationBreadcrumb li {
-  font-size: 17px !important;
 }
 </style>

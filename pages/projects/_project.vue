@@ -1,30 +1,12 @@
 <template>
   <div>
+    <bread-crumb-nav
+      :theme="project.collection"
+      :project="project.properties.title"
+    />
     <div
       class="pb-4 variableHeaderContainer"
     >
-      <v-breadcrumbs
-        class="mx-5 pt-2 navigationBreadcrumb"
-        :items="navigationBreadcrumb"
-      >
-        <template #item="{ item }">
-          <v-breadcrumbs-item
-            :href="item.href"
-            :disabled="item.disabled"
-          >
-            <v-chip
-              v-if="navigationBreadcrumb.indexOf(item) === navigationBreadcrumb.length - 1"
-              color="primary"
-              dark
-              small
-              class="mr-2"
-            >
-              Project
-            </v-chip>
-            {{ item.text }}
-          </v-breadcrumbs-item>
-        </template>
-      </v-breadcrumbs>
       <v-container>
         <v-row class="ml-2">
           <span class="mt-3 mb-5 text-h2">
@@ -94,8 +76,13 @@
 </template>
 
 <script>
+import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+
 export default {
   name: 'ProjectSingle',
+  components: {
+    BreadCrumbNav
+  },
   async asyncData ({ $axios, params }) {
     let project
     // todo handle variable names divided by '_'
@@ -111,13 +98,6 @@ export default {
   },
   data () {
     return {
-      navigationBreadcrumb: [
-        {
-          text: 'ESA EO Catalogue',
-          disabled: false,
-          href: '/'
-        }
-      ],
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
@@ -128,18 +108,6 @@ export default {
     return {
       title: this.$route.params.project.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
-  },
-  created () {
-    this.navigationBreadcrumb.push({
-      text: this.project.collection,
-      disabled: false,
-      href: `/themes/${this.project.collection.toLowerCase()}`
-    })
-    this.navigationBreadcrumb.push({
-      text: this.project.properties.title,
-      disabled: false,
-      href: `/projects/${this.project.id}`
-    })
   }
 }
 </script>

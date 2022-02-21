@@ -50,11 +50,6 @@ export default {
       type: String,
       default: () => ''
     }
-  },
-  methods: {
-    slugify (string) {
-      return string.replace(/[^a-zA-Z ]/g, '').replaceAll(' ', '_').toLowerCase()
-    }
   }
 }
 </script>

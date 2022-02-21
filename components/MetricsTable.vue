@@ -163,7 +163,7 @@
         <template #activator="{ on }">
           <nuxt-link
             style="cursor: pointer; font-size: 12px; text-decoration: none"
-            :to="`variables/${item.name.toLowerCase()}`"
+            :to="`variables/${slugify(item.name)}`"
             v-on="on"
           >
             {{ item.name }}
