@@ -9,28 +9,31 @@
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center center;`"
-      class="pb-4"
     >
-      <v-container>
-        <v-row class="ml-2">
-          <span class="mt-3 mb-5 themeTitle">
-            {{ theme.id }}
-          </span>
-        </v-row>
-        <v-row class="ml-2">
-          <span class="themeDescription">
-            {{ theme.description }}
-          </span>
-        </v-row>
-        <v-row class="ml-2 mt-6">
-          <span class="themeDescription">
-            <a
+      <v-container class="px-15">
+        <v-row>
+          <v-col cols="12" md="6" class="d-flex align-center">
+            <span class="themeTitle">
+              {{ theme.id }}
+            </span>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex flex-column justify-center">
+            <div class="themeDescription">
+              <small>{{ theme.description }}</small>
+            </div>
+            <v-btn
+              color="rgba(0, 49, 72, 0.733)"
+              dark
               :href="theme.links[1].href"
               target="_blank"
+              class="mt-3"
             >
+              <v-icon left>
+                mdi-link
+              </v-icon>
               EO4SOCIETY
-            </a>
-          </span>
+            </v-btn>
+          </v-col>
         </v-row>
       </v-container>
     </div>
@@ -38,6 +41,7 @@
       v-model="tab"
       background-color="#003247"
       dark
+      grow
     >
       <v-tab>
         Projects
@@ -46,41 +50,44 @@
         Variables
       </v-tab>
     </v-tabs>
-    <v-container>
+    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : ''">
       <v-tabs-items v-model="tab">
         <v-tab-item>
-          <v-row class="pa-6">
-            <span class="text-h2">
-              Projects
-            </span>
-            <v-spacer />
-            <v-text-field
-              v-model="projectsSearch"
-              hide-details
-              solo
-              outlined
-              single-line
-              style="width: 400px !important; flex-grow: 0"
-              label="Search projects"
-              prepend-inner-icon="mdi-magnify"
-              @input="filterData('projects')"
-            />
-          </v-row>
-          <v-row>
-            <v-col cols="3">
+          <v-row class="px-8 pt-8 d-flex align-center">
+            <v-col cols="12" md="4">
+              <span class="text-h2">
+                Projects
+              </span>
+            </v-col>
+            <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+              <v-spacer />
               <v-select
                 v-model="projectsDetailsFilter"
+                dense
+                hide-details
                 :items="['Name', 'Consortium', 'Start Date', 'End date']"
                 label="Order by"
                 outlined
+                :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
               />
-            </v-col>
-            <v-col cols="3">
               <v-select
                 v-model="projectsDetailsOrder"
+                dense
+                hide-details
                 :items="['Ascending', 'Descending']"
                 label="Order direction"
                 outlined
+                :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              />
+              <v-text-field
+                v-model="projectsSearch"
+                dense
+                hide-details
+                outlined
+                single-line
+                label="Search projects"
+                prepend-inner-icon="mdi-magnify"
+                @input="filterData('projects')"
               />
             </v-col>
           </v-row>
@@ -90,30 +97,32 @@
           />
         </v-tab-item>
         <v-tab-item>
-          <v-row class="pa-6">
-            <span class="text-h2">
-              Variables
-            </span>
-            <v-spacer />
-            <v-text-field
-              v-model="variablesSearch"
-              hide-details
-              solo
-              outlined
-              single-line
-              style="width: 400px !important; flex-grow: 0"
-              label="Search variables"
-              prepend-inner-icon="mdi-magnify"
-              @input="filterData('variables')"
-            />
-          </v-row>
-          <v-row>
-            <v-col cols="3">
+          <v-row class="px-8 pt-8 d-flex align-center">
+            <v-col cols="12" md="4">
+              <span class="text-h2">
+                Variables
+              </span>
+            </v-col>
+            <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+              <v-spacer />
               <v-select
                 v-model="variablesDetailsOrder"
+                dense
+                hide-details
                 :items="['Ascending', 'Descending']"
                 label="Order direction"
                 outlined
+                :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              />
+              <v-text-field
+                v-model="variablesSearch"
+                dense
+                hide-details
+                outlined
+                single-line
+                label="Search variables"
+                prepend-inner-icon="mdi-magnify"
+                @input="filterData('variables')"
               />
             </v-col>
           </v-row>
