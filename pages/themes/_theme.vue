@@ -147,6 +147,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import ItemGrid from '@/components/ItemGrid.vue'
 
 export default {
@@ -169,18 +170,17 @@ export default {
     })
 
     // format theme project data
-    const projectDetails = []
-    theme.links.forEach(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await $axios.$get(`/themes/${link.href.substring(0, link.href.length - 5)}`)
-        projectDetails.push(projectResponse)
-      }
-    })
+    // const projectDetails = []
+    // theme.links.forEach(async (link) => {
+    //   if (link.rel === 'item') {
+    //     const projectResponse = await $axios.$get(`/themes/${link.href.substring(0, link.href.length - 5)}`)
+    //     projectDetails.push(projectResponse)
+    //   }
+    // })
 
     return {
       theme,
-      variablesDetails,
-      projectDetails
+      variablesDetails
     }
   },
   data () {
@@ -195,6 +195,7 @@ export default {
           href: '/'
         }
       ],
+      projectDetails: [],
       projectsDetailsFilter: 'Name',
       projectsDetailsOrder: 'Ascending',
       variablesDetailsOrder: 'Ascending'
@@ -210,6 +211,13 @@ export default {
       text: this.theme.id,
       disabled: false,
       href: `/themes/${this.theme.id.toLowerCase()}`
+    })
+
+    this.theme.links.forEach(async (link) => {
+      if (link.rel === 'item') {
+        const projectResponse = await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/themes/${link.href}`)
+        this.projectDetails.push(projectResponse.data)
+      }
     })
   }
 }
