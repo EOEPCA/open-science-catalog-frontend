@@ -21,13 +21,13 @@
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
             <img
-              :src="withBase(theme.image.replace('/static/', '/')).slice(0, -3) + 'webp'"
+              :src="withBase(`img//EO_${theme.name}.webp`)"
               width="100%"
             >
             <span
               class="h1 imageLabel elevation-2"
             >
-              {{ theme.name }}
+              {{ theme.name.replace('_', ' ') }}
             </span>
           </div>
         </nuxt-link>
@@ -40,7 +40,8 @@
 export default {
   name: 'IndexPage',
   async asyncData ({ $axios }) {
-    const themes = await $axios.$get('/themes')
+    const metricsResponse = await $axios.$get('/metrics')
+    const themes = metricsResponse.themes
     return {
       themes
     }

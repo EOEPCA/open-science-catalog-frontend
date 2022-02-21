@@ -67,8 +67,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // TEMP
-    baseURL: 'https://raw.githubusercontent.com/EOEPCA/open-science-catalog-frontend/fake-api'
+    baseURL: 'https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages'
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
