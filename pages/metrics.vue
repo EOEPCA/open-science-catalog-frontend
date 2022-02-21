@@ -353,6 +353,8 @@ export default {
     },
     async filterItems (e) {
       this.metrics = await this.$axios.$get('/metrics')
+      this.variables = []
+
       if (e === 0) {
         this.metrics.themes.forEach((theme) => {
           theme.variables.forEach((variable) => {
@@ -366,7 +368,6 @@ export default {
         })
         return
       }
-      this.variables = []
       this.metrics.themes[e - 1].variables.forEach((variable) => {
         this.variables.push(variable)
       })
