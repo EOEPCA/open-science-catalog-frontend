@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row class="px-0 white">
+    <v-row v-if="metrics" class="px-0 white">
       <v-col cols="12" sm="8" lg="9">
         <v-tabs
           v-model="selectedTab"
@@ -10,7 +10,7 @@
             All
           </v-tab>
           <v-tab
-            v-for="theme in themes"
+            v-for="theme in metrics.themes"
             :key="theme.id"
           >
             <div>
@@ -36,8 +36,8 @@
         <MetricsTable
           v-if="metrics"
           :filter="filter"
-          :headers="metrics.years"
-          :items="metrics.variables"
+          :headers="metrics.summary.years"
+          :items="variables"
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
@@ -152,13 +152,6 @@ import annotationPlugin from 'chartjs-plugin-annotation'
 Chart.register(annotationPlugin)
 export default {
   name: 'Metrics',
-  async asyncData ({ $axios }) {
-    const themes = await $axios.$get('/themes')
-
-    return {
-      themes
-    }
-  },
   data () {
     this.recordsChart = null
     this.variablePie = null
@@ -166,7 +159,8 @@ export default {
       dialog: false,
       filter: '',
       selectedTab: 0,
-      metrics: null
+      metrics: null,
+      variables: []
     }
   },
   head: {
@@ -174,9 +168,9 @@ export default {
   },
   computed: {
     nonEmptyVariables () {
-      return this.metrics.variables
-        .filter(variable => variable.numberOfRecords > 0)
-        .sort((a, b) => b.numberOfRecords - a.numberOfRecords)
+      return this.variables
+        .filter(variable => variable.summary.numberOfProducts > 0)
+        .sort((a, b) => b.summary.numberOfProducts - a.summary.numberOfProducts)
     }
   },
   watch: {
@@ -192,6 +186,16 @@ export default {
   },
   async mounted () {
     this.metrics = await this.$axios.$get('/metrics')
+    this.metrics.themes.forEach((theme) => {
+      theme.variables.forEach((variable) => {
+        this.variables.push(variable)
+      })
+    })
+    this.variables.sort(function (a, b) {
+      if (a.name < b.name) { return -1 }
+      if (a.name > b.name) { return 1 }
+      return 0
+    })
   },
   methods: {
     async fetchVariables () {
@@ -348,11 +352,29 @@ export default {
       }
     },
     async filterItems (e) {
+      this.metrics = await this.$axios.$get('/metrics')
       if (e === 0) {
-        this.metrics = await this.$axios.$get('/metrics')
+        this.metrics.themes.forEach((theme) => {
+          theme.variables.forEach((variable) => {
+            this.variables.push(variable)
+          })
+        })
+        this.variables.sort(function (a, b) {
+          if (a.name < b.name) { return -1 }
+          if (a.name > b.name) { return 1 }
+          return 0
+        })
         return
       }
-      this.metrics = await this.$axios.$get('/metrics/atmosphere/metrics')
+      this.variables = []
+      this.metrics.themes[e - 1].variables.forEach((variable) => {
+        this.variables.push(variable)
+      })
+      this.variables.sort(function (a, b) {
+        if (a.name < b.name) { return -1 }
+        if (a.name > b.name) { return 1 }
+        return 0
+      })
     }
   }
 }
