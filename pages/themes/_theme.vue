@@ -10,16 +10,33 @@
         background-repeat: no-repeat;
         background-position: center center;`"
     >
-      <v-container class="px-15">
+      <v-container :class="$vuetify.breakpoint.mdAndUp ? 'px-15' : ''">
         <v-row>
-          <v-col cols="12" md="6" class="d-flex align-center">
+          <v-col cols="12" md="6" class="d-flex align-center" :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : ''">
             <span class="themeTitle">
               {{ theme.id }}
             </span>
           </v-col>
           <v-col cols="12" md="6" class="d-flex flex-column justify-center">
             <div class="themeDescription">
-              <small>{{ theme.description }}</small>
+              <template v-if="$vuetify.breakpoint.smAndDown">
+                <v-scale-transition>
+                  <small v-show="showDescription">{{ theme.description }}</small>
+                </v-scale-transition>
+                <v-btn
+                  text
+                  x-small
+                  dark
+                  block
+                  @click="showDescription = !showDescription"
+                >
+                  <v-icon left>
+                    {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
+                  </v-icon>
+                  Description
+                </v-btn>
+              </template>
+              <small v-else>{{ theme.description }}</small>
             </div>
             <v-btn
               color="rgba(0, 49, 72, 0.733)"
@@ -183,7 +200,8 @@ export default {
       projectDetails: [],
       projectsDetailsFilter: 'Name',
       projectsDetailsOrder: 'Ascending',
-      variablesDetailsOrder: 'Ascending'
+      variablesDetailsOrder: 'Ascending',
+      showDescription: false
     }
   },
   head () {
