@@ -9,7 +9,7 @@
       lg="3"
     >
       <v-card
-        :to="`/${type}/${item.name.toLowerCase()}`"
+        :to="`/${type}/${type === 'variables' ? item.name.toLowerCase() : item.properties.title}`"
         outlined
       >
         <v-card-title>
@@ -17,21 +17,21 @@
             small
             label
             :color="type === 'variables' ? 'green' : 'primary'"
-            :dark="type === 'variables' ? true : false"
+            dark
             class="text-uppercase"
           >
             {{ type.toUpperCase() }}
           </v-chip>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
-          {{ item.name }}
+          {{ type === 'variables' ? item.name : item.properties.title }}
         </v-card-title>
         <v-card-text>
           <span v-if="type === 'variables'">
             {{ item.recordsNumber }} Records
           </span>
           <span v-else>
-            {{ item.description }}
+            {{ `${item.properties.description.substring(0, 100)}...` }}
           </span>
         </v-card-text>
       </v-card>
