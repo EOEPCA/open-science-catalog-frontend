@@ -2,7 +2,7 @@
   <div>
     <div
       ref="themeBanner"
-      :style="`backgroundImage: url('${withBase(theme.image.replace('/static/', '/')).slice(0, -3) + 'webp'}');
+      :style="`backgroundImage: url('${withBase(`img//EO_${theme.id}.webp`)}');
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center center;`"
@@ -33,7 +33,7 @@
       <v-container>
         <v-row class="ml-2">
           <span class="mt-3 mb-5 themeTitle">
-            {{ theme.name }}
+            {{ theme.id }}
           </span>
         </v-row>
         <v-row class="ml-2">
@@ -43,7 +43,10 @@
         </v-row>
         <v-row class="ml-2 mt-6">
           <span class="themeDescription">
-            <a :href="theme.website">
+            <a
+              :href="theme.links[1].href"
+              target="_blank"
+            >
               EO4SOCIETY
             </a>
           </span>
@@ -506,9 +509,9 @@ export default {
   },
   created () {
     this.navigationBreadcrumb.push({
-      text: this.theme.name,
+      text: this.theme.id,
       disabled: false,
-      href: `/themes/${this.theme.name.toLowerCase()}`
+      href: `/themes/${this.theme.id.toLowerCase()}`
     })
   }
 }
