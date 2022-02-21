@@ -9,7 +9,7 @@
       lg="3"
     >
       <v-card
-        :to="`/${type}/${item.id}`"
+        :to="`/${type}/${item.name.toLowerCase()}`"
         outlined
       >
         <v-card-title>

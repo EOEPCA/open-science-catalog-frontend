@@ -138,7 +138,7 @@
           </v-row>
           <item-grid
             type="variables"
-            :items="variablesDetails.variables"
+            :items="variablesDetails"
           />
         </v-tab-item>
       </v-tabs-items>
@@ -156,8 +156,20 @@ export default {
   },
   async asyncData ({ $axios, params }) {
     const theme = await $axios.$get(`/themes/${params.theme}`)
+    const allThemes = await $axios.$get('/metrics')
+    const variablesDetails = []
+    // format theme variables data
+    allThemes.themes.forEach((element) => {
+      if (element.name === theme.id) {
+        element.variables.forEach((variable) => {
+          variablesDetails.push(variable)
+        })
+      }
+    })
+
     return {
-      theme
+      theme,
+      variablesDetails
     }
   },
   data () {
@@ -396,96 +408,6 @@ export default {
         ],
         totalPages: 3,
         total: 32
-      },
-      variablesDetails: {
-        variables: [
-          {
-            id: 'aerosols',
-            name: 'Aerosols',
-            description:
-              'Atmospheric aerosols are minor constituents of the atmosphere by mass, but a critical component in terms of impacts on the climate and especially climate changes. Aerosols influence the global radiation balance by directly scattering solar radiation and indirectly through influencing cloud reflectivity, cloud cover and cloud lifetime. https://gcos.wmo.int/en/essential-climate-variables/aerosols',
-            recordsNumber: '15'
-          },
-          {
-            id: 'anthropogenic_greenhouse_gas_fluxes',
-            name: 'Anthropogenic Greenhouse gas fluxes',
-            description:
-              'Global anthropogenic emissions of Greenhouse gases (CO2, CH4, N2O and F-gases) continue to be emitted at an annual rate that is not yet significantly decreasing. The global warming potential of each of the greenhouse gases and their long residence time in the atmosphere are causing increased surface temperature and climate change. The scientific community illustrated with inverse models and data assimilation how consistent the reported inventories and the atmospheric observations are, which is taken up also in few national inventory reports (e.g. UK, Switzerland, Australia). https://gcos.wmo.int/en/essential-climate-variables/ghg-fluxes',
-            recordsNumber: '0'
-          },
-          {
-            id: 'carbon_dioxide,_methane_and_other_greenhouse_gases',
-            name: 'Carbon dioxide, methane and other greenhouse gases',
-            description:
-              'The atmospheric abundance of carbon dioxide (CO2), the dominant human-produced greenhouse gas, has increased by about 50% since pre-industrial times due to the proliferation of fossil fuel combustion. Methane (CH4) is also a strong greenhouse gas; its atmospheric abundance has more than doubled since the pre-industrial era because of human activities. Other significant greenhouse gases include nitrous oxide (N2O), chlorofluorocarbons (CFCs), hydrochlorofluorocarbons (HCFCs), hydrofluorocarbons (HFCs), perfluorocarbons (PFCs) and sulphur hexafluoride (SF6). https://gcos.wmo.int/en/essential-climate-variables/ghg',
-            recordsNumber: '0'
-          },
-          {
-            id: 'clouds',
-            name: 'Clouds',
-            description:
-              'The variable properties of clouds determines the clouds profound effects on radiation and precipitation. They are influenced by and in turn influence the motion of the atmosphere on many scales. They are affected by the presence of aerosols, and modify atmospheric composition in several ways, including the depletion of ozone when they form in the polar stratosphere. https://gcos.wmo.int/en/essential-climate-variables/clouds',
-            recordsNumber: '6'
-          },
-          {
-            id: 'earth_radiation_budget',
-            name: 'Earth radiation budget',
-            description:
-              'The Earth Radiation Budget (at the top of the atmosphere) describes the overall balance between the incoming energy from the sun and the outgoing thermal (longwave) and reflected (shortwave) energy from the earth. It can only be measured from space. The radiation balance at the top of the atmosphere is the basic radiative forcing of the climate system. Measuring its variability in space and time over the globe provides insight into the overall response of the system to this forcing. https://gcos.wmo.int/en/essential-climate-variables/earth-radiation',
-            recordsNumber: '0'
-          },
-          {
-            id: 'geomagnetic_field',
-            name: 'Geomagnetic Field',
-            description:
-              'Magnitude and direction of the 3D magnetic field on the surface of the Earth and within the magnetosphere (i.e. in low-Earth orbit and in geosynchronous orbit). https://space.oscar.wmo.int/variables/view/geomagnetic_field',
-            recordsNumber: '15'
-          },
-          {
-            id: 'ionospheric_plasma_density',
-            name: 'Ionospheric plasma density',
-            description:
-              'Total number of ionized particles in a volume unit of ionospheric plasma. https://space.oscar.wmo.int/variables/view/ionospheric_plasma_density',
-            recordsNumber: '1'
-          },
-          {
-            id: 'lightning',
-            name: 'Lightning',
-            description:
-              'Lightning is one of the most dramatic weather phenomena, causing many fatalities as well as substantial loss and damage for example by forest fires, damage to electrical infrastructure and other sectors every year all over the world. On top, even more damage is caused by the storms which generate lightning. This direct link to convection makes lightning also a potentially valuable indicator to track and understand trends in storminess, particularly under climate variability and change. In addition, lightning itself impacts the global climate by producing nitrogen oxides (NOX), a strong greenhouse gas. https://gcos.wmo.int/en/essential-climate-variables/lightning',
-            recordsNumber: '1'
-          },
-          {
-            id: 'ozone',
-            name: 'Ozone',
-            description:
-              'Ozone (O3) is a naturally occurring trace gas in the stratosphere that inhibits harmful UV radiation from reaching Earth’s surface. Ozone in the troposphere is a pollutant, harmful to all living things. Ozone is strongly linked to climate by its influence on Earth’s radiation budget. The amount of ozone in the global stratosphere began to decrease in 1980 due to catalytic reactions with chlorine and bromine from man-made CFCs and other halocarbons. Severe, seasonal depletions over Antarctica (“ozone hole”) have occurred annually since 1985. Thanks to the Montreal Protocol, an international treaty enacted to curtail the production and consumption of ozone-depleting substances, stratospheric ozone levels are expected to return to pre-depletion values. https://gcos.wmo.int/en/essential-climate-variables/ozone',
-            recordsNumber: '8'
-          },
-          {
-            id: 'precipitation',
-            name: 'Precipitation',
-            description:
-              'Precipitation, either liquid or solid, is the most important climate variable directly affecting humans. Through either its duration, intensity and frequency or its lack of occurrence, it influences the supply of water, causes risks to life and livelihoods when associated with floods, landslides and droughts, and affects infrastructure planning, leisure activities and more. Precipitation is closely related to cloud properties, a number of terrestrial ECVs and to ocean-surface salinity. It is indicative of the release of latent heat within the energy cycle, as well as being at the heart of the hydrological cycle. https://gcos.wmo.int/en/essential-climate-variables/precipitation',
-            recordsNumber: '2'
-          },
-          {
-            id: 'precursors_for_aerosols_and_ozone',
-            name: 'Precursors for aerosols and ozone',
-            description:
-              'Precursor species lead to the production of aerosols and ozone. Precursors include nitrogen dioxide (NO2), sulphur dioxide (SO2), carbon monoxide (CO) and formaldehyde (HCHO). Aerosols and ozone in the near-surface atmosphere can directly harm human health and produce detrimental environmental impacts (e.g., crop damage, acid rain). Reductions in near-surface aerosols and ozone have been observed in specific regions where the emissions of some precursors are regulated. https://gcos.wmo.int/en/essential-climate-variables/precursors',
-            recordsNumber: '0'
-          },
-          {
-            id: 'pressure',
-            name: 'Pressure',
-            description:
-              "Surface pressure is a fundamental meteorological variable controlling weather systems and providing information on the intensity of weather systems, including tropical cyclones. Pressure observations are required for the long-term simulations of past weather and climate known as 'reanalyses'. Patterns of large-scale pressure variation are used to construct circulation indices that are closely linked to known variations in global and regional climate. https://gcos.wmo.int/en/essential-climate-variables/pressure",
-            recordsNumber: '0'
-          }
-        ],
-        totalPages: 2,
-        total: 17
       },
       tab: 0,
       variablesSearch: '',
