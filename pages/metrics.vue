@@ -111,7 +111,7 @@
                         class="overflow-y-auto"
                       >
                         <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                          {{ variable.name }}: {{ variable.numberOfRecords }}
+                          {{ variable.name }}: {{ variable.summary.numberOfProducts }}
                         </v-list-item>
                       </v-list>
                     </v-col>
@@ -199,12 +199,13 @@ export default {
   },
   methods: {
     async fetchVariables () {
-      const response = await this.$axios.$get('/variables/metrics')
+      // chart breaks if this is removed :D
+      const response = await this.$axios.$get('/metrics')
 
       // Number of records bar chart setup
       const recordsDataset = {}
-      response.variables.forEach((record) => {
-        record.years.forEach((year) => {
+      this.variables.forEach((record) => {
+        record.summary.years.forEach((year) => {
           if (recordsDataset[year]) {
             recordsDataset[year] += 1
           } else {
@@ -218,7 +219,7 @@ export default {
         {
           type: 'bar',
           data: {
-            labels: this.metrics.years,
+            labels: this.metrics.summary.years,
             datasets: [
               {
                 label: 'Number of records',
@@ -243,7 +244,7 @@ export default {
       // Variable distribution doughnut chart setup
       const variableDataset = {}
       this.nonEmptyVariables.forEach((item) => {
-        variableDataset[item.name] = item.numberOfRecords
+        variableDataset[item.name] = item.summary.numberOfProducts
       })
       let sortedVariables = Object.values(variableDataset)
       sortedVariables = sortedVariables.sort((a, b) => {
