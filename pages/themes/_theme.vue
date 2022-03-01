@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="theme">
     <bread-crumb-nav
       :theme="theme.id"
     />
@@ -157,7 +157,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
 
@@ -167,40 +166,13 @@ export default {
     BreadCrumbNav,
     ItemGrid
   },
-  async asyncData ({ $axios, params }) {
-    const theme = await $axios.$get(`/themes/${params.theme}`)
-    const allThemes = await $axios.$get('/metrics')
-
-    // format theme variables data
-    const variablesDetailsRaw = []
-    allThemes.themes.forEach((element) => {
-      if (element.name === theme.id) {
-        element.variables.forEach((variable) => {
-          variablesDetailsRaw.push(variable)
-        })
-      }
-    })
-
-    // format theme project data
-    const projectDetailsRaw = []
-    theme.links.forEach(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/themes/${link.href}`)
-        projectDetailsRaw.push(projectResponse.data)
-      }
-    })
-    return {
-      theme,
-      variablesDetailsRaw,
-      projectDetailsRaw
-    }
-  },
   data () {
     return {
+      theme: null,
       tab: 0,
-      projectsSearch: '',
       projectDetails: null,
-      // projectDetailsRaw: [],
+      projectDetailsRaw: [],
+      projectsSearch: '',
       projectDetailsItems: [
         {
           text: 'Name',
@@ -221,9 +193,10 @@ export default {
       ],
       projectsDetailsFilter: 'title',
       projectsDetailsOrder: 'Ascending',
+      variablesDetails: null,
+      variablesDetailsRaw: [],
       variablesSearch: '',
       variablesDetailsOrder: 'Ascending',
-      variablesDetails: null,
       showDescription: false
     }
   },
@@ -232,7 +205,26 @@ export default {
       title: this.$route.params.theme.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   },
-  created () {
+  async created () {
+    this.theme = await this.$axios.$get(`/themes/${this.$route.params.theme}`)
+    const allThemes = await this.$axios.$get('/metrics')
+
+    // format theme variables data
+    allThemes.themes.forEach((element) => {
+      if (element.name === this.theme.id) {
+        element.variables.forEach((variable) => {
+          this.variablesDetailsRaw.push(variable)
+        })
+      }
+    })
+
+    // format theme project data
+    this.theme.links.forEach(async (link) => {
+      if (link.rel === 'item') {
+        const projectResponse = await this.$axios.$get(`/themes/${link.href.slice(0, -5)}`)
+        this.projectDetailsRaw.push(projectResponse)
+      }
+    })
     this.variablesDetails = this.variablesDetailsRaw
     this.projectDetails = this.projectDetailsRaw
   },
