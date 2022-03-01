@@ -82,10 +82,11 @@
                 v-model="projectsDetailsFilter"
                 dense
                 hide-details
-                :items="['Name', 'Consortium', 'Start Date', 'End date']"
+                :items="projectDetailsItems"
                 label="Order by"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                @change="orderData(projectDetails, projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, true)"
               />
               <v-select
                 v-model="projectsDetailsOrder"
@@ -95,6 +96,7 @@
                 label="Order direction"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                @change="orderData(projectDetails, projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, true)"
               />
               <v-text-field
                 v-model="projectsSearch"
@@ -130,6 +132,7 @@
                 label="Order direction"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                @change="orderData(variablesDetails, 'name', variablesDetailsOrder)"
               />
               <v-text-field
                 v-model="variablesSearch"
@@ -169,38 +172,58 @@ export default {
     const allThemes = await $axios.$get('/metrics')
 
     // format theme variables data
-    const variablesDetails = []
+    const variablesDetailsRaw = []
     allThemes.themes.forEach((element) => {
       if (element.name === theme.id) {
         element.variables.forEach((variable) => {
-          variablesDetails.push(variable)
+          variablesDetailsRaw.push(variable)
         })
       }
     })
 
     // format theme project data
-    // const projectDetails = []
-    // theme.links.forEach(async (link) => {
-    //   if (link.rel === 'item') {
-    //     const projectResponse = await $axios.$get(`/themes/${link.href.substring(0, link.href.length - 5)}`)
-    //     projectDetails.push(projectResponse)
-    //   }
-    // })
-
+    const projectDetailsRaw = []
+    theme.links.forEach(async (link) => {
+      if (link.rel === 'item') {
+        const projectResponse = await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/themes/${link.href}`)
+        projectDetailsRaw.push(projectResponse.data)
+      }
+    })
     return {
       theme,
-      variablesDetails
+      variablesDetailsRaw,
+      projectDetailsRaw
     }
   },
   data () {
     return {
       tab: 0,
-      variablesSearch: '',
       projectsSearch: '',
-      projectDetails: [],
-      projectsDetailsFilter: 'Name',
+      projectDetails: null,
+      // projectDetailsRaw: [],
+      projectDetailsItems: [
+        {
+          text: 'Name',
+          value: 'title'
+        },
+        {
+          text: 'Consortium',
+          value: 'osc:consortium'
+        },
+        {
+          text: 'Start Date',
+          value: 'start_datetime'
+        },
+        {
+          text: 'End date',
+          value: 'end_datetime'
+        }
+      ],
+      projectsDetailsFilter: 'title',
       projectsDetailsOrder: 'Ascending',
+      variablesSearch: '',
       variablesDetailsOrder: 'Ascending',
+      variablesDetails: null,
       showDescription: false
     }
   },
@@ -210,12 +233,31 @@ export default {
     }
   },
   created () {
-    this.theme.links.forEach(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await axios.get(`https://raw.githubusercontent.com/constantinius/open-science-catalog-builder/gh-pages/themes/${link.href}`)
-        this.projectDetails.push(projectResponse.data)
+    this.variablesDetails = this.variablesDetailsRaw
+    this.projectDetails = this.projectDetailsRaw
+  },
+  methods: {
+    orderData (source, key, direction, nested = null) {
+      function compare (a, b) {
+        if (nested) {
+          if (a.properties[key] < b.properties[key]) {
+            return direction === 'Ascending' ? -1 : 1
+          }
+          if (a.properties[key] > b.properties[key]) {
+            return direction === 'Ascending' ? 1 : -1
+          }
+        } else {
+          if (a[key] < b[key]) {
+            return direction === 'Ascending' ? -1 : 1
+          }
+          if (a[key] > b[key]) {
+            return direction === 'Ascending' ? 1 : -1
+          }
+        }
+        return 0
       }
-    })
+      source.sort(compare)
+    }
   }
 }
 </script>
