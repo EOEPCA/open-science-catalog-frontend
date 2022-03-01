@@ -86,7 +86,7 @@
                 label="Order by"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                @change="orderData(projectDetails, projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, true)"
+                @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch,true)"
               />
               <v-select
                 v-model="projectsDetailsOrder"
@@ -96,7 +96,7 @@
                 label="Order direction"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                @change="orderData(projectDetails, projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, true)"
+                @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
               />
               <v-text-field
                 v-model="projectsSearch"
@@ -106,7 +106,7 @@
                 single-line
                 label="Search projects"
                 prepend-inner-icon="mdi-magnify"
-                @input="filterData('projects')"
+                @input="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
               />
             </v-col>
           </v-row>
@@ -132,7 +132,7 @@
                 label="Order direction"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                @change="orderData(variablesDetails, 'name', variablesDetailsOrder)"
+                @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
               />
               <v-text-field
                 v-model="variablesSearch"
@@ -142,7 +142,7 @@
                 single-line
                 label="Search variables"
                 prepend-inner-icon="mdi-magnify"
-                @input="filterData('variables')"
+                @input="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
               />
             </v-col>
           </v-row>
@@ -191,12 +191,12 @@ export default {
           value: 'end_datetime'
         }
       ],
-      projectsDetailsFilter: 'title',
-      projectsDetailsOrder: 'Ascending',
+      projectsDetailsFilter: '',
+      projectsDetailsOrder: '',
       variablesDetails: null,
       variablesDetailsRaw: [],
       variablesSearch: '',
-      variablesDetailsOrder: 'Ascending',
+      variablesDetailsOrder: '',
       showDescription: false
     }
   },
@@ -229,7 +229,7 @@ export default {
     this.projectDetails = this.projectDetailsRaw
   },
   methods: {
-    orderData (source, key, direction, nested = null) {
+    orderData (source, key, direction, string, nested = null) {
       function compare (a, b) {
         if (nested) {
           if (a.properties[key] < b.properties[key]) {
@@ -248,7 +248,23 @@ export default {
         }
         return 0
       }
-      source.sort(compare)
+      if (source === 'variables') {
+        const sortedSource = this.variablesDetailsRaw.sort(compare)
+        this.variablesDetails = string ? this.filterByValue(sortedSource, string) : sortedSource
+      } else {
+        const sortedSource = this.projectDetailsRaw.sort(compare)
+        this.projectDetails = string ? this.filterByValue(sortedSource, string, 'properties') : sortedSource
+      }
+    },
+    filterByValue (array, string, key = null) {
+      return array.filter((o) => {
+        return Object.keys(key ? o[key] : o).some((k) => {
+          if (typeof (key ? o[key][k] : o[k]) === 'string') {
+            return (key ? o[key][k] : o[k]).toLowerCase().includes(string.toLowerCase())
+          }
+          return null
+        })
+      })
     }
   }
 }
