@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="variable">
     <bread-crumb-nav
       :theme="variable['osc:theme']"
       :variable="variable.id"
@@ -83,21 +83,9 @@ export default {
   components: {
     BreadCrumbNav
   },
-  async asyncData ({ $axios, params }) {
-    let variable
-    // todo handle variable names divided by '_'
-    await $axios.$get(`variables/${params.variable}`).then((res) => {
-      variable = res
-    }).catch((err) => {
-      console.log(err)
-    })
-
-    return {
-      variable
-    }
-  },
   data () {
     return {
+      variable: null,
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
@@ -108,6 +96,14 @@ export default {
     return {
       title: this.$route.params.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
+  },
+  async created () {
+    // todo handle variable names divided by '_'
+    await this.$axios.$get(`variables/${this.$route.params.variable}`).then((res) => {
+      this.variable = res
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 }
 </script>

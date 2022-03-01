@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="project">
     <bread-crumb-nav
       :theme="project.collection"
       :project="project.properties.title"
@@ -83,21 +83,9 @@ export default {
   components: {
     BreadCrumbNav
   },
-  async asyncData ({ $axios, params }) {
-    let project
-    // todo handle variable names divided by '_'
-    await $axios.$get(`projects/${params.project}`).then((res) => {
-      project = res
-    }).catch((err) => {
-      console.log(err)
-    })
-
-    return {
-      project
-    }
-  },
   data () {
     return {
+      project: null,
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
@@ -108,6 +96,14 @@ export default {
     return {
       title: this.$route.params.project.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
+  },
+  async created () {
+    // todo handle variable names divided by '_'
+    await this.$axios.$get(`projects/${this.$route.params.project}`).then((res) => {
+      this.project = res
+    }).catch((err) => {
+      console.log(err)
+    })
   }
 }
 </script>
