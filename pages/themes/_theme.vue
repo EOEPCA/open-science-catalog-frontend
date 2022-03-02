@@ -86,7 +86,7 @@
                 label="Order by"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch,true)"
+                @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
               />
               <v-select
                 v-model="projectsDetailsOrder"
@@ -191,12 +191,12 @@ export default {
           value: 'end_datetime'
         }
       ],
-      projectsDetailsFilter: '',
-      projectsDetailsOrder: '',
+      projectsDetailsFilter: 'title',
+      projectsDetailsOrder: 'Ascending',
       variablesDetails: null,
       variablesDetailsRaw: [],
       variablesSearch: '',
-      variablesDetailsOrder: '',
+      variablesDetailsOrder: 'Ascending',
       showDescription: false
     }
   },
@@ -219,14 +219,15 @@ export default {
     })
 
     // format theme project data
-    this.theme.links.forEach(async (link) => {
+    await Promise.all(this.theme.links.map(async (link) => {
       if (link.rel === 'item') {
         const projectResponse = await this.$axios.$get(`/themes/${link.href.slice(0, -5)}`)
         this.projectDetailsRaw.push(projectResponse)
       }
-    })
+    }))
     this.variablesDetails = this.variablesDetailsRaw
     this.projectDetails = this.projectDetailsRaw
+    this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
   },
   methods: {
     orderData (source, key, direction, string, nested = null) {
