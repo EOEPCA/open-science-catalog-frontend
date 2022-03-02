@@ -22,10 +22,25 @@
           >
             {{ type.toUpperCase() }}
           </v-chip>
+          <v-spacer />
+          <div v-if="type === 'projects'" class="projectDates">
+            <v-icon small>
+              mdi-calendar-today
+            </v-icon>
+            {{ item.properties.start_datetime.slice(0, -9) }}
+            -
+            <v-icon small>
+              mdi-calendar
+            </v-icon>
+            {{ item.properties.end_datetime.slice(0, -9) }}
+          </div>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
           {{ type === 'variables' ? item.name : item.properties.title }}
         </v-card-title>
+        <v-card-subtitle v-if="type === 'projects'">
+          {{ item.properties['osc:consortium'] }}
+        </v-card-subtitle>
         <v-card-text>
           <span v-if="type === 'variables'">
             {{ item.recordsNumber }} Records
@@ -53,3 +68,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.projectDates {
+  font-size: 15px;
+}
+</style>
