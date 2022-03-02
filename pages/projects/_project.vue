@@ -10,7 +10,7 @@
       <v-container>
         <v-row class="ml-2">
           <span class="mt-3 mb-5 text-h2">
-            {{ project.properties.title }}
+            {{ project.properties['osc:name'] }}
             <v-chip
               color="green"
               dark
@@ -39,13 +39,13 @@
                 <v-icon>
                   mdi-calendar-today
                 </v-icon>
-                Start date - {{ project.properties.start_datetime.slice(0, -9) }}
+                Start date - {{ project.properties.start_datetime }}
               </v-col>
               <v-col>
                 <v-icon>
                   mdi-calendar
                 </v-icon>
-                Estimated end date - {{ project.properties.end_datetime.slice(0, -9) }}
+                Estimated end date - {{ project.properties.end_datetime }}
               </v-col>
             </v-row>
             <v-row class="ml-2 pt-0 mt-0 mb-4 text-h6">
@@ -55,7 +55,9 @@
               Consortium
             </v-row>
             <v-row class="ml-2 pt-0 mt-0 mb-4">
-              {{ project.properties['osc:consortium'] }}
+              <span v-for="consort in project.properties['osc:consortium']" :key="consort">
+                {{ consort }}
+              </span>
             </v-row>
             <v-row class="ml-2 pt-0 mt-0 mb-4">
               <a

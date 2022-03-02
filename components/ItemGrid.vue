@@ -27,19 +27,21 @@
             <v-icon small>
               mdi-calendar-today
             </v-icon>
-            {{ item.properties.start_datetime.slice(0, -9) }}
+            {{ item.properties.start_datetime }}
             -
             <v-icon small>
               mdi-calendar
             </v-icon>
-            {{ item.properties.end_datetime.slice(0, -9) }}
+            {{ item.properties.end_datetime }}
           </div>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
           {{ type === 'variables' ? item.name : item.properties.title }}
         </v-card-title>
         <v-card-subtitle v-if="type === 'projects'">
-          {{ item.properties['osc:consortium'] }}
+          <span v-for="consort in item.properties['osc:consortium']" :key="consort">
+            {{ consort }}
+          </span>
         </v-card-subtitle>
         <v-card-text>
           <span v-if="type === 'variables'">

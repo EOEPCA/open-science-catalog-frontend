@@ -228,6 +228,7 @@ export default {
     this.variablesDetails = this.variablesDetailsRaw
     this.projectDetails = this.projectDetailsRaw
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
+    this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
   methods: {
     orderData (source, key, direction, string, nested = null) {
