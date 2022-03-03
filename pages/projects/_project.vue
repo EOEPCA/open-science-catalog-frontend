@@ -62,7 +62,7 @@
             <v-row class="ml-2 pt-0 mt-0 mb-4">
               <a
                 v-for="link in project.links.filter(el => el.rel === 'via')"
-                :key="link"
+                :key="link.href"
                 :href="link.href"
                 target="_blank"
                 class="mx-1 projectLink"
@@ -70,7 +70,9 @@
                 <v-icon>
                   mdi-link
                 </v-icon>
-                WEBSITE
+                <span>
+                  {{ link.href.includes('eo4society.esa.int') ? 'EO4SOCIETY LINK' : 'WEBSITE' }}
+                </span>
               </a>
             </v-row>
           </v-col>
