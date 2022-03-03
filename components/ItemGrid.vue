@@ -9,21 +9,21 @@
       lg="3"
     >
       <v-card
-        :to="`/${type}/${type === 'variable' ? slugify(item.name) : item.id}`"
+        :to="`/${type}/${type === 'variables' ? slugify(item.name) : item.id}`"
         outlined
       >
         <v-card-title>
           <v-chip
             small
             label
-            :color="type === 'variable' ? 'green' : 'primary'"
+            :color="type === 'variables' ? 'green' : 'primary'"
             dark
             class="text-uppercase"
           >
-            {{ type.toUpperCase() }}
+            {{ type.toUpperCase().slice(0, -1) }}
           </v-chip>
           <v-spacer />
-          <div v-if="type === 'project'" class="projectDates">
+          <div v-if="type === 'projects'" class="projectDates">
             <v-icon small>
               mdi-calendar-today
             </v-icon>
@@ -36,15 +36,15 @@
           </div>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
-          {{ type === 'variable' ? item.name : item.properties.title }}
+          {{ type === 'variables' ? item.name : item.properties.title }}
         </v-card-title>
-        <v-card-subtitle v-if="type === 'project'">
+        <v-card-subtitle v-if="type === 'projects'">
           <span v-for="consort in item.properties['osc:consortium']" :key="consort">
             {{ consort }}
           </span>
         </v-card-subtitle>
         <v-card-text>
-          <span v-if="type === 'variable'">
+          <span v-if="type === 'variables'">
             {{ item.recordsNumber }} Records
           </span>
           <span v-else>
