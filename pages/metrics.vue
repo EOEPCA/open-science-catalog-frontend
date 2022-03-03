@@ -111,7 +111,7 @@
                         class="overflow-y-auto"
                       >
                         <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                          {{ variable.name }}: {{ variable.summary.numberOfProducts }}
+                          {{ variable.name }}: {{ variable.summary.numberOfProducts }} records
                         </v-list-item>
                       </v-list>
                     </v-col>
@@ -139,7 +139,7 @@
                       class="overflow-y-auto"
                     >
                       <v-list-item v-for="mission in sortedMissions" :key="mission.name">
-                        {{ mission.name }}: {{ mission.summary.numberOfProducts }}
+                        {{ mission.name }}: {{ mission.summary.numberOfProducts }} records
                       </v-list-item>
                     </v-list>
                   </v-col>
@@ -409,7 +409,7 @@ export default {
 
       return {
         id: 'hoverLabel',
-        afterDraw (chart) {
+        afterDraw: (chart) => {
           const {
             ctx,
             chartArea: { top, width, height }
@@ -425,19 +425,27 @@ export default {
               chart.config.data.datasets[chart._active[0].datasetIndex]
                 .hoverBackgroundColor[chart._active[0].index]
           }
-
           ctx.font = 'bolder 10px Arial'
           ctx.fillStyle = variablesLabelColor
           ctx.textAlign = 'center'
           ctx.fillText(variablesTextLabel || '', width / 2, 15)
 
-          ctx.font = 'bolder 10px Arial'
+          ctx.font = 'bolder 12px Arial'
           ctx.fillStyle = 'black'
           ctx.textAlign = 'center'
           ctx.fillText(
             variablesNumberLabel ? `${variablesNumberLabel} records` : '',
             width / 2,
-            height / 2 + top
+            height / 2 + top - 5
+          )
+
+          ctx.font = 'bolder 10px Arial'
+          ctx.fillStyle = 'grey'
+          ctx.textAlign = 'center'
+          ctx.fillText(
+            variablesNumberLabel ? `${(variablesNumberLabel * 100 / this.metrics.summary.numberOfProducts).toFixed(2)}%` : '',
+            width / 2,
+            height / 2 + top + 10
           )
           ctx.restore()
         }
