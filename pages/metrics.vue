@@ -83,9 +83,9 @@
             <v-card-text class="py-4 black--text">
               <v-container>
                 <div class="d-flex mx-6">
-                  <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
+                  <span>Number of projects: {{ metrics.summary.numberOfProjects }}</span>
                   <v-spacer />
-                  <span>Number of records: {{ metrics.summary.records }}</span>
+                  <span>Number of records: {{ metrics.summary.numberOfProducts }}</span>
                 </div>
 
                 <div style="text-align: center" class="ma-6">
@@ -107,7 +107,7 @@
                     <v-col>
                       Variable list
                       <v-list
-                        style="max-height: 300px"
+                        style="max-height: 250px"
                         class="overflow-y-auto"
                       >
                         <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
@@ -118,11 +118,38 @@
                     <v-col>
                       <canvas
                         id="variablePie"
-                        @mousemove="hoverHandler"
+                        @mousemove="e => hoverHandler(e, 'variablePie')"
                       />
                     </v-col>
                   </v-row>
                 </v-container>
+              </v-container>
+
+              <v-divider style="margin-top: 35px" />
+
+              <v-container>
+                <div style="text-align: center" class="ma-6">
+                  Satellite mission distribution
+                </div>
+                <v-row style="height: 300px">
+                  <v-col>
+                    Satellite mission list
+                    <v-list
+                      style="max-height: 250px"
+                      class="overflow-y-auto"
+                    >
+                      <v-list-item v-for="mission in sortedMissions" :key="mission.name">
+                        {{ mission.name }}: {{ mission.summary.numberOfProducts }}
+                      </v-list-item>
+                    </v-list>
+                  </v-col>
+                  <v-col>
+                    <canvas
+                      id="missionPie"
+                      @mousemove="e => hoverHandler(e, 'missionPie')"
+                    />
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
 
@@ -155,12 +182,14 @@ export default {
   data () {
     this.recordsChart = null
     this.variablePie = null
+    this.missionPie = null
     return {
       dialog: false,
       filter: '',
       selectedTab: 0,
       metrics: null,
-      variables: []
+      variables: [],
+      sortedMissions: []
     }
   },
   head: {
@@ -181,6 +210,9 @@ export default {
       }
       if (this.variablePie) {
         this.variablePie.destroy()
+      }
+      if (this.missionPie) {
+        this.missionPie.destroy()
       }
     }
   },
@@ -294,22 +326,80 @@ export default {
           }
         }
       )
+
+      // Satellite mission doughnut chart setup
+      const missionDataset = {}
+      this.metrics.missions.forEach((mission) => {
+        missionDataset[mission.name] = mission.summary.numberOfProducts
+      })
+      let missionLabels = Object.values(missionDataset)
+      missionLabels = missionLabels.sort((a, b) => {
+        return a - b
+      })
+      this.sortedMissions = this.metrics.missions.sort((a, b) => {
+        if (a.summary.numberOfProducts < b.summary.numberOfProducts) { return 1 }
+        if (a.summary.numberOfProducts > b.summary.numberOfProducts) { return -1 }
+        return 0
+      })
+
+      this.missionPie = new Chart(
+        document.getElementById('missionPie'),
+        {
+          plugins: [this.hoverLabel()],
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(missionDataset),
+            datasets: [
+              {
+                data: missionLabels,
+                backgroundColor: 'white',
+                hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
+                hoverBorderWidth: 0,
+                innerText: missionLabels[0],
+                radius: 110,
+                cutout: 180
+              },
+              {
+                data: missionLabels,
+                backgroundColor: [this.$vuetify.theme.themes.light.applications],
+                hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
+                hoverBorderWidth: 0,
+                innerText: missionLabels[0],
+                radius: 150,
+                cutout: 65
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            events: [],
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                enabled: false
+              }
+            }
+          }
+        }
+      )
     },
-    hoverHandler (e) {
-      const points = this.variablePie.getElementsAtEventForMode(
+    hoverHandler (e, name) {
+      const points = this[name].getElementsAtEventForMode(
         e,
         'nearest',
         { intersect: true },
         true
       )
       if (points.length > 0 && points[0].datasetIndex > 0) {
-        this.variablePie.setActiveElements([
+        this[name].setActiveElements([
           {
             datasetIndex: 0,
             index: points[0].index
           }
         ])
-        this.variablePie.update()
+        this[name].update()
       }
     },
     hoverLabel () {
