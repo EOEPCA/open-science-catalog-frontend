@@ -8,20 +8,24 @@
       class="pb-4 variableHeaderContainer"
     >
       <v-container>
-        <v-row class="ml-2">
-          <span class="mt-3 mb-5 text-h2">
-            {{ project.properties['osc:name'] }}
-            <v-chip
-              color="green"
-              dark
-              label
-            >
-              {{ project.properties['osc:status'] }}
-            </v-chip>
-          </span>
-        </v-row>
         <v-row>
           <v-col>
+            <div
+              :class="$vuetify.breakpoint.mdAndUp ? 'text-h4' : 'text-h6'"
+            >
+              {{ project.properties['osc:name'] }}
+              <v-chip
+                color="green"
+                dark
+                label
+              >
+                {{ project.properties['osc:status'] }}
+              </v-chip>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="6">
             <v-row class="ml-2 pt-0 mt-0 mb-4">
               <v-chip
                 v-for="theme in project.properties['osc:themes']"
@@ -76,55 +80,86 @@
               </a>
             </v-row>
           </v-col>
-          <v-col>
-            <v-row class="ml-2 text-h6">
-              <v-icon>
-                mdi-file-document
-              </v-icon>
-              Description
-            </v-row>
-            <v-row class="ml-2">
-              {{ project.properties.description }}
-            </v-row>
+          <v-col cols="12" md="6">
+            <v-container>
+              <v-row>
+                <v-col>
+                  <template v-if="$vuetify.breakpoint.smAndDown">
+                    <v-scale-transition>
+                      <small v-show="showDescription">{{ project.properties.description }}</small>
+                    </v-scale-transition>
+                    <v-btn
+                      text
+                      x-small
+                      block
+                      @click="showDescription = !showDescription"
+                    >
+                      <v-icon left>
+                        {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
+                      </v-icon>
+                      Description
+                    </v-btn>
+                  </template>
+                  <template v-else>
+                    <v-container>
+                      <v-row class="text-h6">
+                        <v-col>
+                          <v-icon>
+                            mdi-file-document
+                          </v-icon>
+                          Description
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col>
+                          <small>
+                            {{ project.properties.description }}
+                          </small>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </template>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-col>
         </v-row>
       </v-container>
     </div>
-    <v-container class="px-6 mx-6">
-      <v-row class="pa-6">
-        <span class="text-h4">
+    <v-container>
+      <v-row class="mt-2">
+        <v-col class="text-h4">
           Records
-        </span>
+        </v-col>
         <v-spacer />
-        <v-text-field
-          v-model="recordsSearch"
-          hide-details
-          solo
-          outlined
-          single-line
-          style="width: 400px !important; flex-grow: 0"
-          label="Search records"
-          prepend-inner-icon="mdi-magnify"
-        />
+        <v-col class="text-right" cols="12" md="6">
+          <v-text-field
+            v-model="recordsSearch"
+            hide-details
+            solo
+            outlined
+            single-line
+            label="Search records"
+            prepend-inner-icon="mdi-magnify"
+          />
+        </v-col>
       </v-row>
       <v-row>
-        <v-col cols="3">
+        <v-col cols="12" md="8" :class="$vuetify.breakpoint.mdAndUp ? 'd-flex' : ''">
           <v-select
             v-model="recordsFilterSortBy"
             :items="['Name']"
             label="Sort by"
             outlined
+            :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
           />
-        </v-col>
-        <v-col cols="3">
           <v-select
             v-model="recordsFilterOrder"
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
+            :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
           />
-        </v-col>
-        <v-col cols="3">
           <v-select
             v-model="recordsFilterMission"
             :items="['CryoSat2']"
@@ -151,7 +186,8 @@ export default {
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
-      recordsFilterMission: 'CryoSat2'
+      recordsFilterMission: 'CryoSat2',
+      showDescription: false
     }
   },
   head () {

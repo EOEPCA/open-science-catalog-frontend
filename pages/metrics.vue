@@ -107,7 +107,7 @@
                     <v-col>
                       Variable list
                       <v-list
-                        style="max-height: 250px"
+                        style="max-height: 300px"
                         class="overflow-y-auto"
                       >
                         <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
@@ -135,7 +135,7 @@
                   <v-col>
                     Satellite mission list
                     <v-list
-                      style="max-height: 250px"
+                      style="max-height: 300px"
                       class="overflow-y-auto"
                     >
                       <v-list-item v-for="mission in sortedMissions" :key="mission.name">

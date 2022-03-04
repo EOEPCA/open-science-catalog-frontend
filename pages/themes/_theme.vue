@@ -67,7 +67,7 @@
         Variables
       </v-tab>
     </v-tabs>
-    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : ''">
+    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
       <v-tabs-items v-model="tab">
         <v-tab-item>
           <v-row class="px-8 pt-8 d-flex align-center">
@@ -272,7 +272,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .themeTitle {
   background: #003247;
   color: white;
