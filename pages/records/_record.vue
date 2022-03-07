@@ -40,7 +40,7 @@
                 </v-icon>
                 End date {{ record.properties.end_datetime }}
               </v-col>
-              <v-col cols="12">
+              <v-col v-if="record.properties.datetime" cols="12">
                 <v-icon>
                   mdi-calendar-check
                 </v-icon>
@@ -56,7 +56,7 @@
                 <v-icon>
                   mdi-image-outline
                 </v-icon>
-                Satellite missions - {{ record.properties['osc:missions'].join(',') }}
+                Satellite missions - {{ record.properties['osc:missions'].join(', ') }}
               </v-col>
               <v-col cols="12">
                 <v-dialog
