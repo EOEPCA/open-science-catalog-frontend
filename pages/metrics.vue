@@ -1,7 +1,7 @@
 <template>
   <v-container class="white pa-2 pa-sm-0 pa-md-2">
     <v-row
-      class="px-0 white"
+      v-if="metrics"
       :style="`z-index: 5; ${showMobileFilters
         ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
         : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
@@ -15,7 +15,7 @@
             All
           </v-tab>
           <v-tab
-            v-for="theme in themes"
+            v-for="theme in metrics.themes"
             :key="theme.id"
           >
             <div>
@@ -25,7 +25,7 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="12" sm="4" lg="3" class="d-flex align-center pa-2">
+      <v-col cols="12" sm="4" lg="3" class="d-flex align-center pa-3">
         <v-text-field
           v-model="filter"
           hide-details
@@ -38,17 +38,19 @@
         />
       </v-col>
     </v-row>
-    <v-row class="px-0 mt-2 mt-sm-0 mt-md-2">
-      <v-col cols="12" class="pa-0">
+    <v-row class="mt-2 mt-sm-0 mt-md-2">
+      <v-col cols="12" class="py-3 py-sm-0 py-md-3">
         <MetricsTable
           v-if="metrics"
           :filter="filter"
-          :headers="metrics.years"
-          :items="metrics.variables"
+          :headers="metrics.summary.years"
+          :items="variables"
           :table-zoom="tableZoom"
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
+    </v-row>
+    <v-row class="mt-2 mt-sm-0 mt-md-2">
       <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
         <v-container>
           <v-row align="center">
@@ -65,7 +67,6 @@
                     color="applications"
                     dark
                     :block="$vuetify.breakpoint.xsOnly"
-                    @click="fetchVariables"
                     v-on="on"
                   >
                     <v-icon left>
@@ -74,82 +75,12 @@
                     Statistics
                   </v-btn>
                 </template>
-                <v-card>
-                  <v-card-title class="text-h6">
-                    <v-icon color="applications" left>
-                      mdi-poll
-                    </v-icon>
-                    <span>All stats</span>
-                    <v-spacer />
-                    <v-btn
-                      icon
-                      @click="dialog = false"
-                    >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-card-title>
-
-                  <v-divider />
-
-                  <v-card-text class="py-4 black--text">
-                    <v-container>
-                      <div class="d-flex mx-6">
-                        <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
-                        <v-spacer />
-                        <span>Number of records: {{ metrics.summary.records }}</span>
-                      </div>
-
-                      <div style="text-align: center" class="ma-6">
-                        Temporal coverage
-                      </div>
-                      <canvas
-                        id="recordsChart"
-                      />
-                    </v-container>
-
-                    <v-divider />
-
-                    <v-container>
-                      <div style="text-align: center" class="ma-6">
-                        Variable distribution
-                      </div>
-                      <v-container>
-                        <v-row style="height: 300px">
-                          <v-col>
-                            Variable list
-                            <v-list
-                              style="max-height: 300px"
-                              class="overflow-y-auto"
-                            >
-                              <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                                {{ variable.name }}: {{ variable.numberOfRecords }}
-                              </v-list-item>
-                            </v-list>
-                          </v-col>
-                          <v-col>
-                            <canvas
-                              id="variablePie"
-                              @mousemove="hoverHandler"
-                            />
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-container>
-                  </v-card-text>
-
-                  <v-divider />
-
-                  <v-card-actions>
-                    <v-spacer />
-                    <v-btn
-                      color="primary"
-                      text
-                      @click="dialog = false"
-                    >
-                      Close
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
+                <MetricsStatistics
+                  v-if="metrics && variables"
+                  :metrics="metrics"
+                  :variables="variables"
+                  @close="dialog = false"
+                />
               </v-dialog>
               <v-btn
                 v-if="$vuetify.breakpoint.smOnly"
@@ -184,27 +115,20 @@
 </template>
 
 <script>
-import Chart from 'chart.js/auto'
-import annotationPlugin from 'chartjs-plugin-annotation'
+import MetricsStatistics from '@/components/MetricsStatistics.vue'
 
-Chart.register(annotationPlugin)
 export default {
   name: 'Metrics',
-  async asyncData ({ $axios }) {
-    const themes = await $axios.$get('/themes')
-
-    return {
-      themes
-    }
+  components: {
+    MetricsStatistics
   },
   data () {
-    this.recordsChart = null
-    this.variablePie = null
     return {
       dialog: false,
       filter: '',
       selectedTab: 0,
       metrics: null,
+      variables: [],
       tableZoom: 1,
       showMobileFilters: false
     }
@@ -212,187 +136,30 @@ export default {
   head: {
     title: 'Metrics'
   },
-  computed: {
-    nonEmptyVariables () {
-      return this.metrics.variables
-        .filter(variable => variable.numberOfRecords > 0)
-        .sort((a, b) => b.numberOfRecords - a.numberOfRecords)
-    }
-  },
-  watch: {
-    dialog (newDialog) {
-      if (newDialog) { return }
-      if (this.recordsChart) {
-        this.recordsChart.destroy()
-      }
-      if (this.variablePie) {
-        this.variablePie.destroy()
-      }
-    }
-  },
-  async mounted () {
-    this.metrics = await this.$axios.$get('/metrics')
+  mounted () {
+    this.filterItems(null)
   },
   methods: {
-    async fetchVariables () {
-      const response = await this.$axios.$get('/variables/metrics')
+    async filterItems (i) {
+      this.metrics = await this.$axios.$get('/metrics')
+      const variables = []
 
-      // Number of records bar chart setup
-      const recordsDataset = {}
-      response.variables.forEach((record) => {
-        record.years.forEach((year) => {
-          if (recordsDataset[year]) {
-            recordsDataset[year] += 1
-          } else {
-            recordsDataset[year] = 1
-          }
+      const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]
+      themes.forEach((theme) => {
+        theme.variables.forEach((variable) => {
+          variables.push(variable)
         })
       })
-
-      this.recordsChart = new Chart(
-        document.getElementById('recordsChart'),
-        {
-          type: 'bar',
-          data: {
-            labels: this.metrics.years,
-            datasets: [
-              {
-                label: 'Number of records',
-                data: Object.values(recordsDataset),
-                backgroundColor: [
-                  this.$vuetify.theme.themes.light.applications
-                ],
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        }
-      )
-
-      // Variable distribution doughnut chart setup
-      const variableDataset = {}
-      this.nonEmptyVariables.forEach((item) => {
-        variableDataset[item.name] = item.numberOfRecords
+      variables.sort(function (a, b) {
+        if (a.name < b.name) { return -1 }
+        if (a.name > b.name) { return 1 }
+        if (a.name > b.name) { return 1 }
+        return 0
       })
-      let sortedVariables = Object.values(variableDataset)
-      sortedVariables = sortedVariables.sort((a, b) => {
-        return a - b
-      })
-
-      this.variablePie = new Chart(
-        document.getElementById('variablePie'),
-        {
-          plugins: [this.hoverLabel()],
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(variableDataset),
-            datasets: [
-              {
-                data: sortedVariables,
-                backgroundColor: 'white',
-                hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
-                hoverBorderWidth: 0,
-                innerText: sortedVariables[0],
-                radius: 110,
-                cutout: 180
-              },
-              {
-                data: sortedVariables,
-                backgroundColor: [this.$vuetify.theme.themes.light.applications],
-                hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
-                hoverBorderWidth: 0,
-                innerText: sortedVariables[0],
-                radius: 150,
-                cutout: 65
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            events: [],
-            plugins: {
-              legend: {
-                display: false
-              },
-              tooltip: {
-                enabled: false
-              }
-            }
-          }
-        }
-      )
-    },
-    hoverHandler (e) {
-      const points = this.variablePie.getElementsAtEventForMode(
-        e,
-        'nearest',
-        { intersect: true },
-        true
-      )
-      if (points.length > 0 && points[0].datasetIndex > 0) {
-        this.variablePie.setActiveElements([
-          {
-            datasetIndex: 0,
-            index: points[0].index
-          }
-        ])
-        this.variablePie.update()
-      }
-    },
-    hoverLabel () {
-      let variablesTextLabel = null
-      let variablesNumberLabel = null
-      let variablesLabelColor = null
-
-      return {
-        id: 'hoverLabel',
-        afterDraw (chart) {
-          const {
-            ctx,
-            chartArea: { top, width, height }
-          } = chart
-          ctx.save()
-          if (chart._active.length > 0) {
-            variablesTextLabel = chart.config.data.labels[chart._active[0].index]
-            variablesNumberLabel =
-              chart.config.data.datasets[chart._active[0].datasetIndex].data[
-                chart._active[0].index
-              ]
-            variablesLabelColor =
-              chart.config.data.datasets[chart._active[0].datasetIndex]
-                .hoverBackgroundColor[chart._active[0].index]
-          }
-
-          ctx.font = 'bolder 10px Arial'
-          ctx.fillStyle = variablesLabelColor
-          ctx.textAlign = 'center'
-          ctx.fillText(variablesTextLabel || '', width / 2, 15)
-
-          ctx.font = 'bolder 10px Arial'
-          ctx.fillStyle = 'black'
-          ctx.textAlign = 'center'
-          ctx.fillText(
-            variablesNumberLabel ? `${variablesNumberLabel} records` : '',
-            width / 2,
-            height / 2 + top
-          )
-          ctx.restore()
-        }
-      }
-    },
-    async filterItems (e) {
-      if (e === 0) {
-        this.metrics = await this.$axios.$get('/metrics')
-        return
-      }
-      this.metrics = await this.$axios.$get('/metrics/atmosphere/metrics')
+      this.variables = [
+        ...variables.filter(v => v.summary.numberOfProducts >= 1),
+        ...variables.filter(v => v.summary.numberOfProducts < 1)
+      ]
     }
   }
 }

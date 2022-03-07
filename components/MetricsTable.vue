@@ -6,7 +6,7 @@
     :items-per-page="-1"
     :search="filter"
     disable-sort
-    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '65vh'"
+    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '70vh'"
     fixed-header
     hide-default-footer
     show-expand
@@ -42,14 +42,14 @@
     </template>
     <template #[`item.data-table-expand`]="{ item, isExpanded, expand }">
       <v-btn
-        v-if="item.numberOfRecords && !isExpanded"
+        v-if="item.summary.numberOfProducts && !isExpanded"
         icon
         @click="expand(true)"
       >
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
       <v-btn
-        v-else-if="item.numberOfRecords && isExpanded"
+        v-else-if="item.summary.numberOfProducts && isExpanded"
         icon
         @click="expand(false)"
       >
@@ -143,19 +143,19 @@
       #[`item.${year}`]="{ item }"
     >
       <v-progress-linear
-        v-if="item.years.includes(year)"
+        v-if="item.summary.years.includes(year)"
         :key="year"
         color="secondary"
         height="15"
         value="100"
         :style="`border-radius: ${
-          !item.years.includes(headers[index - 1]) ? 5 : 0
+          !item.summary.years.includes(headers[index - 1]) ? 5 : 0
         }px ${
-          !item.years.includes(headers[index + 1]) ? 5 : 0
+          !item.summary.years.includes(headers[index + 1]) ? 5 : 0
         }px ${
-          !item.years.includes(headers[index + 1]) ? 5 : 0
+          !item.summary.years.includes(headers[index + 1]) ? 5 : 0
         }px ${
-          !item.years.includes(headers[index - 1]) ? 5 : 0
+          !item.summary.years.includes(headers[index - 1]) ? 5 : 0
         }px;`"
       />
     </template>
@@ -164,10 +164,13 @@
         top
       >
         <template #activator="{ on }">
-          <small
-            style="cursor: pointer"
+          <nuxt-link
+            style="cursor: pointer; font-size: 12px; text-decoration: none"
+            :to="`variables/${slugify(item.name)}`"
             v-on="on"
-          >{{ item.name }}</small>
+          >
+            {{ item.name }}
+          </nuxt-link>
         </template>
         <span>Go to {{ item.name }} variable</span>
       </v-tooltip>
@@ -175,7 +178,7 @@
     <template #[`item.coverage`]="{ item }">
       <Coverage
         :variable="item"
-        :disable="!item.numberOfRecords"
+        :disable="!item.summary.numberOfProducts"
       />
     </template>
   </v-data-table>
@@ -248,7 +251,7 @@ export default {
       if (!this.isMounted) {
         return
       }
-      const width = this.tableZoom * 1.8 * this.$refs.table.$el.clientWidth / 100
+      const width = this.tableZoom * (this.$vuetify.breakpoint.smOnly ? 1.6 : 1.8) * this.$refs.table.$el.clientWidth / 100
       return {
         '--table-cell': `${width}px`
       }

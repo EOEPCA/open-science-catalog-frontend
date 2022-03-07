@@ -13,22 +13,24 @@
         class="pa-1"
       >
         <nuxt-link
-          :to="`/themes/${theme.name.toLowerCase()}`"
+          :to="`/themes/${slugify(theme.name)}`"
         >
           <div
             class="d-flex align-center elevation-2 rounded"
             style="position: relative; height: 300px; overflow: hidden;
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
-            <img
-              :src="withBase(theme.image.replace('/static/', '/')).slice(0, -3) + 'webp'"
+            <v-img
+              :src="`${$axios.defaults.baseURL}/themes/${theme.image}`"
               width="100%"
+              height="100%"
             >
-            <span
-              class="h1 imageLabel elevation-2"
-            >
-              {{ theme.name }}
-            </span>
+              <span
+                class="h1 imageLabel elevation-2"
+              >
+                {{ theme.name.replace('_', ' ') }}
+              </span>
+            </v-img>
           </div>
         </nuxt-link>
       </v-col>
@@ -40,7 +42,8 @@
 export default {
   name: 'IndexPage',
   async asyncData ({ $axios }) {
-    const themes = await $axios.$get('/themes')
+    const metricsResponse = await $axios.$get('/metrics')
+    const themes = metricsResponse.themes
     return {
       themes
     }

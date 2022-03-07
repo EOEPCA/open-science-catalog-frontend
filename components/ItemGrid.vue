@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="pa-8">
     <v-col
       v-for="item in items"
       :key="item.id"
@@ -8,22 +8,48 @@
       md="4"
       lg="3"
     >
-      <v-card>
+      <v-card
+        :to="`/${type}/${type === 'variables' ? slugify(item.name) : item.id}`"
+        outlined
+      >
         <v-card-title>
           <v-chip
             small
             label
-            color="primary"
+            :color="type === 'variables' ? 'green' : 'primary'"
+            dark
             class="text-uppercase"
           >
-            Record
+            {{ type.toUpperCase().slice(0, -1) }}
           </v-chip>
+          <v-spacer />
+          <div v-if="type === 'projects'" class="projectDates">
+            <v-icon small>
+              mdi-calendar-today
+            </v-icon>
+            {{ item.properties.start_datetime }}
+            -
+            <v-icon small>
+              mdi-calendar
+            </v-icon>
+            {{ item.properties.end_datetime }}
+          </div>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
-          {{ item.name }}
+          {{ type === 'variables' ? item.name : item.properties.title }}
         </v-card-title>
+        <v-card-subtitle v-if="type === 'projects'">
+          <span v-for="consort in item.properties['osc:consortium']" :key="consort">
+            {{ consort }}
+          </span>
+        </v-card-subtitle>
         <v-card-text>
-          {{ item.recordsNumber }} Records
+          <span v-if="type === 'variables'">
+            {{ item.recordsNumber }} Records
+          </span>
+          <span v-else>
+            {{ `${item.properties.description.substring(0, 100)}...` }}
+          </span>
         </v-card-text>
       </v-card>
     </v-col>
@@ -36,7 +62,17 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    type: {
+      type: String,
+      default: () => ''
     }
   }
 }
 </script>
+
+<style>
+.projectDates {
+  font-size: 15px;
+}
+</style>

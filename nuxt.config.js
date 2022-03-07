@@ -43,6 +43,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/with-base',
+    '~/plugins/slugify',
+    '~/plugins/text-to-hex',
     // TEMP plugin for intercepting fake api calls
     '~/plugins/axios',
     { src: '~plugins/ol', ssr: false }
@@ -67,8 +69,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // TEMP
-    baseURL: 'https://raw.githubusercontent.com/EOEPCA/open-science-catalog-frontend/fake-api'
+    baseURL: 'https://eoepca.github.io/open-science-catalog-metadata'
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
