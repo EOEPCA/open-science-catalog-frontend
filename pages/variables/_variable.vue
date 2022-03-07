@@ -72,6 +72,10 @@
         </v-col>
       </v-row>
     </v-container>
+    <item-grid
+      type="records"
+      :items="records"
+    />
   </div>
 </template>
 
@@ -86,6 +90,7 @@ export default {
   data () {
     return {
       variable: null,
+      records: [],
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
@@ -104,6 +109,14 @@ export default {
     }).catch((err) => {
       console.log(err)
     })
+
+    // format records
+    await Promise.all(this.variable.links.map(async (link) => {
+      if (link.rel === 'item') {
+        const recordResponse = await this.$axios.$get(`/products/${link.href.slice(0, -5)}`)
+        this.records.push(recordResponse)
+      }
+    }))
   }
 }
 </script>
