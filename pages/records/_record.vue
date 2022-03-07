@@ -44,7 +44,7 @@
                 <v-icon>
                   mdi-calendar-check
                 </v-icon>
-                Release date {{ record.properties.datetime.slice(0, -10) }}
+                Release date {{ record.properties.datetime && record.properties.datetime.slice(0, -10) }}
               </v-col>
               <v-col cols="12">
                 <v-icon>
@@ -110,9 +110,9 @@
       <v-row>
         <v-col>
           <no-ssr>
-            <div
-              id="mapContainer"
-              style="height: 700px; width: 100%;"
+            <CoverageMap
+              ref="map"
+              :features="[record]"
             />
           </no-ssr>
         </v-col>
@@ -122,23 +122,17 @@
 </template>
 
 <script>
-// import Draw from 'ol/interaction/Draw'
+import CoverageMap from '@/components/CoverageMap.vue'
 
 export default {
   name: 'RecordSingle',
+  components: {
+    CoverageMap
+  },
   data () {
     return {
       record: null,
-      showDescription: false,
-      map: null,
-      baseLayers: [
-        {
-          layer: 'terrain-light_3857'
-        },
-        {
-          layer: 'overlay_bright_3857'
-        }
-      ]
+      showDescription: false
     }
   },
   head () {
@@ -150,44 +144,6 @@ export default {
     await this.$staticCatalog.$get(`products/${this.$route.params.record}`).then((res) => {
       this.record = res
     })
-    const ol = this.$ol
-    const parser = new ol.WMTSCapabilities()
-
-    fetch('https://s2maps.eu/WMTSCapabilities.xml')
-      .then((response) => {
-        return response.text()
-      })
-      .then((text) => {
-        const result = parser.read(text)
-
-        const layers = []
-        this.baseLayers.forEach((baselayer) => {
-          const options = ol.optionsFromCapabilities(result, {
-            layer: baselayer.layer,
-            matrixSet: 'EPSG:3857'
-          })
-          layers.push(new ol.TileLayer({
-            opacity: 1,
-            source: new ol.WMTS(options)
-          }))
-        })
-
-        this.map = new ol.Map({
-          layers,
-          target: 'mapContainer',
-          view: new ol.View({
-            center: [0, 0],
-            zoom: 0
-          })
-        })
-
-        // this.map.addInteraction(
-        //   new Draw({
-        //     type: 'Feature',
-        //     source: this.record.geometry
-        //   })
-        // )
-      })
   }
 }
 </script>

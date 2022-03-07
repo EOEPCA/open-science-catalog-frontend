@@ -85,6 +85,7 @@
                       small
                       color="applications"
                       :to="`/records/${record.id}`"
+                      target="_blank"
                       v-on="on"
                     >
                       <v-icon>
@@ -139,7 +140,7 @@
               </td>
               <td class="px-4 subCell">
                 <Coverage
-                  :record="record"
+                  :records="[record]"
                 />
               </td>
             </tr>
@@ -187,7 +188,9 @@
     <template #[`item.coverage`]="{ item }">
       <Coverage
         :variable="item"
+        :records="records[slugify(item.name)]"
         :disable="!item.summary.numberOfProducts"
+        @loadRecords="expandVariable(item)"
       />
     </template>
   </v-data-table>
@@ -223,22 +226,8 @@ export default {
     return {
       isMounted: false,
       expanded: [],
+      variables: {},
       records: {}
-      // records: [
-      //   {
-      //     name: 'Bathymetry_Arctic_Cryosat',
-      //     years: [
-      //       2014
-      //     ]
-      //   },
-      //   {
-      //     name: 'Satellite SAR altimeter product_Sea Floor Mapping_Oceania_Cryosat',
-      //     years: [
-      //       2012,
-      //       2013
-      //     ]
-      //   }
-      // ]
     }
   },
   computed: {
@@ -295,17 +284,19 @@ export default {
     })
   },
   methods: {
-    async expandVariable(item) {
+    async expandVariable (item) {
       const variableSlug = this.slugify(item.name)
       if (!this.records[variableSlug]) {
         const variable = await this.$staticCatalog.$get(`/variables/${variableSlug}`)
-        this.$set(this.records, variableSlug, [])
+        this.$set(this.variables, variableSlug, this.variable)
+        const records = []
         await Promise.all(variable.links.map(async (link) => {
           if (link.rel === 'item') {
             const recordResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
-            this.records[variableSlug].push(recordResponse)
+            records.push(recordResponse)
           }
         }))
+        this.$set(this.records, variableSlug, records)
       }
     },
     getRecords (name) {
