@@ -50,6 +50,9 @@
           <span v-else>
             {{ `${item.properties.description.substring(0, 100)}...` }}
           </span>
+          <div v-if="type === 'records' && 'osc:themes' in item.properties" class="mt-2">
+            - {{ item.properties['osc:themes'].join(', ') }}
+          </div>
         </v-card-text>
       </v-card>
     </v-col>

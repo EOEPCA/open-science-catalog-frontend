@@ -39,6 +39,10 @@ export default {
     project: {
       type: String,
       default: null
+    },
+    record: {
+      type: String,
+      default: null
     }
   },
   computed: {
@@ -72,6 +76,15 @@ export default {
                 text: this.variable,
                 href: `/variables/${this.slugify(this.variable)}`,
                 type: 'variable'
+              }
+            ]
+          : []),
+        ...(this.record
+          ? [
+              {
+                text: this.record,
+                href: `/records/${this.slugify(this.record)}`,
+                type: 'record'
               }
             ]
           : [])

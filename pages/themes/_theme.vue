@@ -5,7 +5,7 @@
     />
     <div
       ref="themeBanner"
-      :style="`backgroundImage: url('${$axios.defaults.baseURL}/themes/${theme.assets.image.href}');
+      :style="`backgroundImage: url('${$staticCatalog.defaults.baseURL}/themes/${theme.assets.image.href}');
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center center;`"
@@ -206,8 +206,8 @@ export default {
     }
   },
   async created () {
-    this.theme = await this.$axios.$get(`/themes/${this.$route.params.theme}`)
-    const allThemes = await this.$axios.$get('/metrics')
+    this.theme = await this.$staticCatalog.$get(`/themes/${this.$route.params.theme}`)
+    const allThemes = await this.$staticCatalog.$get('/metrics')
 
     // format theme variables data
     allThemes.themes.forEach((element) => {
@@ -221,7 +221,7 @@ export default {
     // format theme project data
     await Promise.all(this.theme.links.map(async (link) => {
       if (link.rel === 'item') {
-        const projectResponse = await this.$axios.$get(`/themes/${link.href.slice(0, -5)}`)
+        const projectResponse = await this.$staticCatalog.$get(`/themes/${link.href.slice(0, -5)}`)
         this.projectDetailsRaw.push(projectResponse)
       }
     }))

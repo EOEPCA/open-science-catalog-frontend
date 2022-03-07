@@ -21,7 +21,7 @@
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
             <v-img
-              :src="`${$axios.defaults.baseURL}/themes/${theme.image}`"
+              :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
               width="100%"
               height="100%"
             >
@@ -41,9 +41,9 @@
 <script>
 export default {
   name: 'IndexPage',
-  async asyncData ({ $axios }) {
-    const metricsResponse = await $axios.$get('/metrics')
-    const themes = metricsResponse.themes
+  async asyncData ({ $staticCatalog }) {
+    const metricsResponse = await $staticCatalog.$get('/metrics')
+    const themes = metricsResponse.themes.sort((a, b) => (b.name > a.name) ? -1 : 1)
     return {
       themes
     }

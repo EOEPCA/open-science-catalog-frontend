@@ -4,6 +4,7 @@
     :headers="transformedHeaders"
     :items="items"
     :items-per-page="-1"
+    item-key="name"
     :search="filter"
     disable-sort
     :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '70vh'"
@@ -44,14 +45,14 @@
       <v-btn
         v-if="item.summary.numberOfProducts && !isExpanded"
         icon
-        @click="expand(true)"
+        @click="() => {expand(true); expandVariable(item)}"
       >
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
       <v-btn
         v-else-if="item.summary.numberOfProducts && isExpanded"
         icon
-        @click="expand(false)"
+        @click="() => {expand(false); expandVariable(item)}"
       >
         <v-icon>mdi-chevron-up</v-icon>
       </v-btn>
@@ -62,8 +63,9 @@
         No products available
       </div>
     </template>
-    <template #expanded-item>
+    <template #expanded-item="{ item }">
       <td
+        v-if="getRecords(item.name).length > 0"
         :colspan="transformedHeaders.length + 1"
         class="pa-0"
         style="z-index: 0 !important"
@@ -71,8 +73,8 @@
         <table style="width: 100%; border-spacing: 0;">
           <tbody>
             <tr
-              v-for="record in records"
-              :key="record.name"
+              v-for="record in getRecords(item.name)"
+              :key="record.id"
               style="line-height: 3;"
             >
               <td class="px-4 text-start subCell">
@@ -82,6 +84,8 @@
                       icon
                       small
                       color="applications"
+                      :to="`/records/${record.id}`"
+                      target="_blank"
                       v-on="on"
                     >
                       <v-icon>
@@ -89,7 +93,7 @@
                       </v-icon>
                     </v-btn>
                   </template>
-                  <span>Go to {{ record.name }} record</span>
+                  <span>Go to {{ record.properties.title }} record</span>
                 </v-tooltip>
               </td>
               <td class="px-4 py-2 subCell">
@@ -97,40 +101,46 @@
                   top
                 >
                   <template #activator="{ on }">
-                    <small
-                      style="cursor: pointer"
-                      v-on="on"
-                    >{{ record.name }}</small>
+                    <nuxt-link
+                      :to="`/records/${record.id}`"
+                      style="text-decoration: none"
+                    >
+                      <small
+                        style="cursor: pointer"
+                        v-on="on"
+                      >{{ record.properties.title }}</small>
+                    </nuxt-link>
                   </template>
-                  <span>Go to {{ record.name }} record</span>
+                  <span>Go to {{ record.properties.title }} record</span>
                 </v-tooltip>
               </td>
               <td
-                v-for="(year, index) in headers"
+                v-for="year in headers"
                 :key="year"
                 class="subCell"
               >
                 <v-progress-linear
-                  v-if="record.years.includes(year)"
+                  v-if="record.properties.start_datetime.slice(0, 4) <= year
+                    && record.properties.end_datetime.slice(0, 4) >= year"
                   :key="year"
                   color="applications"
                   height="15"
                   value="100"
                   :style="`border-radius: ${
-                    !record.years.includes(headers[index - 1]) ? 5 : 0
+                    record.properties.start_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    !record.years.includes(headers[index + 1]) ? 5 : 0
+                    record.properties.end_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    !record.years.includes(headers[index + 1]) ? 5 : 0
+                    record.properties.end_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    !record.years.includes(headers[index - 1]) ? 5 : 0
+                    record.properties.start_datetime.slice(0, 4) == year ? 5 : 0
                   }px`"
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
               <td class="px-4 subCell">
                 <Coverage
-                  :record="record"
+                  :records="[record]"
                 />
               </td>
             </tr>
@@ -178,7 +188,9 @@
     <template #[`item.coverage`]="{ item }">
       <Coverage
         :variable="item"
+        :records="records[slugify(item.name)]"
         :disable="!item.summary.numberOfProducts"
+        @loadRecords="expandVariable(item)"
       />
     </template>
   </v-data-table>
@@ -214,21 +226,8 @@ export default {
     return {
       isMounted: false,
       expanded: [],
-      records: [
-        {
-          name: 'Bathymetry_Arctic_Cryosat',
-          years: [
-            2014
-          ]
-        },
-        {
-          name: 'Satellite SAR altimeter product_Sea Floor Mapping_Oceania_Cryosat',
-          years: [
-            2012,
-            2013
-          ]
-        }
-      ]
+      variables: {},
+      records: {}
     }
   },
   computed: {
@@ -283,6 +282,30 @@ export default {
         }
       })
     })
+  },
+  methods: {
+    async expandVariable (item) {
+      const variableSlug = this.slugify(item.name)
+      if (!this.records[variableSlug]) {
+        const variable = await this.$staticCatalog.$get(`/variables/${variableSlug}`)
+        this.$set(this.variables, variableSlug, this.variable)
+        const records = []
+        await Promise.all(variable.links.map(async (link) => {
+          if (link.rel === 'item') {
+            const recordResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
+            records.push(recordResponse)
+          }
+        }))
+        this.$set(this.records, variableSlug, records)
+      }
+    },
+    getRecords (name) {
+      let records = []
+      if (this.records[this.slugify(name)]) {
+        records = this.records[this.slugify(name)]
+      }
+      return records
+    }
   }
 }
 </script>

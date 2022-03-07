@@ -126,28 +126,18 @@
         </v-row>
       </v-container>
     </div>
-    <v-container>
+    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
       <v-row class="mt-2">
-        <v-col class="text-h4">
-          Records
+        <v-col cols="12" md="4">
+          <span class="text-h2">
+            Records
+          </span>
         </v-col>
-        <v-spacer />
-        <v-col class="text-right" cols="12" md="6">
-          <v-text-field
-            v-model="recordsSearch"
-            hide-details
-            solo
-            outlined
-            single-line
-            label="Search records"
-            prepend-inner-icon="mdi-magnify"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="12" md="8" :class="$vuetify.breakpoint.mdAndUp ? 'd-flex' : ''">
+        <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+          <v-spacer />
           <v-select
             v-model="recordsFilterSortBy"
+            dense
             :items="['Name']"
             label="Sort by"
             outlined
@@ -155,16 +145,35 @@
           />
           <v-select
             v-model="recordsFilterOrder"
+            dense
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
             :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
           />
-          <v-select
-            v-model="recordsFilterMission"
-            :items="['CryoSat2']"
-            label="Satellite mission"
+          <v-text-field
+            v-model="recordsSearch"
+            dense
+            hide-details
             outlined
+            single-line
+            label="Search records"
+            prepend-inner-icon="mdi-magnify"
+          />
+        </v-col>
+      </v-row>
+      <item-grid
+        type="records"
+        :items="records"
+      />
+      <v-row>
+        <v-col cols="12" class="text-center">
+          <v-pagination
+            v-model="page"
+            :length="numberOfPages"
+            @input="filterRecords"
+            @next="filterRecords"
+            @previous="filterRecords"
           />
         </v-col>
       </v-row>
@@ -183,11 +192,13 @@ export default {
   data () {
     return {
       project: null,
+      records: [],
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
-      recordsFilterMission: 'CryoSat2',
-      showDescription: false
+      showDescription: false,
+      page: 1,
+      numberOfPages: 1
     }
   },
   head () {
@@ -197,11 +208,16 @@ export default {
   },
   async created () {
     // todo handle variable names divided by '_'
-    await this.$axios.$get(`projects/${this.$route.params.project}`).then((res) => {
+    await this.$staticCatalog.$get(`projects/${this.$route.params.project}`).then((res) => {
       this.project = res
     }).catch((err) => {
       console.log(err)
     })
+
+    const recordsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items&startindex=${
+      (this.page - 1) * 10}`)
+    this.records = recordsResponse.features
+    this.numberOfPages = Math.round(recordsResponse.numberMatched / 10)
   }
 }
 </script>
