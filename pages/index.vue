@@ -43,7 +43,7 @@ export default {
   name: 'IndexPage',
   async asyncData ({ $staticCatalog }) {
     const metricsResponse = await $staticCatalog.$get('/metrics')
-    const themes = metricsResponse.themes
+    const themes = metricsResponse.themes.sort((a, b) => (b.name > a.name) ? -1 : 1)
     return {
       themes
     }
