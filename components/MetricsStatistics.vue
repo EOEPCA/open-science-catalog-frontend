@@ -43,11 +43,23 @@
             <v-col>
               <strong>Variable list</strong>
               <v-list
+                dense
                 style="max-height: 400px"
                 class="overflow-y-auto"
               >
-                <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                  {{ variable.name }}: {{ variable.summary.numberOfProducts }} records
+                <v-list-item
+                  v-for="variable in nonEmptyVariables"
+                  :key="variable.id"
+                  class="px-0"
+                >
+                  <v-list-item-icon class="mr-2">
+                    <v-icon color="applications">
+                      mdi-circle-medium
+                    </v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    {{ variable.name }}: {{ variable.summary.numberOfProducts }} records
+                  </v-list-item-content>
                 </v-list-item>
               </v-list>
             </v-col>
@@ -71,12 +83,23 @@
           <v-col>
             <strong>Satellite mission list</strong>
             <v-list
+              dense
               style="max-height: 400px"
               class="overflow-y-auto"
             >
-              <!-- // TODO: get mission color here -->
-              <v-list-item v-for="mission in sortedMissions" :key="mission.name">
-                {{ mission.name }}: {{ mission.summary.numberOfProducts }} records
+              <v-list-item
+                v-for="mission in sortedMissions"
+                :key="mission.name"
+                class="px-0"
+              >
+                <v-list-item-icon class="mr-2">
+                  <v-icon :color="$textToHex(mission.name)">
+                    mdi-circle-medium
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  {{ mission.name }}: {{ mission.summary.numberOfProducts }} records
+                </v-list-item-content>
               </v-list-item>
             </v-list>
           </v-col>
@@ -212,6 +235,7 @@ export default {
           plugins: [this.hoverLabel()],
           type: 'doughnut',
           data: {
+            id: 'variablePie',
             labels: Object.keys(variableDataset),
             datasets: [
               {
@@ -269,6 +293,7 @@ export default {
           plugins: [this.hoverLabel()],
           type: 'doughnut',
           data: {
+            id: 'missionPie',
             labels: Object.keys(missionDataset),
             datasets: [
               {
@@ -342,10 +367,10 @@ export default {
               chart.config.data.datasets[chart._active[0].datasetIndex].data[
                 chart._active[0].index
               ]
-            variablesLabelColor =
-              chart.config.data.datasets[chart._active[0].datasetIndex]
+            variablesLabelColor = chart.config.data.id === 'missionPie'
+              ? this.$textToHex(variablesTextLabel)
+              : chart.config.data.datasets[chart._active[0].datasetIndex]
                 .hoverBackgroundColor
-            // TODO: get mission color here
           }
           ctx.font = '20px Roboto'
           ctx.fillStyle = variablesLabelColor
