@@ -38,134 +38,133 @@
           :filter="filter"
           :headers="metrics.years"
           :items="metrics.variables"
-          :visibleHeaders="selectedHeaderNumber"
           :table-zoom="tableZoom"
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
-      <v-col v-if="metrics" cols="12" class="text-right">
-        <v-row justify="end" align="center">
-          <v-col cols="2" class="d-flex align-center">
-            <v-slider
-              v-model="tableZoom"
-              hide-details
-              min="35"
-              max="95"
-              step="30"
-              ticks="always"
-              tick-size="4"
-              :prepend-icon="'mdi-magnify-minus-outline'"
-              :append-icon="'mdi-magnify-plus-outline'"
-            />
-          </v-col>
-          <v-dialog
-            v-model="dialog"
-            scrollable
-            width="1000"
-          >
-            <template #activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                class="align-self-center"
-                color="applications"
-                dark
-                x-large
-                :block="$vuetify.breakpoint.xsOnly"
-                @click="fetchVariables"
-                v-on="on"
+      <v-col v-if="metrics" cols="12">
+        <v-container>
+          <v-row align="center">
+            <v-col cols="6">
+              <v-dialog
+                v-model="dialog"
+                scrollable
+                width="1000"
               >
-                <v-icon left>
-                  mdi-poll
-                </v-icon>
-                Statistics
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title class="text-h6">
-                <v-icon color="applications" left>
-                  mdi-poll
-                </v-icon>
-                <span>All stats</span>
-                <v-spacer />
-                <v-btn
-                  icon
-                  @click="dialog = false"
-                >
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-card-title>
-
-              <v-divider />
-
-              <v-card-text class="py-4 black--text">
-                <v-container>
-                  <div class="d-flex mx-6">
-                    <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="align-self-center"
+                    color="applications"
+                    dark
+                    large
+                    :block="$vuetify.breakpoint.xsOnly"
+                    @click="fetchVariables"
+                    v-on="on"
+                  >
+                    <v-icon left>
+                      mdi-poll
+                    </v-icon>
+                    Statistics
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="text-h6">
+                    <v-icon color="applications" left>
+                      mdi-poll
+                    </v-icon>
+                    <span>All stats</span>
                     <v-spacer />
-                    <span>Number of records: {{ metrics.summary.records }}</span>
-                  </div>
+                    <v-btn
+                      icon
+                      @click="dialog = false"
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-card-title>
 
-                  <div style="text-align: center" class="ma-6">
-                    Temporal coverage
-                  </div>
-                  <canvas
-                    id="recordsChart"
-                  />
-                </v-container>
+                  <v-divider />
 
-                <v-divider />
+                  <v-card-text class="py-4 black--text">
+                    <v-container>
+                      <div class="d-flex mx-6">
+                        <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
+                        <v-spacer />
+                        <span>Number of records: {{ metrics.summary.records }}</span>
+                      </div>
 
-                <v-container>
-                  <div style="text-align: center" class="ma-6">
-                    Variable distribution
-                  </div>
-                  <v-container>
-                    <v-row style="height: 300px">
-                      <v-col>
-                        Variable list
-                        <v-list
-                          style="max-height: 300px"
-                          class="overflow-y-auto"
-                        >
-                          <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                            {{ variable.name }}: {{ variable.numberOfRecords }}
-                          </v-list-item>
-                        </v-list>
-                      </v-col>
-                      <v-col>
-                        <canvas
-                          id="variablePie"
-                          @mousemove="hoverHandler"
-                        />
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-container>
-              </v-card-text>
+                      <div style="text-align: center" class="ma-6">
+                        Temporal coverage
+                      </div>
+                      <canvas
+                        id="recordsChart"
+                      />
+                    </v-container>
 
-              <v-divider />
+                    <v-divider />
 
-              <v-card-actions>
-                <v-spacer />
-                <v-btn
-                  color="primary"
-                  text
-                  @click="dialog = false"
-                >
-                  Close
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-          <v-col cols="2">
-            <v-select
-              v-model="selectedHeaderNumber"
-              :items="headerNumber"
-              hide-details
-              outlined
-            />
-          </v-col>
-        </v-row>
+                    <v-container>
+                      <div style="text-align: center" class="ma-6">
+                        Variable distribution
+                      </div>
+                      <v-container>
+                        <v-row style="height: 300px">
+                          <v-col>
+                            Variable list
+                            <v-list
+                              style="max-height: 300px"
+                              class="overflow-y-auto"
+                            >
+                              <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
+                                {{ variable.name }}: {{ variable.numberOfRecords }}
+                              </v-list-item>
+                            </v-list>
+                          </v-col>
+                          <v-col>
+                            <canvas
+                              id="variablePie"
+                              @mousemove="hoverHandler"
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-container>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-divider />
+
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="primary"
+                      text
+                      @click="dialog = false"
+                    >
+                      Close
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-col>
+            <v-spacer />
+            <v-col cols="6" class="d-flex align-center justify-end">
+              <v-slider
+                v-model="tableZoom"
+                hide-details
+                min="1"
+                max="3"
+                step="1"
+                ticks="always"
+                tick-size="4"
+                style="max-width: 300px"
+                :prepend-icon="'mdi-magnify-minus-outline'"
+                :append-icon="'mdi-magnify-plus-outline'"
+                @click:prepend="tableZoom > 1 ? tableZoom-- : null"
+                @click:append="tableZoom < 3 ? tableZoom++ : null"
+              />
+            </v-col>
+          </v-row>
+        </v-container>
       </v-col>
     </v-row>
   </v-container>
@@ -193,9 +192,7 @@ export default {
       filter: '',
       selectedTab: 0,
       metrics: null,
-      headerNumber: ['5', '10', '15', 'All'],
-      selectedHeaderNumber: '5',
-      tableZoom: 100
+      tableZoom: 1
     }
   },
   head: {

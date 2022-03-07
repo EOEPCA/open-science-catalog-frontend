@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    ref="table"
     :headers="transformedHeaders"
     :items="items"
     :items-per-page="-1"
@@ -12,6 +13,7 @@
     :expanded.sync="expanded"
     :mobile-breakpoint="0"
     :style="cssProps"
+    :class="tableZoom < 2 ? 'hide-even ' : ''"
   >
     <template #[`header.name`]="{ header }">
       {{ header.text }}
@@ -200,10 +202,6 @@ export default {
       type: Array,
       default: () => ([])
     },
-    visibleHeaders: {
-      type: String,
-      default: () => ('')
-    },
     tableZoom: {
       type: Number,
       default: 100
@@ -211,6 +209,7 @@ export default {
   },
   data () {
     return {
+      isMounted: false,
       expanded: [],
       records: [
         {
@@ -246,15 +245,16 @@ export default {
       return newHeaders
     },
     cssProps () {
+      if (!this.isMounted) {
+        return
+      }
+      const width = this.tableZoom * 1.8 * this.$refs.table.$el.clientWidth / 100
       return {
-        '--table-percent': `${this.tableZoom}px`
+        '--table-cell': `${width}px`
       }
     }
   },
   watch: {
-    visibleHeaders(newHeaders) {
-      this.updateHeaderClasses(newHeaders)
-    },
     tableZoom () {
       // TODO this keeps the table scrolled right, but ideally it stays at the current center point
       this.$nextTick(() => {
@@ -263,6 +263,7 @@ export default {
     }
   },
   mounted () {
+    this.isMounted = true
     this.$nextTick(() => {
       document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
       document.querySelector('table').addEventListener('mouseover', (e) => {
@@ -278,38 +279,17 @@ export default {
           })
         }
       })
-      this.updateHeaderClasses(this.visibleHeaders)
     })
-  },
-  methods: {
-    updateHeaderClasses(newHeaders) {
-      document.querySelectorAll('th').forEach((header) => {
-        header.classList.remove('visibleHeader')
-        header.children[0].classList.remove('visibleHeaderSpan')
-      })
-      document.querySelectorAll(`th:nth-child(${newHeaders === 'All' ? 1 : parseInt(this.headers.length / newHeaders)}n)`).forEach((header) => {
-        header.classList.add('visibleHeader')
-        header.children[0].classList.add('visibleHeaderSpan')
-      })
-    }
   }
 }
 </script>
-
-<style>
-.visibleHeader {
-  z-index: 2 !important;
-}
-.visibleHeaderSpan {
-  visibility: visible !important;
-}
-</style>
 
 <style scoped>
 ::v-deep table {
   font-size: 14px;
   font-weight: 700;
 }
+::v-deep table th:not(:first-child, :nth-child(2), :last-child),
 ::v-deep table td:not(:first-child, :nth-child(2), :last-child) {
   padding: 0 !important;
 }
@@ -425,36 +405,21 @@ export default {
   pointer-events: none;
 }
 
-/* otherwise it breaks if there is too much space to take, not sure about the correct pixel values */
-/* currently they are different for first, 2nd and last child */
-/* ::v-deep th:first-child, ::v-deep th:nth-child(2), ::v-deep th:last-child,
-::v-deep td:first-child, ::v-deep td:nth-child(2), ::v-deep td:last-child{
-  width: 5px !important;
-  min-width: 5px !important;
-  max-width: 5px !important;
-} */
 ::v-deep th:not(:first-child, :nth-child(2), :last-child),
 ::v-deep td:not(:first-child, :nth-child(2), :last-child) {
-  /* 1px --> minimum slider value */
-  width: var(--table-percent);
-  min-width: var(--table-percent);
-  max-width: var(--table-percent);
-  /* 60px or 100px --> maximum slider value
- 
-  width: 60px;
-  min-width: 60px;
-  max-width: 60px;
-  /* width: 100px;
-  min-width: 100px;
-  max-width: 100px; */
+  width: var(--table-cell);
+  min-width: var(--table-cell);
+  max-width: var(--table-cell);
 }
 
-::v-deep th:not(:first-child, :nth-child(2), :last-child) {
-  z-index: 2 !important;
+.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(odd) {
+  z-index: 3;
+  text-align: center;
 }
-::v-deep th:not(:first-child, :nth-child(2), :last-child) > span {
+.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) {
+  z-index: 2;
+}
+.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) > span {
   visibility: hidden;
 }
-
-/* probably it will be enough to do some settings for e.g. 300px width, 500px, 750px, 1000px and above */
 </style>
