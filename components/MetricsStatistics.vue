@@ -16,7 +16,7 @@
 
     <v-divider />
 
-    <v-card-text class="py-4 black--text">
+    <v-card-text class="py-4 black--text px-0 px-md-6">
       <v-container>
         <div class="d-flex mx-6">
           <span>Number of projects: {{ metrics.summary.numberOfProjects }}</span>
@@ -220,7 +220,7 @@ export default {
                 hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
                 hoverBorderWidth: 0,
                 innerText: sortedVariables[0],
-                radius: 160,
+                radius: '80%',
                 cutout: '90%'
               },
               {
@@ -229,12 +229,13 @@ export default {
                 hoverBackgroundColor: [this.$vuetify.theme.themes.light.applications],
                 hoverBorderWidth: 0,
                 innerText: sortedVariables[0],
-                radius: 195
+                radius: '97%'
               }
             ]
           },
           options: {
             responsive: true,
+            aspectRatio: 1,
             events: [],
             plugins: {
               legend: {
@@ -276,7 +277,7 @@ export default {
                 hoverBackgroundColor: getMissionColor,
                 hoverBorderWidth: 0,
                 innerText: missionLabels[0],
-                radius: 160,
+                radius: '80%',
                 cutout: '90%'
               },
               {
@@ -285,12 +286,13 @@ export default {
                 hoverBackgroundColor: getMissionColor,
                 hoverBorderWidth: 0,
                 innerText: missionLabels[0],
-                radius: 195
+                radius: '97%'
               }
             ]
           },
           options: {
             responsive: true,
+            aspectRatio: 1,
             events: [],
             plugins: {
               legend: {
