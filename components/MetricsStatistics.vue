@@ -347,12 +347,12 @@ export default {
                 .hoverBackgroundColor
             // TODO: get mission color here
           }
-          ctx.font = 'bolder 14px Arial'
+          ctx.font = '20px Roboto'
           ctx.fillStyle = variablesLabelColor
           ctx.textAlign = 'center'
           ctx.fillText(variablesTextLabel || '', width / 2, 15)
 
-          ctx.font = 'bolder 12px Arial'
+          ctx.font = 'bold 16px Roboto'
           ctx.fillStyle = 'black'
           ctx.textAlign = 'center'
           ctx.fillText(
@@ -361,13 +361,13 @@ export default {
             height / 2 + top - 5
           )
 
-          ctx.font = 'bolder 10px Arial'
+          ctx.font = '14px Roboto'
           ctx.fillStyle = 'grey'
           ctx.textAlign = 'center'
           ctx.fillText(
             variablesNumberLabel ? `${(variablesNumberLabel * 100 / this.metrics.summary.numberOfProducts).toFixed(2)}%` : '',
             width / 2,
-            height / 2 + top + 10
+            height / 2 + top + 15
           )
           ctx.restore()
         }
