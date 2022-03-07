@@ -169,6 +169,10 @@
         </v-col>
       </v-row>
     </v-container>
+    <item-grid
+      type="records"
+      :items="records"
+    />
   </div>
 </template>
 
@@ -183,6 +187,7 @@ export default {
   data () {
     return {
       project: null,
+      records: [],
       recordsSearch: '',
       recordsFilterSortBy: 'Name',
       recordsFilterOrder: 'Ascending',
@@ -202,6 +207,9 @@ export default {
     }).catch((err) => {
       console.log(err)
     })
+
+    const recordsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items`)
+    this.records = recordsResponse.features
   }
 }
 </script>

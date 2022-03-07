@@ -43,15 +43,17 @@
           style="width: 400px !important; flex-grow: 0"
           label="Search records"
           prepend-inner-icon="mdi-magnify"
+          @input="filterRecords"
         />
       </v-row>
       <v-row>
         <v-col cols="3">
           <v-select
             v-model="recordsFilterSortBy"
-            :items="['Name']"
+            :items="recordsFilterOptions"
             label="Sort by"
             outlined
+            @change="filterRecords"
           />
         </v-col>
         <v-col cols="3">
@@ -60,6 +62,7 @@
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
+            @change="filterRecords"
           />
         </v-col>
         <v-col cols="3">
@@ -92,7 +95,17 @@ export default {
       variable: null,
       records: [],
       recordsSearch: '',
-      recordsFilterSortBy: 'Name',
+      recordsFilterOptions: [
+        {
+          text: 'Name',
+          value: 'title'
+        },
+        {
+          text: 'Description',
+          value: 'description'
+        }
+      ],
+      recordsFilterSortBy: 'title',
       recordsFilterOrder: 'Ascending',
       recordsFilterMission: 'CryoSat2'
     }
@@ -117,6 +130,17 @@ export default {
         this.records.push(recordResponse)
       }
     }))
+  },
+  methods: {
+    async filterRecords () {
+      const queryString = `/collections/metadata:main/items?type=dataset&q=${this.$metaInfo.title + (this.recordsSearch ? `+${this.recordsSearch}` : '')}&sortby=${this.recordsFilterSortBy}`
+      const recordsResponse = await this.$dynamicCatalog.$get(queryString)
+
+      if (this.recordsFilterOrder === 'Descending') {
+        this.records = recordsResponse.features.reverse()
+      }
+      this.records = recordsResponse.features
+    }
   }
 }
 </script>

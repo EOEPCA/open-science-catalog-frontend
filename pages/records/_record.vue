@@ -40,7 +40,7 @@
                 </v-icon>
                 End date {{ record.properties.end_datetime }}
               </v-col>
-              <v-col cols="12">
+              <v-col v-if="record.properties.datetime" cols="12">
                 <v-icon>
                   mdi-calendar-check
                 </v-icon>
@@ -56,7 +56,68 @@
                 <v-icon>
                   mdi-image-outline
                 </v-icon>
-                Satellite missions - {{ record.properties['osc:missions'].join(',') }}
+                Satellite missions - {{ record.properties['osc:missions'].join(', ') }}
+              </v-col>
+              <v-col cols="12">
+                <v-dialog
+                  v-model="productsDialog"
+                  width="500"
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-btn
+                      color="primary"
+                      dark
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      Products
+                    </v-btn>
+                  </template>
+                  <v-card>
+                    <v-card-title>
+                      Product links
+                      <v-spacer />
+                      <v-icon @click="productsDialog = false">
+                        mdi-close
+                      </v-icon>
+                    </v-card-title>
+                    <v-divider />
+                    <v-card-text>
+                      <v-row>
+                        <v-col
+                          v-for="link in record.links.filter(el => el.rel === 'via')"
+                          :key="link.href"
+                          cols="6"
+                        >
+                          <v-card class="pa-4" outlined>
+                            <v-chip
+                              color="green"
+                              small
+                              label
+                              dark
+                            >
+                              Link
+                            </v-chip>
+                            <div>
+                              Website
+                            </div>
+                            <v-icon>
+                              mdi-web
+                            </v-icon>
+                            Type URL
+                            <v-btn
+                              color="primary"
+                              :href="link.href"
+                              target="_blank"
+                            >
+                              Open Link
+                            </v-btn>
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-dialog>
               </v-col>
             </v-row>
           </v-container>
@@ -132,6 +193,7 @@ export default {
   data () {
     return {
       record: null,
+      productsDialog: false,
       showDescription: false
     }
   },
