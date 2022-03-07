@@ -44,6 +44,7 @@ export default {
   plugins: [
     '~/plugins/with-base',
     '~/plugins/slugify',
+    '~/plugins/text-to-hex',
     // TEMP plugin for intercepting fake api calls
     '~/plugins/axios',
     { src: '~plugins/ol', ssr: false }
