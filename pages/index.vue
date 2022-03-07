@@ -21,7 +21,7 @@
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
             <v-img
-              :src="`${$metadataApi.defaults.baseURL}/themes/${theme.image}`"
+              :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
               width="100%"
               height="100%"
             >
@@ -41,8 +41,8 @@
 <script>
 export default {
   name: 'IndexPage',
-  async asyncData ({ $metadataApi }) {
-    const metricsResponse = await $metadataApi.$get('/metrics')
+  async asyncData ({ $staticCatalog }) {
+    const metricsResponse = await $staticCatalog.$get('/metrics')
     const themes = metricsResponse.themes
     return {
       themes

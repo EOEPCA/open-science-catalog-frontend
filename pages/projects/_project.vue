@@ -197,7 +197,7 @@ export default {
   },
   async created () {
     // todo handle variable names divided by '_'
-    await this.$metadataApi.$get(`projects/${this.$route.params.project}`).then((res) => {
+    await this.$staticCatalog.$get(`projects/${this.$route.params.project}`).then((res) => {
       this.project = res
     }).catch((err) => {
       console.log(err)

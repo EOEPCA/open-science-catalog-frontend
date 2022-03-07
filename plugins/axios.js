@@ -11,27 +11,27 @@ const getUriWithParam = (baseUrl, params) => {
 }
 
 export default function ({ $axios }, inject) {
-  const metadataApi = $axios.create()
-  metadataApi.setBaseURL('https://eoepca.github.io/open-science-catalog-metadata')
+  const staticCatalog = $axios.create()
+  staticCatalog.setBaseURL('https://eoepca.github.io/open-science-catalog-metadata')
   // Add ".json" to all requests going to the static catalog
-  metadataApi.onRequest((config) => {
+  staticCatalog.onRequest((config) => {
     const newUrl = `${config.url}.json`
     return {
       ...config,
       url: newUrl
     }
   })
-  inject('metadataApi', metadataApi)
+  inject('staticCatalog', staticCatalog)
 
-  const catalogApi = $axios.create()
-  catalogApi.setBaseURL('https://resource-catalogue.osc.develop.eoepca.org')
+  const dynamicCatalog = $axios.create()
+  dynamicCatalog.setBaseURL('https://resource-catalogue.osc.develop.eoepca.org')
   // Add "f=json" query param to all requests going to the dynamic catalog
-  catalogApi.onRequest((config) => {
+  dynamicCatalog.onRequest((config) => {
     const newUrl = getUriWithParam(config.baseURL + config.url, { f: 'json' })
     return {
       ...config,
       url: newUrl
     }
   })
-  inject('catalogApi', catalogApi)
+  inject('dynamicCatalog', dynamicCatalog)
 }

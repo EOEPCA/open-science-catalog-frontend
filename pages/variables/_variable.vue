@@ -104,7 +104,7 @@ export default {
   },
   async created () {
     // todo handle variable names divided by '_'
-    await this.$metadataApi.$get(`variables/${this.$route.params.variable}`).then((res) => {
+    await this.$staticCatalog.$get(`variables/${this.$route.params.variable}`).then((res) => {
       this.variable = res
     }).catch((err) => {
       console.log(err)
@@ -113,7 +113,7 @@ export default {
     // format records
     await Promise.all(this.variable.links.map(async (link) => {
       if (link.rel === 'item') {
-        const recordResponse = await this.$metadataApi.$get(`/products/${link.href.slice(0, -5)}`)
+        const recordResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
         this.records.push(recordResponse)
       }
     }))
