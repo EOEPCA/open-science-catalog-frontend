@@ -20,15 +20,17 @@
             style="position: relative; height: 300px; overflow: hidden;
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
-            <img
-              :src="withBase(`img//EO_${theme.name}.webp`)"
+            <v-img
+              :src="`${$axios.defaults.baseURL}/themes/${theme.image}`"
               width="100%"
+              height="100%"
             >
-            <span
-              class="h1 imageLabel elevation-2"
-            >
-              {{ theme.name.replace('_', ' ') }}
-            </span>
+              <span
+                class="h1 imageLabel elevation-2"
+              >
+                {{ theme.name.replace('_', ' ') }}
+              </span>
+            </v-img>
           </div>
         </nuxt-link>
       </v-col>

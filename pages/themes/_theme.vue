@@ -5,7 +5,7 @@
     />
     <div
       ref="themeBanner"
-      :style="`backgroundImage: url('${withBase(`img//EO_${theme.id}.webp`)}');
+      :style="`backgroundImage: url('${$axios.defaults.baseURL}/themes/${theme.assets.image.href}');
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center center;`"
