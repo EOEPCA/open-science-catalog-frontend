@@ -216,18 +216,8 @@ export default {
       }
     }
   },
-  async mounted () {
-    this.metrics = await this.$axios.$get('/metrics')
-    this.metrics.themes.forEach((theme) => {
-      theme.variables.forEach((variable) => {
-        this.variables.push(variable)
-      })
-    })
-    this.variables.sort(function (a, b) {
-      if (a.name < b.name) { return -1 }
-      if (a.name > b.name) { return 1 }
-      return 0
-    })
+  mounted () {
+    this.filterItems(null)
   },
   methods: {
     async fetchVariables () {
@@ -451,31 +441,26 @@ export default {
         }
       }
     },
-    async filterItems (e) {
+    async filterItems (i) {
       this.metrics = await this.$axios.$get('/metrics')
-      this.variables = []
+      const variables = []
 
-      if (e === 0) {
-        this.metrics.themes.forEach((theme) => {
-          theme.variables.forEach((variable) => {
-            this.variables.push(variable)
-          })
+      const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]
+      themes.forEach((theme) => {
+        theme.variables.forEach((variable) => {
+          variables.push(variable)
         })
-        this.variables.sort(function (a, b) {
-          if (a.name < b.name) { return -1 }
-          if (a.name > b.name) { return 1 }
-          return 0
-        })
-        return
-      }
-      this.metrics.themes[e - 1].variables.forEach((variable) => {
-        this.variables.push(variable)
       })
-      this.variables.sort(function (a, b) {
+      variables.sort(function (a, b) {
         if (a.name < b.name) { return -1 }
+        if (a.name > b.name) { return 1 }
         if (a.name > b.name) { return 1 }
         return 0
       })
+      this.variables = [
+        ...variables.filter(v => v.summary.numberOfProducts >= 1),
+        ...variables.filter(v => v.summary.numberOfProducts < 1)
+      ]
     }
   }
 }
