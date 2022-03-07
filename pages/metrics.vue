@@ -1,6 +1,11 @@
 <template>
-  <v-container>
-    <v-row class="px-0 white">
+  <v-container class="white pa-2 pa-sm-0 pa-md-2">
+    <v-row
+      class="px-0 white"
+      :style="`z-index: 5; ${showMobileFilters
+        ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
+        : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
+    >
       <v-col cols="12" sm="8" lg="9">
         <v-tabs
           v-model="selectedTab"
@@ -20,7 +25,7 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="12" sm="4" lg="3" class="d-flex pa-2">
+      <v-col cols="12" sm="4" lg="3" class="d-flex align-center pa-2">
         <v-text-field
           v-model="filter"
           hide-details
@@ -32,114 +37,147 @@
           prepend-inner-icon="mdi-magnify"
         />
       </v-col>
-      <v-col cols="12" class="px-0">
+    </v-row>
+    <v-row class="px-0 mt-2 mt-sm-0 mt-md-2">
+      <v-col cols="12" class="pa-0">
         <MetricsTable
           v-if="metrics"
           :filter="filter"
           :headers="metrics.years"
           :items="metrics.variables"
+          :table-zoom="tableZoom"
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
-      <v-col v-if="metrics" cols="12" class="text-right">
-        <v-dialog
-          v-model="dialog"
-          scrollable
-          width="1000"
-        >
-          <template #activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              class="align-self-center"
-              color="applications"
-              dark
-              :block="$vuetify.breakpoint.xsOnly"
-              @click="fetchVariables"
-              v-on="on"
-            >
-              <v-icon left>
-                mdi-poll
-              </v-icon>
-              Statistics
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="text-h6">
-              <v-icon color="applications" left>
-                mdi-poll
-              </v-icon>
-              <span>All stats</span>
-              <v-spacer />
-              <v-btn
-                icon
-                @click="dialog = false"
+      <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
+        <v-container>
+          <v-row align="center">
+            <v-col cols="6" class="py-2 py-sm-1 py-md-2">
+              <v-dialog
+                v-model="dialog"
+                scrollable
+                width="1000"
               >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-card-title>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="align-self-center"
+                    color="applications"
+                    dark
+                    :block="$vuetify.breakpoint.xsOnly"
+                    @click="fetchVariables"
+                    v-on="on"
+                  >
+                    <v-icon left>
+                      mdi-poll
+                    </v-icon>
+                    Statistics
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="text-h6">
+                    <v-icon color="applications" left>
+                      mdi-poll
+                    </v-icon>
+                    <span>All stats</span>
+                    <v-spacer />
+                    <v-btn
+                      icon
+                      @click="dialog = false"
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-card-title>
 
-            <v-divider />
+                  <v-divider />
 
-            <v-card-text class="py-4 black--text">
-              <v-container>
-                <div class="d-flex mx-6">
-                  <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
-                  <v-spacer />
-                  <span>Number of records: {{ metrics.summary.records }}</span>
-                </div>
+                  <v-card-text class="py-4 black--text">
+                    <v-container>
+                      <div class="d-flex mx-6">
+                        <span>Number of projects: {{ metrics.summary.totalProjects }}</span>
+                        <v-spacer />
+                        <span>Number of records: {{ metrics.summary.records }}</span>
+                      </div>
 
-                <div style="text-align: center" class="ma-6">
-                  Temporal coverage
-                </div>
-                <canvas
-                  id="recordsChart"
-                />
-              </v-container>
-
-              <v-divider />
-
-              <v-container>
-                <div style="text-align: center" class="ma-6">
-                  Variable distribution
-                </div>
-                <v-container>
-                  <v-row style="height: 300px">
-                    <v-col>
-                      Variable list
-                      <v-list
-                        style="max-height: 300px"
-                        class="overflow-y-auto"
-                      >
-                        <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
-                          {{ variable.name }}: {{ variable.numberOfRecords }}
-                        </v-list-item>
-                      </v-list>
-                    </v-col>
-                    <v-col>
+                      <div style="text-align: center" class="ma-6">
+                        Temporal coverage
+                      </div>
                       <canvas
-                        id="variablePie"
-                        @mousemove="hoverHandler"
+                        id="recordsChart"
                       />
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-container>
-            </v-card-text>
+                    </v-container>
 
-            <v-divider />
+                    <v-divider />
 
-            <v-card-actions>
-              <v-spacer />
+                    <v-container>
+                      <div style="text-align: center" class="ma-6">
+                        Variable distribution
+                      </div>
+                      <v-container>
+                        <v-row style="height: 300px">
+                          <v-col>
+                            Variable list
+                            <v-list
+                              style="max-height: 300px"
+                              class="overflow-y-auto"
+                            >
+                              <v-list-item v-for="variable in nonEmptyVariables" :key="variable.id">
+                                {{ variable.name }}: {{ variable.numberOfRecords }}
+                              </v-list-item>
+                            </v-list>
+                          </v-col>
+                          <v-col>
+                            <canvas
+                              id="variablePie"
+                              @mousemove="hoverHandler"
+                            />
+                          </v-col>
+                        </v-row>
+                      </v-container>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-divider />
+
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="primary"
+                      text
+                      @click="dialog = false"
+                    >
+                      Close
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
               <v-btn
-                color="primary"
+                v-if="$vuetify.breakpoint.smOnly"
                 text
-                @click="dialog = false"
+                @click="showMobileFilters = !showMobileFilters"
               >
-                Close
+                {{ showMobileFilters ? 'hide' : 'show' }} filters
               </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+            </v-col>
+            <v-spacer />
+            <v-col cols="6" class="d-flex align-center justify-end py-2 py-sm-1 py-md-2">
+              <v-slider
+                v-model="tableZoom"
+                hide-details
+                min="1"
+                max="3"
+                step="1"
+                ticks="always"
+                tick-size="4"
+                style="max-width: 300px"
+                :prepend-icon="'mdi-magnify-minus-outline'"
+                :append-icon="'mdi-magnify-plus-outline'"
+                @click:prepend="tableZoom > 1 ? tableZoom-- : null"
+                @click:append="tableZoom < 3 ? tableZoom++ : null"
+              />
+            </v-col>
+          </v-row>
+        </v-container>
       </v-col>
     </v-row>
   </v-container>
@@ -166,7 +204,9 @@ export default {
       dialog: false,
       filter: '',
       selectedTab: 0,
-      metrics: null
+      metrics: null,
+      tableZoom: 1,
+      showMobileFilters: false
     }
   },
   head: {
