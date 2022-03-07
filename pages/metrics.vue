@@ -1,6 +1,11 @@
 <template>
-  <v-container>
-    <v-row class="px-0 white">
+  <v-container class="white pa-2 pa-sm-0 pa-md-2">
+    <v-row
+      class="px-0 white"
+      :style="`z-index: 5; ${showMobileFilters
+        ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
+        : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
+    >
       <v-col cols="12" sm="8" lg="9">
         <v-tabs
           v-model="selectedTab"
@@ -20,7 +25,7 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="12" sm="4" lg="3" class="d-flex pa-2">
+      <v-col cols="12" sm="4" lg="3" class="d-flex align-center pa-2">
         <v-text-field
           v-model="filter"
           hide-details
@@ -32,7 +37,9 @@
           prepend-inner-icon="mdi-magnify"
         />
       </v-col>
-      <v-col cols="12" class="px-0">
+    </v-row>
+    <v-row class="px-0 mt-2 mt-sm-0 mt-md-2">
+      <v-col cols="12" class="pa-0">
         <MetricsTable
           v-if="metrics"
           :filter="filter"
@@ -42,10 +49,10 @@
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
-      <v-col v-if="metrics" cols="12">
+      <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
         <v-container>
           <v-row align="center">
-            <v-col cols="6">
+            <v-col cols="6" class="py-2 py-sm-1 py-md-2">
               <v-dialog
                 v-model="dialog"
                 scrollable
@@ -57,7 +64,6 @@
                     class="align-self-center"
                     color="applications"
                     dark
-                    large
                     :block="$vuetify.breakpoint.xsOnly"
                     @click="fetchVariables"
                     v-on="on"
@@ -145,9 +151,16 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
+              <v-btn
+                v-if="$vuetify.breakpoint.smOnly"
+                text
+                @click="showMobileFilters = !showMobileFilters"
+              >
+                {{ showMobileFilters ? 'hide' : 'show' }} filters
+              </v-btn>
             </v-col>
             <v-spacer />
-            <v-col cols="6" class="d-flex align-center justify-end">
+            <v-col cols="6" class="d-flex align-center justify-end py-2 py-sm-1 py-md-2">
               <v-slider
                 v-model="tableZoom"
                 hide-details
@@ -192,7 +205,8 @@ export default {
       filter: '',
       selectedTab: 0,
       metrics: null,
-      tableZoom: 1
+      tableZoom: 1,
+      showMobileFilters: false
     }
   },
   head: {

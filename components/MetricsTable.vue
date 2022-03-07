@@ -6,7 +6,7 @@
     :items-per-page="-1"
     :search="filter"
     disable-sort
-    height="60vh"
+    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '65vh'"
     fixed-header
     hide-default-footer
     show-expand
@@ -421,5 +421,20 @@ export default {
 }
 .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) > span {
   visibility: hidden;
+}
+@media (max-width: 800px) {
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) {
+    z-index: 2;
+  }
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) > span {
+    visibility: hidden;
+  }
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) {
+    z-index: 3;
+    text-align: center;
+  }
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) > span {
+    visibility: visible;
+  }
 }
 </style>
