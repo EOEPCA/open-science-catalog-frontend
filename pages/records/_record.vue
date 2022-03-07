@@ -147,7 +147,7 @@ export default {
     }
   },
   async created () {
-    await this.$axios.$get(`products/${this.$route.params.record}`).then((res) => {
+    await this.$metadataApi.$get(`products/${this.$route.params.record}`).then((res) => {
       this.record = res
     })
     const ol = this.$ol

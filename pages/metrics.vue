@@ -141,7 +141,7 @@ export default {
   },
   methods: {
     async filterItems (i) {
-      this.metrics = await this.$axios.$get('/metrics')
+      this.metrics = await this.$metadataApi.$get('/metrics')
       const variables = []
 
       const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]

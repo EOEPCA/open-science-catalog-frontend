@@ -178,7 +178,7 @@ export default {
     async fetchVariables () {
       // chart breaks if this is removed :D
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const response = await this.$axios.$get('/metrics')
+      const response = await this.$metadataApi.$get('/metrics')
 
       // Number of records bar chart setup
       const recordsDataset = {}

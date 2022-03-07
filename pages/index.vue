@@ -21,7 +21,7 @@
               border-bottom: 0.25em solid rgb(51, 94, 111);"
           >
             <v-img
-              :src="`${$axios.defaults.baseURL}/themes/${theme.image}`"
+              :src="`${$metadataApi.defaults.baseURL}/themes/${theme.image}`"
               width="100%"
               height="100%"
             >
@@ -41,8 +41,8 @@
 <script>
 export default {
   name: 'IndexPage',
-  async asyncData ({ $axios }) {
-    const metricsResponse = await $axios.$get('/metrics')
+  async asyncData ({ $metadataApi }) {
+    const metricsResponse = await $metadataApi.$get('/metrics')
     const themes = metricsResponse.themes
     return {
       themes
