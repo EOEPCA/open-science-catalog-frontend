@@ -28,58 +28,71 @@
         </v-row>
       </v-container>
     </div>
-    <v-container class="px-6 mx-6">
+    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
       <v-row class="pa-6">
-        <span class="text-h4">
-          Records
-        </span>
-        <v-spacer />
-        <v-text-field
-          v-model="recordsSearch"
-          hide-details
-          solo
-          outlined
-          single-line
-          style="width: 400px !important; flex-grow: 0"
-          label="Search records"
-          prepend-inner-icon="mdi-magnify"
-          @input="filterRecords"
-        />
-      </v-row>
-      <v-row>
-        <v-col cols="3">
+        <v-col cols="12" md="4">
+          <span class="text-h2">
+            Records
+          </span>
+        </v-col>
+        <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+          <v-spacer />
           <v-select
             v-model="recordsFilterSortBy"
+            dense
             :items="recordsFilterOptions"
             label="Sort by"
             outlined
+            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
             @change="filterRecords()"
           />
-        </v-col>
-        <v-col cols="3">
           <v-select
             v-model="recordsFilterOrder"
+            dense
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
+            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
             @change="filterRecords()"
           />
-        </v-col>
-        <v-col cols="3">
           <v-select
             v-if="metrics"
             v-model="recordsFilterMission"
+            dense
             :items="metrics.missions.map(m => m.name).sort()"
             label="Satellite mission"
+            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
             outlined
+          />
+          <v-text-field
+            v-model="recordsSearch"
+            dense
+            hide-details
+            outlined
+            single-line
+            style="width: 400px !important; flex-grow: 0"
+            label="Search records"
+            prepend-inner-icon="mdi-magnify"
+            @input="filterRecords"
+          />
+        </v-col>
+      </v-row>
+      <item-grid
+        type="records"
+        :items="records"
+      />
+      <v-row>
+        <v-col cols="12" class="text-center">
+          <v-pagination
+            v-model="page"
+            :length="numberOfPages"
+            @input="filterRecords"
+            @next="filterRecords"
+            @previous="filterRecords"
           />
         </v-col>
       </v-row>
     </v-container>
-    <item-grid
-      type="records"
-      :items="records"
-    />
   </div>
 </template>
 
@@ -109,7 +122,9 @@ export default {
       recordsFilterSortBy: 'title',
       recordsFilterOrder: 'Ascending',
       recordsFilterMission: null,
-      metrics: null
+      metrics: null,
+      page: 1,
+      numberOfPages: 1
     }
   },
   head () {
@@ -148,13 +163,15 @@ export default {
         `&q=${this.$metaInfo.title}`}${
           (this.recordsSearch ? `&q=${this.recordsSearch}` : '')}${
             (this.recordsFilterMission ? `&q=${this.recordsFilterMission}` : '')}&sortby=${
-              this.recordsFilterSortBy}`
+              this.recordsFilterSortBy}&startindex=${
+                (this.page - 1) * 10}`
       const recordsResponse = await this.$dynamicCatalog.$get(queryString)
 
       if (this.recordsFilterOrder === 'Descending') {
         this.records = recordsResponse.features.reverse()
       }
       this.records = recordsResponse.features
+      this.numberOfPages = Math.round(recordsResponse.numberMatched / 10)
     }
   }
 }
