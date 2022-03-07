@@ -69,7 +69,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'https://raw.githubusercontent.com/EOEPCA/open-science-catalog-metadata/gh-pages'
+    baseURL: 'https://eoepca.github.io/open-science-catalog-metadata'
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify

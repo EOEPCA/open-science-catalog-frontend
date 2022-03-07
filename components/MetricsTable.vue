@@ -1,16 +1,19 @@
 <template>
   <v-data-table
+    ref="table"
     :headers="transformedHeaders"
     :items="items"
     :items-per-page="-1"
     :search="filter"
     disable-sort
-    height="60vh"
+    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '70vh'"
     fixed-header
     hide-default-footer
     show-expand
     :expanded.sync="expanded"
     :mobile-breakpoint="0"
+    :style="cssProps"
+    :class="tableZoom < 2 ? 'hide-even ' : ''"
   >
     <template #[`header.name`]="{ header }">
       {{ header.text }}
@@ -201,10 +204,15 @@ export default {
     items: {
       type: Array,
       default: () => ([])
+    },
+    tableZoom: {
+      type: Number,
+      default: 100
     }
   },
   data () {
     return {
+      isMounted: false,
       expanded: [],
       records: [
         {
@@ -238,9 +246,27 @@ export default {
         value: 'coverage'
       })
       return newHeaders
+    },
+    cssProps () {
+      if (!this.isMounted) {
+        return
+      }
+      const width = this.tableZoom * (this.$vuetify.breakpoint.smOnly ? 1.6 : 1.8) * this.$refs.table.$el.clientWidth / 100
+      return {
+        '--table-cell': `${width}px`
+      }
+    }
+  },
+  watch: {
+    tableZoom () {
+      // TODO this keeps the table scrolled right, but ideally it stays at the current center point
+      this.$nextTick(() => {
+        document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
+      })
     }
   },
   mounted () {
+    this.isMounted = true
     this.$nextTick(() => {
       document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
       document.querySelector('table').addEventListener('mouseover', (e) => {
@@ -266,6 +292,7 @@ export default {
   font-size: 14px;
   font-weight: 700;
 }
+::v-deep table th:not(:first-child, :nth-child(2), :last-child),
 ::v-deep table td:not(:first-child, :nth-child(2), :last-child) {
   padding: 0 !important;
 }
@@ -379,5 +406,38 @@ export default {
 ::v-deep th span,
 ::v-deep .v-progress-linear {
   pointer-events: none;
+}
+
+::v-deep th:not(:first-child, :nth-child(2), :last-child),
+::v-deep td:not(:first-child, :nth-child(2), :last-child) {
+  width: var(--table-cell);
+  min-width: var(--table-cell);
+  max-width: var(--table-cell);
+}
+
+.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(odd) {
+  z-index: 3;
+  text-align: center;
+}
+.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) {
+  z-index: 2;
+}
+.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) > span {
+  visibility: hidden;
+}
+@media (max-width: 800px) {
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) {
+    z-index: 2;
+  }
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) > span {
+    visibility: hidden;
+  }
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) {
+    z-index: 3;
+    text-align: center;
+  }
+  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) > span {
+    visibility: visible;
+  }
 }
 </style>
