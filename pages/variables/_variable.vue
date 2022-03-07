@@ -53,7 +53,7 @@
             :items="recordsFilterOptions"
             label="Sort by"
             outlined
-            @change="filterRecords"
+            @change="filterRecords()"
           />
         </v-col>
         <v-col cols="3">
@@ -62,13 +62,14 @@
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
-            @change="filterRecords"
+            @change="filterRecords()"
           />
         </v-col>
         <v-col cols="3">
           <v-select
+            v-if="metrics"
             v-model="recordsFilterMission"
-            :items="['CryoSat2']"
+            :items="metrics.missions.map(m => m.name).sort()"
             label="Satellite mission"
             outlined
           />
@@ -107,12 +108,18 @@ export default {
       ],
       recordsFilterSortBy: 'title',
       recordsFilterOrder: 'Ascending',
-      recordsFilterMission: 'CryoSat2'
+      recordsFilterMission: null,
+      metrics: null
     }
   },
   head () {
     return {
       title: this.$route.params.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
+    }
+  },
+  watch: {
+    recordsFilterMission () {
+      this.filterRecords()
     }
   },
   async created () {
@@ -130,10 +137,18 @@ export default {
         this.records.push(recordResponse)
       }
     }))
+
+    this.metrics = await this.$staticCatalog.$get('/metrics')
   },
   methods: {
     async filterRecords () {
-      const queryString = `/collections/metadata:main/items?type=dataset&q=${this.$metaInfo.title + (this.recordsSearch ? `+${this.recordsSearch}` : '')}&sortby=${this.recordsFilterSortBy}`
+      // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.recordsFilterSortBy}`
+      // TODO proper filtering (todo on backend)
+      const queryString = `/collections/metadata:main/items?type=dataset${
+        `&q=${this.$metaInfo.title}`}${
+          (this.recordsSearch ? `&q=${this.recordsSearch}` : '')}${
+            (this.recordsFilterMission ? `&q=${this.recordsFilterMission}` : '')}&sortby=${
+              this.recordsFilterSortBy}`
       const recordsResponse = await this.$dynamicCatalog.$get(queryString)
 
       if (this.recordsFilterOrder === 'Descending') {
