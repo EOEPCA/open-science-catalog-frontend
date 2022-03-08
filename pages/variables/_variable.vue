@@ -71,7 +71,6 @@
             v-model="recordsSearch"
             dense
             hide-details
-            hide-details
             outlined
             single-line
             style="width: 400px !important; flex-grow: 0"
