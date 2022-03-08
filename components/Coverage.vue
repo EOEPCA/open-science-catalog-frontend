@@ -179,8 +179,6 @@ export default {
         if (this.variable && !this.records) {
           this.$emit('loadRecords')
         }
-      } else {
-        this.$refs.map.unmount()
       }
     }
   }

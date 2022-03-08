@@ -132,9 +132,6 @@ export default {
             padding: this.defaultPadding
           })
         })
-    },
-    unmount () {
-      this.map = null
     }
   }
 }
