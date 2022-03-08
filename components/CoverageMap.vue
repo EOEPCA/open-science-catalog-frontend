@@ -24,10 +24,10 @@ export default {
       map: null,
       baseLayers: [
         {
-          layer: 'terrain-light'
+          layer: 'terrain-light_3857'
         },
         {
-          layer: 'overlay_bright'
+          layer: 'overlay_bright_3857'
         }
       ],
       vectorSource: null,
@@ -38,7 +38,7 @@ export default {
   },
   watch: {
     highlight (feature) {
-      if (feature && feature.geometry) {
+      if (this.map && feature && feature.geometry) {
         this.vectorSource.getFeatures().forEach(f => f.setStyle(this.defaultStyle))
         const highlightFeature = this.vectorSource.getFeatureById(feature.id)
         highlightFeature.setStyle(this.highlightStyle)
@@ -73,11 +73,11 @@ export default {
           width: 3
         }),
         fill: new ol.Fill({
-          color: 'rgba(0, 100, 71, 0.4)'
+          color: 'rgba(0, 200, 71, 0.4)'
         })
       })
 
-      fetch('https://s2maps.eu/WMTSCapabilities.xml')
+      fetch('https://tiles.maps.eox.at/wmts/1.0.0/WMTSCapabilities.xml')
         .then((response) => {
           return response.text()
         })
@@ -88,12 +88,18 @@ export default {
           this.baseLayers.forEach((baselayer) => {
             const options = ol.optionsFromCapabilities(result, {
               layer: baselayer.layer,
-              matrixSet: 'EPSG:4326'
+              matrixSet: 'EPSG:3857'
             })
-            options.wrapX = true
+
             layers.push(new ol.TileLayer({
               opacity: 1,
-              source: new ol.WMTS(options)
+              source: new ol.WMTS({
+                ...options,
+                wrapX: true,
+                attributions: result.Contents.Layer
+                  .find(l => l.Identifier === baselayer.layer).Abstract +
+                  (this.baseLayers.indexOf(baselayer) < this.baseLayers.length - 1 ? ',' : '')
+              })
             }))
           })
           const geojsonObject = {
@@ -107,7 +113,9 @@ export default {
             features: this.features.filter(f => !!f.geometry)
           }
           this.vectorSource = new ol.VectorSource({
-            features: new ol.GeoJSON().readFeatures(geojsonObject)
+            features: new ol.GeoJSON().readFeatures(geojsonObject, {
+              dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'
+            })
           })
 
           const vectorLayer = new ol.VectorLayer({
@@ -124,7 +132,7 @@ export default {
               center: [0, 0],
               zoom: 0,
               multiWorld: true,
-              projection: 'EPSG:4326'
+              projection: 'EPSG:3857'
             })
           })
 
