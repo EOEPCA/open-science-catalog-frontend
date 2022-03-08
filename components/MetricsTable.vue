@@ -7,14 +7,14 @@
     item-key="name"
     :search="filter"
     disable-sort
-    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '70vh'"
+    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '65vh'"
     fixed-header
     hide-default-footer
     show-expand
     :expanded.sync="expanded"
     :mobile-breakpoint="0"
     :style="cssProps"
-    :class="tableZoom < 2 ? 'hide-even ' : ''"
+    :class="tableZoom < 3 ? 'hide-even ' : ''"
   >
     <template #[`header.name`]="{ header }">
       {{ header.text }}
@@ -448,7 +448,7 @@ export default {
 .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) > span {
   visibility: hidden;
 }
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) {
     z-index: 2;
   }
