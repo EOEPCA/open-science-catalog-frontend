@@ -138,6 +138,7 @@
           <v-select
             v-model="recordsFilterSortBy"
             dense
+            hide-details
             :items="['Name']"
             label="Sort by"
             outlined
@@ -146,6 +147,7 @@
           <v-select
             v-model="recordsFilterOrder"
             dense
+            hide-details
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined

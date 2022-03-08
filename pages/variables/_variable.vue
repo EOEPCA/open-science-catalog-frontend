@@ -40,6 +40,7 @@
           <v-select
             v-model="recordsFilterSortBy"
             dense
+            hide-details
             :items="recordsFilterOptions"
             label="Sort by"
             outlined
@@ -49,6 +50,7 @@
           <v-select
             v-model="recordsFilterOrder"
             dense
+            hide-details
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
@@ -59,6 +61,7 @@
             v-if="metrics"
             v-model="recordsFilterMission"
             dense
+            hide-details
             :items="metrics.missions.map(m => m.name).sort()"
             label="Satellite mission"
             :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
@@ -67,6 +70,7 @@
           <v-text-field
             v-model="recordsSearch"
             dense
+            hide-details
             hide-details
             outlined
             single-line
