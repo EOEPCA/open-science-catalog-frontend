@@ -44,12 +44,12 @@
 
       <v-divider />
 
-      <v-card-text class="px-0 black--text">
+      <v-card-text class="px-0 black--text pb-0 pb-md-3">
         <v-container>
           <v-row>
             <v-col
               cols="12"
-              md="5"
+              sm="5"
             >
               <v-list
                 v-if="!!variable"
@@ -113,7 +113,7 @@
             </v-col>
             <v-col
               cols="12"
-              md="7"
+              sm="7"
             >
               <no-ssr>
                 <CoverageMap

@@ -2,7 +2,7 @@
   <no-ssr>
     <div
       ref="mapContainer"
-      style="height: 400px; width: 100%;"
+      :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
     />
   </no-ssr>
 </template>
@@ -33,7 +33,7 @@ export default {
       vectorSource: null,
       defaultStyle: null,
       highlightStyle: null,
-      defaultPadding: [100, 100, 100, 100]
+      defaultPadding: [50, 25, 50, 25]
     }
   },
   watch: {
@@ -69,11 +69,11 @@ export default {
 
       this.highlightStyle = new ol.Style({
         stroke: new ol.Stroke({
-          color: 'rgba(0, 50, 71, 1)',
+          color: 'rgba(20, 100, 91, 1)',
           width: 3
         }),
         fill: new ol.Fill({
-          color: 'rgba(0, 50, 71, 0.4)'
+          color: 'rgba(0, 100, 71, 0.4)'
         })
       })
 
