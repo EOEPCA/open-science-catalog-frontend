@@ -1,7 +1,8 @@
 <template>
-  <v-container class="white pa-2 pa-sm-0 pa-md-2">
+  <v-container class="white pa-2 pa-sm-0 pa-md-2 mt-0 mt-sm-n2 mt-md-2">
     <v-row
       v-if="metrics"
+      class="white"
       :style="`z-index: 5; ${showMobileFilters
         ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
         : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
@@ -38,7 +39,7 @@
         />
       </v-col>
     </v-row>
-    <v-row class="mt-2 mt-sm-0 mt-md-2">
+    <v-row>
       <v-col cols="12" class="py-3 py-sm-0 py-md-3">
         <MetricsTable
           v-if="metrics"
@@ -50,7 +51,7 @@
         <v-progress-linear v-else indeterminate />
       </v-col>
     </v-row>
-    <v-row class="mt-2 mt-sm-0 mt-md-2">
+    <v-row>
       <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
         <v-container>
           <v-row align="center">
