@@ -158,8 +158,7 @@ export default {
         return 0
       })
       this.variables = [
-        ...variables.filter(v => v.summary.numberOfProducts >= 1),
-        ...variables.filter(v => v.summary.numberOfProducts < 1)
+        ...variables.filter(v => v.summary.numberOfProducts >= 1)
       ]
     }
   }
