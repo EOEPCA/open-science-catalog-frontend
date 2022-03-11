@@ -32,34 +32,34 @@
       <v-row class="pa-6">
         <v-col cols="12" md="4">
           <span class="text-h2">
-            Records
+            Products
           </span>
         </v-col>
         <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
           <v-spacer />
           <v-select
-            v-model="recordsFilterSortBy"
+            v-model="productsFilterSortBy"
             dense
             hide-details
-            :items="recordsFilterOptions"
+            :items="productsFilterOptions"
             label="Sort by"
             outlined
             :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-            @change="filterRecords()"
+            @change="filterProducts()"
           />
           <v-select
-            v-model="recordsFilterOrder"
+            v-model="productsFilterOrder"
             dense
             hide-details
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
             :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-            @change="filterRecords()"
+            @change="filterProducts()"
           />
           <v-select
             v-if="metrics"
-            v-model="recordsFilterMission"
+            v-model="productsFilterMission"
             dense
             hide-details
             :items="metrics.missions.map(m => m.name).sort()"
@@ -68,30 +68,30 @@
             outlined
           />
           <v-text-field
-            v-model="recordsSearch"
+            v-model="productsSearch"
             dense
             hide-details
             outlined
             single-line
             style="width: 400px !important; flex-grow: 0"
-            label="Search records"
+            label="Search products"
             prepend-inner-icon="mdi-magnify"
-            @input="filterRecords"
+            @input="filterProducts"
           />
         </v-col>
       </v-row>
       <item-grid
-        type="records"
-        :items="records"
+        type="products"
+        :items="products"
       />
       <v-row>
         <v-col cols="12" class="text-center">
           <v-pagination
             v-model="page"
             :length="numberOfPages"
-            @input="filterRecords"
-            @next="filterRecords"
-            @previous="filterRecords"
+            @input="filterProducts"
+            @next="filterProducts"
+            @previous="filterProducts"
           />
         </v-col>
       </v-row>
@@ -110,9 +110,9 @@ export default {
   data () {
     return {
       variable: null,
-      records: [],
-      recordsSearch: '',
-      recordsFilterOptions: [
+      products: [],
+      productsSearch: '',
+      productsFilterOptions: [
         {
           text: 'Name',
           value: 'title'
@@ -122,9 +122,9 @@ export default {
           value: 'description'
         }
       ],
-      recordsFilterSortBy: 'title',
-      recordsFilterOrder: 'Ascending',
-      recordsFilterMission: null,
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending',
+      productsFilterMission: null,
       metrics: null,
       page: 1,
       numberOfPages: 1
@@ -136,8 +136,8 @@ export default {
     }
   },
   watch: {
-    recordsFilterMission () {
-      this.filterRecords()
+    productsFilterMission () {
+      this.filterProducts()
     }
   },
   async created () {
@@ -148,33 +148,33 @@ export default {
       console.log(err)
     })
 
-    // format records
+    // format products
     await Promise.all(this.variable.links.map(async (link) => {
       if (link.rel === 'item') {
-        const recordResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
-        this.records.push(recordResponse)
+        const productResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
+        this.products.push(productResponse)
       }
     }))
 
     this.metrics = await this.$staticCatalog.$get('/metrics')
   },
   methods: {
-    async filterRecords () {
-      // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.recordsFilterSortBy}`
+    async filterProducts () {
+      // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.productsFilterSortBy}`
       // TODO proper filtering (todo on backend)
       const queryString = `/collections/metadata:main/items?type=dataset${
         `&q=${this.$metaInfo.title}`}${
-          (this.recordsSearch ? `&q=${this.recordsSearch}` : '')}${
-            (this.recordsFilterMission ? `&q=${this.recordsFilterMission}` : '')}&sortby=${
-              this.recordsFilterSortBy}&startindex=${
+          (this.productsSearch ? `&q=${this.productsSearch}` : '')}${
+            (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
+              this.productsFilterSortBy}&startindex=${
                 (this.page - 1) * 10}`
-      const recordsResponse = await this.$dynamicCatalog.$get(queryString)
+      const productsResponse = await this.$dynamicCatalog.$get(queryString)
 
-      if (this.recordsFilterOrder === 'Descending') {
-        this.records = recordsResponse.features.reverse()
+      if (this.productsFilterOrder === 'Descending') {
+        this.products = productsResponse.features.reverse()
       }
-      this.records = recordsResponse.features
-      this.numberOfPages = Math.round(recordsResponse.numberMatched / 10)
+      this.products = productsResponse.features
+      this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
     }
   }
 }

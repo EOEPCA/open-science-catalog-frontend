@@ -21,14 +21,14 @@
         <div class="d-flex mx-6">
           <span>Number of projects: {{ metrics.summary.numberOfProjects }}</span>
           <v-spacer />
-          <span>Number of records: {{ metrics.summary.numberOfProducts }}</span>
+          <span>Number of products: {{ metrics.summary.numberOfProducts }}</span>
         </div>
 
         <div style="text-align: center" class="ma-6">
           Temporal coverage
         </div>
         <canvas
-          id="recordsChart"
+          id="productsChart"
         />
       </v-container>
 
@@ -58,7 +58,7 @@
                     </v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    {{ variable.name }}: {{ variable.summary.numberOfProducts }} records
+                    {{ variable.name }}: {{ variable.summary.numberOfProducts }} products
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -98,7 +98,7 @@
                   </v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  {{ mission.name }}: {{ mission.summary.numberOfProducts }} records
+                  {{ mission.name }}: {{ mission.summary.numberOfProducts }} products
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -146,7 +146,7 @@ export default {
     }
   },
   data () {
-    this.recordsChart = null
+    this.productsChart = null
     this.variablePie = null
     this.missionPie = null
     return {
@@ -164,8 +164,8 @@ export default {
     this.fetchVariables()
   },
   beforeMount () {
-    if (this.recordsChart) {
-      this.recordsChart.destroy()
+    if (this.productsChart) {
+      this.productsChart.destroy()
     }
     if (this.variablePie) {
       this.variablePie.destroy()
@@ -180,28 +180,28 @@ export default {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const response = await this.$staticCatalog.$get('/metrics')
 
-      // Number of records bar chart setup
-      const recordsDataset = {}
-      this.variables.forEach((record) => {
-        record.summary.years.forEach((year) => {
-          if (recordsDataset[year]) {
-            recordsDataset[year] += 1
+      // Number of products bar chart setup
+      const productsDataset = {}
+      this.variables.forEach((product) => {
+        product.summary.years.forEach((year) => {
+          if (productsDataset[year]) {
+            productsDataset[year] += 1
           } else {
-            recordsDataset[year] = 1
+            productsDataset[year] = 1
           }
         })
       })
 
-      this.recordsChart = new Chart(
-        document.getElementById('recordsChart'),
+      this.productsChart = new Chart(
+        document.getElementById('productsChart'),
         {
           type: 'bar',
           data: {
             labels: this.metrics.summary.years,
             datasets: [
               {
-                label: 'Number of records',
-                data: Object.values(recordsDataset),
+                label: 'Number of products',
+                data: Object.values(productsDataset),
                 backgroundColor: [
                   this.$vuetify.theme.themes.light.applications
                 ],
@@ -381,7 +381,7 @@ export default {
           ctx.fillStyle = 'black'
           ctx.textAlign = 'center'
           ctx.fillText(
-            variablesNumberLabel ? `${variablesNumberLabel} records` : '',
+            variablesNumberLabel ? `${variablesNumberLabel} products` : '',
             width / 2,
             height / 2 + top - 5
           )

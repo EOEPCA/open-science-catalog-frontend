@@ -65,7 +65,7 @@
     </template>
     <template #expanded-item="{ item }">
       <td
-        v-if="getRecords(item.name).length > 0"
+        v-if="getProducts(item.name).length > 0"
         :colspan="transformedHeaders.length + 1"
         class="pa-0"
         style="z-index: 0 !important"
@@ -73,8 +73,8 @@
         <table style="width: 100%; border-spacing: 0;">
           <tbody>
             <tr
-              v-for="record in getRecords(item.name)"
-              :key="record.id"
+              v-for="product in getProducts(item.name)"
+              :key="product.id"
               style="line-height: 3;"
             >
               <td class="px-4 text-start subCell">
@@ -84,7 +84,7 @@
                       icon
                       small
                       color="applications"
-                      :to="`/records/${record.id}`"
+                      :to="`/products/${product.id}`"
                       target="_blank"
                       v-on="on"
                     >
@@ -93,7 +93,7 @@
                       </v-icon>
                     </v-btn>
                   </template>
-                  <span>Go to {{ record.properties.title }} record</span>
+                  <span>Go to {{ product.properties.title }} product</span>
                 </v-tooltip>
               </td>
               <td class="px-4 py-2 subCell">
@@ -102,16 +102,16 @@
                 >
                   <template #activator="{ on }">
                     <nuxt-link
-                      :to="`/records/${record.id}`"
+                      :to="`/products/${product.id}`"
                       style="text-decoration: none"
                     >
                       <small
                         style="cursor: pointer"
                         v-on="on"
-                      >{{ record.properties.title }}</small>
+                      >{{ product.properties.title }}</small>
                     </nuxt-link>
                   </template>
-                  <span>Go to {{ record.properties.title }} record</span>
+                  <span>Go to {{ product.properties.title }} product</span>
                 </v-tooltip>
               </td>
               <td
@@ -120,27 +120,27 @@
                 class="subCell"
               >
                 <v-progress-linear
-                  v-if="record.properties.start_datetime.slice(0, 4) <= year
-                    && record.properties.end_datetime.slice(0, 4) >= year"
+                  v-if="product.properties.start_datetime.slice(0, 4) <= year
+                    && product.properties.end_datetime.slice(0, 4) >= year"
                   :key="year"
                   color="applications"
                   height="15"
                   value="100"
                   :style="`border-radius: ${
-                    record.properties.start_datetime.slice(0, 4) == year ? 5 : 0
+                    product.properties.start_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    record.properties.end_datetime.slice(0, 4) == year ? 5 : 0
+                    product.properties.end_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    record.properties.end_datetime.slice(0, 4) == year ? 5 : 0
+                    product.properties.end_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    record.properties.start_datetime.slice(0, 4) == year ? 5 : 0
+                    product.properties.start_datetime.slice(0, 4) == year ? 5 : 0
                   }px`"
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
               <td class="px-4 subCell">
                 <Coverage
-                  :records="[record]"
+                  :products="[product]"
                 />
               </td>
             </tr>
@@ -188,9 +188,9 @@
     <template #[`item.coverage`]="{ item }">
       <Coverage
         :variable="item"
-        :records="records[slugify(item.name)]"
+        :products="products[slugify(item.name)]"
         :disable="!item.summary.numberOfProducts"
-        @loadRecords="expandVariable(item)"
+        @loadProducts="expandVariable(item)"
       />
     </template>
   </v-data-table>
@@ -227,7 +227,7 @@ export default {
       isMounted: false,
       expanded: [],
       variables: {},
-      records: {}
+      products: {}
     }
   },
   computed: {
@@ -286,25 +286,25 @@ export default {
   methods: {
     async expandVariable (item) {
       const variableSlug = this.slugify(item.name)
-      if (!this.records[variableSlug]) {
+      if (!this.products[variableSlug]) {
         const variable = await this.$staticCatalog.$get(`/variables/${variableSlug}`)
         this.$set(this.variables, variableSlug, this.variable)
-        const records = []
+        const products = []
         await Promise.all(variable.links.map(async (link) => {
           if (link.rel === 'item') {
-            const recordResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
-            records.push(recordResponse)
+            const productResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
+            products.push(productResponse)
           }
         }))
-        this.$set(this.records, variableSlug, records)
+        this.$set(this.products, variableSlug, products)
       }
     },
-    getRecords (name) {
-      let records = []
-      if (this.records[this.slugify(name)]) {
-        records = this.records[this.slugify(name)]
+    getProducts (name) {
+      let products = []
+      if (this.products[this.slugify(name)]) {
+        products = this.products[this.slugify(name)]
       }
-      return records
+      return products
     }
   }
 }
