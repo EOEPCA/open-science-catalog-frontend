@@ -26,13 +26,13 @@
       </v-tooltip>
     </template>
     <v-card
-      v-if="records"
+      v-if="products"
     >
       <v-card-title class="text-h6">
         <v-icon color="applications" left>
-          {{ records.length === 1 ? 'mdi-map-marker' : 'mdi-earth' }}
+          {{ products.length === 1 ? 'mdi-map-marker' : 'mdi-earth' }}
         </v-icon>
-        <span>{{ records.length === 1 ? records[0].properties.title : variable && variable.name }} Coverage</span>
+        <span>{{ products.length === 1 ? products[0].properties.title : variable && variable.name }} Coverage</span>
         <v-spacer />
         <v-btn
           icon
@@ -57,18 +57,18 @@
                 subheader
               >
                 <v-subheader class="px-0">
-                  Records
+                  Products
                 </v-subheader>
                 <v-divider />
                 <v-list-item
-                  v-for="record in records"
-                  :key="record.id"
+                  v-for="product in products"
+                  :key="product.id"
                   class="px-0"
                   style="cursor: pointer"
-                  @mouseover="currentHighlight = record"
+                  @mouseover="currentHighlight = product"
                 >
                   <v-list-item-content>
-                    <v-list-item-title>{{ record.properties.title }}</v-list-item-title>
+                    <v-list-item-title>{{ product.properties.title }}</v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action
                     class="flex-row"
@@ -77,14 +77,14 @@
                       v-if="variable"
                       icon
                       color="primary"
-                      :disabled="!record.geometry"
+                      :disabled="!product.geometry"
                     >
                       <v-icon>mdi-map-marker</v-icon>
                     </v-btn>
                     <v-btn
                       icon
                       color="primary"
-                      :to="`/records/${record.id}`"
+                      :to="`/products/${product.id}`"
                       target="_blank"
                     >
                       <v-icon>mdi-open-in-new</v-icon>
@@ -92,22 +92,22 @@
                   </v-list-item-action>
                 </v-list-item>
               </v-list>
-              <template v-else-if="records[0]">
+              <template v-else-if="products[0]">
                 <div><strong>Name</strong></div>
                 <div class="mb-2">
-                  {{ records[0].properties.title }}
+                  {{ products[0].properties.title }}
                 </div>
                 <div><strong>Region</strong></div>
                 <div class="mb-2">
-                  {{ records[0].properties['osc:region'] }}
+                  {{ products[0].properties['osc:region'] }}
                 </div>
                 <div><strong>Satellite missions</strong></div>
                 <div class="mb-2">
-                  {{ records[0].properties['osc:missions'].join(', ') }}
+                  {{ products[0].properties['osc:missions'].join(', ') }}
                 </div>
                 <div><strong>BBOX</strong></div>
                 <div class="mb-2">
-                  {{ records[0].bbox }}
+                  {{ products[0].bbox }}
                 </div>
               </template>
             </v-col>
@@ -117,9 +117,9 @@
             >
               <no-ssr>
                 <CoverageMap
-                  v-if="records"
+                  v-if="products"
                   ref="map"
-                  :features="records"
+                  :features="products"
                   :highlight="currentHighlight"
                 />
               </no-ssr>
@@ -153,7 +153,7 @@ export default {
     CoverageMap
   },
   props: {
-    records: {
+    products: {
       type: Array,
       default: null
     },
@@ -176,8 +176,8 @@ export default {
   watch: {
     dialog (on) {
       if (on) {
-        if (this.variable && !this.records) {
-          this.$emit('loadRecords')
+        if (this.variable && !this.products) {
+          this.$emit('loadProducts')
         }
       }
     }

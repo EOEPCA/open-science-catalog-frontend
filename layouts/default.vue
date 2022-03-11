@@ -55,7 +55,7 @@
           </template>
 
           <v-list-item
-            to="/new-record"
+            to="/new-product"
             router
             exact
             class="pl-10 primary"
@@ -64,7 +64,7 @@
               <v-icon>mdi-clipboard-text</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
-              New record
+              New product
             </v-list-item-title>
           </v-list-item>
           <v-list-item

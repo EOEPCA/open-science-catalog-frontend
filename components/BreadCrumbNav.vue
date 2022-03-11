@@ -40,7 +40,7 @@ export default {
       type: String,
       default: null
     },
-    record: {
+    product: {
       type: String,
       default: null
     }
@@ -79,12 +79,12 @@ export default {
               }
             ]
           : []),
-        ...(this.record
+        ...(this.product
           ? [
               {
-                text: this.record,
-                href: `/records/${this.slugify(this.record)}`,
-                type: 'record'
+                text: this.product,
+                href: `/products/${this.slugify(this.product)}`,
+                type: 'product'
               }
             ]
           : [])

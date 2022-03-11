@@ -130,13 +130,13 @@
       <v-row class="mt-2">
         <v-col cols="12" md="4">
           <span class="text-h2">
-            Records
+            Products
           </span>
         </v-col>
         <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
           <v-spacer />
           <v-select
-            v-model="recordsFilterSortBy"
+            v-model="productsFilterSortBy"
             dense
             hide-details
             :items="['Name']"
@@ -145,7 +145,7 @@
             :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
           />
           <v-select
-            v-model="recordsFilterOrder"
+            v-model="productsFilterOrder"
             dense
             hide-details
             :items="['Ascending', 'Descending']"
@@ -154,28 +154,28 @@
             :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
           />
           <v-text-field
-            v-model="recordsSearch"
+            v-model="productsSearch"
             dense
             hide-details
             outlined
             single-line
-            label="Search records"
+            label="Search products"
             prepend-inner-icon="mdi-magnify"
           />
         </v-col>
       </v-row>
       <item-grid
-        type="records"
-        :items="records"
+        type="products"
+        :items="products"
       />
       <v-row>
         <v-col cols="12" class="text-center">
           <v-pagination
             v-model="page"
             :length="numberOfPages"
-            @input="filterRecords"
-            @next="filterRecords"
-            @previous="filterRecords"
+            @input="filterProducts"
+            @next="filterProducts"
+            @previous="filterProducts"
           />
         </v-col>
       </v-row>
@@ -194,10 +194,10 @@ export default {
   data () {
     return {
       project: null,
-      records: [],
-      recordsSearch: '',
-      recordsFilterSortBy: 'Name',
-      recordsFilterOrder: 'Ascending',
+      products: [],
+      productsSearch: '',
+      productsFilterSortBy: 'Name',
+      productsFilterOrder: 'Ascending',
       showDescription: false,
       page: 1,
       numberOfPages: 1
@@ -216,10 +216,10 @@ export default {
       console.log(err)
     })
 
-    const recordsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items&startindex=${
+    const productsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items&startindex=${
       (this.page - 1) * 10}`)
-    this.records = recordsResponse.features
-    this.numberOfPages = Math.round(recordsResponse.numberMatched / 10)
+    this.products = productsResponse.features
+    this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
   }
 }
 </script>
