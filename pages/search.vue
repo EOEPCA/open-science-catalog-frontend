@@ -90,11 +90,36 @@
         class="ml-3"
         :disabled="filterItems.length < 1 || !!filterItems.find(f => f.value === null)"
         :loading="loading"
-        @click="submit"
+        @click="filterProducts"
       >
         submit
       </v-btn>
     </div>
+    <v-row>
+      <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+        <v-spacer />
+        <v-select
+          v-model="productsFilterSortBy"
+          dense
+          hide-details
+          :items="productsFilterOptions"
+          label="Sort by"
+          outlined
+          :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+          @change="filterProducts()"
+        />
+        <v-select
+          v-model="productsFilterOrder"
+          dense
+          hide-details
+          :items="['Ascending', 'Descending']"
+          label="Order"
+          outlined
+          :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+          @change="filterProducts()"
+        />
+      </v-col>
+    </v-row>
     <item-grid
       type="products"
       :items="items"
@@ -132,7 +157,19 @@ export default {
       mainInputValue: null,
       inputComplete: false,
       searchText: null,
-      loading: false
+      loading: false,
+      productsFilterOptions: [
+        {
+          text: 'Name',
+          value: 'title'
+        },
+        {
+          text: 'Description',
+          value: 'description'
+        }
+      ],
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending'
     }
   },
   head: {
@@ -245,14 +282,22 @@ export default {
     }
   },
   async created () {
-    const itemsResponse = await this.$dynamicCatalog.$get('/collections/metadata:main/items/')
-
-    this.items = itemsResponse.features
-    this.numberOfPages = Math.round(itemsResponse.numberMatched / 10)
+    await this.filterProducts()
   },
   methods: {
     async filterProducts () {
-      const queryString = `/collections/metadata:main/items?startindex=${(this.page - 1) * 10}`
+      const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&${
+        curr.operator
+          ? 'q'
+            // .replace('≤', '__lte') todo: range if needed
+            // .replace('≥', '__gte')
+            // .replace('=', '')
+          : curr.key
+      }=${curr.value}`, '')
+      const queryString = `/collections/metadata:main/items?type=dataset&sortby=${
+        this.productsFilterOrder === 'Descending' ? `-${this.productsFilterSortBy}` : `${this.productsFilterSortBy}`}&offset=${
+          (this.page - 1) * 10}${searchQuery}`
+
       const itemsResponse = await this.$dynamicCatalog.$get(queryString)
 
       this.items = itemsResponse.features
@@ -305,7 +350,7 @@ export default {
     },
     onEnter () {
       if (this.inputComplete && this.filterItems.every(i => !!i.value)) {
-        this.submit()
+        this.filterProducts()
       }
     },
     onDelete () {
@@ -317,19 +362,6 @@ export default {
       }
       this.filterItems.pop()
       this.filterModel = null
-    },
-    async submit () {
-      const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&${
-        curr.operator
-          ? 'q'
-            // .replace('≤', '__lte') todo: range if needed
-            // .replace('≥', '__gte')
-            // .replace('=', '')
-          : curr.key
-      }=${curr.value}`, '')
-      const productsResponse = await this.$dynamicCatalog.$get(`/collections/metadata:main/items?type=dataset${searchQuery}`)
-      this.items = productsResponse.features
-      this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
     }
   }
 }
