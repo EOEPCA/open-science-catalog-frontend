@@ -166,7 +166,7 @@ export default {
         `&q=${this.$metaInfo.title}`}${
           (this.productsSearch ? `&q=${this.productsSearch}` : '')}${
             (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
-              this.productsFilterSortBy}&startindex=${
+              this.productsFilterSortBy}&offset=${
                 (this.page - 1) * 10}`
       const productsResponse = await this.$dynamicCatalog.$get(queryString)
 
