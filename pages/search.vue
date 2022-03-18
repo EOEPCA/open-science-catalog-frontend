@@ -30,7 +30,9 @@
           class="mr-1"
           @click:close="remove(item)"
         >
-          {{ item.key }}
+          <span class="text-capitalize">
+            {{ item.key }}
+          </span>
           <span
             v-if="
               !!item.value || item.operator"
@@ -71,7 +73,7 @@
           :items="
             filterFields"
           chips
-          item-text="display_name"
+          item-text="field_name"
           return-object
           label=" "
           class="headless-input"
@@ -81,7 +83,9 @@
           @keyup.delete="onDelete"
         >
           <template #item="data">
-            {{ data.item.display_name }}
+            <span :class="data.item.operator ? '' : 'text-capitalize'">
+              {{ data.item.field_name }}
+            </span>
           </template>
         </v-autocomplete>
       </div>
@@ -191,27 +195,22 @@ export default {
       const allItems = [
         {
           field_name: 'theme',
-          display_name: 'Theme',
-          filter: 'exact'
+          filter: 'like'
         },
         {
           field_name: 'variable',
-          display_name: 'Variable',
-          filter: 'exact'
+          filter: 'like'
         },
         {
           field_name: 'project',
-          display_name: 'Project',
-          filter: 'exact'
+          filter: 'like'
         },
         {
           field_name: 'product',
-          display_name: 'Product',
-          filter: 'exact'
+          filter: 'like'
         },
         {
           field_name: 'startDate',
-          display_name: 'Start date',
           filter: 'range',
           digits: 0
         }
@@ -240,8 +239,17 @@ export default {
           items = [
             {
               filter_value: null,
-              field_name: '=exactly',
+              field_name: 'is exactly',
               operator: '=',
+              original_field_name: inProgressItem.key
+            }
+          ]
+        } else if (currentMeta.filter === 'like') {
+          items = [
+            {
+              filter_value: null,
+              field_name: 'includes',
+              operator: 'includes',
               original_field_name: inProgressItem.key
             }
           ]
@@ -302,6 +310,7 @@ export default {
 
       this.items = itemsResponse.features
       this.numberOfPages = Math.round(itemsResponse.numberMatched / 10)
+      this.$refs.headless.blur()
     },
     select (item) {
       if (item) {
