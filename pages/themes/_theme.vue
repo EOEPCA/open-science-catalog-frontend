@@ -221,7 +221,7 @@ export default {
     // format theme project data
     await Promise.all(this.theme.links.map(async (link) => {
       if (link.rel === 'item') {
-        const projectResponse = await this.$staticCatalog.$get(`/themes/${link.href.slice(0, -5)}`)
+        const projectResponse = await this.$axios.$get(link.href)
         this.projectDetailsRaw.push(projectResponse)
       }
     }))
