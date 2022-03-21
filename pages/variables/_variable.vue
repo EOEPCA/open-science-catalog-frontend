@@ -53,6 +53,20 @@
       </v-container>
     </div>
     <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
+      <search-combobox
+        embedded-mode
+        :pre-selected-items="[
+          {
+            key: 'variable',
+            value: variable.id
+          },
+          {
+            key: 'type',
+            value: 'Record'
+          }
+        ]"
+        class="ma-8 mb-0"
+      />
       <v-row class="pa-6">
         <v-col cols="12" md="4">
           <span class="text-h2">

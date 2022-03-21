@@ -71,6 +71,7 @@
       <v-tabs-items v-model="tab">
         <v-tab-item>
         <search-combobox
+          embedded-mode
           :pre-selected-items="[
             {
               key: 'theme',
@@ -100,6 +101,7 @@
                 label="Order by"
                 outlined
                 :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                style="max-width:150px"
                 @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
               />
               <v-select
@@ -109,10 +111,11 @@
                 :items="['Ascending', 'Descending']"
                 label="Order direction"
                 outlined
-                :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
+                style="max-width:150px"
                 @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
               />
-              <v-text-field
+              <!-- <v-text-field
                 v-model="projectsSearch"
                 dense
                 hide-details
@@ -121,7 +124,7 @@
                 label="Search projects"
                 prepend-inner-icon="mdi-magnify"
                 @input="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
-              />
+              /> -->
             </v-col>
           </v-row>
           <item-grid
@@ -131,6 +134,7 @@
         </v-tab-item>
         <v-tab-item>
           <search-combobox
+            embedded-mode
             :pre-selected-items="[
               {
                 key: 'theme',
@@ -159,10 +163,11 @@
                 :items="['Ascending', 'Descending']"
                 label="Order direction"
                 outlined
-                :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
+                style="max-width:150px"
                 @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
               />
-              <v-text-field
+              <!-- <v-text-field
                 v-model="variablesSearch"
                 dense
                 hide-details
@@ -171,7 +176,7 @@
                 label="Search variables"
                 prepend-inner-icon="mdi-magnify"
                 @input="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
-              />
+              /> -->
             </v-col>
           </v-row>
           <item-grid

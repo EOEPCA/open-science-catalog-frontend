@@ -12,9 +12,11 @@
       <div style="position: absolute; width: 100%">
         <v-text-field
           style="pointer-events: none;"
-          label="Filter items"
+          :label="`${embeddedMode ? 'Filter': 'Search'} items`"
+          :outlined="embeddedMode"
+          :dense="embeddedMode"
+          :hide-details="embeddedMode"
           :value="mainInputValue"
-          :class="mainInputValue ? 'v-input--is-focused' : ''"
           height="42"
         />
       </div>
@@ -23,8 +25,7 @@
         :key="index"
         small
         :close="!!item.value && !(preSelectedItems.map(i => i.key).includes(item.key))"
-        :close="!!item.value"
-        class="mr-1"
+        :class="embeddedMode ? 'mx-1' : 'mr-1'"
         @click:close="remove(item)"
       >
         <span class="text-capitalize">
@@ -47,7 +48,11 @@
         ]"
         chips
         :search-input.sync="searchText"
+        :outlined="embeddedMode"
+        :dense="embeddedMode"
+        :hide-details="embeddedMode"
         class="headless-input"
+        :class="embeddedMode ? 'customOutline' : ''"
         :type="isNumberField ? 'number' : 'text'"
         @change="select"
         @focus="mainInputValue = ' '"
@@ -73,7 +78,11 @@
         item-text="field_name"
         return-object
         label=" "
+        :outlined="embeddedMode"
+        :dense="embeddedMode"
+        :hide-details="embeddedMode"
         class="headless-input"
+        :class="embeddedMode ? 'customOutline' : ''"
         @input="select"
         @focus="mainInputValue = ' '"
         @keyup.enter="onEnter"
@@ -102,6 +111,10 @@
 export default {
   name: 'SearchCombobox',
   props: {
+    embeddedMode: {
+      type: Boolean,
+      default: false
+    },
     currentPage: {
       type: Number,
       default: 1
@@ -277,7 +290,9 @@ export default {
   },
   mounted() {
     this.$refs.headless.focus()
+    if (!this.embeddedMode) {
     this.$refs.headless.activateMenu()
+    }
   },
   methods: {
     select (item) {
@@ -371,3 +386,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.customOutline ::v-deep fieldset {
+  border: none !important;
+}
+</style>

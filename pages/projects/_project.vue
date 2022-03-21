@@ -128,6 +128,7 @@
     </div>
     <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
       <search-combobox
+        embedded-mode
         :pre-selected-items="[
           {
             key: 'project',
@@ -164,9 +165,9 @@
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
-            :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
+            :class="$vuetify.breakpoint.mdAndUp ? '' : 'mb-4'"
           />
-          <v-text-field
+          <!-- <v-text-field
             v-model="productsSearch"
             dense
             hide-details
@@ -174,7 +175,7 @@
             single-line
             label="Search products"
             prepend-inner-icon="mdi-magnify"
-          />
+          /> -->
         </v-col>
       </v-row>
       <item-grid
