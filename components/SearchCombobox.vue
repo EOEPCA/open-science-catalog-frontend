@@ -108,7 +108,9 @@ export default {
       mainInputValue: null,
       inputComplete: false,
       searchText: null,
-      loading: false
+      loading: false,
+      themes: [],
+      variables: []
     }
   },
   computed: {
@@ -127,11 +129,13 @@ export default {
       const allItems = [
         {
           field_name: 'theme',
-          filter: 'like'
+          filter: 'like',
+          available_values: this.themes
         },
         {
           field_name: 'variable',
-          filter: 'like'
+          filter: 'like',
+          available_values: this.variables
         },
         {
           field_name: 'project',
@@ -140,11 +144,6 @@ export default {
         {
           field_name: 'product',
           filter: 'like'
-        },
-        {
-          field_name: 'startDate',
-          filter: 'range',
-          digits: 0
         }
       ]
       const inProgressItem = this.filterItems.find(f => f.value === null)
@@ -177,14 +176,22 @@ export default {
             }
           ]
         } else if (currentMeta.filter === 'like') {
-          items = [
-            {
-              filter_value: null,
-              field_name: 'includes',
-              operator: 'includes',
-              original_field_name: inProgressItem.key
-            }
-          ]
+          if (currentMeta.available_values) {
+            items = currentMeta.available_values.map(i => ({
+              filter_value: i,
+              field_name: i,
+              original_field_name: currentMeta.field_name
+            }))
+          } else {
+            items = [
+              {
+                filter_value: null,
+                field_name: 'includes',
+                operator: 'includes',
+                original_field_name: inProgressItem.key
+              }
+            ]
+          }
         } else if (currentMeta.filter === 'range') {
           const existingOperator = this.filterItems
             .find(i => i.key === inProgressItem.key && !!i.operator)
@@ -220,6 +227,15 @@ export default {
       }
       return items
     }
+  },
+  async created () {
+    const response = await this.$staticCatalog.$get('/metrics')
+    response.themes.forEach((theme) => {
+      this.themes.push(theme.name)
+      theme.variables.forEach((variable) => {
+        this.variables.push(variable.name)
+      })
+    })
   },
   methods: {
     select (item) {

@@ -97,7 +97,6 @@ export default {
       this.numberOfPages = Math.round(itemsResponse.numberMatched / 10)
     },
     handleSearchEmit (query) {
-      console.log(query)
       this.searchQuery = query
       this.filterProducts()
     }
