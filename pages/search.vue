@@ -4,6 +4,10 @@
       Search
     </h2>
     <search-combobox
+      ref="searchBox"
+      :current-page="this.page"
+      :sort-by="this.productsFilterSortBy"
+      :sort-order="this.productsFilterOrder"
       @searchQuery="handleSearchEmit"
     />
     <v-row>
@@ -17,7 +21,7 @@
           label="Sort by"
           outlined
           :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-          @change="filterProducts()"
+          @change="filterProducts"
         />
         <v-select
           v-model="productsFilterOrder"
@@ -27,7 +31,7 @@
           label="Order"
           outlined
           :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-          @change="filterProducts()"
+          @change="filterProducts"
         />
       </v-col>
     </v-row>
@@ -76,29 +80,21 @@ export default {
       ],
       productsFilterSortBy: 'title',
       productsFilterOrder: 'Ascending',
-      searchQuery: ''
     }
   },
   head: {
     title: 'Search'
   },
-  async created () {
-    await this.filterProducts()
+  mounted () {
+    this.filterProducts()
   },
   methods: {
-    async filterProducts () {
-      const queryString = `/collections/metadata:main/items?type=dataset&sortby=${
-        this.productsFilterOrder === 'Descending' ? `-${this.productsFilterSortBy}` : `${this.productsFilterSortBy}`}&offset=${
-          (this.page - 1) * 10}${this.searchQuery}`
-
-      const itemsResponse = await this.$dynamicCatalog.$get(queryString)
-
-      this.items = itemsResponse.features
-      this.numberOfPages = Math.round(itemsResponse.numberMatched / 10)
+    handleSearchEmit (result) {
+      this.items = result.items
+      this.numberOfPages = result.numberOfPages
     },
-    handleSearchEmit (query) {
-      this.searchQuery = query
-      this.filterProducts()
+    filterProducts() {
+      this.$refs.searchBox.filterProducts()
     }
   }
 }

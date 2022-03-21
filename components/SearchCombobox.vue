@@ -100,6 +100,20 @@
 <script>
 export default {
   name: 'SearchCombobox',
+  props: {
+    currentPage: {
+      type: Number,
+      default: 0
+    },
+    sortBy: {
+      type: String,
+      default: ''
+    },
+    sortOrder: {
+      type: String,
+      default: 'Descending'
+    }
+  },
   data () {
     return {
       filterModel: null,
@@ -299,17 +313,27 @@ export default {
       this.filterModel = null
     },
     submit () {
-      // const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&${
-      //   curr.operator
-      //     ? 'q'
-      //       // .replace('≤', '__lte') todo: range if needed
-      //       // .replace('≥', '__gte')
-      //       // .replace('=', '')
-      //     : curr.key
-      // }=${curr.value}`, '')
-      const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
-      this.$emit('searchQuery', searchQuery)
-    }
+      this.filterProducts()
+    },
+    async filterProducts () {
+      this.loading = true
+      try {
+        const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
+        const queryString = `/collections/metadata:main/items?type=dataset&sortby=${
+          this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
+            (this.currentPage - 1) * 10}${searchQuery}`
+  
+        const itemsResponse = await this.$dynamicCatalog.$get(queryString)
+  
+        this.$emit('searchQuery', {
+          items: itemsResponse.features,
+          numberOfPages: Math.round(itemsResponse.numberMatched / 10)
+        })
+      } catch (error) {
+        console.error(error)
+      }
+      this.loading = false
+    },
   }
 }
 </script>
