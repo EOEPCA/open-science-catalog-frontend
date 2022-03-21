@@ -216,7 +216,7 @@ export default {
       console.log(err)
     })
 
-    const productsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items&startindex=${
+    const productsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items?offset=${
       (this.page - 1) * 10}`)
     this.products = productsResponse.features
     this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
