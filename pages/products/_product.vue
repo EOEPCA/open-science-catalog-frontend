@@ -108,74 +108,20 @@
             </v-icon>
             <strong class="text-uppercase mr-2">Satellite missions</strong> {{ product.properties['osc:missions'].join(', ') }}
           </div>
-          <v-dialog
-            v-model="productsDialog"
-            width="500"
-          >
-            <template #activator="{ on, attrs }">
-              <v-btn
-                color="primary"
-                dark
-                :block="$vuetify.breakpoint.xsOnly"
-                :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
-                v-bind="attrs"
-                v-on="on"
-              >
-                Product Access
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                Product links
-                <v-spacer />
-                <v-icon @click="productsDialog = false">
-                  mdi-close
-                </v-icon>
-              </v-card-title>
-              <v-divider />
-              <v-card-text>
-                <v-row>
-                  <v-col
-                    v-for="link in product.links.filter(el => el.rel === 'via')"
-                    :key="link.href"
-                    cols="6"
-                  >
-                    <v-card class="pa-4" outlined>
-                      <v-chip
-                        color="green"
-                        small
-                        label
-                        dark
-                      >
-                        Link
-                      </v-chip>
-                      <div>
-                        Website
-                      </div>
-                      <v-icon>
-                        mdi-web
-                      </v-icon>
-                      Type URL
-                      <v-btn
-                        color="primary"
-                        :href="link.href"
-                        target="_blank"
-                      >
-                        Open Link
-                      </v-btn>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
           <v-btn
+            v-for="(link, key) in product.links.filter(el => el.rel === 'via').sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
+            :key="key"
             color="primary"
-            outlined
+            :outlined="link.title !== 'Access'"
             :block="$vuetify.breakpoint.xsOnly"
-            v-bind="attrs"
+            :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
+            :href="link.href"
+            target="_blank"
           >
-            Documentation
+            <v-icon left v-if="link.title === 'Access'">mdi-location-enter</v-icon>
+            <v-icon left v-else-if="link.title === 'Documentation'">mdi-file-document-outline</v-icon>
+            <v-icon left v-else>mdi-web</v-icon>
+            {{ link.title || 'Website' }}
           </v-btn>
           <hr class="my-7">
           <h6 class="text-h6 mb-2 d-flex align-center">
