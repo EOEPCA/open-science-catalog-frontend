@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/themes/magnetosphereionosphere", {data:[{}],fetch:{},mutations:[]});
