@@ -299,14 +299,15 @@ export default {
       this.filterModel = null
     },
     submit () {
-      const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&${
-        curr.operator
-          ? 'q'
-            // .replace('≤', '__lte') todo: range if needed
-            // .replace('≥', '__gte')
-            // .replace('=', '')
-          : curr.key
-      }=${curr.value}`, '')
+      // const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&${
+      //   curr.operator
+      //     ? 'q'
+      //       // .replace('≤', '__lte') todo: range if needed
+      //       // .replace('≥', '__gte')
+      //       // .replace('=', '')
+      //     : curr.key
+      // }=${curr.value}`, '')
+      const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
       this.$emit('searchQuery', searchQuery)
     }
   }
