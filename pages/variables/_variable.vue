@@ -8,23 +8,47 @@
       class="pb-4 variableHeaderContainer"
     >
       <v-container>
-        <v-row class="ml-2">
-          <span class="mt-3 mb-5 text-h2">
-            {{ variable.id }}
-          </span>
+        <v-row>
+          <v-col>
+            <h2 class="text-h2">
+              {{ variable.id }}
+            </h2>
+          </v-col>
         </v-row>
-        <v-row class="ml-2 pt-0 mt-0 mb-4">
-          <v-chip
-            color="rgb(124, 69, 86)"
-            dark
-          >
-            {{ variable['osc:theme'] }}
-          </v-chip>
+        <v-row>
+          <v-col>
+            <v-chip
+              color="rgb(124, 69, 86)"
+              dark
+            >
+              {{ variable['osc:theme'] }}
+            </v-chip>
+          </v-col>
         </v-row>
-        <v-row class="ml-2">
-          <span>
-            {{ variable.description }}
-          </span>
+        <v-row>
+          <v-col>
+            <span>
+              {{ variable.description }}
+            </span>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <a
+              v-for="link in variable.links.filter(el => el.rel === 'via')"
+              :key="link.href"
+              :href="link.href"
+              target="_blank"
+              class="mr-1 variableLink"
+            >
+              <v-icon>
+                mdi-link
+              </v-icon>
+              <span>
+                {{ link.title }}
+              </span>
+            </a>
+          </v-col>
         </v-row>
       </v-container>
     </div>
@@ -151,7 +175,7 @@ export default {
     // format products
     await Promise.all(this.variable.links.map(async (link) => {
       if (link.rel === 'item') {
-        const productResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
+        const productResponse = await this.$axios.$get(link.href)
         this.products.push(productResponse)
       }
     }))
@@ -180,8 +204,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .variableHeaderContainer {
   border-bottom: 0.25em solid #335E6F;
+}
+.variableLink {
+  text-decoration: none;
 }
 </style>

@@ -69,13 +69,13 @@
                 :key="link.href"
                 :href="link.href"
                 target="_blank"
-                class="mx-1 projectLink"
+                class="mr-1 projectLink"
               >
                 <v-icon>
                   mdi-link
                 </v-icon>
                 <span>
-                  {{ link.href.includes('eo4society.esa.int') ? 'EO4SOCIETY LINK' : 'WEBSITE' }}
+                  {{ link.title }}
                 </span>
               </a>
             </v-row>
@@ -224,7 +224,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .variableHeaderContainer {
   border-bottom: 0.25em solid #335E6F;
 }

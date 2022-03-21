@@ -292,7 +292,7 @@ export default {
         const products = []
         await Promise.all(variable.links.map(async (link) => {
           if (link.rel === 'item') {
-            const productResponse = await this.$staticCatalog.$get(`/products/${link.href.slice(0, -5)}`)
+            const productResponse = await this.$axios.$get(link.href)
             products.push(productResponse)
           }
         }))
