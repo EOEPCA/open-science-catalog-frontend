@@ -22,6 +22,7 @@
         v-for="(item, index) in filterItems"
         :key="index"
         small
+        :close="!!item.value && !(preSelectedItems.map(i => i.key).includes(item.key))"
         :close="!!item.value"
         class="mr-1"
         @click:close="remove(item)"
@@ -112,6 +113,10 @@ export default {
     sortOrder: {
       type: String,
       default: 'Descending'
+    },
+    preSelectedItems: {
+      type: Array,
+      default: () => ([])
     }
   },
   data () {
@@ -259,6 +264,9 @@ export default {
     }
   },
   async created () {
+    if (this.preSelectedItems.length > 0) {
+      this.filterItems = this.preSelectedItems
+    }
     const response = await this.$staticCatalog.$get('/metrics')
     response.themes.forEach((theme) => {
       this.themes.push(theme.name)
@@ -327,6 +335,9 @@ export default {
         return
       }
       if (this.searchText) {
+        return
+      }
+      if (this.preSelectedItems.map(i => i.key).includes(this.filterItems[this.filterItems.length - 1].key)) {
         return
       }
       this.filterItems.pop()

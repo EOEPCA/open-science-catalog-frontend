@@ -127,6 +127,19 @@
       </v-container>
     </div>
     <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
+      <search-combobox
+        :pre-selected-items="[
+          {
+            key: 'project',
+            value: project.id
+          },
+          {
+            key: 'type',
+            value: 'Record'
+          }
+        ]"
+        class="my-4"
+      />
       <v-row class="mt-2">
         <v-col cols="12" md="4">
           <span class="text-h2">

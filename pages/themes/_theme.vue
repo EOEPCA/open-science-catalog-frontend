@@ -70,6 +70,20 @@
     <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
       <v-tabs-items v-model="tab">
         <v-tab-item>
+        <search-combobox
+          :pre-selected-items="[
+            {
+              key: 'theme',
+              value: theme.id
+            },
+            {
+              key: 'type',
+              value: 'Project'
+            }
+          ]"
+            class="ma-8 mb-0"
+            @searchQuery="handleSearchEmit"
+          />
           <v-row class="px-8 pt-8 d-flex align-center">
             <v-col cols="12" md="4">
               <span class="text-h2">
@@ -116,6 +130,20 @@
           />
         </v-tab-item>
         <v-tab-item>
+          <search-combobox
+            :pre-selected-items="[
+              {
+                key: 'theme',
+                value: theme.id
+              },
+              {
+                key: 'type',
+                value: 'Variable'
+              }
+            ]"
+            class="ma-8 mb-0"
+            @searchQuery="handleSearchEmit"
+          />
           <v-row class="px-8 pt-8 d-flex align-center">
             <v-col cols="12" md="4">
               <span class="text-h2">
@@ -267,6 +295,9 @@ export default {
           return null
         })
       })
+    },
+    handleSearchEmit(result) {
+      this.projectDetails = result.items
     }
   }
 }
