@@ -118,9 +118,15 @@
             :href="link.href"
             target="_blank"
           >
-            <v-icon left v-if="link.title === 'Access'">mdi-location-enter</v-icon>
-            <v-icon left v-else-if="link.title === 'Documentation'">mdi-file-document-outline</v-icon>
-            <v-icon left v-else>mdi-web</v-icon>
+            <v-icon v-if="link.title === 'Access'" left>
+              mdi-location-enter
+            </v-icon>
+            <v-icon v-else-if="link.title === 'Documentation'" left>
+              mdi-file-document-outline
+            </v-icon>
+            <v-icon v-else left>
+              mdi-web
+            </v-icon>
             {{ link.title || 'Website' }}
           </v-btn>
           <hr class="my-7">
