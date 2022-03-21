@@ -75,7 +75,7 @@
                   mdi-link
                 </v-icon>
                 <span>
-                  {{ link.href.includes('eo4society.esa.int') ? 'EO4SOCIETY LINK' : 'WEBSITE' }}
+                  {{ link.title }}
                 </span>
               </a>
             </v-row>
