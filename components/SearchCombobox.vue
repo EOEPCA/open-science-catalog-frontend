@@ -124,31 +124,20 @@ export default {
       searchText: null,
       loading: false,
       themes: [],
-      variables: []
+      variables: [],
     }
   },
   computed: {
-    currentlyFreeText () {
-      return this.filterItems && this.filterItems.find((i) => {
-        return !i.value && i.operator
-      })
-    },
-    isNumberField () {
-      // const currentFilter = this.filterItems.find(f => f.value === null)
-      // const currentField = this.metaInfo.fields.find(f => f.field_name === currentFilter.key)
-      return false
-    },
-    filterFields () {
-      let items
-      const allItems = [
+    availableItems() {
+      return [
         {
           field_name: 'theme',
-          filter: 'like',
+          filter: 'exact',
           available_values: this.themes
         },
         {
           field_name: 'variable',
-          filter: 'like',
+          filter: 'exact',
           available_values: this.variables
         },
         {
@@ -160,10 +149,27 @@ export default {
           filter: 'like'
         }
       ]
+    },
+    currentlyFreeText () {
+      return this.filterItems && this.filterItems.find((i) => {
+        return !i.value && i.operator
+      })
+    },
+    isNumberField () {
+      const currentFilter = this.filterItems.find(f => f.value === null)
+      const currentField = this.metaInfo.fields.find(f => f.field_name === currentFilter.key)
+      return false
+    },
+    filterFields () {
+      let items
+      const allItems = this.availableItems.filter(f => f.filter && (!this.filterItems
+        .find(i => i.key === f.field_name) || (f.filter === 'range' && this.filterItems
+          .filter(i => i.key === f.field_name).length < 2)))
+
       const inProgressItem = this.filterItems.find(f => f.value === null)
       if (inProgressItem || this.currentlyFreeText) {
         const currentMeta = inProgressItem &&
-          allItems.find(f => f.field_name === inProgressItem.key)
+          this.availableItems.find(f => f.field_name === inProgressItem.key)
         if (inProgressItem.operator) {
           items = [
           ]
@@ -181,14 +187,24 @@ export default {
             }
           ]
         } else if (currentMeta.filter === 'exact') {
-          items = [
-            {
-              filter_value: null,
-              field_name: 'is exactly',
-              operator: '=',
-              original_field_name: inProgressItem.key
+          if (currentMeta.available_values) {
+            if (Array.isArray(currentMeta.available_values)) {
+              items = currentMeta.available_values.map(i => ({
+                filter_value: i,
+                field_name: i,
+                original_field_name: currentMeta.field_name,
+              }));
             }
-          ]
+          } else {
+            items = [
+              {
+                filter_value: null,
+                field_name: 'is exactly',
+                operator: '=',
+                original_field_name: inProgressItem.key
+              }
+            ]
+          }
         } else if (currentMeta.filter === 'like') {
           if (currentMeta.available_values) {
             items = currentMeta.available_values.map(i => ({
@@ -329,6 +345,7 @@ export default {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
+        this.$refs.headless.blur();
       } catch (error) {
         console.error(error)
       }

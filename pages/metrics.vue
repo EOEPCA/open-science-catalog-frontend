@@ -27,7 +27,7 @@
       </v-col>
       <v-spacer />
       <v-col cols="12" sm="4" lg="3" class="d-flex align-center pa-3">
-        <v-text-field
+        <!-- <v-text-field
           v-model="filter"
           hide-details
           solo
@@ -36,6 +36,10 @@
           dense
           placeholder="Filter by keywords..."
           prepend-inner-icon="mdi-magnify"
+        /> -->
+        <search-combobox
+          ref="searchBox"
+          @searchQuery="handleSearchEmit"
         />
       </v-col>
     </v-row>
@@ -141,6 +145,9 @@ export default {
     this.filterItems(null)
   },
   methods: {
+    handleSearchEmit(result) {
+      console.log(result)
+    },
     async filterItems (i) {
       this.metrics = await this.$staticCatalog.$get('/metrics')
       const variables = []
