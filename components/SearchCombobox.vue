@@ -267,6 +267,10 @@ export default {
       })
     })
   },
+  mounted() {
+    this.$refs.headless.focus()
+    this.$refs.headless.activateMenu()
+  },
   methods: {
     select (item) {
       if (item) {
@@ -331,7 +335,7 @@ export default {
     submit () {
       this.filterProducts()
     },
-    async filterProducts () {
+    async filterProducts (init) {
       this.loading = true
       try {
         const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
@@ -345,7 +349,9 @@ export default {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
+        if (!init) {
           this.$refs.headless.blur();
+        }
       } catch (error) {
         console.error(error)
       }

@@ -86,15 +86,15 @@ export default {
     title: 'Search'
   },
   mounted () {
-    this.filterProducts()
+    this.filterProducts(true)
   },
   methods: {
     handleSearchEmit (result) {
       this.items = result.items
       this.numberOfPages = result.numberOfPages
     },
-    filterProducts() {
-      this.$refs.searchBox.filterProducts()
+    filterProducts(init) {
+      this.$refs.searchBox.filterProducts(init)
     }
   }
 }
