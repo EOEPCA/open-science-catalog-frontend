@@ -157,8 +157,8 @@ export default {
     },
     isNumberField () {
       const currentFilter = this.filterItems.find(f => f.value === null)
-      const currentField = this.metaInfo.fields.find(f => f.field_name === currentFilter.key)
-      return false
+      const currentField = this.availableItems.find(f => f.field_name === currentFilter.key)
+      return currentField.digits !== undefined
     },
     filterFields () {
       let items
@@ -345,7 +345,7 @@ export default {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
-        this.$refs.headless.blur();
+          this.$refs.headless.blur();
       } catch (error) {
         console.error(error)
       }
