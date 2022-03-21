@@ -103,11 +103,11 @@ export default {
   props: {
     currentPage: {
       type: Number,
-      default: 0
+      default: 1
     },
     sortBy: {
       type: String,
-      default: ''
+      default: 'title'
     },
     sortOrder: {
       type: String,
