@@ -105,7 +105,7 @@
             :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
             outlined
           />
-          <v-text-field
+          <!-- <v-text-field
             v-model="productsSearch"
             dense
             hide-details
@@ -115,7 +115,7 @@
             label="Search products"
             prepend-inner-icon="mdi-magnify"
             @input="filterProducts"
-          />
+          /> -->
         </v-col>
       </v-row>
       <item-grid

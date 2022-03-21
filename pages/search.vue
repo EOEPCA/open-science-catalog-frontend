@@ -5,6 +5,7 @@
     </h2>
     <search-combobox
       ref="searchBox"
+      :auto-focus="true"
       :current-page="this.page"
       :sort-by="this.productsFilterSortBy"
       :sort-order="this.productsFilterOrder"

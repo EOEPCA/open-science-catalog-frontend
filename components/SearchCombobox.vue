@@ -102,7 +102,9 @@
       :loading="loading"
       @click="submit"
     >
-      submit
+      <v-icon>
+        mdi-magnify
+      </v-icon>
     </v-btn>
   </div>
 </template>
@@ -211,7 +213,8 @@ export default {
                 filter_value: i,
                 field_name: i,
                 original_field_name: currentMeta.field_name,
-              }));
+              }))
+              .sort((a, b) => a.field_name < b.field_name ? -1 : 1)
             }
           } else {
             items = [
@@ -291,7 +294,7 @@ export default {
   mounted() {
     this.$refs.headless.focus()
     if (!this.embeddedMode) {
-    this.$refs.headless.activateMenu()
+      this.$refs.headless.activateMenu()
     }
   },
   methods: {
