@@ -72,6 +72,7 @@
         <v-tab-item>
         <search-combobox
           embedded-mode
+          :item-type="'project'"
           :pre-selected-items="[
             {
               key: 'theme',
@@ -135,6 +136,7 @@
         <v-tab-item>
           <search-combobox
             embedded-mode
+            :item-type="'project'"
             :pre-selected-items="[
               {
                 key: 'theme',

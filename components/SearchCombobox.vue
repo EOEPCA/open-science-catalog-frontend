@@ -132,6 +132,10 @@ export default {
     preSelectedItems: {
       type: Array,
       default: () => ([])
+    },
+    itemType: {
+      type: String,
+      default: 'product'
     }
   },
   data () {
@@ -368,7 +372,8 @@ export default {
       this.loading = true
       try {
         const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
-        const queryString = `/collections/metadata:main/items?type=dataset&sortby=${
+        const queryString = `/collections/metadata:main/items?type=${this.itemType === 'project'
+          ? 'datasetcollection' : 'dataset'}&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
             (this.currentPage - 1) * 10}${searchQuery}`
   
