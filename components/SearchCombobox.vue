@@ -127,7 +127,7 @@ export default {
     },
     sortOrder: {
       type: String,
-      default: 'Descending'
+      default: 'Ascending'
     },
     preSelectedItems: {
       type: Array,

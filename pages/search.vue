@@ -94,7 +94,9 @@ export default {
       this.numberOfPages = result.numberOfPages
     },
     filterProducts(init) {
-      this.$refs.searchBox.filterProducts(init)
+      this.$nextTick(() => {
+        this.$refs.searchBox.filterProducts(init)
+      })
     }
   }
 }
