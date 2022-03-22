@@ -148,11 +148,11 @@ export default {
       searchText: null,
       loading: false,
       themes: [],
-      variables: [],
+      variables: []
     }
   },
   computed: {
-    availableItems() {
+    availableItems () {
       return [
         {
           field_name: 'theme',
@@ -188,7 +188,7 @@ export default {
       let items
       const allItems = this.availableItems.filter(f => f.filter && (!this.filterItems
         .find(i => i.key === f.field_name) || (f.filter === 'range' && this.filterItems
-          .filter(i => i.key === f.field_name).length < 2)))
+        .filter(i => i.key === f.field_name).length < 2)))
 
       const inProgressItem = this.filterItems.find(f => f.value === null)
       if (inProgressItem || this.currentlyFreeText) {
@@ -216,9 +216,9 @@ export default {
               items = currentMeta.available_values.map(i => ({
                 filter_value: i,
                 field_name: i,
-                original_field_name: currentMeta.field_name,
+                original_field_name: currentMeta.field_name
               }))
-              .sort((a, b) => a.field_name < b.field_name ? -1 : 1)
+                .sort((a, b) => a.field_name < b.field_name ? -1 : 1)
             }
           } else {
             items = [
@@ -295,7 +295,7 @@ export default {
       })
     })
   },
-  mounted() {
+  mounted () {
     this.$refs.headless.focus()
     if (!this.embeddedMode) {
       this.$refs.headless.activateMenu()
@@ -373,24 +373,25 @@ export default {
       try {
         const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
         const queryString = `/collections/metadata:main/items?type=${this.itemType === 'project'
-          ? 'datasetcollection' : 'dataset'}&sortby=${
+          ? 'datasetcollection'
+: 'dataset'}&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
             (this.currentPage - 1) * 10}${searchQuery}`
-  
+
         const itemsResponse = await this.$dynamicCatalog.$get(queryString)
-  
+
         this.$emit('searchQuery', {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
         if (!init) {
-          this.$refs.headless.blur();
+          this.$refs.headless.blur()
         }
       } catch (error) {
         console.error(error)
       }
       this.loading = false
-    },
+    }
   }
 }
 </script>
