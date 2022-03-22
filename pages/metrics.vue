@@ -146,7 +146,7 @@ export default {
     this.filterItems(null)
   },
   methods: {
-    handleSearchEmit(result) {
+    handleSearchEmit (result) {
       console.log(result)
     },
     async filterItems (i) {

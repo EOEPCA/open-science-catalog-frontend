@@ -70,19 +70,19 @@
     <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
       <v-tabs-items v-model="tab">
         <v-tab-item>
-        <search-combobox
-          embedded-mode
-          :item-type="'project'"
-          :pre-selected-items="[
-            {
-              key: 'theme',
-              value: theme.id
-            },
-            {
-              key: 'type',
-              value: 'Project'
-            }
-          ]"
+          <search-combobox
+            embedded-mode
+            :item-type="'project'"
+            :pre-selected-items="[
+              {
+                key: 'theme',
+                value: theme.id
+              },
+              {
+                key: 'type',
+                value: 'Project'
+              }
+            ]"
             class="ma-8 mb-0"
             @searchQuery="handleSearchEmit"
           />
@@ -301,7 +301,7 @@ export default {
         })
       })
     },
-    handleSearchEmit(result) {
+    handleSearchEmit (result) {
       this.projectDetails = result.items
     }
   }

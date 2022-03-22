@@ -6,9 +6,9 @@
     <search-combobox
       ref="searchBox"
       :auto-focus="true"
-      :current-page="this.page"
-      :sort-by="this.productsFilterSortBy"
-      :sort-order="this.productsFilterOrder"
+      :current-page="page"
+      :sort-by="productsFilterSortBy"
+      :sort-order="productsFilterOrder"
       @searchQuery="handleSearchEmit"
     />
     <v-row>
@@ -79,7 +79,7 @@ export default {
         }
       ],
       productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending',
+      productsFilterOrder: 'Ascending'
     }
   },
   head: {
@@ -93,7 +93,7 @@ export default {
       this.items = result.items
       this.numberOfPages = result.numberOfPages
     },
-    filterProducts(init) {
+    filterProducts (init) {
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts(init)
       })
