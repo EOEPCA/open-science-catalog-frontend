@@ -136,7 +136,7 @@
           },
           {
             key: 'type',
-            value: 'Record'
+            value: 'product'
           }
         ]"
         class="my-4"

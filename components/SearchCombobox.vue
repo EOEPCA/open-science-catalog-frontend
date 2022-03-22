@@ -171,6 +171,14 @@ export default {
         {
           field_name: 'product',
           filter: 'like'
+        },
+        {
+          field_name: 'type',
+          filter: 'exact',
+          available_values: [
+            'project',
+            'product'
+          ]
         }
       ]
     },
@@ -371,9 +379,12 @@ export default {
     async filterProducts (init) {
       this.loading = true
       try {
-        const searchQuery = this.filterItems.reduce((acc, curr) => `${acc}&q=${curr.value}`, '')
-        const queryString = `/collections/metadata:main/items?type=${this.itemType === 'project'
-          ? 'datasetcollection' : 'dataset'}&sortby=${
+        const searchQuery = this.filterItems.reduce((acc, curr) => {
+          return curr.key === 'type'
+            ? `${acc}&type=${curr.value === 'project' ? 'datasetcollection' : 'dataset'}`
+            : `${acc}&q=${curr.value}`
+        }, '')
+        const queryString = `/collections/metadata:main/items?sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
             (this.currentPage - 1) * 10}${searchQuery}`
   

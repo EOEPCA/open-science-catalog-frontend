@@ -62,7 +62,7 @@
           },
           {
             key: 'type',
-            value: 'Record'
+            value: 'product'
           }
         ]"
         class="ma-8 mb-0"
