@@ -179,7 +179,6 @@
         </v-col>
       </v-row>
       <item-grid
-        type="products"
         :items="products"
       />
       <v-row>

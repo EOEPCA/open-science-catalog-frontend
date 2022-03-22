@@ -37,7 +37,6 @@
       </v-col>
     </v-row>
     <item-grid
-      type="products"
       :items="items"
     />
     <v-row>

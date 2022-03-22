@@ -129,7 +129,6 @@
             </v-col>
           </v-row>
           <item-grid
-            type="projects"
             :items="projectDetails"
           />
         </v-tab-item>
@@ -182,7 +181,6 @@
             </v-col>
           </v-row>
           <item-grid
-            type="variables"
             :items="variablesDetails"
           />
         </v-tab-item>
