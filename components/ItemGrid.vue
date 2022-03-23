@@ -9,48 +9,50 @@
       lg="3"
     >
       <v-card
-        :to="`/${type}/${type === 'variables' ? slugify(item.name) : item.id}`"
+        :to="`/${getType(item)}s/${getType(item) === 'variable'
+          ? slugify(item.name)
+          : item.id}`"
         outlined
       >
         <v-card-title>
           <v-chip
             small
             label
-            :color="type === 'variables' ? 'green' : 'primary'"
+            :color="$typeColor(getType(item))"
             dark
             class="text-uppercase"
           >
-            {{ type.toUpperCase().slice(0, -1) }}
+            {{ getType(item) }}
           </v-chip>
           <v-spacer />
-          <div v-if="type === 'projects'" class="projectDates">
+          <div v-if="getType(item) === 'project'">
             <v-icon small>
               mdi-calendar-today
             </v-icon>
-            {{ item.properties.start_datetime }}
+            <small>{{ item.properties.start_datetime }}</small>
             -
             <v-icon small>
               mdi-calendar
             </v-icon>
-            {{ item.properties.end_datetime }}
+            <small>{{ item.properties.end_datetime }}</small>
           </div>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
-          {{ type === 'variables' ? item.name : item.properties.title }}
+          {{ getType(item) === 'variable' ? item.name : item.properties.title }}
         </v-card-title>
-        <v-card-subtitle v-if="type === 'projects'">
+        <v-card-subtitle v-if="getType(item) === 'project'">
           <span v-for="consort in item.properties['osc:consortium']" :key="consort">
             {{ consort }}
           </span>
         </v-card-subtitle>
         <v-card-text>
-          <span v-if="type === 'variables'">
+          <span v-if="getType(item) === 'variable'">
             {{ item.productsNumber }} Products
           </span>
           <span v-else>
             {{ `${item.properties.description.substring(0, 100)}...` }}
           </span>
-          <div v-if="type === 'products' && 'osc:themes' in item.properties" class="mt-2">
+          <div v-if="getType(item) === 'product' && 'osc:themes' in item.properties" class="mt-2">
             - {{ item.properties['osc:themes'].join(', ') }}
           </div>
         </v-card-text>
@@ -65,17 +67,22 @@ export default {
     items: {
       type: Array,
       default: () => []
-    },
-    type: {
-      type: String,
-      default: () => ''
+    }
+  },
+  methods: {
+    getType (item) {
+      let type
+      if (item.properties?.['osc:type']) {
+        type = item.properties['osc:type'].toLowerCase()
+      } else if (item.properties?.type) {
+        type = item.properties.type === 'dataset'
+          ? 'product'
+          : 'project'
+      } else {
+        type = 'variable'
+      }
+      return type
     }
   }
 }
 </script>
-
-<style>
-.projectDates {
-  font-size: 15px;
-}
-</style>

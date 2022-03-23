@@ -11,7 +11,7 @@
       >
         <v-chip
           v-if="item === navigationBreadcrumb[navigationBreadcrumb.length - 1]"
-          :color="getColor(item.type)"
+          :color="$typeColor(item.type)"
           dark
           small
           label
@@ -89,21 +89,6 @@ export default {
             ]
           : [])
       ]
-    }
-  },
-  methods: {
-    getColor (type) {
-      switch (type) {
-        case 'theme': {
-          return 'grey'
-        }
-        case 'project': {
-          return 'primary'
-        }
-        case 'variable': {
-          return 'green'
-        }
-      }
     }
   }
 }

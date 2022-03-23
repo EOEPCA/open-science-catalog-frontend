@@ -1,5 +1,5 @@
 <template>
-  <v-container class="white pa-2 pa-sm-0 pa-md-2 mt-0 mt-sm-n2 mt-md-2">
+  <v-container class="white">
     <v-row
       v-if="metrics"
       class="white"
@@ -7,7 +7,7 @@
         ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
         : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
     >
-      <v-col cols="12" sm="8" lg="9">
+      <v-col cols="12" sm="8" lg="8">
         <v-tabs
           v-model="selectedTab"
           @change="filterItems"
@@ -26,8 +26,8 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="12" sm="4" lg="3" class="d-flex align-center pa-3">
-        <v-text-field
+      <v-col cols="12" sm="4" lg="4" class="d-flex align-center pa-3">
+        <!-- <v-text-field
           v-model="filter"
           hide-details
           solo
@@ -36,6 +36,11 @@
           dense
           placeholder="Filter by keywords..."
           prepend-inner-icon="mdi-magnify"
+        /> -->
+        <search-combobox
+          ref="searchBox"
+          embedded-mode
+          class="mx-2 my-4"
         />
       </v-col>
     </v-row>
@@ -141,6 +146,9 @@ export default {
     this.filterItems(null)
   },
   methods: {
+    handleSearchEmit (result) {
+      console.log(result)
+    },
     async filterItems (i) {
       this.metrics = await this.$staticCatalog.$get('/metrics')
       const variables = []

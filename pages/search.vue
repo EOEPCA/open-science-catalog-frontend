@@ -3,74 +3,121 @@
     <h2 class="text-h2 mt-3 mb-5">
       Search
     </h2>
-    <item-grid :items="items" />
+    <search-combobox
+      ref="searchBox"
+      :auto-focus="true"
+      :current-page="page"
+      :sort-by="productsFilterSortBy"
+      :sort-order="productsFilterOrder"
+      @searchQuery="handleSearchEmit"
+    />
+    <v-row>
+      <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+        <v-spacer />
+        <v-select
+          v-model="productsFilterSortBy"
+          dense
+          hide-details
+          :items="productsFilterOptions"
+          label="Sort by"
+          outlined
+          :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+          @change="filterProducts"
+        />
+        <v-select
+          v-model="productsFilterOrder"
+          dense
+          hide-details
+          :items="['Ascending', 'Descending']"
+          label="Order"
+          outlined
+          :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+          @change="filterProducts"
+        />
+      </v-col>
+    </v-row>
+    <item-grid
+      :items="items"
+    />
+    <v-row>
+      <v-col cols="12" class="text-center">
+        <v-pagination
+          v-model="page"
+          :length="numberOfPages"
+          @input="filterProducts"
+          @next="filterProducts"
+          @previous="filterProducts"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import ItemGrid from '@/components/ItemGrid.vue'
+import SearchCombobox from '@/components/SearchCombobox.vue'
 
 export default {
   name: 'Search',
   components: {
-    ItemGrid
+    ItemGrid,
+    SearchCombobox
   },
   data () {
     return {
-      items: [
+      items: [],
+      page: 1,
+      numberOfPages: 1,
+      productsFilterOptions: [
         {
-          title: 'ADDTID: An Alternative Tool for Studying Earthquake/Tsunami Signatures in the Ionosphere_Japan_SWARM',
-          content: '- Solar activity'
+          text: 'Name',
+          value: 'title'
         },
         {
-          title: 'Aerosol (and dust aerosol) optical depth, averaged per overpass along 1x1 degree grid_Global_CALIPSO',
-          content: '- Aerosols'
-        },
-        {
-          title: 'Aerosol (and dust aerosol) optical depth_Global_CALIPSO',
-          content: '- Aerosols'
-        },
-        {
-          title: 'Aerosol (and dust aerosol) optical property profiles. Dust concentration profiles, along with the cloud-relevant dust number concentrations profiles_Global_CALIPSO',
-          content: '- Aerosols'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
-        },
-        {
-          title: 'dummy',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+          text: 'Description',
+          value: 'description'
         }
-      ]
+      ],
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending'
     }
   },
   head: {
     title: 'Search'
+  },
+  mounted () {
+    this.filterProducts(true)
+  },
+  methods: {
+    handleSearchEmit (result) {
+      this.items = result.items
+      this.numberOfPages = result.numberOfPages
+    },
+    filterProducts (init) {
+      this.$nextTick(() => {
+        this.$refs.searchBox.filterProducts(init)
+      })
+    }
   }
 }
 </script>
+
+<style scoped lang="scss">
+::v-deep .v-select__slot {
+  .v-input__append-inner  {
+    display: none;
+  }
+}
+.headless-input {
+  ::v-deep .v-input__control > .v-input__slot:before {
+    border: none
+  }
+  label {
+    display: none;
+  }
+}
+::v-deep .v-text-field__slot input,
+::v-deep .v-select__selections input {
+  margin-top: 5px;
+}
+</style>

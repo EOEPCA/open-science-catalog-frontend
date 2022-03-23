@@ -53,6 +53,20 @@
       </v-container>
     </div>
     <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
+      <search-combobox
+        embedded-mode
+        :pre-selected-items="[
+          {
+            key: 'variable',
+            value: variable.id
+          },
+          {
+            key: 'type',
+            value: 'product'
+          }
+        ]"
+        class="ma-8 mb-0"
+      />
       <v-row class="pa-6">
         <v-col cols="12" md="4">
           <span class="text-h2">
@@ -91,7 +105,7 @@
             :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
             outlined
           />
-          <v-text-field
+          <!-- <v-text-field
             v-model="productsSearch"
             dense
             hide-details
@@ -101,11 +115,10 @@
             label="Search products"
             prepend-inner-icon="mdi-magnify"
             @input="filterProducts"
-          />
+          /> -->
         </v-col>
       </v-row>
       <item-grid
-        type="products"
         :items="products"
       />
       <v-row>
