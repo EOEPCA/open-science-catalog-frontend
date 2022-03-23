@@ -67,10 +67,10 @@ export default {
     items: {
       type: Array,
       default: () => []
-    },
+    }
   },
   methods: {
-    getType(item) {
+    getType (item) {
       let type
       if (item.properties?.['osc:type']) {
         type = item.properties['osc:type'].toLowerCase()
