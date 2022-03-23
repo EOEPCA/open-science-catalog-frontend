@@ -1,7 +1,7 @@
 <template>
   <v-row class="pa-8">
     <v-col
-      v-for="item in items"
+      v-for="item in nonEmptyItems"
       :key="item.id"
       cols="12"
       sm="6"
@@ -45,7 +45,7 @@
         </v-card-subtitle>
         <v-card-text>
           <span v-if="type === 'variables'">
-            {{ item.productsNumber }} Products
+            {{ item.summary.numberOfProducts }} Products
           </span>
           <span v-else>
             {{ `${item.properties.description.substring(0, 100)}...` }}
@@ -69,6 +69,14 @@ export default {
     type: {
       type: String,
       default: () => ''
+    }
+  },
+  computed: {
+    nonEmptyItems () {
+      if (this.type === 'variables') {
+        return this.items.filter(variable => variable.summary.numberOfProducts > 0)
+      }
+      return this.items
     }
   }
 }
