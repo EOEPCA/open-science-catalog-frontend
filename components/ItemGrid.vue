@@ -71,10 +71,12 @@ export default {
   },
   computed: {
     nonEmptyItems () {
-      if (this.type === 'variables') {
-        return this.items.filter(variable => variable.summary.numberOfProducts > 0)
-      }
-      return this.items
+      return this.items.filter((item) => {
+        if (this.getType(item) === 'variable') {
+          return item.summary.numberOfProducts > 0
+        }
+        return item
+      })
     }
   },
   methods: {
