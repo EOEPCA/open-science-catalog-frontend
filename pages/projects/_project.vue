@@ -127,6 +127,20 @@
       </v-container>
     </div>
     <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
+      <search-combobox
+        embedded-mode
+        :pre-selected-items="[
+          {
+            key: 'project',
+            value: project.id
+          },
+          {
+            key: 'type',
+            value: 'product'
+          }
+        ]"
+        class="my-4"
+      />
       <v-row class="mt-2">
         <v-col cols="12" md="4">
           <span class="text-h2">
@@ -151,9 +165,9 @@
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
-            :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
+            :class="$vuetify.breakpoint.mdAndUp ? '' : 'mb-4'"
           />
-          <v-text-field
+          <!-- <v-text-field
             v-model="productsSearch"
             dense
             hide-details
@@ -161,11 +175,10 @@
             single-line
             label="Search products"
             prepend-inner-icon="mdi-magnify"
-          />
+          /> -->
         </v-col>
       </v-row>
       <item-grid
-        type="products"
         :items="products"
       />
       <v-row>
