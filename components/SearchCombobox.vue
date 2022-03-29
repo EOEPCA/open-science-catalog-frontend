@@ -110,6 +110,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'SearchCombobox',
   props: {
@@ -147,17 +149,19 @@ export default {
       inputComplete: false,
       searchText: null,
       loading: false,
-      themes: [],
       variables: []
     }
   },
   computed: {
+    ...mapGetters('metrics', [
+      'themes'
+    ]),
     availableItems () {
       return [
         {
           field_name: 'theme',
           filter: 'exact',
-          available_values: this.themes
+          available_values: this.themes ? this.themes.map(theme => theme.name) : []
         },
         {
           field_name: 'variable',
@@ -295,9 +299,8 @@ export default {
     if (this.preSelectedItems.length > 0) {
       this.filterItems = this.preSelectedItems
     }
-    const response = await this.$staticCatalog.$get('/metrics')
-    response.themes.forEach((theme) => {
-      this.themes.push(theme.name)
+    await this.retreiveMetrics()
+    this.themes.forEach((theme) => {
       theme.variables.forEach((variable) => {
         this.variables.push(variable.name)
       })
@@ -310,6 +313,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('metrics', [
+      'retreiveMetrics'
+    ]),
     select (item) {
       if (item) {
         if (this.currentlyFreeText) {

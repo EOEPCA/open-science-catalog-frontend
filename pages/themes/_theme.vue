@@ -190,6 +190,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
 
@@ -238,12 +240,16 @@ export default {
       title: this.$route.params.theme.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   },
+  computed: {
+    ...mapGetters('metrics', [
+      'themes'
+    ])
+  },
   async created () {
     this.theme = await this.$staticCatalog.$get(`/themes/${this.$route.params.theme}`)
-    const allThemes = await this.$staticCatalog.$get('/metrics')
-
+    await this.retreiveMetrics()
     // format theme variables data
-    allThemes.themes.forEach((element) => {
+    this.themes.forEach((element) => {
       if (element.name === this.theme.id) {
         element.variables.forEach((variable) => {
           this.variablesDetailsRaw.push(variable)
@@ -264,6 +270,9 @@ export default {
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
   methods: {
+    ...mapActions('metrics', [
+      'retreiveMetrics'
+    ]),
     orderData (source, key, direction, string, nested = null) {
       function compare (a, b) {
         if (nested) {

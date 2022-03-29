@@ -39,17 +39,25 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'IndexPage',
-  async asyncData ({ $staticCatalog }) {
-    const metricsResponse = await $staticCatalog.$get('/metrics')
-    const themes = metricsResponse.themes.sort((a, b) => (b.name > a.name) ? -1 : 1)
-    return {
-      themes
-    }
-  },
   head: {
     titleTemplate: 'ESA Open Science Data'
+  },
+  computed: {
+    ...mapGetters('metrics', [
+      'themes'
+    ])
+  },
+  async mounted () {
+    await this.retreiveMetrics()
+  },
+  methods: {
+    ...mapActions('metrics', [
+      'retreiveMetrics'
+    ])
   }
 }
 </script>

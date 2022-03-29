@@ -121,6 +121,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import MetricsStatistics from '@/components/MetricsStatistics.vue'
 
 export default {
@@ -142,15 +143,29 @@ export default {
   head: {
     title: 'Metrics'
   },
+  computed: {
+    ...mapGetters('metrics', [
+      'missions',
+      'summary',
+      'themes'
+    ])
+  },
   mounted () {
     this.filterItems(null)
   },
   methods: {
+    ...mapActions('metrics', [
+      'retreiveMetrics'
+    ]),
     handleSearchEmit (result) {
       console.log(result)
     },
     async filterItems (i) {
-      this.metrics = await this.$staticCatalog.$get('/metrics')
+      await this.retreiveMetrics()
+      this.metrics = {}
+      this.metrics.missions = this.missions
+      this.metrics.summary = this.summary
+      this.metrics.themes = this.themes
       const variables = []
 
       const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]

@@ -137,6 +137,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 
 export default {
@@ -172,6 +174,13 @@ export default {
       title: this.$route.params.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   },
+  computed: {
+    ...mapGetters('metrics', [
+      'missions',
+      'summary',
+      'themes'
+    ])
+  },
   watch: {
     productsFilterMission () {
       this.filterProducts()
@@ -193,9 +202,16 @@ export default {
       }
     }))
 
-    this.metrics = await this.$staticCatalog.$get('/metrics')
+    await this.retreiveMetrics()
+    this.metrics = {}
+    this.metrics.missions = this.missions
+    this.metrics.summary = this.summary
+    this.metrics.themes = this.themes
   },
   methods: {
+    ...mapActions('metrics', [
+      'retreiveMetrics'
+    ]),
     async filterProducts () {
       // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.productsFilterSortBy}`
       // TODO proper filtering (todo on backend)
