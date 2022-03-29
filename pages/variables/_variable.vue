@@ -178,7 +178,8 @@ export default {
     ...mapGetters('metrics', [
       'missions',
       'summary',
-      'themes'
+      'themes',
+      'variables'
     ])
   },
   watch: {
@@ -187,12 +188,9 @@ export default {
     }
   },
   async created () {
+    await this.retreiveVariable(this.$route.params.variable)
     // todo handle variable names divided by '_'
-    await this.$staticCatalog.$get(`variables/${this.$route.params.variable}`).then((res) => {
-      this.variable = res
-    }).catch((err) => {
-      console.log(err)
-    })
+    this.variable = this.variables[this.$route.params.variable]
 
     // format products
     await Promise.all(this.variable.links.map(async (link) => {
@@ -210,7 +208,8 @@ export default {
   },
   methods: {
     ...mapActions('metrics', [
-      'retreiveMetrics'
+      'retreiveMetrics',
+      'retreiveVariable'
     ]),
     async filterProducts () {
       // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.productsFilterSortBy}`

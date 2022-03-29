@@ -197,6 +197,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 import Coverage from '@/components/Coverage.vue'
 
 export default {
@@ -226,11 +228,14 @@ export default {
     return {
       isMounted: false,
       expanded: [],
-      variables: {},
+      variablesList: {},
       products: {}
     }
   },
   computed: {
+    ...mapGetters('metrics', [
+      'variables'
+    ]),
     transformedHeaders () {
       const newHeaders = this.headers.map(h => ({
         text: h,
@@ -284,11 +289,15 @@ export default {
     })
   },
   methods: {
+    ...mapActions('metrics', [
+      'retreiveVariable'
+    ]),
     async expandVariable (item) {
       const variableSlug = this.slugify(item.name)
       if (!this.products[variableSlug]) {
-        const variable = await this.$staticCatalog.$get(`/variables/${variableSlug}`)
-        this.$set(this.variables, variableSlug, this.variable)
+        await this.retreiveVariable(variableSlug)
+        const variable = this.variables[variableSlug]
+        this.$set(this.variablesList, variableSlug, this.variable)
         const products = []
         await Promise.all(variable.links.map(async (link) => {
           if (link.rel === 'item') {

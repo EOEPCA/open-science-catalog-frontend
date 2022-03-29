@@ -242,11 +242,13 @@ export default {
   },
   computed: {
     ...mapGetters('metrics', [
-      'themes'
+      'themes',
+      'allThemes'
     ])
   },
   async created () {
-    this.theme = await this.$staticCatalog.$get(`/themes/${this.$route.params.theme}`)
+    await this.retreiveTheme(this.$route.params.theme)
+    this.theme = this.allThemes[this.$route.params.theme]
     await this.retreiveMetrics()
     // format theme variables data
     this.themes.forEach((element) => {
@@ -271,7 +273,8 @@ export default {
   },
   methods: {
     ...mapActions('metrics', [
-      'retreiveMetrics'
+      'retreiveMetrics',
+      'retreiveTheme'
     ]),
     orderData (source, key, direction, string, nested = null) {
       function compare (a, b) {

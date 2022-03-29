@@ -186,9 +186,6 @@
           <v-pagination
             v-model="page"
             :length="numberOfPages"
-            @input="filterProducts"
-            @next="filterProducts"
-            @previous="filterProducts"
           />
         </v-col>
       </v-row>
@@ -197,6 +194,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 
 export default {
@@ -221,18 +220,23 @@ export default {
       title: this.$route.params.project.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   },
+  computed: {
+    ...mapGetters('metrics', [
+      'projects'
+    ])
+  },
   async created () {
-    // todo handle variable names divided by '_'
-    await this.$staticCatalog.$get(`projects/${this.$route.params.project}`).then((res) => {
-      this.project = res
-    }).catch((err) => {
-      console.log(err)
-    })
-
+    await this.retreiveProjects(this.$route.params.project)
+    this.project = this.projects[this.$route.params.project]
     const productsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items?offset=${
       (this.page - 1) * 10}`)
     this.products = productsResponse.features
     this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+  },
+  methods: {
+    ...mapActions('metrics', [
+      'retreiveProjects'
+    ])
   }
 }
 </script>
