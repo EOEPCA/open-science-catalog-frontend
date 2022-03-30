@@ -45,7 +45,6 @@ export default {
   name: 'IndexPage',
   async asyncData ({ store }) {
     await store.dispatch('staticCatalog/retreiveMetrics')
-    // await this.retreiveMetrics()
   },
   head: {
     titleTemplate: 'ESA Open Science Data'
@@ -54,9 +53,6 @@ export default {
     ...mapGetters('staticCatalog', [
       'themes'
     ])
-  },
-  async mounted () {
-    // await this.retreiveMetrics()
   },
   methods: {
     ...mapActions('staticCatalog', [

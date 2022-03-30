@@ -201,6 +201,38 @@ export default {
     BreadCrumbNav,
     ItemGrid
   },
+  async asyncData ({ store, $axios, route }) {
+    // this.theme = await this.retreiveTheme(this.$route.params.theme)
+    const theme = await store.dispatch('staticCatalog/retreiveTheme', route.params.theme)
+    await store.dispatch('staticCatalog/retreiveMetrics')
+    // format theme variables data
+    const variablesDetailsRaw = []
+    store.state.staticCatalog.themes.forEach((element) => {
+      if (element.name === theme.id) {
+        element.variables.forEach((variable) => {
+          variablesDetailsRaw.push(variable)
+        })
+      }
+    })
+
+    // format theme project data
+    const projectDetailsRaw = []
+    await Promise.all(theme.links.map(async (link) => {
+      if (link.rel === 'item') {
+        const projectResponse = await $axios.$get(link.href)
+        projectDetailsRaw.push(projectResponse)
+      }
+    }))
+    const variablesDetails = variablesDetailsRaw
+    const projectDetails = projectDetailsRaw
+    return {
+      theme,
+      projectDetails,
+      projectDetailsRaw,
+      variablesDetails,
+      variablesDetailsRaw
+    }
+  },
   data () {
     return {
       theme: null,
@@ -245,27 +277,7 @@ export default {
       'themes'
     ])
   },
-  async created () {
-    this.theme = await this.retreiveTheme(this.$route.params.theme)
-    await this.retreiveMetrics()
-    // format theme variables data
-    this.themes.forEach((element) => {
-      if (element.name === this.theme.id) {
-        element.variables.forEach((variable) => {
-          this.variablesDetailsRaw.push(variable)
-        })
-      }
-    })
-
-    // format theme project data
-    await Promise.all(this.theme.links.map(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await this.$axios.$get(link.href)
-        this.projectDetailsRaw.push(projectResponse)
-      }
-    }))
-    this.variablesDetails = this.variablesDetailsRaw
-    this.projectDetails = this.projectDetailsRaw
+  created () {
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
