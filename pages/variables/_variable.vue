@@ -201,6 +201,9 @@ export default {
     this.metrics = await this.retreiveMetrics()
   },
   methods: {
+    ...mapActions('dynamicCatalog', [
+      'fetchCustomQuery'
+    ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics',
       'retreiveVariable'
@@ -214,7 +217,7 @@ export default {
             (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
               this.productsFilterSortBy}&offset=${
                 (this.page - 1) * 10}`
-      const productsResponse = await this.$dynamicCatalog.$get(queryString)
+      const productsResponse = await this.fetchCustomQuery(queryString)
 
       if (this.productsFilterOrder === 'Descending') {
         this.products = productsResponse.features.reverse()

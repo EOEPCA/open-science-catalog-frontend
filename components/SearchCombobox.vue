@@ -313,6 +313,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('dynamicCatalog', [
+      'fetchCustomQuery'
+    ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics'
     ]),
@@ -394,7 +397,7 @@ export default {
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
             (this.currentPage - 1) * 10}${searchQuery}`
 
-        const itemsResponse = await this.$dynamicCatalog.$get(queryString)
+        const itemsResponse = await this.fetchCustomQuery(queryString)
 
         this.$emit('searchQuery', {
           items: itemsResponse.features,

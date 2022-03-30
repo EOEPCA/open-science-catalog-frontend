@@ -227,12 +227,17 @@ export default {
   },
   async created () {
     this.project = await this.retreiveProjects(this.$route.params.project)
-    const productsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items?offset=${
-      (this.page - 1) * 10}`)
+    const productsResponse = await this.fetchProducts({
+      projectID: this.project.id,
+      page: (this.page - 1) * 10
+    })
     this.products = productsResponse.features
     this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
   },
   methods: {
+    ...mapActions('dynamicCatalog', [
+      'fetchProducts'
+    ]),
     ...mapActions('staticCatalog', [
       'retreiveProjects'
     ])
