@@ -295,8 +295,7 @@ export default {
     async expandVariable (item) {
       const variableSlug = this.slugify(item.name)
       if (!this.products[variableSlug]) {
-        await this.retreiveVariable(variableSlug)
-        const variable = this.variables[variableSlug]
+        const variable = await this.retreiveVariable(variableSlug)
         this.$set(this.variablesList, variableSlug, this.variable)
         const products = []
         await Promise.all(variable.links.map(async (link) => {

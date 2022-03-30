@@ -226,8 +226,7 @@ export default {
     ])
   },
   async created () {
-    await this.retreiveProjects(this.$route.params.project)
-    this.project = this.projects[this.$route.params.project]
+    this.project = await this.retreiveProjects(this.$route.params.project)
     const productsResponse = await this.$dynamicCatalog.$get(`/collections/${this.project.id}/items?offset=${
       (this.page - 1) * 10}`)
     this.products = productsResponse.features

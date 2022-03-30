@@ -161,11 +161,7 @@ export default {
       console.log(result)
     },
     async filterItems (i) {
-      await this.retreiveMetrics()
-      this.metrics = {}
-      this.metrics.missions = this.missions
-      this.metrics.summary = this.summary
-      this.metrics.themes = this.themes
+      this.metrics = await this.retreiveMetrics()
       const variables = []
 
       const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]

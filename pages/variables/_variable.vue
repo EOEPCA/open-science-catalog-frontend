@@ -188,9 +188,7 @@ export default {
     }
   },
   async created () {
-    await this.retreiveVariable(this.$route.params.variable)
-    // todo handle variable names divided by '_'
-    this.variable = this.variables[this.$route.params.variable]
+    this.variable = await this.retreiveVariable(this.$route.params.variable)
 
     // format products
     await Promise.all(this.variable.links.map(async (link) => {
@@ -200,11 +198,7 @@ export default {
       }
     }))
 
-    await this.retreiveMetrics()
-    this.metrics = {}
-    this.metrics.missions = this.missions
-    this.metrics.summary = this.summary
-    this.metrics.themes = this.themes
+    this.metrics = await this.retreiveMetrics()
   },
   methods: {
     ...mapActions('metrics', [

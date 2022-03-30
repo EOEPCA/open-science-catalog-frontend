@@ -242,13 +242,11 @@ export default {
   },
   computed: {
     ...mapGetters('metrics', [
-      'themes',
-      'allThemes'
+      'themes'
     ])
   },
   async created () {
-    await this.retreiveTheme(this.$route.params.theme)
-    this.theme = this.allThemes[this.$route.params.theme]
+    this.theme = await this.retreiveTheme(this.$route.params.theme)
     await this.retreiveMetrics()
     // format theme variables data
     this.themes.forEach((element) => {

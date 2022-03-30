@@ -77,29 +77,46 @@ export const actions = {
       return error
     }
   },
+  async fetchProducts ({ commit }, productName) {
+    try {
+      const product = await this.$staticCatalog.$get(`products/${productName}`)
+      commit('ADD_PRODUCT', { product, productName })
+    } catch (error) {
+      return error
+    }
+  },
   async retreiveMetrics ({ state, dispatch }) {
     if (!state.missions || !state.summary || !state.themes) {
       await dispatch('fetchMetrics')
+    }
+    return {
+      missions: state.missions,
+      summary: state.summary,
+      themes: state.themes
     }
   },
   async retreiveTheme ({ state, dispatch }, themeName) {
     if (!state.allThemes[themeName]) {
       await dispatch('fetchTheme', themeName)
     }
+    return state.allThemes[themeName]
   },
   async retreiveVariable ({ state, dispatch }, variableName) {
     if (!state.variables[variableName]) {
       await dispatch('fetchVariable', variableName)
     }
+    return state.variables[variableName]
   },
-  async retreiveProducts ({ state, dispatch }, productName) {
+  async retreiveProduct ({ state, dispatch }, productName) {
     if (!state.products[productName]) {
       await dispatch('fetchProducts', productName)
     }
+    return state.products[productName]
   },
   async retreiveProjects ({ state, dispatch }, projectName) {
     if (!state.projects[projectName]) {
       await dispatch('fetchProjects', projectName)
     }
+    return state.projects[projectName]
   }
 }
