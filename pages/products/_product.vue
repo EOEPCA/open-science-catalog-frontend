@@ -172,7 +172,6 @@ export default {
   },
   async created () {
     this.product = await this.retreiveProduct(this.$route.params.product)
-    await this.$staticCatalog.$get(`products/${this.$route.params.product}`)
     this.product.properties = {
       ...this.product.properties,
       description: this.product.id === 'product-84' // TEMP DEMO
