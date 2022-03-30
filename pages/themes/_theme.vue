@@ -241,7 +241,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'themes'
     ])
   },
@@ -270,7 +270,7 @@ export default {
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveMetrics',
       'retreiveTheme'
     ]),

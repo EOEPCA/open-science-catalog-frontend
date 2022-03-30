@@ -233,7 +233,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'variables'
     ]),
     transformedHeaders () {
@@ -289,7 +289,7 @@ export default {
     })
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveVariable'
     ]),
     async expandVariable (item) {

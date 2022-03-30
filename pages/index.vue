@@ -43,19 +43,23 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'IndexPage',
+  async asyncData ({ store }) {
+    await store.dispatch('staticCatalog/retreiveMetrics')
+    // await this.retreiveMetrics()
+  },
   head: {
     titleTemplate: 'ESA Open Science Data'
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'themes'
     ])
   },
   async mounted () {
-    await this.retreiveMetrics()
+    // await this.retreiveMetrics()
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveMetrics'
     ])
   }

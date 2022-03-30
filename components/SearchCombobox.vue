@@ -153,7 +153,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'themes'
     ]),
     availableItems () {
@@ -313,7 +313,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveMetrics'
     ]),
     select (item) {

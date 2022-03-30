@@ -221,7 +221,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'projects'
     ])
   },
@@ -233,7 +233,7 @@ export default {
     this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveProjects'
     ])
   }

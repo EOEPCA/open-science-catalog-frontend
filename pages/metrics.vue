@@ -144,7 +144,7 @@ export default {
     title: 'Metrics'
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'missions',
       'summary',
       'themes'
@@ -154,7 +154,7 @@ export default {
     this.filterItems(null)
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveMetrics'
     ]),
     handleSearchEmit (result) {

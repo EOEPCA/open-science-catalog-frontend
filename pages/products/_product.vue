@@ -188,7 +188,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveProduct'
     ])
   }

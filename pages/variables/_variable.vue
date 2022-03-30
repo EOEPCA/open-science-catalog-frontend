@@ -175,7 +175,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('metrics', [
+    ...mapGetters('staticCatalog', [
       'missions',
       'summary',
       'themes',
@@ -201,7 +201,7 @@ export default {
     this.metrics = await this.retreiveMetrics()
   },
   methods: {
-    ...mapActions('metrics', [
+    ...mapActions('staticCatalog', [
       'retreiveMetrics',
       'retreiveVariable'
     ]),
