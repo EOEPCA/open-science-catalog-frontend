@@ -194,7 +194,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 
@@ -221,7 +221,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('staticCatalog', [
+    ...mapState('staticCatalog', [
       'projects'
     ])
   },

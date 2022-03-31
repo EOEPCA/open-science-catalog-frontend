@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'IndexPage',
@@ -50,7 +50,7 @@ export default {
     titleTemplate: 'ESA Open Science Data'
   },
   computed: {
-    ...mapGetters('staticCatalog', [
+    ...mapState('staticCatalog', [
       'themes'
     ])
   },

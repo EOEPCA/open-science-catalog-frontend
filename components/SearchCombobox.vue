@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'SearchCombobox',
@@ -153,7 +153,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('staticCatalog', [
+    ...mapState('staticCatalog', [
       'themes'
     ]),
     availableItems () {

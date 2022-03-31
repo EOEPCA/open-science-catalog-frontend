@@ -197,7 +197,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 import Coverage from '@/components/Coverage.vue'
 
@@ -233,7 +233,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('staticCatalog', [
+    ...mapState('staticCatalog', [
       'variables'
     ]),
     transformedHeaders () {

@@ -190,7 +190,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
@@ -273,7 +273,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('staticCatalog', [
+    ...mapState('staticCatalog', [
       'themes'
     ])
   },

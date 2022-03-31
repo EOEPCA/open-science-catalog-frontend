@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import MetricsStatistics from '@/components/MetricsStatistics.vue'
 
 export default {
@@ -144,7 +144,7 @@ export default {
     title: 'Metrics'
   },
   computed: {
-    ...mapGetters('staticCatalog', [
+    ...mapState('staticCatalog', [
       'missions',
       'summary',
       'themes'
