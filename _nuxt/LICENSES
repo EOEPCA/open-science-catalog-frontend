@@ -1,17 +1,4 @@
 /*!
- * vue-client-only v0.0.0-semantic-release
- * (c) 2021-present egoist <0x142857@gmail.com>
- * Released under the MIT License.
- */
-
-/*!
- * vue-no-ssr v1.1.1
- * (c) 2018-present egoist <0x142857@gmail.com>
- * Released under the MIT License.
- */
-
-
-/*!
   * vue-router v3.5.3
   * (c) 2021 Evan You
   * @license MIT
@@ -51,10 +38,14 @@
  * Released under the MIT License
  */
 
+/*!
+ * vue-client-only v0.0.0-semantic-release
+ * (c) 2021-present egoist <0x142857@gmail.com>
+ * Released under the MIT License.
+ */
 
 /*!
- * Chart.js v3.7.0
- * https://www.chartjs.org
- * (c) 2021 Chart.js Contributors
- * Released under the MIT License
+ * vue-no-ssr v1.1.1
+ * (c) 2018-present egoist <0x142857@gmail.com>
+ * Released under the MIT License.
  */
