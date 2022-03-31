@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DefaultLayout',
@@ -193,7 +193,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
+    ...mapState([
       'appVersion'
     ])
   }
