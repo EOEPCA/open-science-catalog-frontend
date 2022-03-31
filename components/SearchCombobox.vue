@@ -154,6 +154,7 @@ export default {
   },
   computed: {
     ...mapState('staticCatalog', [
+      'missions',
       'themes'
     ]),
     availableItems () {
@@ -175,6 +176,11 @@ export default {
         {
           field_name: 'product',
           filter: 'like'
+        },
+        {
+          field_name: 'mission',
+          filter: 'exact',
+          available_values: this.missions ? this.missions.map(mission => mission.name) : []
         },
         {
           field_name: 'type',
