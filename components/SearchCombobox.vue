@@ -363,6 +363,7 @@ export default {
     },
     remove (item) {
       this.filterItems.splice(this.filterItems.indexOf(item), 1)
+      this.onEnter()
     },
     onEnter () {
       if (this.inputComplete && this.filterItems.every(i => !!i.value)) {
