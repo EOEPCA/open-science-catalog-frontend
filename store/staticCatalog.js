@@ -8,16 +8,6 @@ export const state = () => ({
   projects: {}
 })
 
-// export const getters = {
-//   missions: state => state.missions,
-//   summary: state => state.summary,
-//   themes: state => state.themes,
-//   allThemes: state => state.allThemes,
-//   variables: state => state.variables,
-//   products: state => state.products,
-//   projects: state => state.projects
-// }
-
 export const mutations = {
   SET_MISSIONS (state, { items }) {
     state.missions = items
