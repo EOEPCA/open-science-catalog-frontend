@@ -28,8 +28,8 @@ export const mutations = {
   SET_THEMES (state, { items }) {
     state.themes = items.sort((a, b) => (b.name > a.name) ? -1 : 1)
   },
-  ADD_THEME (state, theme) {
-    state.allThemes[theme.id.toLowerCase()] = theme
+  ADD_THEME (state, { theme, themeName }) {
+    state.allThemes[themeName] = theme
   },
   ADD_VARIABLE (state, { variable, variableName }) {
     state.variables[variableName] = variable
@@ -56,7 +56,7 @@ export const actions = {
   async fetchTheme ({ commit }, themeName) {
     try {
       const theme = await this.$staticCatalog.$get(`/themes/${themeName}`)
-      commit('ADD_THEME', theme)
+      commit('ADD_THEME', { theme, themeName })
     } catch (error) {
       return error
     }
