@@ -78,6 +78,7 @@
         item-text="field_name"
         return-object
         label=" "
+        auto-select-first
         :outlined="embeddedMode"
         :dense="embeddedMode"
         :hide-details="embeddedMode"
@@ -87,7 +88,15 @@
         @focus="mainInputValue = ' '"
         @keyup.enter="onEnter"
         @keyup.delete="onDelete"
+        :search-input.sync="textInputModel"
       >
+        <template #no-data>
+          <v-list-item>
+            <v-list-item-title>
+              Search for in all records (freetext)
+            </v-list-item-title>
+          </v-list-item>
+        </template>
         <template #item="data">
           <span :class="data.item.operator ? '' : 'text-capitalize'">
             {{ data.item.field_name }}
@@ -149,7 +158,9 @@ export default {
       inputComplete: false,
       searchText: null,
       loading: false,
-      variables: []
+      variables: [],
+      inProgressItem: null,
+      textInputModel: null
     }
   },
   computed: {
@@ -208,11 +219,11 @@ export default {
         .find(i => i.key === f.field_name) || (f.filter === 'range' && this.filterItems
         .filter(i => i.key === f.field_name).length < 2)))
 
-      const inProgressItem = this.filterItems.find(f => f.value === null)
-      if (inProgressItem || this.currentlyFreeText) {
-        const currentMeta = inProgressItem &&
-          this.availableItems.find(f => f.field_name === inProgressItem.key)
-        if (inProgressItem.operator) {
+      this.inProgressItem = this.filterItems.find(f => f.value === null)
+      if (this.inProgressItem || this.currentlyFreeText) {
+        const currentMeta = this.inProgressItem &&
+          this.availableItems.find(f => f.field_name === this.inProgressItem.key)
+        if (this.inProgressItem.operator) {
           items = [
           ]
         } else if (currentMeta.filter === 'boolean') {
@@ -220,12 +231,12 @@ export default {
             {
               filter_value: true,
               field_name: 'true',
-              original_field_name: inProgressItem.key
+              original_field_name: this.inProgressItem.key
             },
             {
               filter_value: false,
               field_name: 'false',
-              original_field_name: inProgressItem.key
+              original_field_name: this.inProgressItem.key
             }
           ]
         } else if (currentMeta.filter === 'exact') {
@@ -268,7 +279,7 @@ export default {
                 filter_value: null,
                 field_name: 'is exactly',
                 operator: '=',
-                original_field_name: inProgressItem.key
+                original_field_name: this.inProgressItem.key
               }
             ]
           }
@@ -285,13 +296,13 @@ export default {
                 filter_value: null,
                 field_name: 'includes',
                 operator: 'includes',
-                original_field_name: inProgressItem.key
+                original_field_name: this.inProgressItem.key
               }
             ]
           }
         } else if (currentMeta.filter === 'range') {
           const existingOperator = this.filterItems
-            .find(i => i.key === inProgressItem.key && !!i.operator)
+            .find(i => i.key === this.inProgressItem.key && !!i.operator)
           items = [
             ...((existingOperator ? existingOperator.operator !== '≤' : true)
               ? [
@@ -299,7 +310,7 @@ export default {
                     filter_value: null,
                     field_name: '≤ lower than or equal}',
                     operator: '≤',
-                    original_field_name: inProgressItem.key
+                    original_field_name: this.inProgressItem.key
                   }
                 ]
               : [
@@ -310,7 +321,7 @@ export default {
                     filter_value: null,
                     field_name: '≥ higher than or equal',
                     operator: '≥',
-                    original_field_name: inProgressItem.key
+                    original_field_name: this.inProgressItem.key
                   }
                 ]
               : [
@@ -390,15 +401,26 @@ export default {
           }
         })
       }
+      this.textInputModel = null
     },
     remove (item) {
       this.filterItems.splice(this.filterItems.indexOf(item), 1)
       this.onEnter()
     },
     onEnter () {
+      if (!this.inProgressItem && this.textInputModel) {
+        this.filterItems.push({
+          key: 'record',
+          operator: 'includes',
+          value: this.textInputModel
+        })
+        this.inputComplete = false
+        setTimeout(() => { this.inputComplete = true }, 300)
+      }
       if (this.inputComplete && this.filterItems.every(i => !!i.value)) {
         this.submit()
       }
+      this.textInputModel = null
     },
     onDelete () {
       if (this.filterItems.length < 1) {
@@ -408,6 +430,12 @@ export default {
         return
       }
       if (this.preSelectedItems.map(i => i.key).includes(this.filterItems[this.filterItems.length - 1].key)) {
+        return
+      }
+      if (this.textInputModel !== null) {
+        if (this.textInputModel === '') {
+          this.textInputModel = null
+        }
         return
       }
       this.filterItems.pop()
