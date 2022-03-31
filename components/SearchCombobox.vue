@@ -236,6 +236,30 @@ export default {
                 field_name: i,
                 original_field_name: currentMeta.field_name
               }))
+                .filter(item => {
+                  const previouslySetFilters = this.filterItems ? this.filterItems.filter(i => i.value) : []
+                  const checkFilter = (type, check) => {
+                    const applicableFilter = previouslySetFilters.find(f => f.key === type)
+                    if (applicableFilter) {
+                      const typeObject = `${type}s`
+                      const typeFilter = this[typeObject]
+                        .find(t => t.name === applicableFilter.value)
+                      if (typeFilter) {
+                        const includedItem = typeFilter[check].find(v => v.name === item.field_name)
+                        return includedItem
+                      }
+                    }
+                    return true
+                  }
+                  switch(item.original_field_name) {
+                    case 'variable': {
+                      return checkFilter('theme', 'variables')
+                    }
+                    default: {
+                      return true
+                    }
+                  }
+                })
                 .sort((a, b) => a.field_name < b.field_name ? -1 : 1)
             }
           } else {
