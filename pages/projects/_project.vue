@@ -26,19 +26,21 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="6">
-            <v-row class="ml-2 pt-0 mt-0 mb-4">
-              <v-chip
-                v-for="theme in project.properties['osc:themes']"
-                :key="theme"
-                class="mx-1"
-                color="rgb(124, 69, 86)"
-                dark
-                label
-              >
-                {{ theme }}
-              </v-chip>
+            <v-row>
+              <v-col>
+                <v-chip
+                  v-for="theme in project.properties['osc:themes']"
+                  :key="theme"
+                  class="mr-1"
+                  color="rgb(124, 69, 86)"
+                  dark
+                  label
+                >
+                  {{ theme }}
+                </v-chip>
+              </v-col>
             </v-row>
-            <v-row class="ml-2 pt-0 mt-0 mb-4">
+            <v-row>
               <v-col>
                 <v-icon>
                   mdi-calendar-today
@@ -52,32 +54,38 @@
                 Estimated end date - {{ project.properties.end_datetime }}
               </v-col>
             </v-row>
-            <v-row class="ml-2 pt-0 mt-0 mb-4 text-h6">
-              <v-icon>
-                mdi-account-multiple
-              </v-icon>
-              Consortium
-            </v-row>
-            <v-row class="ml-2 pt-0 mt-0 mb-4">
-              <span v-for="consort in project.properties['osc:consortium']" :key="consort">
-                {{ consort }}
-              </span>
-            </v-row>
-            <v-row class="ml-2 pt-0 mt-0 mb-4">
-              <a
-                v-for="link in project.links.filter(el => el.rel === 'via')"
-                :key="link.href"
-                :href="link.href"
-                target="_blank"
-                class="mr-1 projectLink"
-              >
+            <v-row>
+              <v-col>
                 <v-icon>
-                  mdi-link
+                  mdi-account-multiple
                 </v-icon>
-                <span>
-                  {{ link.title }}
+                Consortium
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <span v-for="consort in project.properties['osc:consortium']" :key="consort">
+                  {{ consort }}
                 </span>
-              </a>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>
+                <a
+                  v-for="link in project.links.filter(el => el.rel === 'via')"
+                  :key="link.href"
+                  :href="link.href"
+                  target="_blank"
+                  class="mr-1 projectLink"
+                >
+                  <v-icon>
+                    mdi-link
+                  </v-icon>
+                  <span>
+                    {{ link.title }}
+                  </span>
+                </a>
+              </v-col>
             </v-row>
           </v-col>
           <v-col cols="12" md="6">
@@ -126,7 +134,7 @@
         </v-row>
       </v-container>
     </div>
-    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
+    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
       <search-combobox
         embedded-mode
         :pre-selected-items="[
@@ -139,9 +147,9 @@
             value: 'product'
           }
         ]"
-        class="my-4"
+        class="ma-8 mb-0"
       />
-      <v-row class="mt-2">
+      <v-row class="pa-6">
         <v-col cols="12" md="4">
           <span class="text-h2">
             Products
@@ -156,7 +164,7 @@
             :items="['Name']"
             label="Sort by"
             outlined
-            :class="$vuetify.breakpoint.mdAndUp ? 'mr-4' : 'mb-4'"
+            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
           />
           <v-select
             v-model="productsFilterOrder"
@@ -165,7 +173,7 @@
             :items="['Ascending', 'Descending']"
             label="Order"
             outlined
-            :class="$vuetify.breakpoint.mdAndUp ? '' : 'mb-4'"
+            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
           />
           <!-- <v-text-field
             v-model="productsSearch"
