@@ -137,6 +137,8 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 
 export default {
@@ -172,18 +174,21 @@ export default {
       title: this.$route.params.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   },
+  computed: {
+    ...mapState('staticCatalog', [
+      'missions',
+      'summary',
+      'themes',
+      'variables'
+    ])
+  },
   watch: {
     productsFilterMission () {
       this.filterProducts()
     }
   },
   async created () {
-    // todo handle variable names divided by '_'
-    await this.$staticCatalog.$get(`variables/${this.$route.params.variable}`).then((res) => {
-      this.variable = res
-    }).catch((err) => {
-      console.log(err)
-    })
+    this.variable = await this.retreiveVariable(this.$route.params.variable)
 
     // format products
     await Promise.all(this.variable.links.map(async (link) => {
@@ -193,9 +198,16 @@ export default {
       }
     }))
 
-    this.metrics = await this.$staticCatalog.$get('/metrics')
+    this.metrics = await this.retreiveMetrics()
   },
   methods: {
+    ...mapActions('dynamicCatalog', [
+      'fetchCustomQuery'
+    ]),
+    ...mapActions('staticCatalog', [
+      'retreiveMetrics',
+      'retreiveVariable'
+    ]),
     async filterProducts () {
       // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.productsFilterSortBy}`
       // TODO proper filtering (todo on backend)
@@ -205,7 +217,7 @@ export default {
             (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
               this.productsFilterSortBy}&offset=${
                 (this.page - 1) * 10}`
-      const productsResponse = await this.$dynamicCatalog.$get(queryString)
+      const productsResponse = await this.fetchCustomQuery(queryString)
 
       if (this.productsFilterOrder === 'Descending') {
         this.products = productsResponse.features.reverse()

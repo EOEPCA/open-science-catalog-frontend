@@ -190,6 +190,8 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
 
@@ -198,6 +200,38 @@ export default {
   components: {
     BreadCrumbNav,
     ItemGrid
+  },
+  async asyncData ({ store, $axios, route }) {
+    // this.theme = await this.retreiveTheme(this.$route.params.theme)
+    const theme = await store.dispatch('staticCatalog/retreiveTheme', route.params.theme)
+    await store.dispatch('staticCatalog/retreiveMetrics')
+    // format theme variables data
+    const variablesDetailsRaw = []
+    store.state.staticCatalog.themes.forEach((element) => {
+      if (element.name === theme.id) {
+        element.variables.forEach((variable) => {
+          variablesDetailsRaw.push(variable)
+        })
+      }
+    })
+
+    // format theme project data
+    const projectDetailsRaw = []
+    await Promise.all(theme.links.map(async (link) => {
+      if (link.rel === 'item') {
+        const projectResponse = await $axios.$get(link.href)
+        projectDetailsRaw.push(projectResponse)
+      }
+    }))
+    const variablesDetails = variablesDetailsRaw
+    const projectDetails = projectDetailsRaw
+    return {
+      theme,
+      projectDetails,
+      projectDetailsRaw,
+      variablesDetails,
+      variablesDetailsRaw
+    }
   },
   data () {
     return {
@@ -238,32 +272,20 @@ export default {
       title: this.$route.params.theme.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
     }
   },
-  async created () {
-    this.theme = await this.$staticCatalog.$get(`/themes/${this.$route.params.theme}`)
-    const allThemes = await this.$staticCatalog.$get('/metrics')
-
-    // format theme variables data
-    allThemes.themes.forEach((element) => {
-      if (element.name === this.theme.id) {
-        element.variables.forEach((variable) => {
-          this.variablesDetailsRaw.push(variable)
-        })
-      }
-    })
-
-    // format theme project data
-    await Promise.all(this.theme.links.map(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await this.$axios.$get(link.href)
-        this.projectDetailsRaw.push(projectResponse)
-      }
-    }))
-    this.variablesDetails = this.variablesDetailsRaw
-    this.projectDetails = this.projectDetailsRaw
+  computed: {
+    ...mapState('staticCatalog', [
+      'themes'
+    ])
+  },
+  created () {
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
   methods: {
+    ...mapActions('staticCatalog', [
+      'retreiveMetrics',
+      'retreiveTheme'
+    ]),
     orderData (source, key, direction, string, nested = null) {
       function compare (a, b) {
         if (nested) {
