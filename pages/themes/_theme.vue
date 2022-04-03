@@ -1,8 +1,10 @@
 <template>
   <div v-if="theme">
-    <bread-crumb-nav
-      :theme="theme.id"
-    />
+    <client-only>
+      <bread-crumb-nav
+        :theme="theme.id"
+      />
+    </client-only>
     <div
       ref="themeBanner"
       :style="`backgroundImage: url('${$staticCatalog.defaults.baseURL}/themes/${theme.assets.image.href}');
