@@ -75,6 +75,9 @@ export default {
         if (this.getType(item) === 'variable') {
           return item.summary.numberOfProducts > 0
         }
+        if (this.getType(item) === 'project') {
+          return item.links.filter(link => link.rel === 'item').length > 0
+        }
         return item
       })
     }
