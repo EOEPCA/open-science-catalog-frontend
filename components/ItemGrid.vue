@@ -1,7 +1,7 @@
 <template>
   <v-row class="pa-8">
     <v-col
-      v-for="item in items"
+      v-for="item in nonEmptyItems"
       :key="item.id"
       cols="12"
       sm="6"
@@ -47,7 +47,7 @@
         </v-card-subtitle>
         <v-card-text>
           <span v-if="getType(item) === 'variable'">
-            {{ item.productsNumber }} Products
+            {{ item.summary.numberOfProducts }} Products
           </span>
           <span v-else>
             {{ `${item.properties.description.substring(0, 100)}...` }}
@@ -67,6 +67,19 @@ export default {
     items: {
       type: Array,
       default: () => []
+    }
+  },
+  computed: {
+    nonEmptyItems () {
+      return this.items.filter((item) => {
+        if (this.getType(item) === 'variable') {
+          return item.summary.numberOfProducts > 0
+        }
+        if (this.getType(item) === 'project') {
+          return item.links.filter(link => link.rel === 'item').length > 0
+        }
+        return item
+      })
     }
   },
   methods: {
