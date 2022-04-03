@@ -84,11 +84,11 @@
         :hide-details="embeddedMode"
         class="headless-input"
         :class="embeddedMode ? 'customOutline' : ''"
+        :search-input.sync="textInputModel"
         @input="select"
         @focus="mainInputValue = ' '"
         @keyup.enter="onEnter"
         @keyup.delete="onDelete"
-        :search-input.sync="textInputModel"
       >
         <template #no-data>
           <v-list-item>
@@ -219,6 +219,7 @@ export default {
         .find(i => i.key === f.field_name) || (f.filter === 'range' && this.filterItems
         .filter(i => i.key === f.field_name).length < 2)))
 
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.inProgressItem = this.filterItems.find(f => f.value === null)
       if (this.inProgressItem || this.currentlyFreeText) {
         const currentMeta = this.inProgressItem &&
@@ -247,7 +248,7 @@ export default {
                 field_name: i,
                 original_field_name: currentMeta.field_name
               }))
-                .filter(item => {
+                .filter((item) => {
                   const previouslySetFilters = this.filterItems ? this.filterItems.filter(i => i.value) : []
                   const checkFilter = (type, check) => {
                     const applicableFilter = previouslySetFilters.find(f => f.key === type)
@@ -262,7 +263,7 @@ export default {
                     }
                     return true
                   }
-                  switch(item.original_field_name) {
+                  switch (item.original_field_name) {
                     case 'variable': {
                       return checkFilter('theme', 'variables')
                     }
