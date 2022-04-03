@@ -20,8 +20,9 @@
             <v-chip
               color="rgb(124, 69, 86)"
               dark
+              label
             >
-              {{ variable['osc:theme'] }}
+              {{ variable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase()) }}
             </v-chip>
           </v-col>
         </v-row>
@@ -52,7 +53,7 @@
         </v-row>
       </v-container>
     </div>
-    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
+    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
       <search-combobox
         embedded-mode
         :pre-selected-items="[
