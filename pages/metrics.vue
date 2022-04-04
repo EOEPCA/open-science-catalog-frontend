@@ -26,7 +26,7 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="12" sm="4" lg="4" class="d-flex align-center pa-3">
+      <v-col cols="12" sm="4" lg="4" class="d-flex align-center justify-end pa-3">
         <!-- <v-text-field
           v-model="filter"
           hide-details
@@ -37,6 +37,24 @@
           placeholder="Filter by keywords..."
           prepend-inner-icon="mdi-magnify"
         /> -->
+        <v-tooltip top>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              v-bind="attrs"
+              v-on="on"
+              @click="() => { TOGGLE_EMPTY_ITEMS(); filterItems(null)}"
+            >
+              <v-icon>
+                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline'}}
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>
+            {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+          </span>
+        </v-tooltip>
         <search-combobox
           ref="searchBox"
           embedded-mode
@@ -121,7 +139,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import MetricsStatistics from '@/components/MetricsStatistics.vue'
 
 export default {
@@ -144,6 +162,9 @@ export default {
     title: 'Metrics'
   },
   computed: {
+    ...mapState([
+      'showEmptyItems'
+    ]),
     ...mapState('staticCatalog', [
       'missions',
       'summary',
@@ -154,6 +175,9 @@ export default {
     this.filterItems(null)
   },
   methods: {
+    ...mapMutations([
+      'TOGGLE_EMPTY_ITEMS'
+    ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics'
     ]),
@@ -176,9 +200,13 @@ export default {
         if (a.name > b.name) { return 1 }
         return 0
       })
-      this.variables = [
-        ...variables.filter(v => v.summary.numberOfProducts >= 1)
-      ]
+      if (!this.showEmptyItems) {
+        this.variables = [
+          ...variables.filter(v => v.summary.numberOfProducts >= 1)
+        ]
+      } else {
+        this.variables = variables
+      }
     }
   }
 }
