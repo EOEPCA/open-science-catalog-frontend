@@ -21,6 +21,9 @@ describe('DefaultLayout', () => {
       getters
     })
     wrapper = mount(DefaultLayout, {
+      mocks: {
+        $dynamicCatalog: { defaults: { baseURL: '#' } }
+      },
       localVue,
       store: mockStore,
       vuetify
