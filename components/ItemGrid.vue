@@ -67,16 +67,22 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    showEmptyItems: {
+      type: Boolean,
+      default: () => false
     }
   },
   computed: {
     nonEmptyItems () {
       return this.items.filter((item) => {
-        if (this.getType(item) === 'variable') {
-          return item.summary.numberOfProducts > 0
-        }
-        if (this.getType(item) === 'project') {
-          return item.links.filter(link => link.rel === 'item').length > 0
+        if (!this.showEmptyItems) {
+          if (this.getType(item) === 'variable') {
+            return item.summary.numberOfProducts > 0
+          }
+          if (this.getType(item) === 'project') {
+            return item.links.filter(link => link.rel === 'item').length > 0
+          }
         }
         return item
       })
