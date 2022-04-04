@@ -189,7 +189,7 @@ export default {
     return {
       drawer: false,
       search: '',
-      title: 'Open science catalog'
+      title: 'Open Science Catalog'
     }
   },
   computed: {
