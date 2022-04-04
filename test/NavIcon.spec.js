@@ -22,7 +22,7 @@ describe('DefaultLayout', () => {
     })
     wrapper = mount(DefaultLayout, {
       mocks: {
-        $dynamicCatalog: { defaults: { baseURL: '#'} },
+        $dynamicCatalog: { defaults: { baseURL: '#' } }
       },
       localVue,
       store: mockStore,
