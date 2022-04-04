@@ -46,7 +46,6 @@ export default {
     '~/plugins/slugify',
     '~/plugins/text-to-hex',
     '~/plugins/type-color',
-    // TEMP plugin for intercepting fake api calls
     '~/plugins/axios',
     { src: '~plugins/ol', ssr: false }
   ],
@@ -67,11 +66,6 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios'
   ],
-
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    baseURL: 'https://eoepca.github.io/open-science-catalog-metadata'
-  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
