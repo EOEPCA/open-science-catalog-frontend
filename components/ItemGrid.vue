@@ -51,7 +51,9 @@
           </p>
           <p v-if="getType(item) === 'variable' || getType(item) === 'project'">
             <template v-if="getType(item) === 'variable'">
-              {{ item.summary.numberOfProducts }} Products
+              {{ item.summary.numberOfProducts }} Product{{ item.summary.numberOfProducts === 1
+                ? ''
+                : 's' }}
             </template>
             <template v-else>
               {{ item.links.filter(link => link.rel === 'item').length }} Products
