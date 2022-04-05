@@ -46,12 +46,17 @@
           </span>
         </v-card-subtitle>
         <v-card-text>
-          <span v-if="getType(item) === 'variable'">
-            {{ item.summary.numberOfProducts }} Products
-          </span>
-          <span v-else>
+          <p v-if="getType(item) === 'project' || getType(item) === 'product'">
             {{ `${item.properties.description.substring(0, 100)}...` }}
-          </span>
+          </p>
+          <p v-if="getType(item) === 'variable' || getType(item) === 'project'">
+            <template v-if="getType(item) === 'variable'">
+              {{ item.summary.numberOfProducts }} Products
+            </template>
+            <template v-else>
+              {{ item.links.filter(link => link.rel === 'item').length }} Products
+            </template>
+          </p>
           <div v-if="getType(item) === 'product' && 'osc:themes' in item.properties" class="mt-2">
             - {{ item.properties['osc:themes'].join(', ') }}
           </div>
@@ -67,16 +72,22 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    showEmptyItems: {
+      type: Boolean,
+      default: () => false
     }
   },
   computed: {
     nonEmptyItems () {
       return this.items.filter((item) => {
-        if (this.getType(item) === 'variable') {
-          return item.summary.numberOfProducts > 0
-        }
-        if (this.getType(item) === 'project') {
-          return item.links.filter(link => link.rel === 'item').length > 0
+        if (!this.showEmptyItems) {
+          if (this.getType(item) === 'variable') {
+            return item.summary.numberOfProducts > 0
+          }
+          if (this.getType(item) === 'project') {
+            return item.links.filter(link => link.rel === 'item').length > 0
+          }
         }
         return item
       })

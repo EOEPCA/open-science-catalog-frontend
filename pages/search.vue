@@ -38,6 +38,7 @@
     </v-row>
     <item-grid
       :items="items"
+      show-empty-items
     />
     <v-row>
       <v-col cols="12" class="text-center">

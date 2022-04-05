@@ -96,6 +96,24 @@
             </v-col>
             <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
               <v-spacer />
+              <v-tooltip top>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="TOGGLE_EMPTY_ITEMS"
+                  >
+                    <v-icon>
+                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline'}}
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>
+                  {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+                </span>
+              </v-tooltip>
               <v-select
                 v-model="projectsDetailsFilter"
                 dense
@@ -132,6 +150,7 @@
           </v-row>
           <item-grid
             :items="projectDetails"
+            :show-empty-items="showEmptyItems"
           />
         </v-tab-item>
         <v-tab-item>
@@ -159,6 +178,24 @@
             </v-col>
             <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
               <v-spacer />
+              <v-tooltip top>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="TOGGLE_EMPTY_ITEMS"
+                  >
+                    <v-icon>
+                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline'}}
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>
+                  {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+                </span>
+              </v-tooltip>
               <v-select
                 v-model="variablesDetailsOrder"
                 dense
@@ -184,6 +221,7 @@
           </v-row>
           <item-grid
             :items="variablesDetails"
+            :showEmptyItems="showEmptyItems"
           />
         </v-tab-item>
       </v-tabs-items>
@@ -192,7 +230,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 
 import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
@@ -275,6 +313,9 @@ export default {
     }
   },
   computed: {
+    ...mapState([
+      'showEmptyItems'
+    ]),
     ...mapState('staticCatalog', [
       'themes'
     ])
@@ -284,6 +325,9 @@ export default {
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
   methods: {
+    ...mapMutations([
+      'TOGGLE_EMPTY_ITEMS'
+    ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics',
       'retreiveTheme'
