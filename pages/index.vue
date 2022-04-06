@@ -10,11 +10,11 @@
       </v-row>
       <v-row class="pa-5 pt-0">
         <v-col>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non sollicitudin ex. Sed at orci at erat maximus molestie fermentum ac nulla.</p>
+          <p>A catalog of publicly available geoscience products, datasets and resources developed in the frame of scientific research Projects funded by ESA EO (Earth Observation). Products vary in geographical and temporal extent, production methodology, validation and quality. Please refer to the documentation of each product for details.</p>
           <p>
             <strong>What products can I find here?</strong>
           </p>
-          <p>Mauris sagittis vulputate sollicitudin. Donec consectetur aliquet massa vel scelerisque. Sed venenatis tempus justo, scelerisque aliquet lacus mollis pulvinar. Suspendisse vitae iaculis velit. Curabitur tempor ultrices purus sit amet feugiat. Suspendisse in elit commodo, blandit ante ac, molestie nunc. Aliquam consequat eget justo tempor feugiat.</p>
+          <p>The majority of pages on opensciencedata.esa.int  only hold metadata for each product and project. The actual data and its documentation are maintained and accessible at the data providers, outside of esa.int, for the majority of cases. This catalog provides the metadata and links to the data as it exists in those many other locations.</p>
           <p>
             <v-btn
               dark
@@ -53,7 +53,7 @@
             </v-btn>
           </p>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit:
+            Explore the catalog:
           </p>
           <p>
             <v-btn
