@@ -47,7 +47,7 @@
               @click="() => { TOGGLE_EMPTY_ITEMS(); filterItems(null)}"
             >
               <v-icon>
-                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline'}}
+                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
               </v-icon>
             </v-btn>
           </template>

@@ -106,7 +106,7 @@
                     @click="TOGGLE_EMPTY_ITEMS"
                   >
                     <v-icon>
-                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline'}}
+                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
                     </v-icon>
                   </v-btn>
                 </template>
@@ -188,7 +188,7 @@
                     @click="TOGGLE_EMPTY_ITEMS"
                   >
                     <v-icon>
-                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline'}}
+                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
                     </v-icon>
                   </v-btn>
                 </template>
@@ -221,11 +221,12 @@
           </v-row>
           <item-grid
             :items="variablesDetails"
-            :showEmptyItems="showEmptyItems"
+            :show-empty-items="showEmptyItems"
           />
         </v-tab-item>
       </v-tabs-items>
     </v-container>
+    <edit-button />
   </div>
 </template>
 
