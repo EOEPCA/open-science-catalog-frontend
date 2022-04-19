@@ -62,7 +62,7 @@
             class="pl-10 primary"
           >
             <v-list-item-icon>
-              <v-icon>mdi-clipboard-text</v-icon>
+              <v-icon>mdi-file-plus-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
               Add item
@@ -75,10 +75,23 @@
             class="pl-10 primary"
           >
             <v-list-item-icon>
-              <v-icon>mdi-wallet</v-icon>
+              <v-icon>mdi-file-edit-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
               Edit item
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            to="/contribution-status"
+            router
+            exact
+            class="pl-10 primary"
+          >
+            <v-list-item-icon>
+              <v-icon>mdi-file-clock-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              Status
             </v-list-item-title>
           </v-list-item>
         </v-list-group>
@@ -137,6 +150,9 @@
             block
             @click="toggleLogin"
           >
+            <v-icon left>
+              mdi-account-outline
+            </v-icon>
             {{ isLoggedIn ? 'Log out' : 'Log in' }}
           </v-btn>
         </div>

@@ -226,6 +226,7 @@
         </v-tab-item>
       </v-tabs-items>
     </v-container>
+    <edit-button />
   </div>
 </template>
 

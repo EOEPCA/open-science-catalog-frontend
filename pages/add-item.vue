@@ -1,8 +1,10 @@
 <template>
   <v-container>
-    <h1>Add an item</h1>
+    <h2 class="text-h2 mt-3 mb-5">
+      Add item
+    </h2>
     <v-row class="d-flex justify-center">
-      <v-col cols="6">
+      <v-col cols="12">
         <change-item type="add" />
       </v-col>
     </v-row>
@@ -14,10 +16,10 @@ import ChangeItem from '@/components/ChangeItem.vue'
 
 export default {
   name: 'AddItem',
-  middleware: 'auth',
   components: {
     ChangeItem
   },
+  middleware: 'auth',
   head: {
     title: 'Add item'
   }

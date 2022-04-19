@@ -1,18 +1,26 @@
 <template>
-  <v-form>
+  <v-form
+    ref="form"
+    v-model="valid"
+    lazy-validation
+    class="white pa-5 rounded"
+  >
     <v-select
       v-model="selectedItemType"
       :items="itemTypes"
       label="Select an item type"
       outlined
+      required
+      :rules="[v => !!v || 'Item is required']"
       @change="fillForm('clear')"
     />
     <v-text-field
-      v-if="type === 'add'"
+      v-if="type === 'add' && !!selectedItemType"
       v-model="name"
       label="Name"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-select
       v-else-if="selectedItemType === 'Theme'"
@@ -23,6 +31,7 @@
       label="Select theme"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
       @change="fillForm"
     />
     <v-select
@@ -34,6 +43,7 @@
       label="Select Variable"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
       @change="fillForm"
     />
     <v-text-field
@@ -43,6 +53,7 @@
       hint="e.g. project-99 (case sensitive)"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
       @change="fillForm"
     />
     <v-text-field
@@ -52,9 +63,11 @@
       hint="e.g. product-84 (case sensitive)"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
       @change="fillForm"
     />
     <v-textarea
+      v-if="!!selectedItemType"
       v-model="description"
       name="Description"
       label="Description"
@@ -68,9 +81,10 @@
       item-text="name"
       chips
       multiple
-      label="Parent Themes"
+      label="Themes"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-select
       v-if="selectedItemType === 'Product' && type === 'Add'"
@@ -80,10 +94,11 @@
       item-text="name"
       chips
       multiple
-      label="Parent Variables"
+      label="Variables"
       hint="Separate multiple variables by comma"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -91,6 +106,7 @@
       label="Parent Project"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -112,6 +128,7 @@
       label="Consortium"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -120,6 +137,7 @@
       hint="Separate multiple missions by comma"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Theme' || selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -127,6 +145,7 @@
       label="EO4Society URL"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -134,11 +153,77 @@
       label="Link"
       outlined
       required
+      :rules="[v => !!v || 'Item is required']"
     />
-    <v-file-input
-      label="Add File"
+    <v-text-field
+      v-if="selectedItemType === 'Theme'"
+      v-model="imageLink"
+      label="Image Link"
       outlined
+      required
+      :rules="[v => !!v || 'Item is required']"
     />
+    <!-- <v-file-input
+      label="Add Image"
+      outlined
+    /> -->
+    <div
+      class="d-flex justify-end"
+    >
+      <v-btn
+        color="primary"
+        text
+        large
+        :block="$vuetify.breakpoint.xsOnly"
+        :class="$vuetify.breakpoint.smAndUp ? 'mr-2' : 'mb-2'"
+        to="/"
+      >
+        <v-icon left>
+          mdi-cancel
+        </v-icon>
+        Cancel
+      </v-btn>
+      <v-btn
+        v-if="!success"
+        color="primary"
+        :disabled="!valid"
+        :loading="loading"
+        large
+        :block="$vuetify.breakpoint.xsOnly"
+        @click="submitForm"
+      >
+        <v-icon left>
+          mdi-checkbox-marked-circle-outline
+        </v-icon>
+        Submit
+      </v-btn>
+    </div>
+    <v-banner
+      v-if="success"
+      two-line
+    >
+      <v-avatar
+        slot="icon"
+        color="success"
+        size="40"
+      >
+        <v-icon
+          color="white"
+        >
+          mdi-checkbox-marked-circle-outline
+        </v-icon>
+      </v-avatar>
+      Thank you for your contribution! Your proposed changes will be reviewed shortly.
+      <template #actions>
+        <v-btn
+          text
+          color="primary"
+          to="/contribution-status"
+        >
+          Check contribution status
+        </v-btn>
+      </template>
+    </v-banner>
   </v-form>
 </template>
 
@@ -173,8 +258,11 @@ export default {
       consortium: '',
       eo4societyURL: '',
       link: '',
-      variables: []
-
+      imageLink: '',
+      variables: [],
+      valid: false,
+      loading: false,
+      success: false
     }
   },
   head: {
@@ -239,7 +327,7 @@ export default {
             this.eo4societyURL = selectedProject.links[0].href
             this.link = selectedProject.links[1].href
           }).catch((err) => {
-            console.log(err)
+            console.error(err)
           })
         } else if (this.selectedItemType === 'Product') {
           await this.retreiveProduct(this.slugify(this.name)).then((selectedProduct) => {
@@ -254,7 +342,7 @@ export default {
             this.eo4societyURL = selectedProduct.links[0].href
             this.link = selectedProduct.links[1].href
           }).catch((err) => {
-            console.log(err)
+            console.error(err)
           })
         }
       } else {
@@ -268,6 +356,48 @@ export default {
         this.satelliteMissions = []
         this.eo4societyURL = ''
         this.link = ''
+      }
+    },
+    async submitForm () {
+      if (this.$refs.form.validate()) {
+        this.loading = true
+        try {
+          if (this.type === 'add') {
+            await this.$axios.$post(
+              `https://open-science-catalog-backend.develop.eoepca.org/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+                name: this.name,
+                description: this.description,
+                theme: this.parentThemes,
+                parentVariables: this.parentVariables,
+                parentProject: this.parentProject,
+                startDate: this.startDate,
+                endDate: this.endDate,
+                satelliteMissions: this.satelliteMissions,
+                eo4societyURL: this.eo4societyURL,
+                link: this.link
+              })
+          } else {
+            await this.$axios.$put(
+              `https://open-science-catalog-backend.develop.eoepca.org/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+                name: this.name,
+                description: this.description,
+                theme: this.parentThemes,
+                parentVariables: this.parentVariables,
+                parentProject: this.parentProject,
+                startDate: this.startDate,
+                endDate: this.endDate,
+                satelliteMissions: this.satelliteMissions,
+                eo4societyURL: this.eo4societyURL,
+                link: this.link
+              })
+          }
+          this.loading = false
+          this.success = true
+        } catch (error) {
+          console.error(error)
+          this.loading = false
+          this.success = false
+        }
       }
     }
   }

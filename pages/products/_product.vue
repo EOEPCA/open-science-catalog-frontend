@@ -145,6 +145,7 @@
         </v-col>
       </v-row>
     </v-container>
+    <edit-button />
   </div>
 </template>
 
