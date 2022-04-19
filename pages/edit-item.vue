@@ -1,14 +1,14 @@
 <template>
   <v-container>
-    <h1>New project page</h1>
+    <h1>Edit item</h1>
   </v-container>
 </template>
 
 <script>
 export default {
-  name: 'NewProject',
+  name: 'EditItem',
   head: {
-    title: 'New Project'
+    title: 'Edit Item'
   }
 }
 </script>

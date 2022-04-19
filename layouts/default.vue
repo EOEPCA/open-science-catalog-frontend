@@ -43,6 +43,7 @@
         </v-list-item>
 
         <v-list-group
+          v-if="isLoggedIn"
           prepend-icon="mdi-plus-circle-outline"
           no-action
         >
@@ -55,7 +56,7 @@
           </template>
 
           <v-list-item
-            to="/new-product"
+            to="/add-item"
             router
             exact
             class="pl-10 primary"
@@ -64,11 +65,11 @@
               <v-icon>mdi-clipboard-text</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
-              New product
+              Add item
             </v-list-item-title>
           </v-list-item>
           <v-list-item
-            to="/new-project"
+            to="/edit-item"
             router
             exact
             class="pl-10 primary"
@@ -77,7 +78,7 @@
               <v-icon>mdi-wallet</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
-              New project
+              Edit item
             </v-list-item-title>
           </v-list-item>
         </v-list-group>
@@ -129,6 +130,17 @@
           </v-list-item-action>
         </v-list-item>
       </v-list>
+      <template #append>
+        <div class="pa-2">
+          <v-btn
+            color="secondary"
+            block
+            @click="toggleLogin"
+          >
+            {{ isLoggedIn ? 'Log out' : 'Log in' }}
+          </v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
     <v-app-bar
       color="primary"
@@ -184,7 +196,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'DefaultLayout',
@@ -198,6 +210,14 @@ export default {
   computed: {
     ...mapState([
       'appVersion'
+    ]),
+    ...mapState('auth', [
+      'isLoggedIn'
+    ])
+  },
+  methods: {
+    ...mapMutations('auth', [
+      'toggleLogin'
     ])
   }
 }
