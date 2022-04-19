@@ -14,6 +14,7 @@ import ChangeItem from '@/components/ChangeItem.vue'
 
 export default {
   name: 'AddItem',
+  middleware: 'auth',
   components: {
     ChangeItem
   },

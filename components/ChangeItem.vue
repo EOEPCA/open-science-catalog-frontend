@@ -147,7 +147,6 @@ import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'ChangeItem',
-  middleware: 'auth',
   props: {
     type: {
       type: String,
