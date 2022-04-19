@@ -28,7 +28,7 @@
     <v-select
       v-else-if="selectedItemType === 'Variable'"
       v-model="name"
-      :items="variables"
+      :items="variables.map((variable) => variable.name.slice(0, -1))"
       item-value="name"
       item-text="name"
       label="Select Variable"
@@ -193,6 +193,23 @@ export default {
         this.variables.push(variable)
       })
     })
+    if ('theme' in this.$route.query) {
+      this.selectedItemType = 'Theme'
+      this.name = this.$route.query.theme.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
+      this.fillForm()
+    } else if ('variable' in this.$route.query) {
+      this.selectedItemType = 'Variable'
+      this.name = this.$route.query.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
+      this.fillForm()
+    } else if ('project' in this.$route.query) {
+      this.selectedItemType = 'Project'
+      this.name = this.$route.query.project
+      this.fillForm()
+    } else if ('product' in this.$route.query) {
+      this.selectedItemType = 'Product'
+      this.name = this.$route.query.product
+      this.fillForm()
+    }
   },
   methods: {
     ...mapActions('staticCatalog', [
@@ -210,7 +227,7 @@ export default {
           const selectedVariable = await this.retreiveVariable(this.slugify(this.name))
           this.description = selectedVariable.description
           // temporary hack to pre-select parent theme
-          this.parentThemes.push(selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase()))
+          this.parentThemes = selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
           this.link = selectedVariable.links.find(link => link.rel === 'via').href
         } else if (this.selectedItemType === 'Project') {
           await this.retreiveProjects(this.name).then((selectedProject) => {
