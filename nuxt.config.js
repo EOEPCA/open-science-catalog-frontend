@@ -29,6 +29,11 @@ export default {
       { name: 'keywords', content: 'European Space Agency, Moon, Mars, sun, space exploration, probes, missions, satellites, launchers, international space station, ISS, telecommunications, earth observation, navigation, astronauts, solar system, universe, remote sensing, space news, ESA, environment, monitoring, astronomy, Ariane, rocket, Galileo, comet, education, Venus ' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
+    script: [
+      {
+        src: 'https://cdn.rawgit.com/GluuFederation/openid-implicit-client/master/openidconnect.min.js'
+      }
+    ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: `${routerBase}favicon.ico` }
     ]
@@ -47,6 +52,7 @@ export default {
     '~/plugins/text-to-hex',
     '~/plugins/type-color',
     '~/plugins/axios',
+    '~/plugins/oauth.client',
     { src: '~plugins/ol', ssr: false }
   ],
 

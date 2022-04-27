@@ -83,7 +83,6 @@
 
 export default {
   name: 'ContributionsStatus',
-  middleware: 'auth',
   data: () => ({
     pendingItems: {},
     loaded: false

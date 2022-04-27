@@ -148,7 +148,8 @@
           <v-btn
             color="secondary"
             block
-            @click="toggleLogin"
+            @click="$OIDC.login( {scope : 'openid profile email',
+                                  response_type : 'token id_token'} );"
           >
             <v-icon left>
               mdi-account-outline
