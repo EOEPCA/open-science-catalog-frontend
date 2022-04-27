@@ -43,7 +43,7 @@
         </v-list-item>
 
         <v-list-group
-          v-if="isLoggedIn"
+          v-if="$auth.loggedIn"
           prepend-icon="mdi-plus-circle-outline"
           no-action
         >
@@ -145,16 +145,31 @@
       </v-list>
       <template #append>
         <div class="pa-2">
+          <template
+            v-if="$auth.loggedIn"
+          >
+            <p class="white--text text-center mb-0">
+              Hello, {{ $auth.user.given_name }} {{ $auth.user.family_name }}
+            </p>
+            <p class="white--text text-center">
+              <small>OSCDataOwner: {{ $auth.user.OSCDataOwner }}</small>
+              <v-icon
+                small
+                :color="$auth.user.OSCDataOwner ? 'success' : 'error'"
+              >
+                {{ $auth.user.OSCDataOwner ? 'mdi-check-decagram' : 'mdi-close-circle-outline' }}
+              </v-icon>
+            </p>
+          </template>
           <v-btn
             color="secondary"
             block
-            @click="$OIDC.login( {scope : 'openid profile email',
-                                  response_type : 'token id_token'} );"
+            :to="$auth.loggedIn ? '/logout' : '/login'"
           >
             <v-icon left>
               mdi-account-outline
             </v-icon>
-            {{ isLoggedIn ? 'Log out' : 'Log in' }}
+            {{ $auth.loggedIn ? 'Log out' : 'Log in' }}
           </v-btn>
         </div>
       </template>
@@ -213,7 +228,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'DefaultLayout',
@@ -227,14 +242,6 @@ export default {
   computed: {
     ...mapState([
       'appVersion'
-    ]),
-    ...mapState('auth', [
-      'isLoggedIn'
-    ])
-  },
-  methods: {
-    ...mapMutations('auth', [
-      'toggleLogin'
     ])
   }
 }

@@ -13,14 +13,13 @@
 
 <script>
 import ChangeItem from '@/components/ChangeItem.vue'
-import authentication from '@/mixins/authentication'
 
 export default {
   name: 'AddItem',
   components: {
     ChangeItem
   },
-  mixins: [authentication],
+  middleware: 'auth',
   head: {
     title: 'Add item'
   }

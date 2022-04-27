@@ -26,6 +26,7 @@ export default {
   components: {
     ChangeItem
   },
+  middleware: 'auth',
   head: {
     title: 'Edit Item'
   }

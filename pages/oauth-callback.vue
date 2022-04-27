@@ -1,18 +1,9 @@
 <template>
-  <div>
-    OAuth
-    <button @click="$OIDC.logout">
-      Log out
-    </button>
-  </div>
+  <v-progress-circular
+    :size="70"
+    :width="5"
+    color="primary"
+    indeterminate
+    class="ma-8"
+  />
 </template>
-
-<script>
-export default {
-  mounted () {
-    this.$OIDC.restoreInfo()
-    const token = this.$OIDC.getAccessToken()
-    console.log(this.$OIDC.getUserInfo(token))
-  }
-}
-</script>

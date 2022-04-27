@@ -29,11 +29,6 @@ export default {
       { name: 'keywords', content: 'European Space Agency, Moon, Mars, sun, space exploration, probes, missions, satellites, launchers, international space station, ISS, telecommunications, earth observation, navigation, astronauts, solar system, universe, remote sensing, space news, ESA, environment, monitoring, astronomy, Ariane, rocket, Galileo, comet, education, Venus ' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
-    script: [
-      {
-        src: 'https://cdn.rawgit.com/GluuFederation/openid-implicit-client/master/openidconnect.min.js'
-      }
-    ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: `${routerBase}favicon.ico` }
     ]
@@ -52,7 +47,6 @@ export default {
     '~/plugins/text-to-hex',
     '~/plugins/type-color',
     '~/plugins/axios',
-    '~/plugins/oauth.client',
     { src: '~plugins/ol', ssr: false }
   ],
 
@@ -70,7 +64,8 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -100,5 +95,32 @@ export default {
         }
       })
     ]
+  },
+
+  auth: {
+    plugins: ['~/plugins/auth.js'],
+    strategies: {
+      oidc: {
+        scheme: 'openIDConnect',
+        clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
+        endpoints: {
+          configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
+        },
+        responseType: 'token id_token',
+        idToken: {
+          property: 'id_token',
+          maxAge: 1800
+        },
+        scope: 'profile',
+        acrValues: ['passport_social']
+      }
+    },
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/oauth-callback',
+      home: '/'
+    },
+    fullPathRedirect: true
   }
 }
