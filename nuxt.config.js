@@ -111,7 +111,7 @@ export default {
           property: 'id_token',
           maxAge: 1800
         },
-        scope: 'profile',
+        scope: 'profile email',
         acrValues: ['passport_social']
       }
     },
