@@ -44,7 +44,7 @@
 
         <client-only>
           <v-list-group
-            v-if="$auth.loggedIn"
+            v-if="$auth.loggedIn && $auth.user.OSCDataOwner"
             prepend-icon="mdi-plus-circle-outline"
             no-action
           >
