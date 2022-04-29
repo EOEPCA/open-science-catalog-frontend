@@ -64,7 +64,8 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -94,5 +95,31 @@ export default {
         }
       })
     ]
+  },
+
+  auth: {
+    strategies: {
+      oidc: {
+        scheme: 'openIDConnect',
+        clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
+        endpoints: {
+          configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
+        },
+        responseType: 'token id_token',
+        idToken: {
+          property: 'id_token',
+          maxAge: 1800
+        },
+        scope: 'profile email',
+        acrValues: ['passport_social']
+      }
+    },
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/oauth-callback',
+      home: '/'
+    },
+    fullPathRedirect: true
   }
 }
