@@ -33,17 +33,16 @@
  */
 
 /*!
+ * cookie
+ * Copyright(c) 2012-2014 Roman Shtylman
+ * Copyright(c) 2015 Douglas Christopher Wilson
+ * MIT Licensed
+ */
+
+/*!
  * vuex v3.6.2
  * (c) 2021 Evan You
  * @license MIT
- */
-
-
-/*!
-* chartjs-plugin-annotation v1.4.0
-* https://www.chartjs.org/chartjs-plugin-annotation/index
- * (c) 2022 chartjs-plugin-annotation Contributors
- * Released under the MIT License
  */
 
 
@@ -57,4 +56,12 @@
  * vue-no-ssr v1.1.1
  * (c) 2018-present egoist <0x142857@gmail.com>
  * Released under the MIT License.
+ */
+
+
+/*!
+* chartjs-plugin-annotation v1.4.0
+* https://www.chartjs.org/chartjs-plugin-annotation/index
+ * (c) 2022 chartjs-plugin-annotation Contributors
+ * Released under the MIT License
  */
