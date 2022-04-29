@@ -23,11 +23,12 @@ describe('DefaultLayout', () => {
     wrapper = mount(DefaultLayout, {
       mocks: {
         $dynamicCatalog: { defaults: { baseURL: '#' } },
-        $auth: { loggedIn: true }
+        $auth: { loggedIn: true, user: { name: 'FooBar' } }
       },
       localVue,
       store: mockStore,
-      vuetify
+      vuetify,
+      stubs: ['nuxt-link', 'router-link', 'client-only', 'Nuxt']
     })
     // console.log(wrapper.html())
     const homeButton = wrapper.find('.v-list-item__title')
