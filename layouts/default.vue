@@ -152,7 +152,12 @@
               v-if="$auth.loggedIn"
             >
               <p class="white--text text-center mb-0">
-              Hello, {{ $auth.user.given_name }} {{ $auth.user.family_name }} {{ $auth.user.name }}
+                <span v-if="$auth.user.given_name">
+                  Hello, {{ $auth.user.given_name }} {{ $auth.user.family_name }}
+                </span>
+                <span v-else>
+                  Hello, {{ $auth.user.name || 'unknown user' }}
+                </span>
               </p>
               <p class="white--text text-center">
                 <small>OSCDataOwner: {{ $auth.user.OSCDataOwner }}</small>
