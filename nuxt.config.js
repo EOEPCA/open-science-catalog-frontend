@@ -98,7 +98,6 @@ export default {
   },
 
   auth: {
-    plugins: ['~/plugins/auth.js'],
     strategies: {
       oidc: {
         scheme: 'openIDConnect',
