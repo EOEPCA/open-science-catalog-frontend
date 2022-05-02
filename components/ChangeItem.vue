@@ -110,7 +110,6 @@
       required
       :rules="[
         (v) => !!v || 'Parent Project ID is required',
-        (v) => /^[a-zA-Z]+-{1}[0-9]+$/.test(v) || 'Parent Project ID format is incorrect'
       ]"
     />
     <v-text-field
@@ -148,7 +147,7 @@
       required
       :rules="[
         (v) => !!v || 'Satellite missions are required',
-        (v) => /^[a-z]+(,[a-z]+)*$/.test(v) || 'Satellite missions must be separated by commas'
+        (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
       ]"
     />
     <v-text-field
@@ -169,8 +168,7 @@
       outlined
       required
       :rules="[
-        (v) => !!v || 'Link is required',
-        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'Link must be valid'
+        (v) => !!v || 'Link is required'
       ]"
     />
     <v-text-field
