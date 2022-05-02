@@ -69,13 +69,37 @@
       :rules="[v => !!v || 'Product ID is required']"
       @change="fillForm"
     />
-    <v-textarea
+    <v-tabs
       v-if="!!selectedItemType"
-      v-model="description"
-      name="Description"
-      label="Description"
-      outlined
-    />
+      v-model="descriptionToggle"
+      tile
+      group
+    >
+      <v-tab>
+        Input
+      </v-tab>
+      <v-tab>
+        Preview
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items
+      v-if="!!selectedItemType"
+      v-model="descriptionToggle"
+    >
+      <v-tab-item>
+        <v-textarea
+          v-model="description"
+          name="Description"
+          label="Description (markdown supported)"
+          class="mt-4"
+          outlined
+        />
+      </v-tab-item>
+      <v-tab-item>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <medium class="mt-2 mb-4 mx-2" style="display: block" v-html="description ? description : 'Write in the input field to see preview here'" />
+      </v-tab-item>
+    </v-tabs-items>
     <v-select
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
       v-model="parentThemes"
@@ -290,7 +314,8 @@ export default {
       variables: [],
       valid: false,
       loading: false,
-      success: false
+      success: false,
+      descriptionToggle: null
     }
   },
   head: {
