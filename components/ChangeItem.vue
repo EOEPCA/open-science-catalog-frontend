@@ -156,6 +156,14 @@
       :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
+      v-if="selectedItemType === 'Product'"
+      v-model="WMSLink"
+      label="WMS Link"
+      outlined
+      required
+      :rules="[v => !!v || 'Item is required']"
+    />
+    <v-text-field
       v-if="selectedItemType === 'Theme'"
       v-model="imageLink"
       label="Image Link"
@@ -258,6 +266,7 @@ export default {
       consortium: '',
       eo4societyURL: '',
       link: '',
+      WMSLink: '',
       imageLink: '',
       variables: [],
       valid: false,
