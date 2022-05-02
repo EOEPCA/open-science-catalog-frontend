@@ -11,7 +11,7 @@
       label="Select an item type"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Item type is required']"
       @change="fillForm('clear')"
     />
     <v-text-field
@@ -20,7 +20,7 @@
       label="Name"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Name is required']"
     />
     <v-select
       v-else-if="selectedItemType === 'Theme'"
@@ -31,7 +31,7 @@
       label="Select theme"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Theme is required']"
       @change="fillForm"
     />
     <v-select
@@ -43,7 +43,7 @@
       label="Select Variable"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Variable is required']"
       @change="fillForm"
     />
     <v-text-field
@@ -53,7 +53,10 @@
       hint="e.g. project-99 (case sensitive)"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Project ID is required',
+        (v) => /^[a-zA-Z]+-{1}[0-9]+$/.test(v) || 'Project ID format is incorrect'
+      ]"
       @change="fillForm"
     />
     <v-text-field
@@ -63,7 +66,7 @@
       hint="e.g. product-84 (case sensitive)"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Product ID is required']"
       @change="fillForm"
     />
     <v-textarea
@@ -84,10 +87,10 @@
       label="Themes"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Parent theme is required']"
     />
     <v-select
-      v-if="selectedItemType === 'Product' && type === 'Add'"
+      v-if="selectedItemType === 'Product' && type === 'add'"
       v-model="parentVariables"
       :items="variables"
       item-value="name"
@@ -98,7 +101,6 @@
       hint="Separate multiple variables by comma"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -106,7 +108,10 @@
       label="Parent Project"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Parent Project ID is required',
+        (v) => /^[a-zA-Z]+-{1}[0-9]+$/.test(v) || 'Parent Project ID format is incorrect'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -114,6 +119,8 @@
       type="datetime-local"
       label="Start date"
       outlined
+      required
+      :rules="[v => !!v || 'Start date is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -121,6 +128,8 @@
       type="datetime-local"
       label="End date"
       outlined
+      required
+      :rules="[v => !!v || 'End date is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Project'"
@@ -128,7 +137,7 @@
       label="Consortium"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Consortium is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -137,7 +146,10 @@
       hint="Separate multiple missions by comma"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Satellite missions are required',
+        (v) => /^[a-z]+(,[a-z]+)*$/.test(v) || 'Satellite missions must be separated by commas'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Theme' || selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -145,7 +157,10 @@
       label="EO4Society URL"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'EO4Society URL is required',
+        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'EO4Society URL must be valid'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -153,7 +168,10 @@
       label="Link"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Link is required',
+        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'Link must be valid'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -161,7 +179,10 @@
       label="WMS Link"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'WMS link is required',
+        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'WMS link must be valid'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Theme'"
@@ -169,7 +190,7 @@
       label="Image Link"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Image link is required']"
     />
     <!-- <v-file-input
       label="Add Image"
