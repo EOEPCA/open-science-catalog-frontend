@@ -11,7 +11,7 @@
       label="Select an item type"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Item type is required']"
       @change="fillForm('clear')"
     />
     <v-text-field
@@ -20,7 +20,7 @@
       label="Name"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Name is required']"
     />
     <v-select
       v-else-if="selectedItemType === 'Theme'"
@@ -31,7 +31,7 @@
       label="Select theme"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Theme is required']"
       @change="fillForm"
     />
     <v-select
@@ -43,7 +43,7 @@
       label="Select Variable"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Variable is required']"
       @change="fillForm"
     />
     <v-text-field
@@ -53,7 +53,10 @@
       hint="e.g. project-99 (case sensitive)"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Project ID is required',
+        (v) => /^[a-zA-Z]+-{1}[0-9]+$/.test(v) || 'Project ID format is incorrect'
+      ]"
       @change="fillForm"
     />
     <v-text-field
@@ -63,16 +66,40 @@
       hint="e.g. product-84 (case sensitive)"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Product ID is required']"
       @change="fillForm"
     />
-    <v-textarea
+    <v-tabs
       v-if="!!selectedItemType"
-      v-model="description"
-      name="Description"
-      label="Description"
-      outlined
-    />
+      v-model="descriptionToggle"
+      tile
+      group
+    >
+      <v-tab>
+        Input
+      </v-tab>
+      <v-tab>
+        Preview
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items
+      v-if="!!selectedItemType"
+      v-model="descriptionToggle"
+    >
+      <v-tab-item>
+        <v-textarea
+          v-model="description"
+          name="Description"
+          label="Description (markdown supported)"
+          class="mt-4"
+          outlined
+        />
+      </v-tab-item>
+      <v-tab-item>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? description : 'Write in the input field to see preview here'" />
+      </v-tab-item>
+    </v-tabs-items>
     <v-select
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
       v-model="parentThemes"
@@ -84,10 +111,10 @@
       label="Themes"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Parent theme is required']"
     />
     <v-select
-      v-if="selectedItemType === 'Product' && type === 'Add'"
+      v-if="selectedItemType === 'Product' && type === 'add'"
       v-model="parentVariables"
       :items="variables"
       item-value="name"
@@ -98,7 +125,6 @@
       hint="Separate multiple variables by comma"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -106,7 +132,9 @@
       label="Parent Project"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Parent Project ID is required',
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -114,6 +142,8 @@
       type="datetime-local"
       label="Start date"
       outlined
+      required
+      :rules="[v => !!v || 'Start date is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -121,6 +151,8 @@
       type="datetime-local"
       label="End date"
       outlined
+      required
+      :rules="[v => !!v || 'End date is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Project'"
@@ -128,7 +160,7 @@
       label="Consortium"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Consortium is required']"
     />
     <v-text-field
       v-if="selectedItemType === 'Product'"
@@ -137,7 +169,10 @@
       hint="Separate multiple missions by comma"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Satellite missions are required',
+        (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Theme' || selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -145,7 +180,10 @@
       label="EO4Society URL"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'EO4Society URL is required',
+        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'EO4Society URL must be valid'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
@@ -153,7 +191,20 @@
       label="Link"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[
+        (v) => !!v || 'Link is required'
+      ]"
+    />
+    <v-text-field
+      v-if="selectedItemType === 'Product'"
+      v-model="WMSLink"
+      label="WMS Link"
+      outlined
+      required
+      :rules="[
+        (v) => !!v || 'WMS link is required',
+        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'WMS link must be valid'
+      ]"
     />
     <v-text-field
       v-if="selectedItemType === 'Theme'"
@@ -161,15 +212,65 @@
       label="Image Link"
       outlined
       required
-      :rules="[v => !!v || 'Item is required']"
+      :rules="[v => !!v || 'Image link is required']"
     />
     <!-- <v-file-input
       label="Add Image"
       outlined
     /> -->
     <div
-      class="d-flex justify-end"
+      class="d-flex"
     >
+      <v-dialog v-model="deleteDialog" max-width="500">
+        <template #activator="{ on, attrs }">
+          <v-btn
+            v-if="true"
+            dark
+            large
+            color="red"
+            style="cursor: pointer"
+            v-bind="attrs"
+            :block="$vuetify.breakpoint.xsOnly"
+            :class="$vuetify.breakpoint.smAndUp ? 'mr-2' : 'mb-2'"
+            v-on="on"
+          >
+            <v-icon left>
+              mdi-delete
+            </v-icon>
+            Request deletion
+          </v-btn>
+        </template>
+        <v-card class="pa-3">
+          <v-card-title class="text-h5" style="word-break: break-word">
+            Are you sure you want to request this item to be deleted?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="blue"
+              dark
+              @click="deleteDialog = false"
+            >
+              <v-icon left>
+                mdi-cancel
+              </v-icon>
+              Cancel
+            </v-btn>
+            <v-btn
+              color="red"
+              dark
+              :loading="loading"
+              @click="deleteItem"
+            >
+              <v-icon left>
+                mdi-delete
+              </v-icon>
+              Request deletion
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-spacer />
       <v-btn
         color="primary"
         text
@@ -258,11 +359,14 @@ export default {
       consortium: '',
       eo4societyURL: '',
       link: '',
+      WMSLink: '',
       imageLink: '',
       variables: [],
       valid: false,
       loading: false,
-      success: false
+      success: false,
+      descriptionToggle: null,
+      deleteDialog: false
     }
   },
   head: {
@@ -399,6 +503,14 @@ export default {
           this.success = false
         }
       }
+    },
+    async deleteItem () {
+      this.loading = true
+      await this.$axios.$delete(
+        `https://open-science-catalog-backend.develop.eoepca.org/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {}
+      )
+      this.loading = false
+      this.deleteDialog = false
     }
   }
 }
