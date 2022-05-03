@@ -97,7 +97,7 @@
       </v-tab-item>
       <v-tab-item>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="mt-2 mb-4 mx-2" style="display: block" v-html="description ? description : 'Write in the input field to see preview here'" />
+        <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? description : 'Write in the input field to see preview here'" />
       </v-tab-item>
     </v-tabs-items>
     <v-select
@@ -219,7 +219,7 @@
       outlined
     /> -->
     <div
-      class="d-flex justify-end"
+      class="d-flex"
     >
       <v-dialog v-model="deleteDialog" max-width="500">
         <template #activator="{ on, attrs }">
@@ -237,11 +237,11 @@
             <v-icon left>
               mdi-delete
             </v-icon>
-            Delete item
+            Request deletion
           </v-btn>
         </template>
-        <v-card>
-          <v-card-title class="text-h5">
+        <v-card class="pa-3">
+          <v-card-title class="text-h5" style="word-break: break-word">
             Are you sure you want to request this item to be deleted?
           </v-card-title>
           <v-card-actions>
@@ -265,11 +265,12 @@
               <v-icon left>
                 mdi-delete
               </v-icon>
-              Delete
+              Request deletion
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-spacer />
       <v-btn
         color="primary"
         text
