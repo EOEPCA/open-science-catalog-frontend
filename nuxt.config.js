@@ -47,6 +47,7 @@ export default {
     '~/plugins/text-to-hex',
     '~/plugins/type-color',
     '~/plugins/axios',
+    '~/plugins/markdown',
     { src: '~plugins/ol', ssr: false }
   ],
 

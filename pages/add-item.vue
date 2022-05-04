@@ -19,7 +19,6 @@ export default {
   components: {
     ChangeItem
   },
-  middleware: 'auth',
   head: {
     title: 'Add item'
   }
