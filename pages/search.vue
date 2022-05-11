@@ -9,11 +9,11 @@
       :current-page="page"
       :sort-by="productsFilterSortBy"
       :sort-order="productsFilterOrder"
+      :bbox="bbox"
       @searchQuery="handleSearchEmit"
     />
     <v-row>
       <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
-        <v-spacer />
         <v-select
           v-model="productsFilterSortBy"
           dense
@@ -34,8 +34,49 @@
           :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
           @change="filterProducts"
         />
+        <v-btn
+          outlined
+          style="height: 40px"
+          @click="showMap = !showMap"
+        >
+          Filter by location
+        </v-btn>
       </v-col>
     </v-row>
+    <div v-if="showMap" class="ma-4">
+      <no-ssr>
+        <CoverageMap
+          ref="map"
+          :features="[mapFeatures]"
+          enable-draw
+          @drawEnd="handleDraw"
+        />
+      </no-ssr>
+      <v-row justify="space-between">
+        <v-col>
+          <div class="mapError">
+            {{ mapError }}
+          </div>
+        </v-col>
+        <v-col justify-self="end">
+          <v-btn
+            style="height: 40px"
+            color="yellow"
+            @click="undoMap"
+          >
+            Undo
+          </v-btn>
+          <v-btn
+            color="red"
+            dark
+            style="height: 40px"
+            @click="clearMap"
+          >
+            Clear selection
+          </v-btn>
+        </v-col>
+      </v-row>
+    </div>
     <item-grid
       :items="items"
       show-empty-items
@@ -80,7 +121,18 @@ export default {
         }
       ],
       productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending'
+      productsFilterOrder: 'Ascending',
+      showMap: true,
+      mapFeatures: {
+        geometry: {
+          type: 'Polygon',
+          bbox: [0, 0, 0, 0],
+          coordinates: [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]
+        },
+        type: 'Feature'
+      },
+      bbox: null,
+      mapError: null
     }
   },
   head: {
@@ -98,6 +150,24 @@ export default {
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts(init)
       })
+    },
+    handleDraw (bbox) {
+      if (bbox.flatCoordinates.length !== 10) {
+        this.mapError = 'You must select 4 points'
+        return
+      }
+      this.bbox = bbox.getExtent()
+      this.mapFeatures.geometry.bbox = bbox.getExtent()
+
+      this.$nextTick(() => {
+        this.$refs.searchBox.filterProducts('bbox')
+      })
+    },
+    undoMap () {
+      this.$refs.map.undo()
+    },
+    clearMap () {
+      this.$refs.map.clear()
     }
   }
 }
@@ -120,5 +190,9 @@ export default {
 ::v-deep .v-text-field__slot input,
 ::v-deep .v-select__selections input {
   margin-top: 5px;
+}
+
+.mapError {
+  color: red;
 }
 </style>

@@ -8,6 +8,7 @@ import { Vector as VectorSource } from 'ol/source'
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer'
 import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS'
 import WMTSCapabilities from 'ol/format/WMTSCapabilities'
+import { Draw } from 'ol/interaction'
 
 const ol = {
   Map,
@@ -21,6 +22,7 @@ const ol = {
   VectorLayer,
   WMTS,
   WMTSCapabilities,
-  optionsFromCapabilities
+  optionsFromCapabilities,
+  Draw
 }
 Vue.prototype.$ol = ol

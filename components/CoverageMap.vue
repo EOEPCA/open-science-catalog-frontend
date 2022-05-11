@@ -17,11 +17,16 @@ export default {
     highlight: {
       type: Object,
       default: null
+    },
+    enableDraw: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       map: null,
+      draw: null,
       baseLayers: [
         {
           layer: 'terrain-light_3857'
@@ -56,7 +61,6 @@ export default {
     createMap () {
       const ol = this.$ol
       const parser = new ol.WMTSCapabilities()
-
       this.defaultStyle = new ol.Style({
         stroke: new ol.Stroke({
           color: 'rgba(0, 50, 71, 0.5)',
@@ -114,7 +118,7 @@ export default {
           }
           this.vectorSource = new ol.VectorSource({
             features: new ol.GeoJSON().readFeatures(geojsonObject, {
-              dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'
+              dataProjection: 'EPSG:4326', featureProjection: 'EPSG:4326'
             })
           })
 
@@ -132,14 +136,33 @@ export default {
               center: [0, 0],
               zoom: 0,
               multiWorld: true,
-              projection: 'EPSG:3857'
+              projection: 'EPSG:4326'
             })
           })
 
           this.map.getView().fit(this.vectorSource.getExtent(), {
             padding: this.defaultPadding
           })
+
+          if (this.enableDraw) {
+            this.draw = new ol.Draw({
+              source: this.vectorSource,
+              type: 'Polygon'
+            })
+            this.map.addInteraction(this.draw)
+
+            this.draw.on('drawend', (e) => {
+              this.$emit('drawEnd', e.feature.getGeometry())
+            })
+          }
         })
+    },
+    undo () {
+      this.draw.removeLastPoint()
+    },
+    clear () {
+      const features = this.vectorSource.getFeatures()
+      this.vectorSource.removeFeature(features[features.length - 1])
     }
   }
 }

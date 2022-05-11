@@ -147,6 +147,10 @@ export default {
     itemType: {
       type: String,
       default: 'product'
+    },
+    bbox: {
+      type: Array,
+      default: () => ([0, 0, 0, 0])
     }
   },
   data () {
@@ -455,7 +459,7 @@ export default {
         }, '')
         const queryString = `/collections/metadata:main/items?sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-            (this.currentPage - 1) * 10}${searchQuery}`
+            (this.currentPage - 1) * 10}${searchQuery}${this.bbox ? `&bbox=${this.bbox.join(',')}` : ''}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
 
