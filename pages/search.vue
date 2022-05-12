@@ -53,11 +53,6 @@
         />
       </no-ssr>
       <v-row justify="space-between">
-        <v-col>
-          <div class="mapError">
-            {{ mapError }}
-          </div>
-        </v-col>
         <v-col justify-self="end">
           <v-btn
             style="height: 40px"
@@ -131,8 +126,7 @@ export default {
         },
         type: 'Feature'
       },
-      bbox: null,
-      mapError: null
+      bbox: null
     }
   },
   head: {
@@ -152,10 +146,6 @@ export default {
       })
     },
     handleDraw (bbox) {
-      if (bbox.flatCoordinates.length !== 10) {
-        this.mapError = 'You must select 4 points'
-        return
-      }
       this.bbox = bbox.getExtent()
       this.mapFeatures.geometry.bbox = bbox.getExtent()
 
@@ -190,9 +180,5 @@ export default {
 ::v-deep .v-text-field__slot input,
 ::v-deep .v-select__selections input {
   margin-top: 5px;
-}
-
-.mapError {
-  color: red;
 }
 </style>

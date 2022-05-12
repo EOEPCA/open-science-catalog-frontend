@@ -147,7 +147,8 @@ export default {
           if (this.enableDraw) {
             this.draw = new ol.Draw({
               source: this.vectorSource,
-              type: 'Polygon'
+              type: 'Circle',
+              geometryFunction: ol.createBox()
             })
             this.map.addInteraction(this.draw)
 
