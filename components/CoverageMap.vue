@@ -1,9 +1,17 @@
 <template>
   <no-ssr>
-    <div
-      ref="mapContainer"
-      :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
-    />
+    <div class="text-center">
+      <v-progress-circular
+        v-if="loading"
+        color="primary"
+        :size="70"
+        indeterminate
+      />
+      <div
+        ref="mapContainer"
+        :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
+      />
+    </div>
   </no-ssr>
 </template>
 
@@ -38,7 +46,8 @@ export default {
       vectorSource: null,
       defaultStyle: null,
       highlightStyle: null,
-      defaultPadding: [50, 25, 50, 25]
+      defaultPadding: [50, 25, 50, 25],
+      loading: true
     }
   },
   watch: {
@@ -144,6 +153,10 @@ export default {
             padding: this.defaultPadding
           })
 
+          this.map.on('loadstart', () => {
+            this.loading = false
+          })
+
           if (this.enableDraw) {
             this.draw = new ol.Draw({
               source: this.vectorSource,
@@ -157,9 +170,6 @@ export default {
             })
           }
         })
-    },
-    undo () {
-      this.draw.removeLastPoint()
     },
     clear () {
       const features = this.vectorSource.getFeatures()
