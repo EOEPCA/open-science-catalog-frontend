@@ -139,6 +139,7 @@ export default {
           layers.push(vectorLayer)
 
           this.map = new ol.Map({
+            controls: ol.defaultControls().extend([new ol.ClearMap()]),
             layers,
             target: this.$refs.mapContainer,
             view: new ol.View({
@@ -170,11 +171,14 @@ export default {
             })
           }
         })
-    },
-    clear () {
-      const features = this.vectorSource.getFeatures()
-      this.vectorSource.removeFeature(features[features.length - 1])
     }
   }
 }
 </script>
+
+<style>
+.clear-btn {
+  bottom: 15px;
+  left: 0.5em;
+}
+</style>

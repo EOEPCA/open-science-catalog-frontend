@@ -52,25 +52,6 @@
           @drawEnd="handleDraw"
         />
       </no-ssr>
-      <v-row justify="space-between">
-        <v-col justify-self="end">
-          <v-btn
-            style="height: 40px"
-            color="yellow"
-            @click="undoMap"
-          >
-            Undo
-          </v-btn>
-          <v-btn
-            color="red"
-            dark
-            style="height: 40px"
-            @click="clearMap"
-          >
-            Clear selection
-          </v-btn>
-        </v-col>
-      </v-row>
     </div>
     <item-grid
       :items="items"
@@ -152,12 +133,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts('bbox')
       })
-    },
-    undoMap () {
-      this.$refs.map.undo()
-    },
-    clearMap () {
-      this.$refs.map.clear()
     }
   }
 }
