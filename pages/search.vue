@@ -9,11 +9,11 @@
       :current-page="page"
       :sort-by="productsFilterSortBy"
       :sort-order="productsFilterOrder"
+      :bbox="bbox"
       @searchQuery="handleSearchEmit"
     />
     <v-row>
       <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
-        <v-spacer />
         <v-select
           v-model="productsFilterSortBy"
           dense
@@ -34,8 +34,24 @@
           :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
           @change="filterProducts"
         />
+        <v-btn
+          outlined
+          style="height: 40px"
+          @click="showMap = !showMap"
+        >
+          Filter by location
+        </v-btn>
       </v-col>
     </v-row>
+    <div v-if="showMap" class="ma-4">
+      <no-ssr>
+        <CoverageMap
+          ref="map"
+          enable-draw
+          @drawEnd="handleDraw"
+        />
+      </no-ssr>
+    </div>
     <item-grid
       :items="items"
       show-empty-items
@@ -80,7 +96,17 @@ export default {
         }
       ],
       productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending'
+      productsFilterOrder: 'Ascending',
+      showMap: true,
+      mapFeatures: {
+        geometry: {
+          type: 'Polygon',
+          bbox: [0, 0, 0, 0],
+          coordinates: [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]
+        },
+        type: 'Feature'
+      },
+      bbox: null
     }
   },
   head: {
@@ -97,6 +123,14 @@ export default {
     filterProducts (init) {
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts(init)
+      })
+    },
+    handleDraw (bbox) {
+      this.bbox = bbox.getExtent()
+      this.mapFeatures.geometry.bbox = bbox.getExtent()
+
+      this.$nextTick(() => {
+        this.$refs.searchBox.filterProducts('bbox')
       })
     }
   }
