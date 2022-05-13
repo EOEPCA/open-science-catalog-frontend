@@ -59,6 +59,7 @@
           ref="searchBox"
           embedded-mode
           class="mx-2 my-4"
+          @searchQuery="handleSearchEmit"
         />
       </v-col>
     </v-row>
@@ -182,7 +183,19 @@ export default {
       'retreiveMetrics'
     ]),
     handleSearchEmit (result) {
-      console.log(result)
+      const filteredResults = []
+      result.items.forEach((item) => {
+        item.properties.keywords.forEach((keyword) => {
+          if (keyword.substring(0, 9) === 'variable:') {
+            filteredResults.push(keyword.substring(9, keyword.length))
+          }
+        })
+      })
+      const auxVar = this.variables.filter((variable) => {
+        return filteredResults.find(result => result === variable.name)
+      })
+
+      this.variables = auxVar
     },
     async filterItems (i) {
       this.metrics = await this.retreiveMetrics()
