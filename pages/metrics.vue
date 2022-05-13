@@ -58,7 +58,10 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          pagination-loop
           class="mx-2 my-4"
+          @searchQuery="handleSearchEmit"
+          @clearEvent="clearFilter"
         />
       </v-col>
     </v-row>
@@ -66,7 +69,7 @@
       <v-col cols="12" class="py-3 py-sm-0 py-md-3">
         <MetricsTable
           v-if="metrics"
-          :filter="filter"
+          :filtered-products="filteredProducts"
           :headers="metrics.summary.years"
           :items="variables"
           :table-zoom="tableZoom"
@@ -154,8 +157,10 @@ export default {
       selectedTab: 0,
       metrics: null,
       variables: [],
+      staticVariables: [],
       tableZoom: 1,
-      showMobileFilters: false
+      showMobileFilters: false,
+      filteredProducts: []
     }
   },
   head: {
@@ -182,7 +187,23 @@ export default {
       'retreiveMetrics'
     ]),
     handleSearchEmit (result) {
-      console.log(result)
+      const filteredResults = []
+      this.filteredProducts = result.items
+      result.items.forEach((item) => {
+        item.properties.keywords.forEach((keyword) => {
+          if (keyword.substring(0, 9) === 'variable:') {
+            filteredResults.push(keyword.substring(9, keyword.length))
+          }
+        })
+      })
+      const auxVar = this.staticVariables.filter((variable) => {
+        return filteredResults.find(result => result === variable.name)
+      })
+
+      this.variables = auxVar
+    },
+    clearFilter () {
+      this.variables = this.staticVariables
     },
     async filterItems (i) {
       this.metrics = await this.retreiveMetrics()
@@ -204,8 +225,12 @@ export default {
         this.variables = [
           ...variables.filter(v => v.summary.numberOfProducts >= 1)
         ]
+        this.staticVariables = [
+          ...variables.filter(v => v.summary.numberOfProducts >= 1)
+        ]
       } else {
         this.variables = variables
+        this.staticVariables = variables
       }
     }
   }

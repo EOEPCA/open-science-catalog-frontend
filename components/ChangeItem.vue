@@ -97,7 +97,7 @@
       </v-tab-item>
       <v-tab-item>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? description : 'Write in the input field to see preview here'" />
+        <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? $markdown(description) : 'Write in the input field to see preview here'" />
       </v-tab-item>
     </v-tabs-items>
     <v-select

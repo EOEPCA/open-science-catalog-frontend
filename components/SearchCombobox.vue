@@ -151,6 +151,10 @@ export default {
     bbox: {
       type: Array,
       default: () => ([0, 0, 0, 0])
+    },
+    paginationLoop: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -462,11 +466,27 @@ export default {
             (this.currentPage - 1) * 10}${searchQuery}${this.bbox ? `&bbox=${this.bbox.join(',')}` : ''}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
-
+        if (this.paginationLoop) {
+          const additionalPages = itemsResponse.numberMatched / itemsResponse.numberReturned
+          let currPage = this.currentPage
+          for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
+            currPage++
+            const response = await this.fetchCustomQuery(`/collections/metadata:main/items?sortby=${
+              this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
+                (currPage - 1) * 100}${searchQuery}`)
+            itemsResponse.features = [
+              ...itemsResponse.features,
+              ...response.features
+            ]
+          }
+        }
         this.$emit('searchQuery', {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
+        if (this.filterItems.length === 0) {
+          this.$emit('clearEvent')
+        }
         if (!init) {
           this.$refs.headless.blur()
         }
