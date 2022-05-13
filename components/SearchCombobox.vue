@@ -470,10 +470,10 @@ export default {
             const response = await this.fetchCustomQuery(`/collections/metadata:main/items?sortby=${
               this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
                 (currPage - 1) * 100}${searchQuery}`)
-            itemsResponse.features.concat(response.features)
-            response.features.forEach((feature) => {
-              itemsResponse.features.push(feature)
-            })
+            itemsResponse.features = [
+              ...itemsResponse.features,
+              ...response.features
+            ]
           }
         }
         this.$emit('searchQuery', {
