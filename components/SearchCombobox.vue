@@ -480,6 +480,9 @@ export default {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
+        if (this.filterItems.length === 0) {
+          this.$emit('clearEvent')
+        }
         if (!init) {
           this.$refs.headless.blur()
         }

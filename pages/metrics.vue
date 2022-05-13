@@ -61,6 +61,7 @@
           pagination-loop
           class="mx-2 my-4"
           @searchQuery="handleSearchEmit"
+          @clearEvent="clearFilter"
         />
       </v-col>
     </v-row>
@@ -198,6 +199,9 @@ export default {
       })
 
       this.variables = auxVar
+    },
+    clearFilter () {
+      this.variables = this.staticVariables
     },
     async filterItems (i) {
       this.metrics = await this.retreiveMetrics()
