@@ -58,7 +58,9 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          pagination-loop
           class="mx-2 my-4"
+          @searchQuery="handleSearchEmit"
         />
       </v-col>
     </v-row>
@@ -154,6 +156,7 @@ export default {
       selectedTab: 0,
       metrics: null,
       variables: [],
+      staticVariables: [],
       tableZoom: 1,
       showMobileFilters: false
     }
@@ -182,7 +185,19 @@ export default {
       'retreiveMetrics'
     ]),
     handleSearchEmit (result) {
-      console.log(result)
+      const filteredResults = []
+      result.items.forEach((item) => {
+        item.properties.keywords.forEach((keyword) => {
+          if (keyword.substring(0, 9) === 'variable:') {
+            filteredResults.push(keyword.substring(9, keyword.length))
+          }
+        })
+      })
+      const auxVar = this.staticVariables.filter((variable) => {
+        return filteredResults.find(result => result === variable.name)
+      })
+
+      this.variables = auxVar
     },
     async filterItems (i) {
       this.metrics = await this.retreiveMetrics()
@@ -204,8 +219,12 @@ export default {
         this.variables = [
           ...variables.filter(v => v.summary.numberOfProducts >= 1)
         ]
+        this.staticVariables = [
+          ...variables.filter(v => v.summary.numberOfProducts >= 1)
+        ]
       } else {
         this.variables = variables
+        this.staticVariables = variables
       }
     }
   }
