@@ -5,7 +5,6 @@
     :items="items"
     :items-per-page="-1"
     item-key="name"
-    :search="filter"
     disable-sort
     :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '65vh'"
     fixed-header
@@ -207,9 +206,9 @@ export default {
     Coverage
   },
   props: {
-    filter: {
-      type: String,
-      default: () => ('')
+    filteredProducts: {
+      type: Array,
+      default: () => ([])
     },
     headers: {
       type: Array,
@@ -298,6 +297,7 @@ export default {
         const variable = await this.retreiveVariable(variableSlug)
         this.$set(this.variablesList, variableSlug, this.variable)
         const products = []
+        // TODO: use dynamic endpoint instead of static here
         await Promise.all(variable.links.map(async (link) => {
           if (link.rel === 'item') {
             const productResponse = await this.$axios.$get(link.href)
@@ -311,6 +311,11 @@ export default {
       let products = []
       if (this.products[this.slugify(name)]) {
         products = this.products[this.slugify(name)]
+        if (this.filteredProducts.length > 0) {
+          products = products.filter((product) => {
+            return this.filteredProducts.find(filteredProduct => (filteredProduct.id === product.id))
+          })
+        }
       }
       return products
     }
