@@ -311,9 +311,11 @@ export default {
       let products = []
       if (this.products[this.slugify(name)]) {
         products = this.products[this.slugify(name)]
-        products = products.filter((product) => {
-          return this.filteredProducts.find(filteredProduct => (filteredProduct.id === product.id))
-        })
+        if (this.filteredProducts.length > 0) {
+          products = products.filter((product) => {
+            return this.filteredProducts.find(filteredProduct => (filteredProduct.id === product.id))
+          })
+        }
       }
       return products
     }
