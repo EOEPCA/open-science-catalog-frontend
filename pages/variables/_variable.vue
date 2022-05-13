@@ -20,7 +20,7 @@
         <v-row>
           <v-col>
             <v-chip
-              color="rgb(124, 69, 86)"
+              color="grey"
               dark
               label
             >

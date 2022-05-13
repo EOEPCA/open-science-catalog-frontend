@@ -23,7 +23,7 @@
               v-for="theme in project.properties['osc:themes']"
               :key="theme"
               class="mr-1"
-              color="rgb(124, 69, 86)"
+              color="grey"
               dark
               label
             >

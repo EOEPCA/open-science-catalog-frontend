@@ -19,7 +19,7 @@
               v-for="theme in product.properties['osc:themes']"
               :key="theme"
               class="mr-1 text-uppercase"
-              color="rgb(124, 69, 86)"
+              color="grey"
               dark
               label
               :to="`/themes/${slugify(theme)}`"
