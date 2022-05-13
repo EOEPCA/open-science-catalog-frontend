@@ -14,122 +14,108 @@
               :class="$vuetify.breakpoint.mdAndUp ? 'text-h4' : 'text-h6'"
             >
               {{ project.properties['osc:name'] }}
-              <v-chip
-                color="green"
-                dark
-                label
-              >
-                {{ project.properties['osc:status'] }}
-              </v-chip>
             </div>
           </v-col>
         </v-row>
         <v-row>
+          <v-col>
+            <v-chip
+              v-for="theme in project.properties['osc:themes']"
+              :key="theme"
+              class="mr-1"
+              color="rgb(124, 69, 86)"
+              dark
+              label
+            >
+              {{ theme }}
+            </v-chip>
+            <v-chip
+              color="green"
+              dark
+              label
+            >
+              {{ project.properties['osc:status'] }}
+            </v-chip>
+          </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" md="6">
-            <v-row>
-              <v-col>
-                <v-chip
-                  v-for="theme in project.properties['osc:themes']"
-                  :key="theme"
-                  class="mr-1"
-                  color="rgb(124, 69, 86)"
-                  dark
-                  label
-                >
-                  {{ theme }}
-                </v-chip>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-icon>
-                  mdi-calendar-today
+            <template v-if="$vuetify.breakpoint.smAndDown">
+              <v-scale-transition>
+                <small v-show="showDescription">{{ project.properties.description }}</small>
+              </v-scale-transition>
+              <v-btn
+                text
+                x-small
+                block
+                @click="showDescription = !showDescription"
+              >
+                <v-icon left>
+                  {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
                 </v-icon>
-                Start date - {{ project.properties.start_datetime }}
-              </v-col>
-              <v-col>
-                <v-icon>
-                  mdi-calendar
+                Description
+              </v-btn>
+            </template>
+            <template v-else>
+              <h6 class="text-h6 mb-2 d-flex align-center">
+                <v-icon left>
+                  mdi-text-long
                 </v-icon>
-                Estimated end date - {{ project.properties.end_datetime }}
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-icon>
-                  mdi-account-multiple
-                </v-icon>
-                Consortium
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <span v-for="consort in project.properties['osc:consortium']" :key="consort">
-                  {{ consort }}
-                </span>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <a
-                  v-for="link in project.links.filter(el => el.rel === 'via')"
-                  :key="link.href"
-                  :href="link.href"
-                  target="_blank"
-                  class="mr-1 projectLink"
-                >
-                  <v-icon>
-                    mdi-link
-                  </v-icon>
-                  <span>
-                    {{ link.title }}
-                  </span>
-                </a>
-              </v-col>
-            </v-row>
+                Description
+              </h6>
+              <p>
+                <small>
+                  {{ project.properties.description }}
+                </small>
+              </p>
+            </template>
           </v-col>
           <v-col cols="12" md="6">
-            <v-container>
-              <v-row>
-                <v-col>
-                  <template v-if="$vuetify.breakpoint.smAndDown">
-                    <v-scale-transition>
-                      <small v-show="showDescription">{{ project.properties.description }}</small>
-                    </v-scale-transition>
-                    <v-btn
-                      text
-                      x-small
-                      block
-                      @click="showDescription = !showDescription"
-                    >
-                      <v-icon left>
-                        {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
-                      </v-icon>
-                      Description
-                    </v-btn>
-                  </template>
-                  <template v-else>
-                    <v-container>
-                      <v-row class="text-h6">
-                        <v-col>
-                          <v-icon>
-                            mdi-file-document
-                          </v-icon>
-                          Description
-                        </v-col>
-                      </v-row>
-                      <v-row>
-                        <v-col>
-                          <small>
-                            {{ project.properties.description }}
-                          </small>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </template>
-                </v-col>
-              </v-row>
-            </v-container>
+            <h6 class="text-h6 mb-2 d-flex align-center">
+              <v-icon left>
+                mdi-information-outline
+              </v-icon>
+              Details
+            </h6>
+            <div class="d-flex align-center">
+              <v-icon left>
+                mdi-calendar-today
+              </v-icon>
+              <strong class="text-uppercase mr-2 mt-1">Start Date</strong> {{ project.properties.start_datetime }}
+            </div>
+            <div class="d-flex align-center mt-1">
+              <v-icon left>
+                mdi-calendar
+              </v-icon>
+              <strong class="text-uppercase mr-2">End Date</strong> {{ project.properties.end_datetime }}
+            </div>
+            <div class="d-flex align-center mb-5 mt-1">
+              <v-icon left>
+                mdi-account-multiple
+              </v-icon>
+              <strong class="text-uppercase mr-2">Consortium</strong> {{ project.properties['osc:consortium'].join(', ') }}
+            </div>
+            <v-btn
+              v-for="(link, key) in project.links.filter(el => el.rel === 'via').sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
+              :key="key"
+              color="primary"
+              :outlined="link.title !== 'Access'"
+              :block="$vuetify.breakpoint.xsOnly"
+              :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
+              :href="link.href"
+              target="_blank"
+            >
+              <v-icon v-if="link.title === 'Access'" left>
+                mdi-location-enter
+              </v-icon>
+              <v-icon v-else-if="link.title === 'Documentation'" left>
+                mdi-file-document-outline
+              </v-icon>
+              <v-icon v-else left>
+                mdi-web
+              </v-icon>
+              {{ link.title || 'Website' }}
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>

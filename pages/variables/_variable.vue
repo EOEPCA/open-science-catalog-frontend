@@ -10,9 +10,11 @@
       <v-container>
         <v-row>
           <v-col>
-            <h2 class="text-h2">
+            <div
+              :class="$vuetify.breakpoint.mdAndUp ? 'text-h4' : 'text-h6'"
+            >
               {{ variable.id }}
-            </h2>
+            </div>
           </v-col>
         </v-row>
         <v-row>
@@ -27,28 +29,65 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col>
-            <span>
-              {{ variable.description }}
-            </span>
+          <v-col cols="12" md="6">
+            <template v-if="$vuetify.breakpoint.smAndDown">
+              <v-scale-transition>
+                <small v-show="showDescription">{{ variable.description }}</small>
+              </v-scale-transition>
+              <v-btn
+                text
+                x-small
+                block
+                @click="showDescription = !showDescription"
+              >
+                <v-icon left>
+                  {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
+                </v-icon>
+                Description
+              </v-btn>
+            </template>
+            <template v-else>
+              <h6 class="text-h6 mb-2 d-flex align-center">
+                <v-icon left>
+                  mdi-text-long
+                </v-icon>
+                Description
+              </h6>
+              <p>
+                <small>
+                  {{ variable.description }}
+                </small>
+              </p>
+            </template>
           </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <a
-              v-for="link in variable.links.filter(el => el.rel === 'via')"
-              :key="link.href"
+          <v-col cols="12" md="6">
+            <h6 class="text-h6 mb-2 d-flex align-center">
+              <v-icon left>
+                mdi-information-outline
+              </v-icon>
+              Details
+            </h6>
+            <v-btn
+              v-for="(link, key) in variable.links.filter(el => el.rel === 'via').sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
+              :key="key"
+              color="primary"
+              :outlined="link.title !== 'Access'"
+              :block="$vuetify.breakpoint.xsOnly"
+              :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
               :href="link.href"
               target="_blank"
-              class="mr-1 variableLink"
             >
-              <v-icon>
-                mdi-link
+              <v-icon v-if="link.title === 'Access'" left>
+                mdi-location-enter
               </v-icon>
-              <span>
-                {{ link.title }}
-              </span>
-            </a>
+              <v-icon v-else-if="link.title === 'Documentation'" left>
+                mdi-file-document-outline
+              </v-icon>
+              <v-icon v-else left>
+                mdi-web
+              </v-icon>
+              {{ link.title || 'Website' }}
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -168,7 +207,8 @@ export default {
       productsFilterMission: null,
       metrics: null,
       page: 1,
-      numberOfPages: 1
+      numberOfPages: 1,
+      showDescription: false
     }
   },
   head () {
