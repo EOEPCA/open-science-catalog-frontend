@@ -7,50 +7,75 @@
     </client-only>
     <div
       ref="themeBanner"
-      :style="`backgroundImage: url('${$staticCatalog.defaults.baseURL}/themes/${theme.assets.image.href}');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center center;`"
+      class="pb-4 variableHeaderContainer"
     >
-      <v-container :class="$vuetify.breakpoint.mdAndUp ? 'px-15' : ''">
+      <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="d-flex align-center" :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : ''">
-            <span class="themeTitle">
+          <v-col>
+            <div class="text-h4">
               {{ theme.id }}
-            </span>
-          </v-col>
-          <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-            <div class="themeDescription">
-              <template v-if="$vuetify.breakpoint.smAndDown">
-                <v-scale-transition>
-                  <small v-show="showDescription">{{ theme.description }}</small>
-                </v-scale-transition>
-                <v-btn
-                  text
-                  x-small
-                  dark
-                  block
-                  @click="showDescription = !showDescription"
-                >
-                  <v-icon left>
-                    {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
-                  </v-icon>
-                  Description
-                </v-btn>
-              </template>
-              <small v-else>{{ theme.description }}</small>
             </div>
-            <v-btn
-              color="rgba(0, 49, 72, 0.733)"
-              dark
-              :href="theme.links[1].href"
-              target="_blank"
-              class="mt-3"
-            >
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="6">
+            <template v-if="$vuetify.breakpoint.smAndDown">
+              <v-scale-transition>
+                <small v-show="showDescription">{{ theme.description }}</small>
+              </v-scale-transition>
+              <v-btn
+                text
+                x-small
+                block
+                @click="showDescription = !showDescription"
+              >
+                <v-icon left>
+                  {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
+                </v-icon>
+                Description
+              </v-btn>
+            </template>
+            <template v-else>
+              <h6 class="text-h6 mb-2 d-flex align-center">
+                <v-icon left>
+                  mdi-text-long
+                </v-icon>
+                Description
+              </h6>
+              <p>
+                <small>
+                  {{ theme.description }}
+                </small>
+              </p>
+            </template>
+          </v-col>
+          <v-col cols="12" md="6">
+            <h6 class="text-h6 mb-2 d-flex align-center">
               <v-icon left>
-                mdi-link
+                mdi-information-outline
               </v-icon>
-              EO4SOCIETY
+              Details
+            </h6>
+            <v-btn
+              v-for="(link, key) in theme.links.filter(el => el.rel === 'via').sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
+              :key="key"
+              color="primary"
+              :outlined="link.title !== 'Access'"
+              :block="$vuetify.breakpoint.xsOnly"
+              :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
+              :href="link.href"
+              target="_blank"
+            >
+              <v-icon v-if="link.title === 'Access'" left>
+                mdi-location-enter
+              </v-icon>
+              <v-icon v-else-if="link.title === 'Documentation'" left>
+                mdi-file-document-outline
+              </v-icon>
+              <v-icon v-else left>
+                mdi-web
+              </v-icon>
+              {{ link.title || 'Website' }}
             </v-btn>
           </v-col>
         </v-row>
