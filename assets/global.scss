@@ -2,6 +2,10 @@ html {
   overflow-y: auto !important;
 }
 
+.ol-control button {
+  background-color: var(--v-primary-base) !important;
+}
+
 ::-webkit-scrollbar {
   width: 18px;
   height: 18px;

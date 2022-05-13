@@ -148,6 +148,10 @@ export default {
       type: String,
       default: 'product'
     },
+    bbox: {
+      type: Array,
+      default: () => ([0, 0, 0, 0])
+    },
     paginationLoop: {
       type: Boolean,
       default: false
@@ -464,7 +468,11 @@ export default {
         }, '')
         const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-            (this.currentPage - 1) * 10}${searchQuery}${filterQuery ? `&filter=${filterQuery}` : ''}`
+            (this.currentPage - 1) * 10}${searchQuery}${filterQuery
+              ? `&filter=${filterQuery}`
+              : ''}${this.bbox
+                ? `&bbox=${this.bbox.join(',')}`
+                : ''}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
         if (this.paginationLoop) {
