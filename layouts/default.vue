@@ -42,45 +42,61 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-group
-          prepend-icon="mdi-plus-circle-outline"
-          no-action
-        >
-          <template #activator>
-            <v-list-item-content>
-              <v-list-item-title>
-                Contribute
-              </v-list-item-title>
-            </v-list-item-content>
-          </template>
+        <client-only>
+          <v-list-group
+            v-if="$auth.loggedIn && $auth.user.OSCDataOwner"
+            prepend-icon="mdi-plus-circle-outline"
+            no-action
+          >
+            <template #activator>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Contribute
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
 
-          <v-list-item
-            to="/new-product"
-            router
-            exact
-            class="pl-10 primary"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-clipboard-text</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              New product
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item
-            to="/new-project"
-            router
-            exact
-            class="pl-10 primary"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-wallet</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              New project
-            </v-list-item-title>
-          </v-list-item>
-        </v-list-group>
+            <v-list-item
+              to="/add-item"
+              router
+              exact
+              class="pl-10 primary"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-file-plus-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Add item
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              to="/edit-item"
+              router
+              exact
+              class="pl-10 primary"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-file-edit-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Edit item
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              to="/contribution-status"
+              router
+              exact
+              class="pl-10 primary"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-file-clock-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Status
+              </v-list-item-title>
+            </v-list-item>
+          </v-list-group>
+        </client-only>
 
         <v-list-item
           to="/metrics"
@@ -113,19 +129,59 @@
         </v-list-item>
 
         <v-list-item
-          href="https://opensciencedata.esa.int/api/docs/"
+          :href="$dynamicCatalog.defaults.baseURL"
           target="_blank"
         >
           <v-list-item-action>
-            <v-icon>mdi-file-document</v-icon>
+            <v-icon>mdi-xml</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>
-              API Documentation
+              API Access
             </v-list-item-title>
           </v-list-item-content>
+          <v-list-item-action>
+            <v-icon>mdi-open-in-new</v-icon>
+          </v-list-item-action>
         </v-list-item>
       </v-list>
+      <template #append>
+        <client-only>
+          <div class="pa-2">
+            <template
+              v-if="$auth.loggedIn"
+            >
+              <p class="white--text text-center mb-0">
+                <span v-if="$auth.user.given_name">
+                  Hello, {{ $auth.user.given_name }} {{ $auth.user.family_name }}
+                </span>
+                <span v-else>
+                  Hello, {{ $auth.user.name || 'unknown user' }}
+                </span>
+              </p>
+              <p class="white--text text-center">
+                <small>OSCDataOwner: {{ $auth.user.OSCDataOwner }}</small>
+                <v-icon
+                  small
+                  :color="$auth.user.OSCDataOwner ? 'success' : 'error'"
+                >
+                  {{ $auth.user.OSCDataOwner ? 'mdi-check-decagram' : 'mdi-close-circle-outline' }}
+                </v-icon>
+              </p>
+            </template>
+            <v-btn
+              color="secondary"
+              block
+              :to="$auth.loggedIn ? '/logout' : '/login'"
+            >
+              <v-icon left>
+                mdi-account-outline
+              </v-icon>
+              {{ $auth.loggedIn ? 'Log out' : 'Log in' }}
+            </v-btn>
+          </div>
+        </client-only>
+      </template>
     </v-navigation-drawer>
     <v-app-bar
       color="primary"
@@ -189,7 +245,7 @@ export default {
     return {
       drawer: false,
       search: '',
-      title: 'Open science catalog'
+      title: 'Open Science Catalog'
     }
   },
   computed: {

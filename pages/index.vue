@@ -1,41 +1,130 @@
 <template>
-  <v-container fluid style="height: 100%;" class="pa-0">
-    <v-row
-      justify="center"
-      align="center"
-      no-gutters
-    >
-      <v-col
-        v-for="theme in themes"
-        :key="theme.name"
-        cols="12"
-        md="6"
-        class="pa-1"
-      >
-        <nuxt-link
-          :to="`/themes/${slugify(theme.name)}`"
-        >
-          <div
-            class="d-flex align-center elevation-2 rounded"
-            style="position: relative; height: 300px; overflow: hidden;
-              border-bottom: 0.25em solid rgb(51, 94, 111);"
-          >
-            <v-img
-              :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
-              width="100%"
-              height="100%"
+  <div>
+    <v-container fluid class="mb-2">
+      <v-row class="pa-5 pb-0">
+        <v-col>
+          <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'">
+            Welcome to the Open Science Catalog
+          </h1>
+        </v-col>
+      </v-row>
+      <v-row class="pa-5 pt-0">
+        <v-col>
+          <p>A catalog of publicly available geoscience products, datasets and resources developed in the frame of scientific research Projects funded by ESA EO (Earth Observation). Products vary in geographical and temporal extent, production methodology, validation and quality. Please refer to the documentation of each product for details.</p>
+          <p>
+            <strong>What products can I find here?</strong>
+          </p>
+          <p>The majority of pages on opensciencedata.esa.int  only hold metadata for each product and project. The actual data and its documentation are maintained and accessible at the data providers, outside of esa.int, for the majority of cases. This catalog provides the metadata and links to the data as it exists in those many other locations.</p>
+          <p>
+            <v-btn
+              dark
+              small
+              :color="$typeColor('theme')"
+              class="mb-2 mb-sm-0"
             >
-              <span
-                class="h1 imageLabel elevation-2"
+              Themes
+            </v-btn>
+            <v-btn
+              dark
+              small
+              :color="$typeColor('project')"
+              to="/projects"
+              class="mb-2 mb-sm-0"
+            >
+              Projects
+            </v-btn>
+            <v-btn
+              dark
+              small
+              :color="$typeColor('variable')"
+              to="/variables"
+              class="mb-2 mb-sm-0"
+            >
+              Variables
+            </v-btn>
+            <v-btn
+              dark
+              small
+              :color="$typeColor('product')"
+              to="/products"
+              class="mb-2 mb-sm-0"
+            >
+              Products
+            </v-btn>
+          </p>
+          <p>
+            Explore the catalog:
+          </p>
+          <p>
+            <v-btn
+              dark
+              small
+              color="primary"
+              to="/metrics"
+            >
+              <v-icon
+                left
               >
-                {{ theme.name.replace('_', ' ') }}
-              </span>
-            </v-img>
-          </div>
-        </nuxt-link>
-      </v-col>
-    </v-row>
-  </v-container>
+                mdi-poll
+              </v-icon>
+              Metrics
+            </v-btn>
+            <v-btn
+              dark
+              small
+              color="primary"
+              to="/search"
+            >
+              <v-icon
+                left
+              >
+                mdi-magnify
+              </v-icon>
+              Search
+            </v-btn>
+          </p>
+          <p>Choose a theme below to get started or access the <a href="https://opensciencedata.esa.int/api/docs/" target="_blank">API Documentation</a>!</p>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container fluid style="height: 100%;" class="pa-0">
+      <v-row
+        justify="center"
+        align="center"
+        no-gutters
+      >
+        <v-col
+          v-for="theme in themes"
+          :key="theme.name"
+          cols="12"
+          md="4"
+          class="pa-1"
+        >
+          <nuxt-link
+            :to="`/themes/${slugify(theme.name)}`"
+          >
+            <div
+              class="d-flex align-center elevation-2 rounded"
+              style="position: relative; height: 300px; overflow: hidden;
+              border-bottom: 0.25em solid rgb(51, 94, 111);"
+            >
+              <v-img
+                :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
+                width="100%"
+                height="100%"
+              >
+                <span
+                  class="h1 imageLabel elevation-2"
+                >
+                  {{ theme.name.replace('_', ' ') }}
+                </span>
+              </v-img>
+            </div>
+          </nuxt-link>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
@@ -47,7 +136,7 @@ export default {
     await store.dispatch('staticCatalog/retreiveMetrics')
   },
   head: {
-    titleTemplate: 'ESA Open Science Data'
+    titleTemplate: 'ESA Open Science Catalog'
   },
   computed: {
     ...mapState('staticCatalog', [

@@ -78,16 +78,25 @@
         item-text="field_name"
         return-object
         label=" "
+        auto-select-first
         :outlined="embeddedMode"
         :dense="embeddedMode"
         :hide-details="embeddedMode"
         class="headless-input"
         :class="embeddedMode ? 'customOutline' : ''"
+        :search-input.sync="textInputModel"
         @input="select"
         @focus="mainInputValue = ' '"
         @keyup.enter="onEnter"
         @keyup.delete="onDelete"
       >
+        <template #no-data>
+          <v-list-item>
+            <v-list-item-title>
+              Search for in all records (freetext)
+            </v-list-item-title>
+          </v-list-item>
+        </template>
         <template #item="data">
           <span :class="data.item.operator ? '' : 'text-capitalize'">
             {{ data.item.field_name }}
@@ -138,6 +147,14 @@ export default {
     itemType: {
       type: String,
       default: 'product'
+    },
+    bbox: {
+      type: Array,
+      default: () => ([0, 0, 0, 0])
+    },
+    paginationLoop: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -149,11 +166,14 @@ export default {
       inputComplete: false,
       searchText: null,
       loading: false,
-      variables: []
+      variables: [],
+      inProgressItem: null,
+      textInputModel: null
     }
   },
   computed: {
     ...mapState('staticCatalog', [
+      'missions',
       'themes'
     ]),
     availableItems () {
@@ -175,6 +195,11 @@ export default {
         {
           field_name: 'product',
           filter: 'like'
+        },
+        {
+          field_name: 'mission',
+          filter: 'exact',
+          available_values: this.missions ? this.missions.map(mission => mission.name) : []
         },
         {
           field_name: 'type',
@@ -202,11 +227,12 @@ export default {
         .find(i => i.key === f.field_name) || (f.filter === 'range' && this.filterItems
         .filter(i => i.key === f.field_name).length < 2)))
 
-      const inProgressItem = this.filterItems.find(f => f.value === null)
-      if (inProgressItem || this.currentlyFreeText) {
-        const currentMeta = inProgressItem &&
-          this.availableItems.find(f => f.field_name === inProgressItem.key)
-        if (inProgressItem.operator) {
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      this.inProgressItem = this.filterItems.find(f => f.value === null)
+      if (this.inProgressItem || this.currentlyFreeText) {
+        const currentMeta = this.inProgressItem &&
+          this.availableItems.find(f => f.field_name === this.inProgressItem.key)
+        if (this.inProgressItem.operator) {
           items = [
           ]
         } else if (currentMeta.filter === 'boolean') {
@@ -214,12 +240,12 @@ export default {
             {
               filter_value: true,
               field_name: 'true',
-              original_field_name: inProgressItem.key
+              original_field_name: this.inProgressItem.key
             },
             {
               filter_value: false,
               field_name: 'false',
-              original_field_name: inProgressItem.key
+              original_field_name: this.inProgressItem.key
             }
           ]
         } else if (currentMeta.filter === 'exact') {
@@ -230,6 +256,30 @@ export default {
                 field_name: i,
                 original_field_name: currentMeta.field_name
               }))
+                .filter((item) => {
+                  const previouslySetFilters = this.filterItems ? this.filterItems.filter(i => i.value) : []
+                  const checkFilter = (type, check) => {
+                    const applicableFilter = previouslySetFilters.find(f => f.key === type)
+                    if (applicableFilter) {
+                      const typeObject = `${type}s`
+                      const typeFilter = this[typeObject]
+                        .find(t => t.name === applicableFilter.value)
+                      if (typeFilter) {
+                        const includedItem = typeFilter[check].find(v => v.name === item.field_name)
+                        return includedItem
+                      }
+                    }
+                    return true
+                  }
+                  switch (item.original_field_name) {
+                    case 'variable': {
+                      return checkFilter('theme', 'variables')
+                    }
+                    default: {
+                      return true
+                    }
+                  }
+                })
                 .sort((a, b) => a.field_name < b.field_name ? -1 : 1)
             }
           } else {
@@ -238,7 +288,7 @@ export default {
                 filter_value: null,
                 field_name: 'is exactly',
                 operator: '=',
-                original_field_name: inProgressItem.key
+                original_field_name: this.inProgressItem.key
               }
             ]
           }
@@ -255,13 +305,13 @@ export default {
                 filter_value: null,
                 field_name: 'includes',
                 operator: 'includes',
-                original_field_name: inProgressItem.key
+                original_field_name: this.inProgressItem.key
               }
             ]
           }
         } else if (currentMeta.filter === 'range') {
           const existingOperator = this.filterItems
-            .find(i => i.key === inProgressItem.key && !!i.operator)
+            .find(i => i.key === this.inProgressItem.key && !!i.operator)
           items = [
             ...((existingOperator ? existingOperator.operator !== '≤' : true)
               ? [
@@ -269,7 +319,7 @@ export default {
                     filter_value: null,
                     field_name: '≤ lower than or equal}',
                     operator: '≤',
-                    original_field_name: inProgressItem.key
+                    original_field_name: this.inProgressItem.key
                   }
                 ]
               : [
@@ -280,7 +330,7 @@ export default {
                     filter_value: null,
                     field_name: '≥ higher than or equal',
                     operator: '≥',
-                    original_field_name: inProgressItem.key
+                    original_field_name: this.inProgressItem.key
                   }
                 ]
               : [
@@ -360,14 +410,26 @@ export default {
           }
         })
       }
+      this.textInputModel = null
     },
     remove (item) {
       this.filterItems.splice(this.filterItems.indexOf(item), 1)
+      this.onEnter()
     },
     onEnter () {
+      if (!this.inProgressItem && this.textInputModel) {
+        this.filterItems.push({
+          key: 'record',
+          operator: 'includes',
+          value: this.textInputModel
+        })
+        this.inputComplete = false
+        setTimeout(() => { this.inputComplete = true }, 300)
+      }
       if (this.inputComplete && this.filterItems.every(i => !!i.value)) {
         this.submit()
       }
+      this.textInputModel = null
     },
     onDelete () {
       if (this.filterItems.length < 1) {
@@ -377,6 +439,12 @@ export default {
         return
       }
       if (this.preSelectedItems.map(i => i.key).includes(this.filterItems[this.filterItems.length - 1].key)) {
+        return
+      }
+      if (this.textInputModel !== null) {
+        if (this.textInputModel === '') {
+          this.textInputModel = null
+        }
         return
       }
       this.filterItems.pop()
@@ -395,14 +463,30 @@ export default {
         }, '')
         const queryString = `/collections/metadata:main/items?sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-            (this.currentPage - 1) * 10}${searchQuery}`
+            (this.currentPage - 1) * 10}${searchQuery}${this.bbox ? `&bbox=${this.bbox.join(',')}` : ''}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
-
+        if (this.paginationLoop) {
+          const additionalPages = itemsResponse.numberMatched / itemsResponse.numberReturned
+          let currPage = this.currentPage
+          for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
+            currPage++
+            const response = await this.fetchCustomQuery(`/collections/metadata:main/items?sortby=${
+              this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
+                (currPage - 1) * 100}${searchQuery}`)
+            itemsResponse.features = [
+              ...itemsResponse.features,
+              ...response.features
+            ]
+          }
+        }
         this.$emit('searchQuery', {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
         })
+        if (this.filterItems.length === 0) {
+          this.$emit('clearEvent')
+        }
         if (!init) {
           this.$refs.headless.blur()
         }

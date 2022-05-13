@@ -26,7 +26,7 @@
         </v-tabs>
       </v-col>
       <v-spacer />
-      <v-col cols="12" sm="4" lg="4" class="d-flex align-center pa-3">
+      <v-col cols="12" sm="4" lg="4" class="d-flex align-center justify-end pa-3">
         <!-- <v-text-field
           v-model="filter"
           hide-details
@@ -37,10 +37,31 @@
           placeholder="Filter by keywords..."
           prepend-inner-icon="mdi-magnify"
         /> -->
+        <v-tooltip top>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              v-bind="attrs"
+              v-on="on"
+              @click="() => { TOGGLE_EMPTY_ITEMS(); filterItems(null)}"
+            >
+              <v-icon>
+                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>
+            {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+          </span>
+        </v-tooltip>
         <search-combobox
           ref="searchBox"
           embedded-mode
+          pagination-loop
           class="mx-2 my-4"
+          @searchQuery="handleSearchEmit"
+          @clearEvent="clearFilter"
         />
       </v-col>
     </v-row>
@@ -48,7 +69,7 @@
       <v-col cols="12" class="py-3 py-sm-0 py-md-3">
         <MetricsTable
           v-if="metrics"
-          :filter="filter"
+          :filtered-products="filteredProducts"
           :headers="metrics.summary.years"
           :items="variables"
           :table-zoom="tableZoom"
@@ -121,7 +142,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapMutations } from 'vuex'
 import MetricsStatistics from '@/components/MetricsStatistics.vue'
 
 export default {
@@ -136,14 +157,19 @@ export default {
       selectedTab: 0,
       metrics: null,
       variables: [],
+      staticVariables: [],
       tableZoom: 1,
-      showMobileFilters: false
+      showMobileFilters: false,
+      filteredProducts: []
     }
   },
   head: {
     title: 'Metrics'
   },
   computed: {
+    ...mapState([
+      'showEmptyItems'
+    ]),
     ...mapState('staticCatalog', [
       'missions',
       'summary',
@@ -154,11 +180,30 @@ export default {
     this.filterItems(null)
   },
   methods: {
+    ...mapMutations([
+      'TOGGLE_EMPTY_ITEMS'
+    ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics'
     ]),
     handleSearchEmit (result) {
-      console.log(result)
+      const filteredResults = []
+      this.filteredProducts = result.items
+      result.items.forEach((item) => {
+        item.properties.keywords.forEach((keyword) => {
+          if (keyword.substring(0, 9) === 'variable:') {
+            filteredResults.push(keyword.substring(9, keyword.length))
+          }
+        })
+      })
+      const auxVar = this.staticVariables.filter((variable) => {
+        return filteredResults.find(result => result === variable.name)
+      })
+
+      this.variables = auxVar
+    },
+    clearFilter () {
+      this.variables = this.staticVariables
     },
     async filterItems (i) {
       this.metrics = await this.retreiveMetrics()
@@ -176,9 +221,17 @@ export default {
         if (a.name > b.name) { return 1 }
         return 0
       })
-      this.variables = [
-        ...variables.filter(v => v.summary.numberOfProducts >= 1)
-      ]
+      if (!this.showEmptyItems) {
+        this.variables = [
+          ...variables.filter(v => v.summary.numberOfProducts >= 1)
+        ]
+        this.staticVariables = [
+          ...variables.filter(v => v.summary.numberOfProducts >= 1)
+        ]
+      } else {
+        this.variables = variables
+        this.staticVariables = variables
+      }
     }
   }
 }

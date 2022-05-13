@@ -15,15 +15,15 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s | ESA Open Science Data',
-    title: 'ESA Open Science Data',
+    titleTemplate: '%s | ESA Open Science Catalog',
+    title: 'ESA Open Science Catalog',
     htmlAttrs: {
       lang: 'en'
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { property: 'og:title', content: 'ESA Open Science Data' },
+      { property: 'og:title', content: 'ESA Open Science Catalog' },
       { hid: 'description', name: 'description', content: 'The European Space Agency portal features the latest news in space exploration, human spaceflight, launchers, telecommunications, navigation, monitoring and space science. ' },
       { property: 'og:description', content: 'The European Space Agency portal features the latest news in space exploration, human spaceflight, launchers, telecommunications, navigation, monitoring and space science.' },
       { name: 'keywords', content: 'European Space Agency, Moon, Mars, sun, space exploration, probes, missions, satellites, launchers, international space station, ISS, telecommunications, earth observation, navigation, astronauts, solar system, universe, remote sensing, space news, ESA, environment, monitoring, astronomy, Ariane, rocket, Galileo, comet, education, Venus ' },
@@ -46,8 +46,8 @@ export default {
     '~/plugins/slugify',
     '~/plugins/text-to-hex',
     '~/plugins/type-color',
-    // TEMP plugin for intercepting fake api calls
     '~/plugins/axios',
+    '~/plugins/markdown',
     { src: '~plugins/ol', ssr: false }
   ],
 
@@ -65,14 +65,9 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
-
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    baseURL: 'https://eoepca.github.io/open-science-catalog-metadata'
-  },
-
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
@@ -101,5 +96,31 @@ export default {
         }
       })
     ]
+  },
+
+  auth: {
+    strategies: {
+      oidc: {
+        scheme: 'openIDConnect',
+        clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
+        endpoints: {
+          configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
+        },
+        responseType: 'token id_token',
+        idToken: {
+          property: 'id_token',
+          maxAge: 1800
+        },
+        scope: 'profile email',
+        acrValues: ['passport_social']
+      }
+    },
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/oauth-callback',
+      home: '/'
+    },
+    fullPathRedirect: true
   }
 }

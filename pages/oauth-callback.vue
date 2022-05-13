@@ -1,0 +1,9 @@
+<template>
+  <v-progress-circular
+    :size="70"
+    :width="5"
+    color="primary"
+    indeterminate
+    class="ma-8"
+  />
+</template>

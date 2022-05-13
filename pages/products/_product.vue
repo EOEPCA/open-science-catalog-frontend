@@ -145,6 +145,7 @@
         </v-col>
       </v-row>
     </v-container>
+    <edit-button />
   </div>
 </template>
 
@@ -174,16 +175,7 @@ export default {
     this.product = await this.retreiveProduct(this.$route.params.product)
     this.product.properties = {
       ...this.product.properties,
-      description: this.product.id === 'product-84' // TEMP DEMO
-        ? `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu nisl nunc mi ipsum faucibus. Euismod nisi porta lorem mollis aliquam ut porttitor. Pharetra vel turpis nunc eget lorem dolor. Facilisis mauris sit amet massa vitae tortor condimentum lacinia.<br /><br />
-        <img style="max-width: 100%" src="https://dummyimage.com/480x120/ddd/aaa" /><br /><br />
-        Feugiat nisl pretium fusce id velit. Platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras. Eget mauris pharetra et ultrices neque ornare aenean. Egestas pretium aenean pharetra magna ac placerat vestibulum lectus mauris. Tincidunt augue interdum velit euismod in pellentesque.<br /><br />
-        <a href="#">Laoreet non curabitur gravida arcu ac</a>. Eget nunc scelerisque viverra mauris in. Purus in massa tempor nec feugiat nisl.<br /><br />
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eu nisl nunc mi ipsum faucibus. Euismod nisi porta lorem mollis aliquam ut porttitor. Pharetra vel turpis nunc eget lorem dolor. Facilisis mauris sit amet massa vitae tortor condimentum lacinia.<br /><br />
-        <img style="max-width: 50%" src="https://dummyimage.com/300x300/aaa/fff" /><img style="max-width: 50%" src="https://dummyimage.com/300x300/ddd/aaa" /><br /><br />
-        Feugiat nisl pretium fusce id velit. Platea dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras. Eget mauris pharetra et ultrices neque ornare aenean. Egestas pretium aenean pharetra magna ac placerat vestibulum lectus mauris. Tincidunt augue interdum velit euismod in pellentesque.<br /><br />
-        <a href="#">Laoreet non curabitur gravida arcu ac</a>. Eget nunc scelerisque viverra mauris in. Purus in massa tempor nec feugiat nisl.<br /><br />`
-        : this.product.properties.description
+      description: this.product.properties.description
     }
   },
   methods: {

@@ -1,9 +1,17 @@
 <template>
   <no-ssr>
-    <div
-      ref="mapContainer"
-      :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
-    />
+    <div class="text-center">
+      <v-progress-circular
+        v-if="loading"
+        color="primary"
+        :size="70"
+        indeterminate
+      />
+      <div
+        ref="mapContainer"
+        :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
+      />
+    </div>
   </no-ssr>
 </template>
 
@@ -17,11 +25,16 @@ export default {
     highlight: {
       type: Object,
       default: null
+    },
+    enableDraw: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       map: null,
+      draw: null,
       baseLayers: [
         {
           layer: 'terrain-light_3857'
@@ -33,7 +46,9 @@ export default {
       vectorSource: null,
       defaultStyle: null,
       highlightStyle: null,
-      defaultPadding: [50, 25, 50, 25]
+      defaultPadding: [50, 25, 50, 25],
+      loading: true,
+      clearButton: null
     }
   },
   watch: {
@@ -56,7 +71,6 @@ export default {
     createMap () {
       const ol = this.$ol
       const parser = new ol.WMTSCapabilities()
-
       this.defaultStyle = new ol.Style({
         stroke: new ol.Stroke({
           color: 'rgba(0, 50, 71, 0.5)',
@@ -110,37 +124,71 @@ export default {
                 name: 'EPSG:4326'
               }
             },
-            features: this.features.filter(f => !!f.geometry)
+            features: this.features ? this.features.filter(f => !!f.geometry) : []
           }
           this.vectorSource = new ol.VectorSource({
             features: new ol.GeoJSON().readFeatures(geojsonObject, {
-              dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857'
+              dataProjection: 'EPSG:4326', featureProjection: 'EPSG:4326'
             })
           })
-
+          this.vectorSource.on('clear', () => {
+            this.map.removeControl(this.clearButton)
+          })
           const vectorLayer = new ol.VectorLayer({
             source: this.vectorSource,
             style: this.defaultStyle
           })
 
           layers.push(vectorLayer)
-
+          this.clearButton = new ol.ClearMap()
           this.map = new ol.Map({
+            // controls: ol.defaultControls().extend([new ol.ClearMap()]),
             layers,
             target: this.$refs.mapContainer,
             view: new ol.View({
               center: [0, 0],
-              zoom: 0,
+              zoom: 2,
               multiWorld: true,
-              projection: 'EPSG:3857'
+              projection: 'EPSG:4326'
             })
           })
 
-          this.map.getView().fit(this.vectorSource.getExtent(), {
-            padding: this.defaultPadding
+          if (this.features) {
+            this.map.getView().fit(this.vectorSource.getExtent(), {
+              padding: this.defaultPadding
+            })
+          }
+
+          this.map.on('loadstart', () => {
+            this.loading = false
           })
+
+          if (this.enableDraw) {
+            this.draw = new ol.Draw({
+              source: this.vectorSource,
+              type: 'Circle',
+              geometryFunction: ol.createBox()
+            })
+            this.map.addInteraction(this.draw)
+
+            this.draw.on('drawend', (e) => {
+              this.$emit('drawEnd', e.feature.getGeometry())
+              this.map.addControl(this.clearButton)
+            })
+          }
         })
     }
   }
 }
 </script>
+
+<style>
+.clear-btn {
+  top: 15px;
+  right: 0.5em;
+}
+.clear-btn button {
+  width: auto !important;
+  padding: 0 0.5em !important;
+}
+</style>
