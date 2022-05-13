@@ -452,14 +452,19 @@ export default {
     async filterProducts (init) {
       this.loading = true
       try {
+        let filterQuery = ''
         const searchQuery = this.filterItems.reduce((acc, curr) => {
+          const keywordKeys = ['theme', 'variable']
+          if (keywordKeys.includes(curr.key)) {
+            filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:%${curr.value}%'`
+          }
           return curr.key === 'type'
             ? `${acc}&type=${curr.value === 'project' ? 'datasetcollection' : 'dataset'}`
-            : `${acc}&q=${curr.value}`
+            : keywordKeys.includes(curr.key) ? '' : `${acc}&q=${curr.value}`
         }, '')
-        const queryString = `/collections/metadata:main/items?sortby=${
+        const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-            (this.currentPage - 1) * 10}${searchQuery}`
+            (this.currentPage - 1) * 10}${searchQuery}${filterQuery ? `&filter=${filterQuery}` : ''}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
         if (this.paginationLoop) {
