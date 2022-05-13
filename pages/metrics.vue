@@ -58,6 +58,7 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          pagination-loop
           class="mx-2 my-4"
           @searchQuery="handleSearchEmit"
         />
@@ -155,6 +156,7 @@ export default {
       selectedTab: 0,
       metrics: null,
       variables: [],
+      staticVariables: [],
       tableZoom: 1,
       showMobileFilters: false
     }
@@ -191,7 +193,7 @@ export default {
           }
         })
       })
-      const auxVar = this.variables.filter((variable) => {
+      const auxVar = this.staticVariables.filter((variable) => {
         return filteredResults.find(result => result === variable.name)
       })
 
@@ -217,8 +219,12 @@ export default {
         this.variables = [
           ...variables.filter(v => v.summary.numberOfProducts >= 1)
         ]
+        this.staticVariables = [
+          ...variables.filter(v => v.summary.numberOfProducts >= 1)
+        ]
       } else {
         this.variables = variables
+        this.staticVariables = variables
       }
     }
   }

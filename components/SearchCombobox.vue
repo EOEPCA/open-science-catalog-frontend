@@ -147,6 +147,10 @@ export default {
     itemType: {
       type: String,
       default: 'product'
+    },
+    paginationLoop: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -458,7 +462,20 @@ export default {
             (this.currentPage - 1) * 10}${searchQuery}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
-
+        if (this.paginationLoop) {
+          const additionalPages = itemsResponse.numberMatched / itemsResponse.numberReturned
+          let currPage = this.currentPage
+          for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
+            currPage++
+            const response = await this.fetchCustomQuery(`/collections/metadata:main/items?sortby=${
+              this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
+                (currPage - 1) * 100}${searchQuery}`)
+            itemsResponse.features.concat(response.features)
+            response.features.forEach((feature) => {
+              itemsResponse.features.push(feature)
+            })
+          }
+        }
         this.$emit('searchQuery', {
           items: itemsResponse.features,
           numberOfPages: Math.round(itemsResponse.numberMatched / 10)
