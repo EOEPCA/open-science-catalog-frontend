@@ -36,6 +36,11 @@
         />
       </v-col>
     </v-row>
+    <v-row>
+      <v-col class="d-flex justify-end">
+        <small>{{ numberOfItems }} items found</small>
+      </v-col>
+    </v-row>
     <item-grid
       :items="items"
       show-empty-items
@@ -69,6 +74,7 @@ export default {
       items: [],
       page: 1,
       numberOfPages: 1,
+      numberOfItems: 0,
       productsFilterOptions: [
         {
           text: 'Name',
@@ -93,6 +99,7 @@ export default {
     handleSearchEmit (result) {
       this.items = result.items
       this.numberOfPages = result.numberOfPages
+      this.numberOfItems = result.numberOfItems
     },
     filterProducts (init) {
       this.$nextTick(() => {

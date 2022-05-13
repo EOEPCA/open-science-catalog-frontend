@@ -483,7 +483,8 @@ export default {
         }
         this.$emit('searchQuery', {
           items: itemsResponse.features,
-          numberOfPages: Math.round(itemsResponse.numberMatched / 10)
+          numberOfPages: Math.round(itemsResponse.numberMatched / 10),
+          numberOfItems: itemsResponse.numberMatched
         })
         if (this.filterItems.length === 0) {
           this.$emit('clearEvent')
