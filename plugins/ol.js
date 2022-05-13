@@ -14,7 +14,7 @@ import { Control, defaults as defaultControls } from 'ol/control'
 class ClearMap extends Control {
   constructor () {
     const button = document.createElement('button')
-    button.innerHTML = 'x'
+    button.innerHTML = 'Clear selection'
 
     const element = document.createElement('div')
     element.className = 'clear-btn ol-unselectable ol-control'
@@ -29,8 +29,7 @@ class ClearMap extends Control {
 
   clear () {
     const source = this.getMap().getLayers().array_[2].getSource()
-    const features = source.getFeatures()
-    source.removeFeature(features[features.length - 1])
+    source.clear()
   }
 }
 

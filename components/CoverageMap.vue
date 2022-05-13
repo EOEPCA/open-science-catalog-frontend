@@ -47,7 +47,8 @@ export default {
       defaultStyle: null,
       highlightStyle: null,
       defaultPadding: [50, 25, 50, 25],
-      loading: true
+      loading: true,
+      clearButton: null
     }
   },
   watch: {
@@ -123,36 +124,40 @@ export default {
                 name: 'EPSG:4326'
               }
             },
-            features: this.features.filter(f => !!f.geometry)
+            features: this.features ? this.features.filter(f => !!f.geometry) : []
           }
           this.vectorSource = new ol.VectorSource({
             features: new ol.GeoJSON().readFeatures(geojsonObject, {
               dataProjection: 'EPSG:4326', featureProjection: 'EPSG:4326'
             })
           })
-
+          this.vectorSource.on('clear', () => {
+            this.map.removeControl(this.clearButton)
+          })
           const vectorLayer = new ol.VectorLayer({
             source: this.vectorSource,
             style: this.defaultStyle
           })
 
           layers.push(vectorLayer)
-
+          this.clearButton = new ol.ClearMap()
           this.map = new ol.Map({
-            controls: ol.defaultControls().extend([new ol.ClearMap()]),
+            // controls: ol.defaultControls().extend([new ol.ClearMap()]),
             layers,
             target: this.$refs.mapContainer,
             view: new ol.View({
               center: [0, 0],
-              zoom: 0,
+              zoom: 2,
               multiWorld: true,
               projection: 'EPSG:4326'
             })
           })
 
-          this.map.getView().fit(this.vectorSource.getExtent(), {
-            padding: this.defaultPadding
-          })
+          if (this.features) {
+            this.map.getView().fit(this.vectorSource.getExtent(), {
+              padding: this.defaultPadding
+            })
+          }
 
           this.map.on('loadstart', () => {
             this.loading = false
@@ -168,6 +173,7 @@ export default {
 
             this.draw.on('drawend', (e) => {
               this.$emit('drawEnd', e.feature.getGeometry())
+              this.map.addControl(this.clearButton)
             })
           }
         })
@@ -178,7 +184,11 @@ export default {
 
 <style>
 .clear-btn {
-  bottom: 15px;
-  left: 0.5em;
+  top: 15px;
+  right: 0.5em;
+}
+.clear-btn button {
+  width: auto !important;
+  padding: 0 0.5em !important;
 }
 </style>

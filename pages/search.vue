@@ -47,7 +47,6 @@
       <no-ssr>
         <CoverageMap
           ref="map"
-          :features="[mapFeatures]"
           enable-draw
           @drawEnd="handleDraw"
         />
