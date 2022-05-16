@@ -171,12 +171,18 @@ export default {
             })
             this.map.addInteraction(this.draw)
 
+            this.draw.on('drawstart', () => {
+              this.vectorSource.clear()
+            })
             this.draw.on('drawend', (e) => {
               this.$emit('drawEnd', e.feature.getGeometry())
               this.map.addControl(this.clearButton)
             })
           }
         })
+    },
+    clearFeatures () {
+      this.vectorSource.clear()
     }
   }
 }
