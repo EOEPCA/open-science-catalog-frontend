@@ -429,6 +429,7 @@ export default {
               }
               return i
             })
+          this.filterModel = null
         } else {
           this.filterItems.push({
             key: item.field_name,
