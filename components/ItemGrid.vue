@@ -1,5 +1,5 @@
 <template>
-  <v-row class="pa-8">
+  <v-row>
     <v-col
       v-for="item in nonEmptyItems"
       :key="item.id"
@@ -47,7 +47,7 @@
         </v-card-subtitle>
         <v-card-text>
           <p v-if="getType(item) === 'project' || getType(item) === 'product'">
-            {{ `${item.properties.description ? item.properties.description.substring(0, 100) : ''}...` }}
+            {{ item.properties.description ? `${item.properties.description.substring(0, 100)}...` : 'No description' }}
           </p>
           <p v-if="getType(item) === 'variable' || getType(item) === 'project'">
             <template v-if="getType(item) === 'variable'">

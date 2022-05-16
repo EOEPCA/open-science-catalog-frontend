@@ -9,7 +9,6 @@
       :current-page="page"
       :sort-by="productsFilterSortBy"
       :sort-order="productsFilterOrder"
-      :bbox="bbox"
       @searchQuery="handleSearchEmit"
     />
     <v-row>
@@ -34,24 +33,13 @@
           :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
           @change="filterProducts"
         />
-        <v-btn
-          outlined
-          style="height: 40px"
-          @click="showMap = !showMap"
-        >
-          Filter by location
-        </v-btn>
       </v-col>
     </v-row>
-    <div v-if="showMap" class="ma-4">
-      <no-ssr>
-        <CoverageMap
-          ref="map"
-          enable-draw
-          @drawEnd="handleDraw"
-        />
-      </no-ssr>
-    </div>
+    <v-row>
+      <v-col class="d-flex justify-end">
+        <small>{{ numberOfItems }} items found</small>
+      </v-col>
+    </v-row>
     <item-grid
       :items="items"
       show-empty-items
@@ -85,6 +73,7 @@ export default {
       items: [],
       page: 1,
       numberOfPages: 1,
+      numberOfItems: 0,
       productsFilterOptions: [
         {
           text: 'Name',
@@ -96,17 +85,7 @@ export default {
         }
       ],
       productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending',
-      showMap: true,
-      mapFeatures: {
-        geometry: {
-          type: 'Polygon',
-          bbox: [0, 0, 0, 0],
-          coordinates: [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]
-        },
-        type: 'Feature'
-      },
-      bbox: null
+      productsFilterOrder: 'Ascending'
     }
   },
   head: {
@@ -119,18 +98,11 @@ export default {
     handleSearchEmit (result) {
       this.items = result.items
       this.numberOfPages = result.numberOfPages
+      this.numberOfItems = result.numberOfItems
     },
     filterProducts (init) {
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts(init)
-      })
-    },
-    handleDraw (bbox) {
-      this.bbox = bbox.getExtent()
-      this.mapFeatures.geometry.bbox = bbox.getExtent()
-
-      this.$nextTick(() => {
-        this.$refs.searchBox.filterProducts('bbox')
       })
     }
   }
