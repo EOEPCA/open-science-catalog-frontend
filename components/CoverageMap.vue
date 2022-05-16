@@ -1,12 +1,19 @@
 <template>
   <no-ssr>
-    <div class="text-center">
-      <v-progress-circular
-        v-if="loading"
-        color="primary"
-        :size="70"
-        indeterminate
-      />
+    <div
+      style="position: relative"
+    >
+      <div
+        class="d-flex align-center justify-center"
+        style="position: absolute; width: 100%; height: 100%"
+      >
+        <v-progress-circular
+          v-if="loading"
+          color="primary"
+          :size="70"
+          indeterminate
+        />
+      </div>
       <div
         ref="mapContainer"
         :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"

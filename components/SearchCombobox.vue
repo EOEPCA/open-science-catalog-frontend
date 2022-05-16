@@ -115,6 +115,7 @@
     </v-btn>
     <v-dialog
       v-model="showMap"
+      width="1000"
     >
       <div class="white">
         <no-ssr>
