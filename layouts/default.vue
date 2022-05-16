@@ -193,23 +193,17 @@
         v-if="!drawer"
         @click.stop="drawer = !drawer"
       />
-      <v-toolbar-title v-text="title" />
+      <v-toolbar-title>
+        <nuxt-link
+          to="/"
+          class="white--text text-decoration-none"
+          v-text="title"
+        />
+      </v-toolbar-title>
       <v-spacer />
-      <!-- <v-text-field
-        v-if="$vuetify.breakpoint.smAndUp"
-        v-model="search"
-        class="mr-4"
-        hide-details
-        solo
-        single-line
-        background-color="secondary"
-        style="width: 250px !important; flex-grow: 0"
-        label="Search..."
-        prepend-inner-icon="mdi-magnify"
-      /> -->
       <img :src="withBase('/img/ESA_Logo.svg')">
     </v-app-bar>
-    <v-main class="grey lighten-3">
+    <v-main>
       <Nuxt />
     </v-main>
     <v-footer

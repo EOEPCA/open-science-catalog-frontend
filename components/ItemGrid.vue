@@ -1,5 +1,5 @@
 <template>
-  <v-row class="pa-8">
+  <v-row>
     <v-col
       v-for="item in nonEmptyItems"
       :key="item.id"

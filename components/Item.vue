@@ -9,18 +9,25 @@
       />
     </client-only>
     <div class="itemHeaderContainer">
-      <v-container>
+      <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
         <v-row>
           <v-col>
-            <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h2 mt-5'">
+            <h1
+              class="primary--text"
+              :class="$vuetify.breakpoint.mdAndUp ? 'mt-5' : 'mt-5'"
+              style="font-size: 3em"
+            >
               {{ title }}
             </h1>
-            <h4 v-if="subtitle" class="mt-2">
+            <h4
+              v-if="subtitle"
+              class="mt-2"
+            >
               {{ subtitle }}
             </h4>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="chips.themes">
           <v-col>
             <v-chip
               v-for="theme in chips.themes"
@@ -54,7 +61,7 @@
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="8">
             <template v-if="$vuetify.breakpoint.smAndDown">
               <v-scale-transition>
                 <!-- eslint-disable-next-line vue/no-v-html -->
@@ -85,7 +92,7 @@
               </p>
             </template>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="4">
             <h6 class="text-h6 mb-2 d-flex align-center">
               <v-icon left>
                 mdi-information-outline
@@ -153,23 +160,7 @@
         </v-row>
       </v-container>
     </div>
-    <v-tabs
-      v-if="tabs"
-      v-model="tab"
-      background-color="#003247"
-      dark
-      grow
-    >
-      <v-tab>
-        Projects
-      </v-tab>
-      <v-tab>
-        Variables
-      </v-tab>
-    </v-tabs>
-    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
-      <slot :tab="tab" />
-    </v-container>
+    <slot />
     <edit-button />
   </div>
 </template>
@@ -201,16 +192,11 @@ export default {
     nav: {
       type: Object,
       default: () => ({})
-    },
-    tabs: {
-      type: Boolean,
-      default: false
     }
   },
   data () {
     return {
-      showDescription: false,
-      tab: 0
+      showDescription: false
     }
   }
 }
@@ -219,5 +205,6 @@ export default {
 <style>
 .itemHeaderContainer {
   border-bottom: 0.25em solid #335E6F;
+  padding-bottom: 40px;
 }
 </style>

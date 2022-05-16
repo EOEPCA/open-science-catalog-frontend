@@ -20,18 +20,20 @@
         product: product.id
       }"
     >
-      <h6 class="text-h6 mb-2 d-flex align-center">
-        <v-icon left>
-          mdi-image-size-select-large
-        </v-icon>
-        Product Extent
-      </h6>
-      <no-ssr>
-        <CoverageMap
-          ref="map"
-          :features="[product]"
-        />
-      </no-ssr>
+      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+        <h6 class="text-h6 mt-8 mb-2 d-flex align-center">
+          <v-icon left>
+            mdi-image-size-select-large
+          </v-icon>
+          Product Extent
+        </h6>
+        <client-only>
+          <CoverageMap
+            ref="map"
+            :features="[product]"
+          />
+        </client-only>
+      </v-container>
     </Item>
   </div>
 </template>

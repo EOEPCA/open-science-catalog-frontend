@@ -13,9 +13,9 @@
         <v-text-field
           style="pointer-events: none;"
           :label="`${embeddedMode ? 'Filter': 'Search'} items`"
-          :outlined="embeddedMode"
-          :dense="embeddedMode"
-          :hide-details="embeddedMode"
+          outlined
+          dense
+          hide-details
           :value="mainInputValue"
           height="42"
         />
@@ -48,11 +48,10 @@
         ]"
         chips
         :search-input.sync="searchText"
-        :outlined="embeddedMode"
-        :dense="embeddedMode"
-        :hide-details="embeddedMode"
-        class="headless-input"
-        :class="embeddedMode ? 'customOutline' : ''"
+        outlined
+        dense
+        hide-details
+        class="headless-input customOutline"
         :type="isNumberField ? 'number' : 'text'"
         @change="select"
         @focus="mainInputValue = ' '"
@@ -79,11 +78,10 @@
         return-object
         label=" "
         auto-select-first
-        :outlined="embeddedMode"
-        :dense="embeddedMode"
-        :hide-details="embeddedMode"
-        class="headless-input"
-        :class="embeddedMode ? 'customOutline' : ''"
+        outlined
+        dense
+        hide-details
+        class="headless-input customOutline"
         :search-input.sync="textInputModel"
         @input="select"
         @focus="mainInputValue = ' '"
@@ -115,6 +113,19 @@
         mdi-magnify
       </v-icon>
     </v-btn>
+    <v-dialog
+      v-model="showMap"
+    >
+      <div class="white">
+        <no-ssr>
+          <CoverageMap
+            ref="map"
+            enable-draw
+            @drawEnd="(e) => { handleDraw(e); showMap = false }"
+          />
+        </no-ssr>
+      </div>
+    </v-dialog>
   </div>
 </template>
 
@@ -148,10 +159,6 @@ export default {
       type: String,
       default: 'product'
     },
-    bbox: {
-      type: Array,
-      default: () => ([0, 0, 0, 0])
-    },
     paginationLoop: {
       type: Boolean,
       default: false
@@ -168,7 +175,17 @@ export default {
       loading: false,
       variables: [],
       inProgressItem: null,
-      textInputModel: null
+      textInputModel: null,
+      showMap: false,
+      mapFeatures: {
+        geometry: {
+          type: 'Polygon',
+          bbox: [0, 0, 0, 0],
+          coordinates: [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]
+        },
+        type: 'Feature'
+      },
+      bbox: null
     }
   },
   computed: {
@@ -208,6 +225,10 @@ export default {
             'project',
             'product'
           ]
+        },
+        {
+          field_name: 'bbox',
+          filter: 'bbox'
         }
       ]
     },
@@ -345,6 +366,13 @@ export default {
       return items
     }
   },
+  watch: {
+    filterItems (newFilterItems) {
+      if (!newFilterItems.find(i => i.key === 'bbox') && this.bbox) {
+        this.$refs.map.clearFeatures()
+      }
+    }
+  },
   async created () {
     if (this.preSelectedItems.length > 0) {
       this.filterItems = this.preSelectedItems
@@ -371,6 +399,10 @@ export default {
     ]),
     select (item) {
       if (item) {
+        if (item.filter === 'bbox') {
+          this.showMap = true
+          // return
+        }
         if (this.currentlyFreeText) {
           this.filterItems = this.filterItems
             .map((i) => {
@@ -456,14 +488,23 @@ export default {
     async filterProducts (init) {
       this.loading = true
       try {
+        let filterQuery = ''
         const searchQuery = this.filterItems.reduce((acc, curr) => {
+          const keywordKeys = ['theme', 'variable']
+          if (keywordKeys.includes(curr.key)) {
+            filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:%${curr.value}%'`
+          }
           return curr.key === 'type'
             ? `${acc}&type=${curr.value === 'project' ? 'datasetcollection' : 'dataset'}`
-            : `${acc}&q=${curr.value}`
+            : keywordKeys.includes(curr.key) ? '' : `${acc}&q=${curr.value}`
         }, '')
-        const queryString = `/collections/metadata:main/items?sortby=${
+        const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-            (this.currentPage - 1) * 10}${searchQuery}${this.bbox ? `&bbox=${this.bbox.join(',')}` : ''}`
+            (this.currentPage - 1) * 10}${searchQuery}${filterQuery
+              ? `&filter=${filterQuery}`
+              : ''}${this.bbox
+                ? `&bbox=${this.bbox.join(',')}`
+                : ''}`
 
         const itemsResponse = await this.fetchCustomQuery(queryString)
         if (this.paginationLoop) {
@@ -482,7 +523,8 @@ export default {
         }
         this.$emit('searchQuery', {
           items: itemsResponse.features,
-          numberOfPages: Math.round(itemsResponse.numberMatched / 10)
+          numberOfPages: Math.round(itemsResponse.numberMatched / 10),
+          numberOfItems: itemsResponse.numberMatched
         })
         if (this.filterItems.length === 0) {
           this.$emit('clearEvent')
@@ -494,6 +536,26 @@ export default {
         console.error(error)
       }
       this.loading = false
+    },
+    handleDraw (newBbox) {
+      this.bbox = newBbox.getExtent()
+      this.mapFeatures.geometry.bbox = this.bbox
+
+      const alreadySetIndex = this.filterItems.findIndex(i => i.key === 'bbox')
+      if (alreadySetIndex > -1) {
+        this.filterItems.splice(alreadySetIndex, 1)
+      }
+      // this.filterItems = this.filterItems
+      //   .map((i) => {
+      //     if (i.key === 'bbox') {
+      //       i.value = this.bbox.map(c => c.toFixed(3)).join(',')
+      //     }
+      //     return i
+      //   })
+      this.filterItems.push({
+        key: 'bbox',
+        value: this.bbox.map(c => c.toFixed(3)).join(',')
+      })
     }
   }
 }

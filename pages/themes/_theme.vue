@@ -9,10 +9,22 @@
       :nav="{
         theme: theme.id
       }"
-      tabs
     >
-      <template slot-scope="themeSlot">
-        <v-tabs-items v-model="themeSlot.tab">
+      <v-tabs
+        v-model="tab"
+        background-color="#003247"
+        dark
+        grow
+      >
+        <v-tab>
+          Projects
+        </v-tab>
+        <v-tab>
+          Variables
+        </v-tab>
+      </v-tabs>
+      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+        <v-tabs-items v-model="tab">
           <v-tab-item>
             <search-combobox
               embedded-mode
@@ -27,12 +39,12 @@
                   value: 'Project'
                 }
               ]"
-              class="ma-8 mb-0"
+              class="mt-8 mb-0"
               @searchQuery="handleSearchEmit"
             />
-            <v-row class="px-8 pt-8 d-flex align-center">
+            <v-row class="pt-8 d-flex align-center">
               <v-col cols="12" md="4">
-                <span class="text-h2">
+                <span class="text-h4">
                   Projects
                 </span>
               </v-col>
@@ -78,16 +90,6 @@
                   style="max-width:150px"
                   @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
                 />
-                <!-- <v-text-field
-                  v-model="projectsSearch"
-                  dense
-                  hide-details
-                  outlined
-                  single-line
-                  label="Search projects"
-                  prepend-inner-icon="mdi-magnify"
-                  @input="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
-                /> -->
               </v-col>
             </v-row>
             <item-grid
@@ -109,12 +111,12 @@
                   value: 'Variable'
                 }
               ]"
-              class="ma-8 mb-0"
+              class="mt-8 mb-0"
               @searchQuery="handleSearchEmit"
             />
-            <v-row class="px-8 pt-8 d-flex align-center">
+            <v-row class="pt-8 d-flex align-center">
               <v-col cols="12" md="4">
-                <span class="text-h2">
+                <span class="text-h4">
                   Variables
                 </span>
               </v-col>
@@ -149,16 +151,6 @@
                   style="max-width:150px"
                   @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
                 />
-                <!-- <v-text-field
-                  v-model="variablesSearch"
-                  dense
-                  hide-details
-                  outlined
-                  single-line
-                  label="Search variables"
-                  prepend-inner-icon="mdi-magnify"
-                  @input="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
-                /> -->
               </v-col>
             </v-row>
             <item-grid
@@ -167,7 +159,7 @@
             />
           </v-tab-item>
         </v-tabs-items>
-      </template>
+      </v-container>
     </Item>
   </div>
 </template>

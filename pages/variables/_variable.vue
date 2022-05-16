@@ -14,85 +14,79 @@
         variable: variable.id
       }"
     >
-      <search-combobox
-        embedded-mode
-        :pre-selected-items="[
-          {
-            key: 'variable',
-            value: variable.id
-          },
-          {
-            key: 'type',
-            value: 'product'
-          }
-        ]"
-        class="ma-8 mb-0"
-      />
-      <v-row class="pa-6">
-        <v-col cols="12" md="4">
-          <span class="text-h2">
-            Products
-          </span>
-        </v-col>
-        <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
-          <v-spacer />
-          <v-select
-            v-model="productsFilterSortBy"
-            dense
-            hide-details
-            :items="productsFilterOptions"
-            label="Sort by"
-            outlined
-            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-            @change="filterProducts()"
-          />
-          <v-select
-            v-model="productsFilterOrder"
-            dense
-            hide-details
-            :items="['Ascending', 'Descending']"
-            label="Order"
-            outlined
-            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-            @change="filterProducts()"
-          />
-          <v-select
-            v-if="metrics"
-            v-model="productsFilterMission"
-            dense
-            hide-details
-            :items="metrics.missions.map(m => m.name).sort()"
-            label="Satellite mission"
-            :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-            outlined
-          />
-          <!-- <v-text-field
-            v-model="productsSearch"
-            dense
-            hide-details
-            outlined
-            single-line
-            style="width: 400px !important; flex-grow: 0"
-            label="Search products"
-            prepend-inner-icon="mdi-magnify"
-            @input="filterProducts"
-          /> -->
-        </v-col>
-      </v-row>
-      <item-grid
-        :items="products"
-      />
-      <v-row>
-        <v-col cols="12" class="text-center">
-          <v-pagination
-            v-model="page"
-            :length="numberOfPages"
-            @input="filterProducts"
-            @next="filterProducts"
-            @previous="filterProducts"
-          />
-        </v-col>
-      </v-row>
+      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+        <search-combobox
+          embedded-mode
+          :pre-selected-items="[
+            {
+              key: 'variable',
+              value: variable.id
+            },
+            {
+              key: 'type',
+              value: 'product'
+            }
+          ]"
+          class="mt-8 mb-0"
+        />
+        <v-row class="pt-8">
+          <v-col cols="12" md="4">
+            <span class="text-h4">
+              Products
+            </span>
+          </v-col>
+          <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+            <v-spacer />
+            <v-select
+              v-model="productsFilterSortBy"
+              dense
+              hide-details
+              :items="productsFilterOptions"
+              label="Sort by"
+              outlined
+              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              style="max-width:150px"
+              @change="filterProducts()"
+            />
+            <v-select
+              v-model="productsFilterOrder"
+              dense
+              hide-details
+              :items="['Ascending', 'Descending']"
+              label="Order"
+              outlined
+              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              style="max-width:150px"
+              @change="filterProducts()"
+            />
+            <v-select
+              v-if="metrics"
+              v-model="productsFilterMission"
+              dense
+              hide-details
+              :items="metrics.missions.map(m => m.name).sort()"
+              label="Satellite mission"
+              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              style="max-width:150px"
+              outlined
+            />
+          </v-col>
+        </v-row>
+        <item-grid
+          :items="products"
+        />
+        <v-row>
+          <v-col cols="12" class="text-center">
+            <v-pagination
+              v-model="page"
+              :length="numberOfPages"
+              @input="filterProducts"
+              @next="filterProducts"
+              @previous="filterProducts"
+            />
+          </v-col>
+        </v-row>
+      </v-container>
     </Item>
   </div>
 </template>

@@ -6,7 +6,6 @@
     :items-per-page="-1"
     item-key="name"
     disable-sort
-    :height="$vuetify.breakpoint.mdAndUp ? '60vh' : '65vh'"
     fixed-header
     hide-default-footer
     show-expand
@@ -327,6 +326,9 @@ export default {
 ::v-deep table {
   font-size: 14px;
   font-weight: 700;
+}
+::v-deep .v-data-table__wrapper {
+  max-height: 70vh;
 }
 ::v-deep table th:not(:first-child, :nth-child(2), :last-child),
 ::v-deep table td:not(:first-child, :nth-child(2), :last-child) {
