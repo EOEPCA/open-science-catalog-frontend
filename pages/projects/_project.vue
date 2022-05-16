@@ -1,126 +1,24 @@
 <template>
   <div v-if="project">
-    <bread-crumb-nav
-      :theme="project.collection"
-      :project="project.properties.title"
-    />
-    <div
-      class="pb-4 variableHeaderContainer"
+    <Item
+      :title="project.properties.title"
+      :subtitle="project.properties['osc:name']"
+      :chips="{
+        themes: project.properties['osc:themes'],
+        status: project.properties['osc:status']
+      }"
+      :description="project.properties.description"
+      :details="{
+        start_datetime: project.properties.start_datetime,
+        end_datetime: project.properties.end_datetime,
+        consortium: project.properties['osc:consortium'],
+        links: project.links
+      }"
+      :nav="{
+        theme: project.collection,
+        project: project.properties.title
+      }"
     >
-      <v-container>
-        <v-row>
-          <v-col>
-            <div
-              :class="$vuetify.breakpoint.mdAndUp ? 'text-h4' : 'text-h6'"
-            >
-              {{ project.properties['osc:name'] }}
-            </div>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-chip
-              v-for="theme in project.properties['osc:themes']"
-              :key="theme"
-              class="mr-1"
-              color="grey"
-              dark
-              label
-            >
-              {{ theme }}
-            </v-chip>
-            <v-chip
-              color="green"
-              dark
-              label
-            >
-              {{ project.properties['osc:status'] }}
-            </v-chip>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col cols="12" md="6">
-            <template v-if="$vuetify.breakpoint.smAndDown">
-              <v-scale-transition>
-                <small v-show="showDescription">{{ project.properties.description }}</small>
-              </v-scale-transition>
-              <v-btn
-                text
-                x-small
-                block
-                @click="showDescription = !showDescription"
-              >
-                <v-icon left>
-                  {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
-                </v-icon>
-                Description
-              </v-btn>
-            </template>
-            <template v-else>
-              <h6 class="text-h6 mb-2 d-flex align-center">
-                <v-icon left>
-                  mdi-text-long
-                </v-icon>
-                Description
-              </h6>
-              <p>
-                <small>
-                  {{ project.properties.description }}
-                </small>
-              </p>
-            </template>
-          </v-col>
-          <v-col cols="12" md="6">
-            <h6 class="text-h6 mb-2 d-flex align-center">
-              <v-icon left>
-                mdi-information-outline
-              </v-icon>
-              Details
-            </h6>
-            <div class="d-flex align-center">
-              <v-icon left>
-                mdi-calendar-today
-              </v-icon>
-              <strong class="text-uppercase mr-2 mt-1">Start Date</strong> {{ project.properties.start_datetime }}
-            </div>
-            <div class="d-flex align-center mt-1">
-              <v-icon left>
-                mdi-calendar
-              </v-icon>
-              <strong class="text-uppercase mr-2">End Date</strong> {{ project.properties.end_datetime }}
-            </div>
-            <div class="d-flex align-center mb-5 mt-1">
-              <v-icon left>
-                mdi-account-multiple
-              </v-icon>
-              <strong class="text-uppercase mr-2">Consortium</strong> {{ project.properties['osc:consortium'].join(', ') }}
-            </div>
-            <v-btn
-              v-for="(link, key) in project.links.filter(el => el.rel === 'via').sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
-              :key="key"
-              color="primary"
-              :outlined="link.title !== 'Access'"
-              :block="$vuetify.breakpoint.xsOnly"
-              :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
-              :href="link.href"
-              target="_blank"
-            >
-              <v-icon v-if="link.title === 'Access'" left>
-                mdi-location-enter
-              </v-icon>
-              <v-icon v-else-if="link.title === 'Documentation'" left>
-                mdi-file-document-outline
-              </v-icon>
-              <v-icon v-else left>
-                mdi-web
-              </v-icon>
-              {{ link.title || 'Website' }}
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
-    <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
       <search-combobox
         embedded-mode
         :pre-selected-items="[
@@ -137,7 +35,7 @@
       />
       <v-row class="pa-6">
         <v-col cols="12" md="4">
-          <span class="text-h2">
+          <span class="text-h4">
             Products
           </span>
         </v-col>
@@ -183,20 +81,19 @@
           />
         </v-col>
       </v-row>
-    </v-container>
-    <edit-button />
+    </Item>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex'
 
-import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import Item from '@/components/Item.vue'
 
 export default {
   name: 'ProjectSingle',
   components: {
-    BreadCrumbNav
+    Item
   },
   data () {
     return {
@@ -239,12 +136,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.variableHeaderContainer {
-  border-bottom: 0.25em solid #335E6F;
-}
-.projectLink {
-  text-decoration: none;
-}
-</style>
