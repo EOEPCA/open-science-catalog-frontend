@@ -13,9 +13,9 @@
         <v-text-field
           style="pointer-events: none;"
           :label="`${embeddedMode ? 'Filter': 'Search'} items`"
-          :outlined="embeddedMode"
-          :dense="embeddedMode"
-          :hide-details="embeddedMode"
+          outlined
+          dense
+          hide-details
           :value="mainInputValue"
           height="42"
         />
@@ -48,11 +48,10 @@
         ]"
         chips
         :search-input.sync="searchText"
-        :outlined="embeddedMode"
-        :dense="embeddedMode"
-        :hide-details="embeddedMode"
-        class="headless-input"
-        :class="embeddedMode ? 'customOutline' : ''"
+        outlined
+        dense
+        hide-details
+        class="headless-input customOutline"
         :type="isNumberField ? 'number' : 'text'"
         @change="select"
         @focus="mainInputValue = ' '"
@@ -79,11 +78,10 @@
         return-object
         label=" "
         auto-select-first
-        :outlined="embeddedMode"
-        :dense="embeddedMode"
-        :hide-details="embeddedMode"
-        class="headless-input"
-        :class="embeddedMode ? 'customOutline' : ''"
+        outlined
+        dense
+        hide-details
+        class="headless-input customOutline"
         :search-input.sync="textInputModel"
         @input="select"
         @focus="mainInputValue = ' '"
@@ -117,6 +115,7 @@
     </v-btn>
     <v-dialog
       v-model="showMap"
+      width="1000"
     >
       <div class="white">
         <no-ssr>
