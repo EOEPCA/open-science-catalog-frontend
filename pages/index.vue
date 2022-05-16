@@ -83,7 +83,7 @@
               Search
             </v-btn>
           </p>
-          <p>Choose a theme below to get started or access the <a href="https://opensciencedata.esa.int/api/docs/" target="_blank">API Documentation</a>!</p>
+          <p>Choose a theme below to get started or access the <a :href="$dynamicCatalog.defaults.baseURL" target="_blank">API Documentation</a>!</p>
         </v-col>
       </v-row>
     </v-container>

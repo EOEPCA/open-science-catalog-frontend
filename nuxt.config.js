@@ -9,6 +9,12 @@ export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
 
+  privateRuntimeConfig: {
+    staticEndpoint: process.env.STATIC_ENDPOINT,
+    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT,
+    backendEndpoint: process.env.BACKEND_ENDPOINT
+  },
+
   router: {
     base: routerBase
   },
@@ -102,23 +108,23 @@ export default {
     strategies: {
       oidc: {
         scheme: 'openIDConnect',
-        clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
+        clientId: process.env.OAUTH_CLIENTID,
         endpoints: {
-          configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
+          configuration: process.env.OPENID_CONFIGURATION
         },
         responseType: 'token id_token',
         idToken: {
           property: 'id_token',
           maxAge: 1800
         },
-        scope: 'profile email',
+        scope: process.env.OAUTH_SCOPE,
         acrValues: ['passport_social']
       }
     },
     redirect: {
-      login: '/login',
-      logout: '/',
-      callback: '/oauth-callback',
+      login: process.env.OAUTH_REDIRECT_LOGIN,
+      logout: process.env.OAUTH_REDIRECT_LOGOUT,
+      callback: process.env.OAUTH_REDIRECT_CALLBACK,
       home: '/'
     },
     fullPathRedirect: true
