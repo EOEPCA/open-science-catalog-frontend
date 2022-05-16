@@ -427,6 +427,7 @@ export default {
               }
               return i
             })
+          this.filterModel = null
         } else {
           this.filterItems.push({
             key: item.field_name,
@@ -446,6 +447,7 @@ export default {
     },
     remove (item) {
       this.filterItems.splice(this.filterItems.indexOf(item), 1)
+      this.filterModel = null
       this.onEnter()
     },
     onEnter () {
