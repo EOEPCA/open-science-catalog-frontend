@@ -99,37 +99,37 @@
               </v-icon>
               Details
             </h6>
-            <div v-if="details.start_datetime" class="d-flex align-center mt-1">
+            <div v-if="details.start_datetime" class="mb-2">
               <v-icon left>
                 mdi-calendar-today
               </v-icon>
               <strong class="text-uppercase mr-2">Start Date</strong> {{ details.start_datetime }}
             </div>
-            <div v-if="details.end_datetime" class="d-flex align-center mt-1">
+            <div v-if="details.end_datetime" class="mb-2">
               <v-icon left>
                 mdi-calendar
               </v-icon>
               <strong class="text-uppercase mr-2">End Date</strong> {{ details.end_datetime }}
             </div>
-            <div v-if="details.datetime" class="d-flex align-center mt-1">
+            <div v-if="details.datetime" class="mb-2">
               <v-icon left>
                 mdi-calendar-check
               </v-icon>
               <strong class="text-uppercase mr-2">Release Date</strong> {{ details.datetime && details.datetime.slice(0, -10) }}
             </div>
-            <div v-if="details.consortium" class="d-flex align-center mb-5 mt-1">
+            <div v-if="details.consortium" class="mb-2">
               <v-icon left>
                 mdi-account-multiple
               </v-icon>
               <strong class="text-uppercase mr-2">Consortium</strong> {{ details.consortium.join(', ') }}
             </div>
-            <div v-if="details['osc:project']" class="d-flex align-center mt-5">
+            <div v-if="details['osc:project']" class="mb-2">
               <v-icon left>
                 mdi-calendar-text
               </v-icon>
               <strong class="text-uppercase mr-2">Project</strong> {{ details['osc:project'] }}
             </div>
-            <div v-if="details['osc:missions']" class="d-flex align-center mb-5">
+            <div v-if="details['osc:missions']" class="mb-2">
               <v-icon left>
                 mdi-satellite
               </v-icon>

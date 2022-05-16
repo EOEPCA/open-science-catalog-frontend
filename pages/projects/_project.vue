@@ -59,7 +59,7 @@
               :items="['Ascending', 'Descending']"
               label="Order"
               outlined
-              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
               style="max-width:150px"
             />
           </v-col>
