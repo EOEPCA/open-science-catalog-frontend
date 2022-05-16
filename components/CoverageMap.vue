@@ -44,10 +44,10 @@ export default {
       draw: null,
       baseLayers: [
         {
-          layer: 'terrain-light_3857'
+          layer: 'terrain-light'
         },
         {
-          layer: 'overlay_bright_3857'
+          layer: 'overlay_bright'
         }
       ],
       vectorSource: null,
