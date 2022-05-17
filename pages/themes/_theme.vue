@@ -302,6 +302,7 @@ export default {
       await Promise.all(result.items.map(async (project) => {
         const projectResponse = await this.retreiveProjects(project.id)
         project.links = projectResponse.links
+        project.properties['osc:consortium'] = projectResponse.properties['osc:consortium']
       }))
       if (this.projectDetailsRaw.length === 0) {
         this.projectDetailsRaw = result.items
