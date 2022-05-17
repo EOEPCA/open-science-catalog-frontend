@@ -118,8 +118,8 @@
                 class="subCell"
               >
                 <v-progress-linear
-                  v-if="product.properties.start_datetime.slice(0, 4) <= year
-                    && product.properties.end_datetime.slice(0, 4) >= year"
+                  v-if="(product.properties.start_datetime) && product.properties.start_datetime.slice(0, 4) <= year
+                    && (product.properties.end_datetime) && product.properties.end_datetime.slice(0, 4) >= year"
                   :key="year"
                   color="applications"
                   height="15"
