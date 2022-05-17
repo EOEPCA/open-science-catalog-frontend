@@ -15,6 +15,10 @@ export default {
     backendEndpoint: process.env.BACKEND_ENDPOINT
   },
 
+  publicRuntimeConfig: {
+    authEnabled: process.env.ENABLE_AUTH
+  },
+
   router: {
     base: routerBase
   },
