@@ -3,7 +3,9 @@
     <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-2'">
       <v-row class="pt-5 pb-0">
         <v-col>
-          <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'">
+          <h1
+            class="primary--text"
+            :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'">
             Welcome to the Open Science Catalog
           </h1>
         </v-col>

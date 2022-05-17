@@ -59,7 +59,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="py-3 py-sm-0 py-md-3">
+      <v-col cols="12" class="pa-0 py-md-3">
         <MetricsTable
           v-if="metrics"
           :filtered-products="filteredProducts"

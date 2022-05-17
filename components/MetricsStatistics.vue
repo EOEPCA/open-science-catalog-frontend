@@ -372,12 +372,12 @@ export default {
               : chart.config.data.datasets[chart._active[0].datasetIndex]
                 .hoverBackgroundColor
           }
-          ctx.font = '20px Roboto'
+          ctx.font = '20px Arial'
           ctx.fillStyle = variablesLabelColor
           ctx.textAlign = 'center'
           ctx.fillText(variablesTextLabel || '', width / 2, 15)
 
-          ctx.font = 'bold 16px Roboto'
+          ctx.font = 'bold 16px Arial'
           ctx.fillStyle = 'black'
           ctx.textAlign = 'center'
           ctx.fillText(
@@ -386,7 +386,7 @@ export default {
             height / 2 + top - 5
           )
 
-          ctx.font = '14px Roboto'
+          ctx.font = '14px Arial'
           ctx.fillStyle = 'grey'
           ctx.textAlign = 'center'
           ctx.fillText(

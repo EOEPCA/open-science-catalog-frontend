@@ -188,6 +188,8 @@
       dark
       fixed
       app
+      style="border-bottom: 4px solid #335E6F !important;
+      box-shadow: none !important;"
     >
       <v-app-bar-nav-icon
         v-if="!drawer"
@@ -196,14 +198,14 @@
       <v-toolbar-title>
         <nuxt-link
           to="/"
-          class="white--text text-decoration-none"
+          class="white--text text-decoration-none text-uppercase"
           v-text="title"
         />
       </v-toolbar-title>
       <v-spacer />
       <img :src="withBase('/img/ESA_Logo.svg')">
     </v-app-bar>
-    <v-main>
+    <v-main style="background: #E8E8E4">
       <Nuxt />
     </v-main>
     <v-footer
