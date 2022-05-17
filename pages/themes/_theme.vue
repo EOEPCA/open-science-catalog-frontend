@@ -27,7 +27,9 @@
         <v-tabs-items v-model="tab">
           <v-tab-item>
             <search-combobox
+              ref="projectCombobox"
               embedded-mode
+              pagination-loop
               :item-type="'project'"
               :pre-selected-items="[
                 {
@@ -40,7 +42,7 @@
                 }
               ]"
               class="mt-8 mb-0"
-              @searchQuery="handleSearchEmit"
+              @searchQuery="handleProjectEmit"
             />
             <v-row class="pt-8 d-flex align-center">
               <v-col cols="12" md="4">
@@ -99,7 +101,9 @@
           </v-tab-item>
           <v-tab-item>
             <search-combobox
+              ref="variableCombobox"
               embedded-mode
+              pagination-loop
               :item-type="'project'"
               :pre-selected-items="[
                 {
@@ -112,7 +116,7 @@
                 }
               ]"
               class="mt-8 mb-0"
-              @searchQuery="handleSearchEmit"
+              @searchQuery="handleVariableEmit"
             />
             <v-row class="pt-8 d-flex align-center">
               <v-col cols="12" md="4">
@@ -176,7 +180,7 @@ export default {
     Item,
     ItemGrid
   },
-  async asyncData ({ store, $axios, route }) {
+  async asyncData ({ store, route }) {
     // this.theme = await this.retreiveTheme(this.$route.params.theme)
     const theme = await store.dispatch('staticCatalog/retreiveTheme', route.params.theme)
     await store.dispatch('staticCatalog/retreiveMetrics')
@@ -189,21 +193,9 @@ export default {
         })
       }
     })
-
-    // format theme project data
-    const projectDetailsRaw = []
-    await Promise.all(theme.links.map(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await $axios.$get(link.href)
-        projectDetailsRaw.push(projectResponse)
-      }
-    }))
     const variablesDetails = variablesDetailsRaw
-    const projectDetails = projectDetailsRaw
     return {
       theme,
-      projectDetails,
-      projectDetailsRaw,
       variablesDetails,
       variablesDetailsRaw
     }
@@ -212,7 +204,7 @@ export default {
     return {
       theme: null,
       tab: 0,
-      projectDetails: null,
+      projectDetails: [],
       projectDetailsRaw: [],
       projectsSearch: '',
       projectDetailsItems: [
@@ -235,7 +227,7 @@ export default {
       ],
       projectsDetailsFilter: 'title',
       projectsDetailsOrder: 'Ascending',
-      variablesDetails: null,
+      variablesDetails: [],
       variablesDetailsRaw: [],
       variablesSearch: '',
       variablesDetailsOrder: 'Ascending',
@@ -255,7 +247,8 @@ export default {
       'themes'
     ])
   },
-  created () {
+  async mounted () {
+    await this.$refs.projectCombobox.filterProducts()
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
@@ -265,7 +258,8 @@ export default {
     ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics',
-      'retreiveTheme'
+      'retreiveTheme',
+      'retreiveProjects'
     ]),
     orderData (source, key, direction, string, nested = null) {
       function compare (a, b) {
@@ -304,8 +298,18 @@ export default {
         })
       })
     },
-    handleSearchEmit (result) {
+    async handleProjectEmit (result) {
+      await Promise.all(result.items.map(async (project) => {
+        const projectResponse = await this.retreiveProjects(project.id)
+        project.links = projectResponse.links
+      }))
+      if (this.projectDetailsRaw.length === 0) {
+        this.projectDetailsRaw = result.items
+      }
       this.projectDetails = result.items
+    },
+    handleVariableEmit (result) {
+      this.variablesDetails = result.items
     }
   }
 }
