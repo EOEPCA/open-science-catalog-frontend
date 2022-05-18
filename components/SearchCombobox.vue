@@ -372,6 +372,11 @@ export default {
       if (!newFilterItems.find(i => i.key === 'bbox') && this.bbox) {
         this.$refs.map.clearFeatures()
       }
+    },
+    showMap (status) {
+      if (!status && !this.bbox) {
+        this.onDelete()
+      }
     }
   },
   async created () {
