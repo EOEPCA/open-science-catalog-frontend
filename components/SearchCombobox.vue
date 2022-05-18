@@ -498,12 +498,12 @@ export default {
             filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:%${curr.value}%'`
           }
           return curr.key === 'type'
-            ? `${acc}&type=${curr.value === 'project' ? 'datasetcollection' : 'dataset'}`
+            ? `${acc}&type=${curr.value === 'Project' ? 'datasetcollection' : 'dataset'}`
             : keywordKeys.includes(curr.key) ? '' : `${acc}&q=${curr.value}`
         }, '')
         const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-            (this.currentPage - 1) * 10}${searchQuery}${filterQuery
+            (this.currentPage - 1) * 12}${searchQuery}${filterQuery
               ? `&filter=${filterQuery}`
               : ''}${this.bbox
                 ? `&bbox=${this.bbox.join(',')}`
@@ -515,9 +515,13 @@ export default {
           let currPage = this.currentPage
           for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
             currPage++
-            const response = await this.fetchCustomQuery(`/collections/metadata:main/items?sortby=${
+            const response = await this.fetchCustomQuery(`/collections/metadata:main/items?limit=12&sortby=${
               this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-                (currPage - 1) * 100}${searchQuery}`)
+                (currPage - 1) * 12}${searchQuery}${filterQuery
+              ? `&filter=${filterQuery}`
+              : ''}${this.bbox
+                ? `&bbox=${this.bbox.join(',')}`
+                : ''}`)
             itemsResponse.features = [
               ...itemsResponse.features,
               ...response.features
