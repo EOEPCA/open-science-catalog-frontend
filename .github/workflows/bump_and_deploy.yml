@@ -3,10 +3,11 @@ name: Bump version and deploy
 on:
   push:
     branches:
-      - "main"
+      - "prepare-deployment"
 
 jobs:
-  bump-and-deploy:
+  version-bump:
+    name: Bump version
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -55,12 +56,19 @@ jobs:
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new tag $NEW_TAG"
+  push_to_registry:
+    name: Build and push Docker image to Docker Hub
 
-      - name: Generate ⚙️
-        run: ROUTER_BASE=/${{ github.event.repository.name }}/ npm run generate
+    runs-on: ubuntu-latest
 
-      - name: Deploy 🚀
-        uses: peaceiris/actions-gh-pages@v3
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: ./
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: eoepca/open-science-catalog-frontend
+          tag_with_ref: true
