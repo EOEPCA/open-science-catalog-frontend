@@ -573,9 +573,3 @@ export default {
   border: none !important;
 }
 </style>
-
-<style>
-.v-menu__content {
-  z-index: 100 !important;
-}
-</style>
