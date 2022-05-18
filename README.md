@@ -6,7 +6,7 @@ The Open Science Catalog is one of the elements contributing to an Open Science 
 Adhering by design to the “FAIR” (findable, accessible, interoperable, reproducible/reusable) principles, the Open Science Catalogue aims to support better knowledge discovery and innovation, and facilitate data and knowledge integration and reuse by the scientific community.
 
 ## This repository
-This repository holds the static frontend app powered by [Nuxt](https://nuxtjs.org/). On every push to the `main` branch, a GitHub Action triggers a pre-rendering of the application and publishes it in the `gh-pages` branch, thus deploying it on the domain [eoepca.github.io/open-science-catalog-frontend](https://eoepca.github.io/open-science-catalog-frontend/).
+This repository holds the frontend app powered by [Nuxt](https://nuxtjs.org/). On every push to the `main` branch, a GitHub Action triggers a Docker image build, which is deployed in the Kubernetes cluster.
 
 Every PR triggers GitHub Actions for linting and testing, and additionally checks for conventional style commits.
 ## Used EOEPCA endpoints

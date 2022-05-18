@@ -133,9 +133,6 @@ import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'IndexPage',
-  async asyncData ({ store }) {
-    await store.dispatch('staticCatalog/retreiveMetrics')
-  },
   head: {
     titleTemplate: 'ESA Open Science Catalog'
   },
@@ -143,6 +140,9 @@ export default {
     ...mapState('staticCatalog', [
       'themes'
     ])
+  },
+  async created() {
+    await this.$store.dispatch('staticCatalog/retreiveMetrics')
   },
   methods: {
     ...mapActions('staticCatalog', [

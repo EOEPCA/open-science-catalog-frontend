@@ -6,16 +6,10 @@ const version = JSON.parse(packageJson).version || 0
 const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
-  // Target: https://go.nuxtjs.dev/config-target
-  target: 'static',
-
-  privateRuntimeConfig: {
+  publicRuntimeConfig: {
     staticEndpoint: process.env.STATIC_ENDPOINT,
     dynamicEndpoint: process.env.DYNAMIC_ENDPOINT,
-    backendEndpoint: process.env.BACKEND_ENDPOINT
-  },
-
-  publicRuntimeConfig: {
+    backendEndpoint: process.env.BACKEND_ENDPOINT,
     authEnabled: process.env.ENABLE_AUTH
   },
 
@@ -129,7 +123,7 @@ export default {
       }
     },
     redirect: {
-      login: process.env.OAUTH_REDIRECT_LOGIN,
+      login: '/login',
       logout: process.env.OAUTH_REDIRECT_LOGOUT,
       callback: process.env.OAUTH_REDIRECT_CALLBACK,
       home: '/'
