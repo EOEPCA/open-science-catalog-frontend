@@ -447,6 +447,9 @@ export default {
       this.textInputModel = null
     },
     remove (item) {
+      if (item.key === 'bbox') {
+        this.bbox = null
+      }
       this.filterItems.splice(this.filterItems.indexOf(item), 1)
       this.filterModel = null
       this.onEnter()
@@ -475,6 +478,9 @@ export default {
       }
       if (this.preSelectedItems.map(i => i.key).includes(this.filterItems[this.filterItems.length - 1].key)) {
         return
+      }
+      if (this.filterItems[this.filterItems.length - 1].key === 'bbox') {
+        this.bbox = null
       }
       if (this.textInputModel !== null) {
         if (this.textInputModel === '') {
