@@ -1,5 +1,20 @@
 <template>
-  <v-container class="white">
+  <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-2'">
+    <v-row class="py-5">
+      <v-col>
+        <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'">
+          Metrics
+        </h1>
+      </v-col>
+    </v-row>
+    <search-combobox
+      ref="searchBox"
+      embedded-mode
+      pagination-loop
+      class="my-4"
+      @searchQuery="handleSearchEmit"
+      @clearEvent="clearFilter"
+    />
     <v-row
       v-if="metrics"
       class="white"
@@ -7,7 +22,7 @@
         ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
         : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
     >
-      <v-col cols="12" sm="8" lg="8">
+      <v-col class="d-flex">
         <v-tabs
           v-model="selectedTab"
           @change="filterItems"
@@ -24,24 +39,10 @@
             </div>
           </v-tab>
         </v-tabs>
-      </v-col>
-      <v-spacer />
-      <v-col cols="12" sm="4" lg="4" class="d-flex align-center justify-end pa-3">
-        <!-- <v-text-field
-          v-model="filter"
-          hide-details
-          solo
-          single-line
-          outlined
-          dense
-          placeholder="Filter by keywords..."
-          prepend-inner-icon="mdi-magnify"
-        /> -->
         <v-tooltip top>
           <template #activator="{ on, attrs }">
             <v-btn
               icon
-              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
               v-bind="attrs"
               v-on="on"
               @click="() => { TOGGLE_EMPTY_ITEMS(); filterItems(null)}"
@@ -55,18 +56,10 @@
             {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
           </span>
         </v-tooltip>
-        <search-combobox
-          ref="searchBox"
-          embedded-mode
-          pagination-loop
-          class="mx-2 my-4"
-          @searchQuery="handleSearchEmit"
-          @clearEvent="clearFilter"
-        />
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" class="py-3 py-sm-0 py-md-3">
+      <v-col cols="12" class="pa-0 py-md-3">
         <MetricsTable
           v-if="metrics"
           :filtered-products="filteredProducts"

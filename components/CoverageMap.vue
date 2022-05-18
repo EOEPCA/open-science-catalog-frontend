@@ -1,12 +1,19 @@
 <template>
   <no-ssr>
-    <div class="text-center">
-      <v-progress-circular
-        v-if="loading"
-        color="primary"
-        :size="70"
-        indeterminate
-      />
+    <div
+      style="position: relative"
+    >
+      <div
+        class="d-flex align-center justify-center"
+        style="position: absolute; width: 100%; height: 100%"
+      >
+        <v-progress-circular
+          v-if="loading"
+          color="primary"
+          :size="70"
+          indeterminate
+        />
+      </div>
       <div
         ref="mapContainer"
         :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
@@ -37,10 +44,10 @@ export default {
       draw: null,
       baseLayers: [
         {
-          layer: 'terrain-light_3857'
+          layer: 'terrain-light'
         },
         {
-          layer: 'overlay_bright_3857'
+          layer: 'overlay_bright'
         }
       ],
       vectorSource: null,
@@ -171,12 +178,18 @@ export default {
             })
             this.map.addInteraction(this.draw)
 
+            this.draw.on('drawstart', () => {
+              this.vectorSource.clear()
+            })
             this.draw.on('drawend', (e) => {
               this.$emit('drawEnd', e.feature.getGeometry())
               this.map.addControl(this.clearButton)
             })
           }
         })
+    },
+    clearFeatures () {
+      this.vectorSource.clear()
     }
   }
 }

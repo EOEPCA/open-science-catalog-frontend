@@ -1,19 +1,42 @@
 <template>
-  <v-container>
-    <h2 class="text-h2 mt-3 mb-5">
-      Search
-    </h2>
+  <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-2'">
+    <v-row class="py-5">
+      <v-col>
+        <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'">
+          Search
+        </h1>
+      </v-col>
+    </v-row>
     <search-combobox
       ref="searchBox"
       :auto-focus="true"
       :current-page="page"
       :sort-by="productsFilterSortBy"
       :sort-order="productsFilterOrder"
-      :bbox="bbox"
+      class="my-4"
       @searchQuery="handleSearchEmit"
     />
     <v-row>
-      <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+      <v-col :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+        <v-spacer />
+        <v-tooltip top>
+          <template #activator="{ on, attrs }">
+            <v-btn
+              icon
+              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              v-bind="attrs"
+              v-on="on"
+              @click="TOGGLE_EMPTY_ITEMS"
+            >
+              <v-icon>
+                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>
+            {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+          </span>
+        </v-tooltip>
         <v-select
           v-model="productsFilterSortBy"
           dense
@@ -22,6 +45,7 @@
           label="Sort by"
           outlined
           :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+          style="max-width:150px"
           @change="filterProducts"
         />
         <v-select
@@ -31,27 +55,17 @@
           :items="['Ascending', 'Descending']"
           label="Order"
           outlined
-          :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+          :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
+          style="max-width:150px"
           @change="filterProducts"
         />
-        <v-btn
-          outlined
-          style="height: 40px"
-          @click="showMap = !showMap"
-        >
-          Filter by location
-        </v-btn>
       </v-col>
     </v-row>
-    <div v-if="showMap" class="ma-4">
-      <no-ssr>
-        <CoverageMap
-          ref="map"
-          enable-draw
-          @drawEnd="handleDraw"
-        />
-      </no-ssr>
-    </div>
+    <v-row>
+      <v-col class="d-flex justify-end">
+        <small>{{ numberOfItems }} items found</small>
+      </v-col>
+    </v-row>
     <item-grid
       :items="items"
       show-empty-items
@@ -71,6 +85,8 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+
 import ItemGrid from '@/components/ItemGrid.vue'
 import SearchCombobox from '@/components/SearchCombobox.vue'
 
@@ -85,6 +101,7 @@ export default {
       items: [],
       page: 1,
       numberOfPages: 1,
+      numberOfItems: 0,
       productsFilterOptions: [
         {
           text: 'Name',
@@ -96,41 +113,32 @@ export default {
         }
       ],
       productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending',
-      showMap: true,
-      mapFeatures: {
-        geometry: {
-          type: 'Polygon',
-          bbox: [0, 0, 0, 0],
-          coordinates: [[[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]]]
-        },
-        type: 'Feature'
-      },
-      bbox: null
+      productsFilterOrder: 'Ascending'
     }
   },
   head: {
     title: 'Search'
   },
+  computed: {
+    ...mapState([
+      'showEmptyItems'
+    ])
+  },
   mounted () {
     this.filterProducts(true)
   },
   methods: {
+    ...mapMutations([
+      'TOGGLE_EMPTY_ITEMS'
+    ]),
     handleSearchEmit (result) {
       this.items = result.items
       this.numberOfPages = result.numberOfPages
+      this.numberOfItems = result.numberOfItems
     },
     filterProducts (init) {
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts(init)
-      })
-    },
-    handleDraw (bbox) {
-      this.bbox = bbox.getExtent()
-      this.mapFeatures.geometry.bbox = bbox.getExtent()
-
-      this.$nextTick(() => {
-        this.$refs.searchBox.filterProducts('bbox')
       })
     }
   }

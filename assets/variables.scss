@@ -1,4 +1,33 @@
 // Ref: https://github.com/nuxt-community/vuetify-module#customvariables
-//
-// The variables you want to modify
-// $font-size-root: 20px;
+
+@font-face{
+  font-family: 'NotesESABold';
+  src: url('@/assets/notesesabol-webfont.ttf') format('truetype');
+}
+
+$body-font-family: 'Arial', sans-serif;
+$heading-font-family: 'NotesESABold';
+
+.v-application h1,
+.v-application h2,
+.v-application h3,
+.v-application h4,
+.v-application .h1,
+.v-application .h2,
+.v-application .h3,
+.v-application .h4,
+.v-application .text-h1,
+.v-application .text-h2,
+.v-application .text-h3,
+.v-application .text-h4,
+.v-application .headline,
+.v-application .display-1,
+.v-application .display-2,
+.v-application .display-3,
+.v-btn__content,
+.v-toolbar__title,
+.v-card__title,
+.v-tab,
+.v-chip {
+  font-family: $heading-font-family, sans-serif;
+}

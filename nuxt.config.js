@@ -46,8 +46,7 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '@/assets/global.scss',
-    '@/assets/esa.scss'
+    '@/assets/global.scss'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -81,10 +80,14 @@ export default {
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
+    treeShake: true,
+    defaultAssets: {
+      font: false
+    },
+    options: {
+      customProperties: true
+    },
     theme: {
-      options: {
-        customProperties: true
-      },
       themes: {
         light: {
           primary: '#003247',

@@ -31,3 +31,6 @@ html {
   border: 0px none transparent;
   border-radius: 42px;
 }
+.v-menu__content {
+  z-index: 4 !important;
+}

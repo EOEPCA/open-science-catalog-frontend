@@ -49,7 +49,7 @@ export default {
     navigationBreadcrumb () {
       return [
         {
-          text: 'ESA EO Catalogue',
+          text: 'Catalog',
           href: '/'
         },
         ...(this.theme

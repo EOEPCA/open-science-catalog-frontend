@@ -1,14 +1,16 @@
 <template>
   <div>
-    <v-container fluid class="mb-2">
-      <v-row class="pa-5 pb-0">
+    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-2'">
+      <v-row class="pt-5 pb-0">
         <v-col>
-          <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'">
+          <h1
+            class="primary--text"
+            :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'">
             Welcome to the Open Science Catalog
           </h1>
         </v-col>
       </v-row>
-      <v-row class="pa-5 pt-0">
+      <v-row class="pb-5 pt-0">
         <v-col>
           <p>A catalog of publicly available geoscience products, datasets and resources developed in the frame of scientific research Projects funded by ESA EO (Earth Observation). Products vary in geographical and temporal extent, production methodology, validation and quality. Please refer to the documentation of each product for details.</p>
           <p>
@@ -16,45 +18,45 @@
           </p>
           <p>The majority of pages on opensciencedata.esa.int  only hold metadata for each product and project. The actual data and its documentation are maintained and accessible at the data providers, outside of esa.int, for the majority of cases. This catalog provides the metadata and links to the data as it exists in those many other locations.</p>
           <p>
-            <v-btn
+            Explore the catalog, consisting of
+            <v-chip
               dark
               small
+              label
               :color="$typeColor('theme')"
-              class="mb-2 mb-sm-0"
+              class="mb-2 mb-sm-0 text-uppercase"
             >
               Themes
-            </v-btn>
-            <v-btn
+            </v-chip>,
+            <v-chip
               dark
               small
+              label
               :color="$typeColor('project')"
-              to="/projects"
-              class="mb-2 mb-sm-0"
+              class="mb-2 mb-sm-0 text-uppercase"
             >
               Projects
-            </v-btn>
-            <v-btn
+            </v-chip>,
+            <v-chip
               dark
               small
+              label
               :color="$typeColor('variable')"
-              to="/variables"
-              class="mb-2 mb-sm-0"
+              class="mb-2 mb-sm-0 text-uppercase"
             >
               Variables
-            </v-btn>
-            <v-btn
+            </v-chip> and
+            <v-chip
               dark
               small
+              label
               :color="$typeColor('product')"
-              to="/products"
-              class="mb-2 mb-sm-0"
+              class="mb-2 mb-sm-0 text-uppercase"
             >
               Products
-            </v-btn>
+            </v-chip>.
           </p>
-          <p>
-            Explore the catalog:
-          </p>
+          <p>Choose a theme below to get started or access the <a :href="$dynamicCatalog.defaults.baseURL" target="_blank">API Documentation</a>!</p>
           <p>
             <v-btn
               dark
@@ -83,11 +85,10 @@
               Search
             </v-btn>
           </p>
-          <p>Choose a theme below to get started or access the <a :href="$dynamicCatalog.defaults.baseURL" target="_blank">API Documentation</a>!</p>
         </v-col>
       </v-row>
     </v-container>
-    <v-container fluid style="height: 100%;" class="pa-0">
+    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-0' : 'pa-2'">
       <v-row
         justify="center"
         align="center"

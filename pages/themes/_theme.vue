@@ -1,248 +1,186 @@
 <template>
   <div v-if="theme">
-    <client-only>
-      <bread-crumb-nav
-        :theme="theme.id"
-      />
-    </client-only>
-    <div
-      ref="themeBanner"
-      :style="`backgroundImage: url('${$staticCatalog.defaults.baseURL}/themes/${theme.assets.image.href}');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center center;`"
+    <Item
+      :title="theme.id"
+      :description="theme.description"
+      :details="{
+        links: theme.links
+      }"
+      :nav="{
+        theme: theme.id
+      }"
     >
-      <v-container :class="$vuetify.breakpoint.mdAndUp ? 'px-15' : ''">
-        <v-row>
-          <v-col cols="12" md="6" class="d-flex align-center" :class="$vuetify.breakpoint.smAndDown ? 'justify-center' : ''">
-            <span class="themeTitle">
-              {{ theme.id }}
-            </span>
-          </v-col>
-          <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-            <div class="themeDescription">
-              <template v-if="$vuetify.breakpoint.smAndDown">
-                <v-scale-transition>
-                  <small v-show="showDescription">{{ theme.description }}</small>
-                </v-scale-transition>
-                <v-btn
-                  text
-                  x-small
-                  dark
-                  block
-                  @click="showDescription = !showDescription"
-                >
-                  <v-icon left>
-                    {{ showDescription ? 'mdi-arrow-collapse-vertical' : 'mdi-arrow-expand-vertical' }}
-                  </v-icon>
-                  Description
-                </v-btn>
-              </template>
-              <small v-else>{{ theme.description }}</small>
-            </div>
-            <v-btn
-              color="rgba(0, 49, 72, 0.733)"
-              dark
-              :href="theme.links[1].href"
-              target="_blank"
-              class="mt-3"
-            >
-              <v-icon left>
-                mdi-link
-              </v-icon>
-              EO4SOCIETY
-            </v-btn>
-          </v-col>
-        </v-row>
+      <v-tabs
+        v-model="tab"
+        background-color="#003247"
+        dark
+        grow
+      >
+        <v-tab>
+          Projects
+        </v-tab>
+        <v-tab>
+          Variables
+        </v-tab>
+      </v-tabs>
+      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+        <v-tabs-items v-model="tab">
+          <v-tab-item>
+            <search-combobox
+              ref="projectCombobox"
+              embedded-mode
+              pagination-loop
+              :item-type="'project'"
+              :pre-selected-items="[
+                {
+                  key: 'theme',
+                  value: theme.id
+                },
+                {
+                  key: 'type',
+                  value: 'Project'
+                }
+              ]"
+              class="mt-8 mb-0"
+              @searchQuery="handleProjectEmit"
+            />
+            <v-row class="pt-8 d-flex align-center">
+              <v-col cols="12" md="4">
+                <span class="text-h4">
+                  Projects
+                </span>
+              </v-col>
+              <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+                <v-spacer />
+                <v-tooltip top>
+                  <template #activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="TOGGLE_EMPTY_ITEMS"
+                    >
+                      <v-icon>
+                        {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>
+                    {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+                  </span>
+                </v-tooltip>
+                <v-select
+                  v-model="projectsDetailsFilter"
+                  dense
+                  hide-details
+                  :items="projectDetailsItems"
+                  label="Order by"
+                  outlined
+                  :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                  style="max-width:150px"
+                  @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
+                />
+                <v-select
+                  v-model="projectsDetailsOrder"
+                  dense
+                  hide-details
+                  :items="['Ascending', 'Descending']"
+                  label="Order direction"
+                  outlined
+                  :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
+                  style="max-width:150px"
+                  @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
+                />
+              </v-col>
+            </v-row>
+            <item-grid
+              :items="projectDetails"
+              :show-empty-items="showEmptyItems"
+            />
+          </v-tab-item>
+          <v-tab-item>
+            <search-combobox
+              ref="variableCombobox"
+              embedded-mode
+              pagination-loop
+              :item-type="'project'"
+              :pre-selected-items="[
+                {
+                  key: 'theme',
+                  value: theme.id
+                },
+                {
+                  key: 'type',
+                  value: 'Variable'
+                }
+              ]"
+              class="mt-8 mb-0"
+              @searchQuery="handleVariableEmit"
+            />
+            <v-row class="pt-8 d-flex align-center">
+              <v-col cols="12" md="4">
+                <span class="text-h4">
+                  Variables
+                </span>
+              </v-col>
+              <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+                <v-spacer />
+                <v-tooltip top>
+                  <template #activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="TOGGLE_EMPTY_ITEMS"
+                    >
+                      <v-icon>
+                        {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>
+                    {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+                  </span>
+                </v-tooltip>
+                <v-select
+                  v-model="variablesDetailsOrder"
+                  dense
+                  hide-details
+                  :items="['Ascending', 'Descending']"
+                  label="Order direction"
+                  outlined
+                  :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
+                  style="max-width:150px"
+                  @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
+                />
+              </v-col>
+            </v-row>
+            <item-grid
+              :items="variablesDetails"
+              :show-empty-items="showEmptyItems"
+            />
+          </v-tab-item>
+        </v-tabs-items>
       </v-container>
-    </div>
-    <v-tabs
-      v-model="tab"
-      background-color="#003247"
-      dark
-      grow
-    >
-      <v-tab>
-        Projects
-      </v-tab>
-      <v-tab>
-        Variables
-      </v-tab>
-    </v-tabs>
-    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-0'">
-      <v-tabs-items v-model="tab">
-        <v-tab-item>
-          <search-combobox
-            embedded-mode
-            :item-type="'project'"
-            :pre-selected-items="[
-              {
-                key: 'theme',
-                value: theme.id
-              },
-              {
-                key: 'type',
-                value: 'Project'
-              }
-            ]"
-            class="ma-8 mb-0"
-            @searchQuery="handleSearchEmit"
-          />
-          <v-row class="px-8 pt-8 d-flex align-center">
-            <v-col cols="12" md="4">
-              <span class="text-h2">
-                Projects
-              </span>
-            </v-col>
-            <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
-              <v-spacer />
-              <v-tooltip top>
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    icon
-                    :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="TOGGLE_EMPTY_ITEMS"
-                  >
-                    <v-icon>
-                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>
-                  {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
-                </span>
-              </v-tooltip>
-              <v-select
-                v-model="projectsDetailsFilter"
-                dense
-                hide-details
-                :items="projectDetailsItems"
-                label="Order by"
-                outlined
-                :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                style="max-width:150px"
-                @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
-              />
-              <v-select
-                v-model="projectsDetailsOrder"
-                dense
-                hide-details
-                :items="['Ascending', 'Descending']"
-                label="Order direction"
-                outlined
-                :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
-                style="max-width:150px"
-                @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
-              />
-              <!-- <v-text-field
-                v-model="projectsSearch"
-                dense
-                hide-details
-                outlined
-                single-line
-                label="Search projects"
-                prepend-inner-icon="mdi-magnify"
-                @input="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
-              /> -->
-            </v-col>
-          </v-row>
-          <item-grid
-            :items="projectDetails"
-            :show-empty-items="showEmptyItems"
-          />
-        </v-tab-item>
-        <v-tab-item>
-          <search-combobox
-            embedded-mode
-            :item-type="'project'"
-            :pre-selected-items="[
-              {
-                key: 'theme',
-                value: theme.id
-              },
-              {
-                key: 'type',
-                value: 'Variable'
-              }
-            ]"
-            class="ma-8 mb-0"
-            @searchQuery="handleSearchEmit"
-          />
-          <v-row class="px-8 pt-8 d-flex align-center">
-            <v-col cols="12" md="4">
-              <span class="text-h2">
-                Variables
-              </span>
-            </v-col>
-            <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
-              <v-spacer />
-              <v-tooltip top>
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    icon
-                    :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                    v-bind="attrs"
-                    v-on="on"
-                    @click="TOGGLE_EMPTY_ITEMS"
-                  >
-                    <v-icon>
-                      {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <span>
-                  {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
-                </span>
-              </v-tooltip>
-              <v-select
-                v-model="variablesDetailsOrder"
-                dense
-                hide-details
-                :items="['Ascending', 'Descending']"
-                label="Order direction"
-                outlined
-                :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
-                style="max-width:150px"
-                @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
-              />
-              <!-- <v-text-field
-                v-model="variablesSearch"
-                dense
-                hide-details
-                outlined
-                single-line
-                label="Search variables"
-                prepend-inner-icon="mdi-magnify"
-                @input="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
-              /> -->
-            </v-col>
-          </v-row>
-          <item-grid
-            :items="variablesDetails"
-            :show-empty-items="showEmptyItems"
-          />
-        </v-tab-item>
-      </v-tabs-items>
-    </v-container>
-    <edit-button />
+    </Item>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState, mapMutations } from 'vuex'
 
-import BreadCrumbNav from '@/components/BreadCrumbNav.vue'
+import Item from '@/components/Item.vue'
 import ItemGrid from '@/components/ItemGrid.vue'
 
 export default {
   name: 'ThemeSingle',
   components: {
-    BreadCrumbNav,
+    Item,
     ItemGrid
   },
-  async asyncData ({ store, $axios, route }) {
+  async asyncData ({ store, route }) {
     // this.theme = await this.retreiveTheme(this.$route.params.theme)
     const theme = await store.dispatch('staticCatalog/retreiveTheme', route.params.theme)
     await store.dispatch('staticCatalog/retreiveMetrics')
@@ -255,21 +193,9 @@ export default {
         })
       }
     })
-
-    // format theme project data
-    const projectDetailsRaw = []
-    await Promise.all(theme.links.map(async (link) => {
-      if (link.rel === 'item') {
-        const projectResponse = await $axios.$get(link.href)
-        projectDetailsRaw.push(projectResponse)
-      }
-    }))
     const variablesDetails = variablesDetailsRaw
-    const projectDetails = projectDetailsRaw
     return {
       theme,
-      projectDetails,
-      projectDetailsRaw,
       variablesDetails,
       variablesDetailsRaw
     }
@@ -278,7 +204,7 @@ export default {
     return {
       theme: null,
       tab: 0,
-      projectDetails: null,
+      projectDetails: [],
       projectDetailsRaw: [],
       projectsSearch: '',
       projectDetailsItems: [
@@ -301,7 +227,7 @@ export default {
       ],
       projectsDetailsFilter: 'title',
       projectsDetailsOrder: 'Ascending',
-      variablesDetails: null,
+      variablesDetails: [],
       variablesDetailsRaw: [],
       variablesSearch: '',
       variablesDetailsOrder: 'Ascending',
@@ -321,7 +247,8 @@ export default {
       'themes'
     ])
   },
-  created () {
+  async mounted () {
+    await this.$refs.projectCombobox.filterProducts()
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
@@ -331,7 +258,8 @@ export default {
     ]),
     ...mapActions('staticCatalog', [
       'retreiveMetrics',
-      'retreiveTheme'
+      'retreiveTheme',
+      'retreiveProjects'
     ]),
     orderData (source, key, direction, string, nested = null) {
       function compare (a, b) {
@@ -370,8 +298,19 @@ export default {
         })
       })
     },
-    handleSearchEmit (result) {
+    async handleProjectEmit (result) {
+      await Promise.all(result.items.map(async (project) => {
+        const projectResponse = await this.retreiveProjects(project.id)
+        project.links = projectResponse.links
+        project.properties['osc:consortium'] = projectResponse.properties['osc:consortium']
+      }))
+      if (this.projectDetailsRaw.length === 0) {
+        this.projectDetailsRaw = result.items
+      }
       this.projectDetails = result.items
+    },
+    handleVariableEmit (result) {
+      this.variablesDetails = result.items
     }
   }
 }
