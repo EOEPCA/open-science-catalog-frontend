@@ -10,6 +10,9 @@ jobs:
     name: Bump version
     runs-on: ${{ matrix.os }}
 
+    outputs:
+      newTag: ${{ steps.version-bump.outputs.newTag }}
+
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -59,6 +62,8 @@ jobs:
   push_to_registry:
     name: Build and push Docker image to Docker Hub
 
+    needs: version-bump
+
     runs-on: ubuntu-latest
 
     steps:
@@ -71,4 +76,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: eoepca/open-science-catalog-frontend
-          tag_with_ref: true
+          tags: ${{ needs.version-bump.outputs.newTag }}
