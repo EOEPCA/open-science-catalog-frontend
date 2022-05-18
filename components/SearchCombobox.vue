@@ -510,7 +510,11 @@ export default {
           }
           return curr.key === 'type'
             ? `${acc}&type=${curr.value === 'Project' ? 'datasetcollection' : 'dataset'}`
-            : keywordKeys.includes(curr.key) ? '' : `${acc}&q=${curr.value}`
+            : keywordKeys.includes(curr.key)
+              ? ''
+              : curr.key !== 'bbox'
+                ? `${acc}&q=${curr.value}`
+                : ''
         }, '')
         const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
