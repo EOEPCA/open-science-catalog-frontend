@@ -41,15 +41,6 @@
               {{ theme }}
             </v-chip>
             <v-chip
-              v-if="chips.status"
-              color="green"
-              dark
-              label
-              class="mr-2 mb-2 text-uppercase"
-            >
-              {{ chips.status }}
-            </v-chip>
-            <v-chip
               v-if="chips.variable"
               color="green"
               dark
@@ -58,6 +49,26 @@
               class="mr-2 mb-2 text-uppercase"
             >
               {{ chips.variable }}
+            </v-chip>
+            <v-chip
+              v-if="chips.project"
+              color="primary"
+              dark
+              label
+              :to="`/projects/${chips.project.url}`"
+              class="mr-2 mb-2 text-uppercase"
+            >
+              {{ chips.project.url }}
+            </v-chip>
+            <v-chip
+              v-if="chips.status"
+              :color="chips.status === 'ongoing' ? 'green' : 'primary'"
+              outlined
+              dark
+              label
+              class="mr-2 mb-2 text-uppercase"
+            >
+              {{ chips.status }}
             </v-chip>
           </v-col>
         </v-row>
