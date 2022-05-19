@@ -15,7 +15,7 @@
             <h1
               class="primary--text"
               :class="$vuetify.breakpoint.mdAndUp ? 'mt-5' : 'mt-5'"
-              style="font-size: 3em"
+              style="font-size: 3em; word-break: break-word; line-height: normal"
             >
               {{ title }}
             </h1>
@@ -32,11 +32,11 @@
             <v-chip
               v-for="theme in chips.themes"
               :key="theme"
-              class="mr-1 text-uppercase"
               color="grey"
               dark
               label
               :to="`/themes/${slugify(theme)}`"
+              class="mr-2 mb-2 text-uppercase"
             >
               {{ theme }}
             </v-chip>
@@ -45,16 +45,17 @@
               color="green"
               dark
               label
+              class="mr-2 mb-2 text-uppercase"
             >
               {{ chips.status }}
             </v-chip>
             <v-chip
               v-if="chips.variable"
-              class="text-uppercase"
               color="green"
               dark
               label
               :to="`/variables/${slugify(chips.variable)}`"
+              class="mr-2 mb-2 text-uppercase"
             >
               {{ chips.variable }}
             </v-chip>
