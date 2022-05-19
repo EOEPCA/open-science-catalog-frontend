@@ -195,7 +195,7 @@
         v-if="!drawer"
         @click.stop="drawer = !drawer"
       />
-      <v-toolbar-title>
+      <v-toolbar-title class="pl-0 pl-sm-5">
         <nuxt-link
           to="/"
           class="white--text text-decoration-none text-uppercase"
@@ -205,7 +205,7 @@
       <v-spacer />
       <img :src="withBase('/img/ESA_Logo.svg')">
     </v-app-bar>
-    <v-main style="background: #E8E8E4">
+    <v-main>
       <Nuxt />
     </v-main>
     <v-footer

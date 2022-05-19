@@ -50,13 +50,13 @@
                   Projects
                 </span>
               </v-col>
-              <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+              <v-col cols="12" md="8" class="d-flex">
                 <v-spacer />
                 <v-tooltip top>
                   <template #activator="{ on, attrs }">
                     <v-btn
                       icon
-                      :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                      class="mr-2"
                       v-bind="attrs"
                       v-on="on"
                       @click="TOGGLE_EMPTY_ITEMS"
@@ -77,8 +77,8 @@
                   :items="projectDetailsItems"
                   label="Order by"
                   outlined
-                  :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-                  style="max-width:150px"
+                  class="mr-2"
+                  :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
                   @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
                 />
                 <v-select
@@ -88,8 +88,7 @@
                   :items="['Ascending', 'Descending']"
                   label="Order direction"
                   outlined
-                  :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
-                  style="max-width:150px"
+                  :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
                   @change="orderData('projects', projectsDetailsFilter.toLowerCase(), projectsDetailsOrder, projectsSearch, true)"
                 />
               </v-col>
@@ -124,13 +123,13 @@
                   Variables
                 </span>
               </v-col>
-              <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+              <v-col cols="12" md="8" class="d-flex">
                 <v-spacer />
                 <v-tooltip top>
                   <template #activator="{ on, attrs }">
                     <v-btn
                       icon
-                      :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+                      class="mr-2"
                       v-bind="attrs"
                       v-on="on"
                       @click="TOGGLE_EMPTY_ITEMS"
@@ -151,8 +150,7 @@
                   :items="['Ascending', 'Descending']"
                   label="Order direction"
                   outlined
-                  :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
-                  style="max-width:150px"
+                  :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
                   @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
                 />
               </v-col>
@@ -310,9 +308,12 @@ export default {
     },
     async handleProjectEmit (result) {
       await Promise.all(result.items.map(async (project) => {
-        const projectResponse = await this.retreiveProjects(project.id)
-        project.links = projectResponse.links
-        project.properties['osc:consortium'] = projectResponse.properties['osc:consortium']
+        await this.retreiveProjects(project.id).then((projectResponse) => {
+          project.links = projectResponse.links
+          project.properties['osc:consortium'] = projectResponse.properties['osc:consortium']
+        }).catch((err) => {
+          console.error(err)
+        })
       }))
       if (this.projectDetailsRaw.length === 0) {
         this.projectDetailsRaw = result.items
@@ -320,7 +321,15 @@ export default {
       this.projectDetails = result.items
     },
     handleVariableEmit (result) {
-      this.variablesDetails = result.items
+      const resultedVariables = {}
+      result.items.forEach((item) => {
+        item.properties.keywords.forEach((keyword) => {
+          if (keyword.substring(0, 9) === 'variable:') {
+            resultedVariables[keyword.slice(9)] = 1
+          }
+        })
+      })
+      this.variablesDetails = this.variablesDetailsRaw.filter(variable => resultedVariables[variable.name])
     }
   }
 }

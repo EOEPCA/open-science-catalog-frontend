@@ -40,7 +40,7 @@
               Products
             </span>
           </v-col>
-          <v-col cols="12" md="8" :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+          <v-col cols="12" md="8" class="d-flex">
             <v-spacer />
             <v-select
               v-model="productsFilterSortBy"
@@ -49,8 +49,8 @@
               :items="['Name']"
               label="Sort by"
               outlined
-              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-              style="max-width:150px"
+              class="mr-2"
+              :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
             />
             <v-select
               v-model="productsFilterOrder"
@@ -59,8 +59,7 @@
               :items="['Ascending', 'Descending']"
               label="Order"
               outlined
-              :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
-              style="max-width:150px"
+              :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
             />
           </v-col>
         </v-row>

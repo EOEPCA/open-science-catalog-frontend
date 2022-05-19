@@ -52,6 +52,7 @@
         dense
         hide-details
         class="headless-input customOutline"
+        style="width: 0"
         :type="isNumberField ? 'number' : 'text'"
         @change="select"
         @focus="mainInputValue = ' '"
@@ -82,6 +83,7 @@
         dense
         hide-details
         class="headless-input customOutline"
+        style="width: 0"
         :search-input.sync="textInputModel"
         @input="select"
         @focus="mainInputValue = ' '"
@@ -372,6 +374,11 @@ export default {
       if (!newFilterItems.find(i => i.key === 'bbox') && this.bbox) {
         this.$refs.map.clearFeatures()
       }
+    },
+    showMap (status) {
+      if (!status && !this.bbox) {
+        this.onDelete()
+      }
     }
   },
   async created () {
@@ -447,6 +454,9 @@ export default {
       this.textInputModel = null
     },
     remove (item) {
+      if (item.key === 'bbox') {
+        this.bbox = null
+      }
       this.filterItems.splice(this.filterItems.indexOf(item), 1)
       this.filterModel = null
       this.onEnter()
@@ -476,6 +486,9 @@ export default {
       if (this.preSelectedItems.map(i => i.key).includes(this.filterItems[this.filterItems.length - 1].key)) {
         return
       }
+      if (this.filterItems[this.filterItems.length - 1].key === 'bbox') {
+        this.bbox = null
+      }
       if (this.textInputModel !== null) {
         if (this.textInputModel === '') {
           this.textInputModel = null
@@ -498,8 +511,12 @@ export default {
             filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:%${curr.value}%'`
           }
           return curr.key === 'type'
-            ? `${acc}&type=${curr.value === 'Project' ? 'datasetcollection' : 'dataset'}`
-            : keywordKeys.includes(curr.key) ? '' : `${acc}&q=${curr.value}`
+            ? `${acc}&type=${curr.value.toLowerCase() === 'project' ? 'datasetcollection' : 'dataset'}`
+            : keywordKeys.includes(curr.key)
+              ? ''
+              : curr.key !== 'bbox'
+                ? `${acc}&q=${curr.value}`
+                : ''
         }, '')
         const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
