@@ -203,7 +203,9 @@
         />
       </v-toolbar-title>
       <v-spacer />
-      <img :src="withBase('/img/ESA_Logo.svg')">
+      <a href="https://www.esa.int/" target="_blank" class="d-flex align-center">
+        <img :src="withBase('/img/ESA_Logo.svg')">
+      </a>
     </v-app-bar>
     <v-main>
       <Nuxt />
