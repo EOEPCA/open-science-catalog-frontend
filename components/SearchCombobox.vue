@@ -25,6 +25,7 @@
         :key="index"
         small
         :close="!!item.value && !(preSelectedItems.map(i => i.key).includes(item.key))"
+        class="ml-1"
         :class="embeddedMode ? 'mx-1' : 'mr-1'"
         @click:close="remove(item)"
       >
