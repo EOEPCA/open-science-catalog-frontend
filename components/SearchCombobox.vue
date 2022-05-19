@@ -549,7 +549,7 @@ export default {
           }
           this.$emit('searchQuery', {
             items: itemsResponse.features,
-            numberOfPages: Math.round(itemsResponse.numberMatched / 10),
+            numberOfPages: Math.round(itemsResponse.numberMatched / 12),
             numberOfItems: itemsResponse.numberMatched
           })
         }).catch(err => console.error(err))
