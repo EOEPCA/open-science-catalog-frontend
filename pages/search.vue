@@ -1,5 +1,5 @@
 <template>
-  <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-2'">
+  <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
     <v-row class="py-5">
       <v-col>
         <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'">
@@ -17,7 +17,7 @@
       @searchQuery="handleSearchEmit"
     />
     <v-row>
-      <v-col :class="$vuetify.breakpoint.lgAndUp ? 'd-flex' : ''">
+      <v-col class="d-flex">
         <v-spacer />
         <v-tooltip top>
           <template #activator="{ on, attrs }">
@@ -44,8 +44,8 @@
           :items="productsFilterOptions"
           label="Sort by"
           outlined
-          :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
-          style="max-width:150px"
+          class="mr-2"
+          :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
           @change="filterProducts"
         />
         <v-select
@@ -55,8 +55,7 @@
           :items="['Ascending', 'Descending']"
           label="Order"
           outlined
-          :class="$vuetify.breakpoint.lgAndUp ? '' : 'mb-4'"
-          style="max-width:150px"
+          :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
           @change="filterProducts"
         />
       </v-col>

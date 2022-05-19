@@ -52,6 +52,7 @@
         dense
         hide-details
         class="headless-input customOutline"
+        style="width: 0"
         :type="isNumberField ? 'number' : 'text'"
         @change="select"
         @focus="mainInputValue = ' '"
@@ -82,6 +83,7 @@
         dense
         hide-details
         class="headless-input customOutline"
+        style="width: 0"
         :search-input.sync="textInputModel"
         @input="select"
         @focus="mainInputValue = ' '"
