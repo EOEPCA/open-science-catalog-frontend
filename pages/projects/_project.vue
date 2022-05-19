@@ -112,13 +112,16 @@ export default {
     ])
   },
   async created () {
-    this.project = await this.retreiveProjects(this.$route.params.project)
-    const productsResponse = await this.fetchProducts({
-      projectID: this.project.id,
-      page: (this.page - 1) * 10
-    })
-    this.products = productsResponse.features
-    this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+    await this.retreiveProjects(this.$route.params.project).then(async (project) => {
+      this.project = project
+      await this.fetchProducts({
+        projectID: this.project.id,
+        page: (this.page - 1) * 10
+      }).then((productsResponse) => {
+        this.products = productsResponse.features
+        this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+      }).catch(err => console.error(err))
+    }).catch(err => console.error(err))
   },
   methods: {
     ...mapActions('dynamicCatalog', [

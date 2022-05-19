@@ -63,11 +63,13 @@ export default {
     }
   },
   async created () {
-    this.product = await this.retreiveProduct(this.$route.params.product)
-    this.product.properties = {
-      ...this.product.properties,
-      description: this.product.properties.description
-    }
+    await this.retreiveProduct(this.$route.params.product).then((product) => {
+      this.product = product
+      this.product.properties = {
+        ...this.product.properties,
+        description: this.product.properties.description
+      }
+    }).catch(err => console.error(err))
   },
   methods: {
     ...mapActions('staticCatalog', [
