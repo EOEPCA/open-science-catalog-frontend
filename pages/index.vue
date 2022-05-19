@@ -141,7 +141,7 @@ export default {
       'themes'
     ])
   },
-  async created() {
+  async created () {
     await this.$store.dispatch('staticCatalog/retreiveMetrics')
   },
   methods: {
