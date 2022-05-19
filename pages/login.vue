@@ -1,6 +1,6 @@
 <template>
   <v-progress-circular
-    v-if="$auth"
+    v-if="$auth.enabled"
     :size="70"
     :width="5"
     color="primary"
@@ -9,6 +9,7 @@
   />
   <p
     v-else
+    class="pa-5"
   >
     Authentication is currently disabled.
   </p>

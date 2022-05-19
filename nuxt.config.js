@@ -51,6 +51,7 @@ export default {
     '~/plugins/type-color',
     '~/plugins/axios',
     '~/plugins/markdown',
+    '~/plugins/auth-temp', // TEMP while auth is disabled
     { src: '~plugins/ol', ssr: false }
   ],
 
@@ -68,8 +69,8 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/axios'
+    // '@nuxtjs/auth-next'
   ],
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -103,31 +104,31 @@ export default {
         }
       })
     ]
-  },
-
-  auth: {
-    strategies: {
-      oidc: {
-        scheme: 'openIDConnect',
-        clientId: process.env.OAUTH_CLIENTID,
-        endpoints: {
-          configuration: process.env.OPENID_CONFIGURATION
-        },
-        responseType: 'token id_token',
-        idToken: {
-          property: 'id_token',
-          maxAge: 1800
-        },
-        scope: process.env.OAUTH_SCOPE,
-        acrValues: ['passport_social']
-      }
-    },
-    redirect: {
-      login: '/login',
-      logout: process.env.OAUTH_REDIRECT_LOGOUT,
-      callback: process.env.OAUTH_REDIRECT_CALLBACK,
-      home: '/'
-    },
-    fullPathRedirect: true
   }
+
+  // auth: {
+  //   strategies: {
+  //     oidc: {
+  //       scheme: 'openIDConnect',
+  //       clientId: process.env.OAUTH_CLIENTID,
+  //       endpoints: {
+  //         configuration: process.env.OPENID_CONFIGURATION
+  //       },
+  //       responseType: 'token id_token',
+  //       idToken: {
+  //         property: 'id_token',
+  //         maxAge: 1800
+  //       },
+  //       scope: process.env.OAUTH_SCOPE,
+  //       acrValues: ['passport_social']
+  //     }
+  //   },
+  //   redirect: {
+  //     login: '/login',
+  //     logout: process.env.OAUTH_REDIRECT_LOGOUT,
+  //     callback: process.env.OAUTH_REDIRECT_CALLBACK,
+  //     home: '/'
+  //   },
+  //   fullPathRedirect: true
+  // }
 }

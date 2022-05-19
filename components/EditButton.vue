@@ -29,7 +29,7 @@
         dark
         rounded
         color="green"
-        :to="`/edit-item?${Object.keys($route.params)[0]}=${Object.values($route.params)[0]}`"
+        to="/login"
         style="cursor: pointer"
       >
         <v-icon left>
@@ -45,8 +45,7 @@
         @click="$auth.loggedin
           ? deleteDialog = true
           : $router
-            .push(`/edit-item?${Object
-              .keys($route.params)[0]}=${Object.values($route.params)[0]}`)"
+            .push('login')"
       >
         <v-icon left>
           mdi-delete
