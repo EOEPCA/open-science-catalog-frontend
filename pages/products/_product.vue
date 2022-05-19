@@ -21,6 +21,7 @@
       }"
       :nav="{
         theme: product['osc:theme'],
+        project: getProductLink(),
         product: product.id
       }"
     >
