@@ -62,7 +62,7 @@
             </v-chip>
             <v-chip
               v-if="chips.status"
-              :color="chips.status === 'ongoing' ? 'green' : 'primary'"
+              :color="chips.status === 'ONGOING' ? 'green' : 'primary'"
               outlined
               dark
               label
@@ -161,7 +161,7 @@
               color="primary"
               :outlined="link.title !== 'Access'"
               :block="$vuetify.breakpoint.xsOnly"
-              :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
+              class="mb-2 mr-3"
               :href="link.href"
               target="_blank"
             >
