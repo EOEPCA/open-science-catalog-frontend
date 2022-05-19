@@ -142,7 +142,7 @@
               color="primary"
               :outlined="link.title !== 'Access'"
               :block="$vuetify.breakpoint.xsOnly"
-              :class="$vuetify.breakpoint.xsOnly ? 'mb-2' : 'mr-3'"
+              class="mb-2 mr-2"
               :href="link.href"
               target="_blank"
             >
