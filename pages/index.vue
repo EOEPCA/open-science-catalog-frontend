@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-2'">
+    <v-container>
       <v-row class="pt-5 pb-0">
         <v-col>
           <h1
