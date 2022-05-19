@@ -293,17 +293,19 @@ export default {
     async expandVariable (item) {
       const variableSlug = this.slugify(item.name)
       if (!this.products[variableSlug]) {
-        const variable = await this.retreiveVariable(variableSlug)
-        this.$set(this.variablesList, variableSlug, this.variable)
-        const products = []
-        // TODO: use dynamic endpoint instead of static here
-        await Promise.all(variable.links.map(async (link) => {
-          if (link.rel === 'item') {
-            const productResponse = await this.$axios.$get(link.href)
-            products.push(productResponse)
-          }
-        }))
-        this.$set(this.products, variableSlug, products)
+        await this.retreiveVariable(variableSlug).then(async (variable) => {
+          this.$set(this.variablesList, variableSlug, this.variable)
+          const products = []
+          // TODO: use dynamic endpoint instead of static here
+          await Promise.all(variable.links.map(async (link) => {
+            if (link.rel === 'item') {
+              await this.$axios.$get(link.href).then((productResponse) => {
+                products.push(productResponse)
+              }).catch(err => console.error(err))
+            }
+          }))
+          this.$set(this.products, variableSlug, products)
+        }).catch(err => console.error(err))
       }
     },
     getProducts (name) {

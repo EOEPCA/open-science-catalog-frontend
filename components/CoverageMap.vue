@@ -98,7 +98,7 @@ export default {
         })
       })
 
-      fetch('https://tiles.maps.eox.at/wmts/1.0.0/WMTSCapabilities.xml')
+      fetch('https://s2maps.eu/WMTSCapabilities.xml')
         .then((response) => {
           return response.text()
         })
@@ -109,7 +109,7 @@ export default {
           this.baseLayers.forEach((baselayer) => {
             const options = ol.optionsFromCapabilities(result, {
               layer: baselayer.layer,
-              matrixSet: 'EPSG:3857'
+              matrixSet: 'WGS84'
             })
 
             layers.push(new ol.TileLayer({
