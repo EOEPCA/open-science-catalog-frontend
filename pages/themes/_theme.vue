@@ -310,7 +310,15 @@ export default {
       this.projectDetails = result.items
     },
     handleVariableEmit (result) {
-      this.variablesDetails = result.items
+      const resultedVariables = {}
+      result.items.forEach((item) => {
+        item.properties.keywords.forEach((keyword) => {
+          if (keyword.substring(0, 9) === 'variable:') {
+            resultedVariables[keyword.slice(9)] = 1
+          }
+        })
+      })
+      this.variablesDetails = this.variablesDetailsRaw.filter(variable => resultedVariables[variable.name])
     }
   }
 }

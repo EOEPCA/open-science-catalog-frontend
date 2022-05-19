@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 import ItemGrid from '@/components/ItemGrid.vue'
 import SearchCombobox from '@/components/SearchCombobox.vue'
@@ -131,7 +131,16 @@ export default {
     ...mapMutations([
       'TOGGLE_EMPTY_ITEMS'
     ]),
-    handleSearchEmit (result) {
+    ...mapActions('staticCatalog', [
+      'retreiveProjects'
+    ]),
+    async handleSearchEmit (result) {
+      await Promise.all(result.items.map(async (item) => {
+        if (item.id.substring(0, 7) === 'project') {
+          const projectResponse = await this.retreiveProjects(item.id)
+          item.links = projectResponse.links
+        }
+      }))
       this.items = result.items
       this.numberOfPages = result.numberOfPages
       this.numberOfItems = result.numberOfItems
