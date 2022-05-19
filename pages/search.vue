@@ -136,8 +136,9 @@ export default {
     async handleSearchEmit (result) {
       await Promise.all(result.items.map(async (item) => {
         if (item.id.substring(0, 7) === 'project') {
-          const projectResponse = await this.retreiveProjects(item.id)
-          item.links = projectResponse.links
+          await this.retreiveProjects(item.id).then((projectResponse) => {
+            item.links = projectResponse.links
+          }).catch(err => console.log(err))
         }
       }))
       this.items = result.items

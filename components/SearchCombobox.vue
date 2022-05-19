@@ -511,7 +511,7 @@ export default {
             filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:%${curr.value}%'`
           }
           return curr.key === 'type'
-            ? `${acc}&type=${curr.value === 'Project' ? 'datasetcollection' : 'dataset'}`
+            ? `${acc}&type=${curr.value.toLowerCase() === 'project' ? 'datasetcollection' : 'dataset'}`
             : keywordKeys.includes(curr.key)
               ? ''
               : curr.key !== 'bbox'
