@@ -135,11 +135,19 @@
               </v-icon>
               <strong class="text-uppercase mr-2">Consortium</strong> {{ details.consortium.join(', ') }}
             </div>
-            <div v-if="details['osc:project']" class="mb-2">
+            <div
+              v-if="details['osc:project']"
+              class="mb-2"
+            >
               <v-icon left>
                 mdi-calendar-text
               </v-icon>
-              <strong class="text-uppercase mr-2">Project</strong> {{ details['osc:project'] }}
+              <strong class="text-uppercase mr-2">Project</strong>
+              <a
+                :href="`/projects/${chips.project.url}`"
+              >
+                {{ details['osc:project'] }}
+              </a>
             </div>
             <div v-if="details['osc:missions']" class="mb-2">
               <v-icon left>
