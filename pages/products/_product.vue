@@ -5,7 +5,11 @@
       :description="product.properties.description"
       :chips="{
         themes: product.properties['osc:themes'],
-        variable: product.properties['osc:variable']
+        variable: product.properties['osc:variable'],
+        project: {
+          url: getProductLink(),
+          name: product.properties
+        }
       }"
       :details="{
         start_datetime: product.properties.start_datetime,
@@ -63,16 +67,20 @@ export default {
     }
   },
   async created () {
-    this.product = await this.retreiveProduct(this.$route.params.product)
-    this.product.properties = {
-      ...this.product.properties,
-      description: this.product.properties.description
-    }
+    await this.retreiveProduct(this.$route.params.product).then((product) => {
+      this.product = product
+    }).catch(err => console.error(err))
   },
   methods: {
     ...mapActions('staticCatalog', [
       'retreiveProduct'
-    ])
+    ]),
+    getProductLink () {
+      const projectLink = this.product.links.find((link) => {
+        return link.href.includes('/projects')
+      }).href.match(/projects\/([\s\S]*?)\.json/)
+      return projectLink[1]
+    }
   }
 }
 </script>

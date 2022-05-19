@@ -109,7 +109,7 @@ export default {
           this.baseLayers.forEach((baselayer) => {
             const options = ol.optionsFromCapabilities(result, {
               layer: baselayer.layer,
-              matrixSet: 'EPSG:3857'
+              matrixSet: 'WGS84'
             })
 
             layers.push(new ol.TileLayer({

@@ -138,15 +138,17 @@ export default {
     }
   },
   async created () {
-    this.variable = await this.retreiveVariable(this.$route.params.variable)
-
-    // format products
-    await Promise.all(this.variable.links.map(async (link) => {
-      if (link.rel === 'item') {
-        const productResponse = await this.$axios.$get(link.href)
-        this.products.push(productResponse)
-      }
-    }))
+    await this.retreiveVariable(this.$route.params.variable).then(async (variable) => {
+      this.variable = variable
+      // format products
+      await Promise.all(this.variable.links.map(async (link) => {
+        if (link.rel === 'item') {
+          await this.$axios.$get(link.href).then((productResponse) => {
+            this.products.push(productResponse)
+          }).catch(err => console.error(err))
+        }
+      }))
+    }).catch(err => console.error(err))
 
     this.metrics = await this.retreiveMetrics()
   },
@@ -167,13 +169,13 @@ export default {
             (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
               this.productsFilterSortBy}&offset=${
                 (this.page - 1) * 10}`
-      const productsResponse = await this.fetchCustomQuery(queryString)
-
-      if (this.productsFilterOrder === 'Descending') {
-        this.products = productsResponse.features.reverse()
-      }
-      this.products = productsResponse.features
-      this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+      await this.fetchCustomQuery(queryString).then((productsResponse) => {
+        if (this.productsFilterOrder === 'Descending') {
+          this.products = productsResponse.features.reverse()
+        }
+        this.products = productsResponse.features
+        this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+      })
     }
   }
 }

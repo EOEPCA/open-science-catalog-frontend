@@ -415,11 +415,12 @@ export default {
           this.description = selectedTheme.description
           this.eo4societyURL = selectedTheme.website
         } else if (this.selectedItemType === 'Variable') {
-          const selectedVariable = await this.retreiveVariable(this.slugify(this.name))
-          this.description = selectedVariable.description
-          // temporary hack to pre-select parent theme
-          this.parentThemes = selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-          this.link = selectedVariable.links.find(link => link.rel === 'via').href
+          await this.retreiveVariable(this.slugify(this.name)).then((selectedVariable) => {
+            this.description = selectedVariable.description
+            // temporary hack to pre-select parent theme
+            this.parentThemes = selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
+            this.link = selectedVariable.links.find(link => link.rel === 'via').href
+          }).catch(err => console.error(err))
         } else if (this.selectedItemType === 'Project') {
           await this.retreiveProjects(this.name).then((selectedProject) => {
             this.description = selectedProject.properties.description

@@ -25,6 +25,7 @@
         :key="index"
         small
         :close="!!item.value && !(preSelectedItems.map(i => i.key).includes(item.key))"
+        class="ml-1"
         :class="embeddedMode ? 'mx-1' : 'mr-1'"
         @click:close="remove(item)"
       >
@@ -526,30 +527,32 @@ export default {
                 ? `&bbox=${this.bbox.join(',')}`
                 : ''}`
 
-        const itemsResponse = await this.fetchCustomQuery(queryString)
-        if (this.paginationLoop) {
-          const additionalPages = itemsResponse.numberMatched / itemsResponse.numberReturned
-          let currPage = this.currentPage
-          for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
-            currPage++
-            const response = await this.fetchCustomQuery(`/collections/metadata:main/items?limit=12&sortby=${
-              this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
-                (currPage - 1) * 12}${searchQuery}${filterQuery
-              ? `&filter=${filterQuery}`
-              : ''}${this.bbox
-                ? `&bbox=${this.bbox.join(',')}`
-                : ''}`)
-            itemsResponse.features = [
-              ...itemsResponse.features,
-              ...response.features
-            ]
+        await this.fetchCustomQuery(queryString).then(async (itemsResponse) => {
+          if (this.paginationLoop) {
+            const additionalPages = itemsResponse.numberMatched / itemsResponse.numberReturned
+            let currPage = this.currentPage
+            for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
+              currPage++
+              await this.fetchCustomQuery(`/collections/metadata:main/items?limit=12&sortby=${
+                this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
+                  (currPage - 1) * 12}${searchQuery}${filterQuery
+                ? `&filter=${filterQuery}`
+                : ''}${this.bbox
+                  ? `&bbox=${this.bbox.join(',')}`
+                  : ''}`).then((response) => {
+                itemsResponse.features = [
+                  ...itemsResponse.features,
+                  ...response.features
+                ]
+              }).catch(err => console.error(err))
+            }
           }
-        }
-        this.$emit('searchQuery', {
-          items: itemsResponse.features,
-          numberOfPages: Math.round(itemsResponse.numberMatched / 10),
-          numberOfItems: itemsResponse.numberMatched
-        })
+          this.$emit('searchQuery', {
+            items: itemsResponse.features,
+            numberOfPages: Math.round(itemsResponse.numberMatched / 10),
+            numberOfItems: itemsResponse.numberMatched
+          })
+        }).catch(err => console.error(err))
         if (this.filterItems.length === 0) {
           this.$emit('clearEvent')
         }
