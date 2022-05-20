@@ -16,7 +16,10 @@
       }"
       :nav="{
         theme: project.collection,
-        project: project.properties.title
+        project: {
+          url: $extractSlug(project),
+          name: project.properties.title
+        }
       }"
     >
       <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
@@ -116,10 +119,10 @@ export default {
       this.project = project
       await this.fetchProducts({
         projectID: this.project.id,
-        page: (this.page - 1) * 10
+        page: (this.page - 1) * 12
       }).then((productsResponse) => {
         this.products = productsResponse.features
-        this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+        this.numberOfPages = Math.round(productsResponse.numberMatched / 12)
       }).catch(err => console.error(err))
     }).catch(err => console.error(err))
   },

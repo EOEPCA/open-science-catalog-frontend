@@ -82,7 +82,7 @@
                       icon
                       small
                       color="applications"
-                      :to="`/products/${product.id}`"
+                      :to="`/products/${$extractSlug(product)}`"
                       target="_blank"
                       v-on="on"
                     >
@@ -100,7 +100,7 @@
                 >
                   <template #activator="{ on }">
                     <nuxt-link
-                      :to="`/products/${product.id}`"
+                      :to="`/products/${$extractSlug(product)}`"
                       style="text-decoration: none"
                     >
                       <small

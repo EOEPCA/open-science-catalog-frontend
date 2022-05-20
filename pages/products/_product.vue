@@ -1,5 +1,5 @@
 <template>
-  <div v-if="product">
+  <div v-if="product && project">
     <Item
       :title="product.properties.title"
       :description="product.properties.description"
@@ -8,7 +8,7 @@
         variable: product.properties['osc:variable'],
         project: {
           url: getProductLink(),
-          name: product.properties
+          name: project.properties.title
         }
       }"
       :details="{
@@ -21,7 +21,11 @@
       }"
       :nav="{
         theme: product['osc:theme'],
-        product: product.id
+        project: {
+          url: $extractSlug(project),
+          name: project.properties.title
+        },
+        product: product.properties.title
       }"
     >
       <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
@@ -57,6 +61,7 @@ export default {
   data () {
     return {
       product: null,
+      project: null,
       productsDialog: false,
       showDescription: false
     }
@@ -70,10 +75,14 @@ export default {
     await this.retreiveProduct(this.$route.params.product).then((product) => {
       this.product = product
     }).catch(err => console.error(err))
+    await this.retreiveProjects(this.getProductLink()).then((project) => {
+      this.project = project
+    }).catch(err => console.error(err))
   },
   methods: {
     ...mapActions('staticCatalog', [
-      'retreiveProduct'
+      'retreiveProduct',
+      'retreiveProjects'
     ]),
     getProductLink () {
       const projectLink = this.product.links.find((link) => {

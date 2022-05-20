@@ -168,13 +168,13 @@ export default {
           (this.productsSearch ? `&q=${this.productsSearch}` : '')}${
             (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
               this.productsFilterSortBy}&offset=${
-                (this.page - 1) * 10}`
+                (this.page - 1) * 12}`
       await this.fetchCustomQuery(queryString).then((productsResponse) => {
         if (this.productsFilterOrder === 'Descending') {
           this.products = productsResponse.features.reverse()
         }
         this.products = productsResponse.features
-        this.numberOfPages = Math.round(productsResponse.numberMatched / 10)
+        this.numberOfPages = Math.round(productsResponse.numberMatched / 12)
       })
     }
   }
