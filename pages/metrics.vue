@@ -31,7 +31,7 @@
               v-bind="attrs"
               class="mr-3"
               v-on="on"
-              @click="() => { TOGGLE_EMPTY_ITEMS(); filterItems(null)}"
+              @click="() => { TOGGLE_EMPTY_ITEMS(); }"
             >
               <v-icon>
                 {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
@@ -162,6 +162,16 @@ export default {
       'themes'
     ])
   },
+  watch: {
+    showEmptyItems (status) {
+      if (status === false) {
+        this.$refs.searchBox.filterProducts()
+        this.filterItems(true)
+      } else {
+        this.filterItems()
+      }
+    }
+  },
   mounted () {
     this.filterItems(null)
   },
@@ -191,12 +201,11 @@ export default {
     clearFilter () {
       this.variables = this.staticVariables
     },
-    async filterItems (i) {
+    async filterItems (silent) {
       this.metrics = await this.retreiveMetrics()
       const variables = []
 
-      const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]
-      themes.forEach((theme) => {
+      this.metrics.themes.forEach((theme) => {
         theme.variables.forEach((variable) => {
           variables.push(variable)
         })
@@ -208,14 +217,18 @@ export default {
         return 0
       })
       if (!this.showEmptyItems) {
-        this.variables = [
-          ...variables.filter(v => v.summary.numberOfProducts >= 1)
-        ]
+        if (!silent) {
+          this.variables = [
+            ...variables.filter(v => v.summary.numberOfProducts >= 1)
+          ]
+        }
         this.staticVariables = [
           ...variables.filter(v => v.summary.numberOfProducts >= 1)
         ]
       } else {
-        this.variables = variables
+        if (!silent) {
+          this.variables = variables
+        }
         this.staticVariables = variables
       }
     }
