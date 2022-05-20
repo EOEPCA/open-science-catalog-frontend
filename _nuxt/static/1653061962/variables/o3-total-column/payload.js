@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/o3-total-column", {data:[{}],fetch:{},mutations:[]});

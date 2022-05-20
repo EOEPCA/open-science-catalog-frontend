@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/o3-tropospheric-column", {data:[{}],fetch:{},mutations:[]});

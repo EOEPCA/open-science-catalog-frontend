@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/aerosol-optical-depth", {data:[{}],fetch:{},mutations:[]});

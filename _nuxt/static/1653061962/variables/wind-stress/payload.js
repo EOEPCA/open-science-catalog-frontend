@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/wind-stress", {data:[{}],fetch:{},mutations:[]});

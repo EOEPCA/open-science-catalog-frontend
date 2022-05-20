@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/glacier-topography", {data:[{}],fetch:{},mutations:[]});

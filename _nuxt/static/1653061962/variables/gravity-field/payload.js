@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/gravity-field", {data:[{}],fetch:{},mutations:[]});

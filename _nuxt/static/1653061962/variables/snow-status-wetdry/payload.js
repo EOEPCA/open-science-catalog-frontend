@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/snow-status-wetdry", {data:[{}],fetch:{},mutations:[]});

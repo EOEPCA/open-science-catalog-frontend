@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/variables/earth-surface-albedo", {data:[{}],fetch:{},mutations:[]});
