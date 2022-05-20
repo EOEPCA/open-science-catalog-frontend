@@ -11,7 +11,7 @@
       <v-card
         :to="`/${getType(item)}s/${getType(item) === 'variable'
           ? slugify(item.name)
-          : item.id}`"
+          : $extractSlug(item)}`"
         outlined
       >
         <v-card-title>

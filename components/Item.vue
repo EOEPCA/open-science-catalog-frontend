@@ -58,7 +58,7 @@
               :to="`/projects/${chips.project.url}`"
               class="mr-2 mb-2 text-uppercase"
             >
-              {{ chips.project.url }}
+              {{ chips.project.name }}
             </v-chip>
             <v-chip
               v-if="chips.status"

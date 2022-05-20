@@ -298,7 +298,7 @@ export default {
     },
     async handleProjectEmit (result) {
       await Promise.all(result.items.map(async (project) => {
-        await this.retreiveProjects(project.id).then((projectResponse) => {
+        await this.retreiveProjects(this.$extractSlug(project)).then((projectResponse) => {
           project.links = projectResponse.links
           project.properties['osc:consortium'] = projectResponse.properties['osc:consortium']
         }).catch((err) => {
