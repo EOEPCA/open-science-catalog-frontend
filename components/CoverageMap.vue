@@ -111,6 +111,18 @@ export default {
               layer: baselayer.layer,
               matrixSet: 'WGS84'
             })
+            // TEMP - until the options from capabilities actually work
+            options.tileGrid.max_zoom = 13
+            options.tileGrid.fullTileRanges_['2'] = new ol.TileRange()
+            options.tileGrid.fullTileRanges_['2'].minX = 0
+            options.tileGrid.fullTileRanges_['2'].maxX = 7
+            options.tileGrid.fullTileRanges_['2'].minY = 0
+            options.tileGrid.fullTileRanges_['2'].maxY = 3
+            options.tileGrid.fullTileRanges_['1'] = new ol.TileRange()
+            options.tileGrid.fullTileRanges_['1'].minX = 0
+            options.tileGrid.fullTileRanges_['1'].maxX = 3
+            options.tileGrid.fullTileRanges_['1'].minY = 0
+            options.tileGrid.fullTileRanges_['1'].maxY = 1
 
             layers.push(new ol.TileLayer({
               opacity: 1,
