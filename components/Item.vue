@@ -62,7 +62,7 @@
             </v-chip>
             <v-chip
               v-if="chips.status"
-              :color="chips.status === 'ongoing' ? 'green' : 'primary'"
+              :color="chips.status === 'ONGOING' ? 'green' : 'primary'"
               outlined
               dark
               label
@@ -135,11 +135,19 @@
               </v-icon>
               <strong class="text-uppercase mr-2">Consortium</strong> {{ details.consortium.join(', ') }}
             </div>
-            <div v-if="details['osc:project']" class="mb-2">
+            <div
+              v-if="details['osc:project']"
+              class="mb-2"
+            >
               <v-icon left>
                 mdi-calendar-text
               </v-icon>
-              <strong class="text-uppercase mr-2">Project</strong> {{ details['osc:project'] }}
+              <strong class="text-uppercase mr-2">Project</strong>
+              <a
+                :href="`/projects/${chips.project.url}`"
+              >
+                {{ details['osc:project'] }}
+              </a>
             </div>
             <div v-if="details['osc:missions']" class="mb-2">
               <v-icon left>
@@ -153,7 +161,7 @@
               color="primary"
               :outlined="link.title !== 'Access'"
               :block="$vuetify.breakpoint.xsOnly"
-              class="mb-2 mr-2"
+              class="mb-2 mr-3"
               :href="link.href"
               target="_blank"
             >
