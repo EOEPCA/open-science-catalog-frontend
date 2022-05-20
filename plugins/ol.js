@@ -12,7 +12,6 @@ import Draw, { createBox } from 'ol/interaction/Draw'
 import { Control, defaults as defaultControls } from 'ol/control'
 import { TileRange } from 'ol' // TEMP
 
-
 class ClearMap extends Control {
   constructor () {
     const button = document.createElement('button')
