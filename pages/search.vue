@@ -9,7 +9,6 @@
     </v-row>
     <search-combobox
       ref="searchBox"
-      :auto-focus="true"
       :current-page="page"
       :sort-by="productsFilterSortBy"
       :sort-order="productsFilterOrder"

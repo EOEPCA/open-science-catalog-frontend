@@ -15,4 +15,9 @@ export default ({ $staticCatalog }, inject) => {
         .replace('.json', '')
       : undefined
   })
+  inject('replaceStaticBase', (link) => {
+    // TODO
+    return link
+      .replace('https://eoepca.github.io/open-science-catalog-metadata', '')
+  })
 }

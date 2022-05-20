@@ -53,7 +53,7 @@ export default {
     '~/plugins/axios',
     '~/plugins/markdown',
     '~/plugins/auth-temp', // TEMP while auth is disabled
-    '~/plugins/extractSlug',
+    '~/plugins/staticCatalogHelpers',
     { src: '~plugins/ol', ssr: false }
   ],
 

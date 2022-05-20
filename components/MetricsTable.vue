@@ -277,7 +277,7 @@ export default {
           // TODO: use dynamic endpoint instead of static here
           await Promise.all(variable.links.map(async (link) => {
             if (link.rel === 'item') {
-              await this.$axios.$get(link.href).then((productResponse) => {
+              await this.$staticCatalog.$get(this.$replaceStaticBase(link.href)).then((productResponse) => {
                 products.push(productResponse)
               }).catch(err => console.error(err))
             }
