@@ -29,7 +29,7 @@
         dark
         rounded
         color="green"
-        :to="`/edit-item?${Object.keys($route.params)[0]}=${Object.values($route.params)[0]}`"
+        to="/login"
         style="cursor: pointer"
       >
         <v-icon left>
@@ -45,8 +45,7 @@
         @click="$auth.loggedin
           ? deleteDialog = true
           : $router
-            .push(`/edit-item?${Object
-              .keys($route.params)[0]}=${Object.values($route.params)[0]}`)"
+            .push('login')"
       >
         <v-icon left>
           mdi-delete
@@ -112,7 +111,7 @@ export default {
     async deleteItem () {
       this.loading = true
       await this.$axios.$delete(
-        `https://open-science-catalog-backend.develop.eoepca.org/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.slugify(Object.values(this.$route.params)[0])}.json`, {}
+        `${$metadataBackend}/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.slugify(Object.values(this.$route.params)[0])}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false
