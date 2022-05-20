@@ -44,6 +44,7 @@ jobs:
         id: version-bump
         uses: phips28/gh-action-bump-version@master
         with:
+          skip-tag:  "true"
           tag-prefix: "v"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
