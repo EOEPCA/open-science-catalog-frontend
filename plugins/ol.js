@@ -10,6 +10,7 @@ import WMTS, { optionsFromCapabilities } from 'ol/source/WMTS'
 import WMTSCapabilities from 'ol/format/WMTSCapabilities'
 import Draw, { createBox } from 'ol/interaction/Draw'
 import { Control, defaults as defaultControls } from 'ol/control'
+import { TileRange } from 'ol' // TEMP
 
 class ClearMap extends Control {
   constructor () {
@@ -49,6 +50,7 @@ export const ol = {
   Draw,
   createBox,
   ClearMap,
-  defaultControls
+  defaultControls,
+  TileRange // TEMP
 }
 Vue.prototype.$ol = ol

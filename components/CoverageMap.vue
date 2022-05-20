@@ -60,11 +60,17 @@ export default {
   },
   watch: {
     highlight (feature) {
+      this.vectorSource.getFeatures().forEach(f => f.setStyle(this.defaultStyle))
       if (this.map && feature && feature.geometry) {
-        this.vectorSource.getFeatures().forEach(f => f.setStyle(this.defaultStyle))
         const highlightFeature = this.vectorSource.getFeatureById(feature.id)
         highlightFeature.setStyle(this.highlightStyle)
+        console.log(highlightFeature.getGeometry().getExtent())
         this.map.getView().fit(highlightFeature.getGeometry().getExtent(), {
+          padding: this.defaultPadding,
+          duration: 500
+        })
+      } else {
+        this.map.getView().fit([-180, -90, 180, 90], {
           padding: this.defaultPadding,
           duration: 500
         })
@@ -84,7 +90,7 @@ export default {
           width: 3
         }),
         fill: new ol.Fill({
-          color: 'rgba(0, 50, 71, 0.2)'
+          color: 'rgba(0, 50, 71, 0.1)'
         })
       })
 
@@ -111,6 +117,18 @@ export default {
               layer: baselayer.layer,
               matrixSet: 'WGS84'
             })
+            // TEMP - until the options from capabilities actually work
+            options.tileGrid.max_zoom = 13
+            options.tileGrid.fullTileRanges_['2'] = new ol.TileRange()
+            options.tileGrid.fullTileRanges_['2'].minX = 0
+            options.tileGrid.fullTileRanges_['2'].maxX = 7
+            options.tileGrid.fullTileRanges_['2'].minY = 0
+            options.tileGrid.fullTileRanges_['2'].maxY = 3
+            options.tileGrid.fullTileRanges_['1'] = new ol.TileRange()
+            options.tileGrid.fullTileRanges_['1'].minX = 0
+            options.tileGrid.fullTileRanges_['1'].maxX = 3
+            options.tileGrid.fullTileRanges_['1'].minY = 0
+            options.tileGrid.fullTileRanges_['1'].maxY = 1
 
             layers.push(new ol.TileLayer({
               opacity: 1,

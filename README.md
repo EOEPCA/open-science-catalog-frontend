@@ -1,12 +1,12 @@
 # open-science-catalog-frontend
 
-## The Open Science Catalog (coming soon)
+## The Open Science Catalog ([opensciencedata.esa.int](https://opensciencedata.esa.int/))
 The Open Science Catalog is one of the elements contributing to an Open Science framework and infrastructure, with the scope to enhance the discoverability and use of products, data and knowledge resulting from Scientific Earth Observation exploitation studies.
 
 Adhering by design to the “FAIR” (findable, accessible, interoperable, reproducible/reusable) principles, the Open Science Catalogue aims to support better knowledge discovery and innovation, and facilitate data and knowledge integration and reuse by the scientific community.
 
 ## This repository
-This repository holds the frontend app powered by [Nuxt](https://nuxtjs.org/). On every push to the `prepare-deployment` branch, a GitHub Action triggers a Docker image build, which is deployed in the Kubernetes cluster.
+This repository holds the static frontend app powered by [Nuxt](https://nuxtjs.org/). On every push to the `main` branch, a GitHub Action triggers a pre-rendering of the application and publishes it in the `gh-pages` branch, thus deploying a development version on the domain [eoepca.github.io/open-science-catalog-frontend](https://eoepca.github.io/open-science-catalog-frontend/). The production version is built as a docker image and is available at [opensciencedata.esa.int](https://opensciencedata.esa.int/).
 
 Every PR triggers GitHub Actions for linting and testing, and additionally checks for conventional style commits.
 ## Used EOEPCA endpoints

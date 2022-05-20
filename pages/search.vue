@@ -67,7 +67,7 @@
     </v-row>
     <item-grid
       :items="items"
-      show-empty-items
+      :show-empty-items="showEmptyItems"
     />
     <v-row>
       <v-col cols="12" class="text-center">

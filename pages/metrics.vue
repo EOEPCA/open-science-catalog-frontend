@@ -1,51 +1,37 @@
 <template>
-  <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
-    <v-row class="py-5">
+  <v-container
+    :class="$vuetify.breakpoint.lgAndUp
+      ? 'px-15 pt-8'
+      : (($vuetify.breakpoint.smAndDown && ($vuetify.breakpoint.width > $vuetify.breakpoint.height))
+        ? 'pa-0'
+        : 'pa-4')"
+  >
+    <v-row
+      v-if="!($vuetify.breakpoint.smAndDown && ($vuetify.breakpoint.width > $vuetify.breakpoint.height))"
+      class="py-5"
+    >
       <v-col>
         <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'">
           Metrics
         </h1>
       </v-col>
     </v-row>
-    <search-combobox
-      ref="searchBox"
-      embedded-mode
-      pagination-loop
-      class="my-4"
-      @searchQuery="handleSearchEmit"
-      @clearEvent="clearFilter"
-    />
     <v-row
       v-if="metrics"
       class="white"
       :style="`z-index: 5; ${showMobileFilters
-        ? 'position: absolute; display: flex; box-shadow: 0 5px 20px 5px #0005'
+        ? 'position: absolute; width: 95vw; display: flex; box-shadow: 0 5px 20px 5px #0005'
         : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
     >
-      <v-col class="d-flex">
-        <v-tabs
-          v-model="selectedTab"
-          @change="filterItems"
-        >
-          <v-tab>
-            All
-          </v-tab>
-          <v-tab
-            v-for="theme in metrics.themes"
-            :key="theme.id"
-          >
-            <div>
-              {{ theme.name }}
-            </div>
-          </v-tab>
-        </v-tabs>
+      <v-col class="d-flex align-center">
         <v-tooltip v-if="$vuetify.breakpoint.smAndUp" top>
           <template #activator="{ on, attrs }">
             <v-btn
               icon
               v-bind="attrs"
+              class="mr-3"
               v-on="on"
-              @click="() => { TOGGLE_EMPTY_ITEMS(); filterItems(null)}"
+              @click="() => { TOGGLE_EMPTY_ITEMS(); }"
             >
               <v-icon>
                 {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
@@ -56,9 +42,17 @@
             {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
           </span>
         </v-tooltip>
+        <search-combobox
+          ref="searchBox"
+          embedded-mode
+          pagination-loop
+          class="my-4 flex-grow-1"
+          @searchQuery="handleSearchEmit"
+          @clearEvent="clearFilter"
+        />
       </v-col>
     </v-row>
-    <v-row>
+    <v-row class="mt-0 mt-md-3">
       <v-col cols="12" class="pa-0 py-md-3">
         <MetricsTable
           v-if="metrics"
@@ -147,7 +141,6 @@ export default {
     return {
       dialog: false,
       filter: '',
-      selectedTab: 0,
       metrics: null,
       variables: [],
       staticVariables: [],
@@ -168,6 +161,16 @@ export default {
       'summary',
       'themes'
     ])
+  },
+  watch: {
+    showEmptyItems (status) {
+      if (status === false) {
+        this.$refs.searchBox.filterProducts()
+        this.filterItems(true)
+      } else {
+        this.filterItems()
+      }
+    }
   },
   mounted () {
     this.filterItems(null)
@@ -198,12 +201,11 @@ export default {
     clearFilter () {
       this.variables = this.staticVariables
     },
-    async filterItems (i) {
+    async filterItems (silent) {
       this.metrics = await this.retreiveMetrics()
       const variables = []
 
-      const themes = (i === 0 || !i) ? this.metrics.themes : [this.metrics.themes[i - 1]]
-      themes.forEach((theme) => {
+      this.metrics.themes.forEach((theme) => {
         theme.variables.forEach((variable) => {
           variables.push(variable)
         })
@@ -215,14 +217,18 @@ export default {
         return 0
       })
       if (!this.showEmptyItems) {
-        this.variables = [
-          ...variables.filter(v => v.summary.numberOfProducts >= 1)
-        ]
+        if (!silent) {
+          this.variables = [
+            ...variables.filter(v => v.summary.numberOfProducts >= 1)
+          ]
+        }
         this.staticVariables = [
           ...variables.filter(v => v.summary.numberOfProducts >= 1)
         ]
       } else {
-        this.variables = variables
+        if (!silent) {
+          this.variables = variables
+        }
         this.staticVariables = variables
       }
     }

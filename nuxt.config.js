@@ -40,7 +40,8 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    '@/assets/global.scss'
+    '@/assets/global.scss',
+    './static/css/materialdesignicons.min.css'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -78,7 +79,8 @@ export default {
     customVariables: ['~/assets/variables.scss'],
     treeShake: true,
     defaultAssets: {
-      font: false
+      font: false,
+      icons: false
     },
     options: {
       customProperties: true

@@ -17,15 +17,77 @@
         grow
       >
         <v-tab>
-          Projects
+          Variables
         </v-tab>
         <v-tab>
-          Variables
+          Projects
         </v-tab>
       </v-tabs>
       <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
         <v-tabs-items v-model="tab">
           <v-tab-item>
+            <search-combobox
+              ref="variableCombobox"
+              embedded-mode
+              pagination-loop
+              :item-type="'project'"
+              :pre-selected-items="[
+                {
+                  key: 'theme',
+                  value: theme.id
+                },
+                {
+                  key: 'type',
+                  value: 'Variable'
+                }
+              ]"
+              class="mt-8 mb-0"
+              @searchQuery="handleVariableEmit"
+            />
+            <v-row class="pt-8 d-flex align-center">
+              <v-col cols="12" md="4">
+                <span class="text-h4">
+                  Variables
+                </span>
+              </v-col>
+              <v-col cols="12" md="8" class="d-flex">
+                <v-spacer />
+                <v-tooltip top>
+                  <template #activator="{ on, attrs }">
+                    <v-btn
+                      icon
+                      class="mr-2"
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="TOGGLE_EMPTY_ITEMS"
+                    >
+                      <v-icon>
+                        {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <span>
+                    {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+                  </span>
+                </v-tooltip>
+                <v-select
+                  v-model="variablesDetailsOrder"
+                  dense
+                  hide-details
+                  :items="['Ascending', 'Descending']"
+                  label="Order direction"
+                  outlined
+                  :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
+                  @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
+                />
+              </v-col>
+            </v-row>
+            <item-grid
+              :items="variablesDetails"
+              :show-empty-items="showEmptyItems"
+            />
+          </v-tab-item>
+          <v-tab-item eager>
             <search-combobox
               ref="projectCombobox"
               embedded-mode
@@ -95,68 +157,6 @@
             </v-row>
             <item-grid
               :items="projectDetails"
-              :show-empty-items="showEmptyItems"
-            />
-          </v-tab-item>
-          <v-tab-item>
-            <search-combobox
-              ref="variableCombobox"
-              embedded-mode
-              pagination-loop
-              :item-type="'project'"
-              :pre-selected-items="[
-                {
-                  key: 'theme',
-                  value: theme.id
-                },
-                {
-                  key: 'type',
-                  value: 'Variable'
-                }
-              ]"
-              class="mt-8 mb-0"
-              @searchQuery="handleVariableEmit"
-            />
-            <v-row class="pt-8 d-flex align-center">
-              <v-col cols="12" md="4">
-                <span class="text-h4">
-                  Variables
-                </span>
-              </v-col>
-              <v-col cols="12" md="8" class="d-flex">
-                <v-spacer />
-                <v-tooltip top>
-                  <template #activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      class="mr-2"
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="TOGGLE_EMPTY_ITEMS"
-                    >
-                      <v-icon>
-                        {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
-                      </v-icon>
-                    </v-btn>
-                  </template>
-                  <span>
-                    {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
-                  </span>
-                </v-tooltip>
-                <v-select
-                  v-model="variablesDetailsOrder"
-                  dense
-                  hide-details
-                  :items="['Ascending', 'Descending']"
-                  label="Order direction"
-                  outlined
-                  :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
-                  @change="orderData('variables', 'name', variablesDetailsOrder, variablesSearch)"
-                />
-              </v-col>
-            </v-row>
-            <item-grid
-              :items="variablesDetails"
               :show-empty-items="showEmptyItems"
             />
           </v-tab-item>
