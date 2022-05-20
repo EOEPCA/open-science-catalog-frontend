@@ -6,60 +6,6 @@ on:
       - "prepare-deployment"
 
 jobs:
-  version-bump:
-    name: Bump version
-    runs-on: ${{ matrix.os }}
-
-    outputs:
-      newTag: ${{ steps.version-bump.outputs.newTag }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [16]
-
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v2
-        with:  
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup node env 🏗
-        uses: actions/setup-node@v3.1.0
-        with:
-          node-version: ${{ matrix.node }}
-          check-latest: true
-
-      - name: Cache node_modules 📦
-        uses: actions/cache@v3.0.1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies 👨🏻‍💻
-        run: npm ci --prefer-offline --no-audit
-
-      - name: cat package.json 🔎
-        run: cat ./package.json
-
-      - name: Automated Version Bump ⏫
-        id: version-bump
-        uses: phips28/gh-action-bump-version@master
-        with:
-          skip-tag:  "true"
-          tag-prefix: "v"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: cat package.json 🔎
-        run: cat ./package.json
-
-      - name: Output Step 🎉
-        env:
-          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: echo "new tag $NEW_TAG"
   push_to_registry:
     name: Build and push Docker image to Docker Hub
 
@@ -70,6 +16,9 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
@@ -77,4 +26,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: eoepca/open-science-catalog-frontend
-          tags: ${{ needs.version-bump.outputs.newTag }}
+          tags: ${{ steps.package-version.outputs.current-version }}
