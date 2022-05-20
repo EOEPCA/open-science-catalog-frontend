@@ -4,7 +4,9 @@ export default ({ $staticCatalog }, inject) => {
     if (item) {
       const staticFormat = item.links?.find(l => l.rel === 'self')
       const dynamicFormat = item.properties?.associations?.find(l => l.name === 'self')
-      selfLink = staticFormat ? staticFormat.href : dynamicFormat.href
+      if (staticFormat || dynamicFormat) {
+        selfLink = staticFormat ? staticFormat.href : dynamicFormat.href
+      }
     }
     return selfLink
       ? selfLink.replace($staticCatalog.defaults.baseURL, '')
