@@ -86,7 +86,7 @@ export default {
     ]),
     getProductLink () {
       const projectLink = this.product.links.find((link) => {
-        return link.href.includes('/projects')
+        return link.rel === 'collection' && link.href.includes('/projects')
       }).href.match(/projects\/([\s\S]*?)\.json/)
       return projectLink[1]
     }
