@@ -52,7 +52,7 @@ export default {
     '~/plugins/type-color',
     '~/plugins/axios',
     '~/plugins/markdown',
-    '~/plugins/extractSlug',
+    '~/plugins/staticCatalogHelpers',
     { src: '~plugins/ol', ssr: false }
   ],
 
