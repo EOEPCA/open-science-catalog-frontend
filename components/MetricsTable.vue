@@ -16,28 +16,6 @@
   >
     <template #[`header.name`]="{ header }">
       {{ header.text }}
-      <!-- It's kinda hacky to put this here - is there a better place? -->
-      <v-tooltip top>
-        <template #activator="{ on }">
-          <v-btn
-            icon
-            :style="`position: absolute; left: ${$vuetify.breakpoint.xsOnly
-              ? -34
-              : -60}px; top: 5px`"
-            v-on="on"
-            @click="expanded = expanded.length === items.length ? [] : items"
-          >
-            <v-icon
-              :small="$vuetify.breakpoint.xsOnly ? true : false"
-            >
-              {{ expanded.length === items.length
-                ? 'mdi-arrow-collapse-vertical'
-                : 'mdi-arrow-expand-vertical' }}
-            </v-icon>
-          </v-btn>
-        </template>
-        <span>{{ expanded.length === items.length ? 'Close all' : 'Expand all' }}</span>
-      </v-tooltip>
     </template>
     <template #[`item.data-table-expand`]="{ item, isExpanded, expand }">
       <v-btn
@@ -136,7 +114,7 @@
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
-              <td class="px-4 subCell">
+              <td class="subCell">
                 <Coverage
                   :products="[product]"
                 />
