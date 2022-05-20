@@ -60,11 +60,17 @@ export default {
   },
   watch: {
     highlight (feature) {
+      this.vectorSource.getFeatures().forEach(f => f.setStyle(this.defaultStyle))
       if (this.map && feature && feature.geometry) {
-        this.vectorSource.getFeatures().forEach(f => f.setStyle(this.defaultStyle))
         const highlightFeature = this.vectorSource.getFeatureById(feature.id)
         highlightFeature.setStyle(this.highlightStyle)
+        console.log(highlightFeature.getGeometry().getExtent())
         this.map.getView().fit(highlightFeature.getGeometry().getExtent(), {
+          padding: this.defaultPadding,
+          duration: 500
+        })
+      } else {
+        this.map.getView().fit([-180, -90, 180, 90], {
           padding: this.defaultPadding,
           duration: 500
         })
@@ -84,7 +90,7 @@ export default {
           width: 3
         }),
         fill: new ol.Fill({
-          color: 'rgba(0, 50, 71, 0.2)'
+          color: 'rgba(0, 50, 71, 0.1)'
         })
       })
 
