@@ -245,8 +245,10 @@ export default {
       'themes'
     ])
   },
-  async mounted () {
-    await this.$refs.projectCombobox.filterProducts()
+  mounted () {
+    this.$nextTick(async () => {
+      await this.$refs.projectCombobox.filterProducts()
+    })
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
@@ -297,7 +299,7 @@ export default {
       })
     },
     async handleProjectEmit (result) {
-      await Promise.all(result.items.map(async (project) => {
+      await Promise.all(result.items.filter(project => this.$extractSlug(project)).map(async (project) => {
         await this.retreiveProjects(this.$extractSlug(project)).then((projectResponse) => {
           project.links = projectResponse.links
           project.properties['osc:consortium'] = projectResponse.properties['osc:consortium']
