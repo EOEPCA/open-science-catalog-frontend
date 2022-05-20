@@ -244,16 +244,17 @@ export default {
     return {
       drawer: false,
       search: '',
-      title: 'Open Science Catalog'
+      title: 'Open Science Catalog',
+      devMode: null
     }
   },
   computed: {
     ...mapState([
       'appVersion'
-    ]),
-    devMode () {
-      return window && !window.location.host.includes('esa.int')
-    }
+    ])
+  },
+  mounted () {
+    this.devMode = window && !window.location.host.includes('esa.int')
   }
 }
 </script>
