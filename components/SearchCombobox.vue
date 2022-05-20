@@ -79,7 +79,6 @@
         item-text="field_name"
         return-object
         label=" "
-        auto-select-first
         outlined
         dense
         hide-details
