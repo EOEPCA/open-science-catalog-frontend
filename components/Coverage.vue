@@ -66,6 +66,7 @@
                   class="px-0"
                   style="cursor: pointer"
                   @mouseover="currentHighlight = product"
+                  @mouseleave="currentHighlight = null"
                 >
                   <v-list-item-content>
                     <v-list-item-title>{{ product.properties.title }}</v-list-item-title>

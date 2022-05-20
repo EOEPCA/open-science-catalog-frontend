@@ -25,17 +25,21 @@
             {{ getType(item) }}
           </v-chip>
           <v-spacer />
-          <div v-if="getType(item) === 'project'">
-            <v-icon small>
-              mdi-calendar-today
-            </v-icon>
-            <small>{{ item.properties.start_datetime }}</small>
-            -
-            <v-icon small>
-              mdi-calendar
-            </v-icon>
-            <small>{{ item.properties.end_datetime }}</small>
-          </div>
+          <template v-if="getType(item) === 'project'">
+            <div class="projectDate">
+              <v-icon small>
+                mdi-calendar-today
+              </v-icon>
+              <small>{{ item.properties.start_datetime }}</small>
+              -
+            </div>
+            <div class="projectDate">
+              <v-icon small>
+                mdi-calendar
+              </v-icon>
+              <small>{{ item.properties.end_datetime }}</small>
+            </div>
+          </template>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
           {{ getType(item) === 'variable' ? item.name : item.properties.title }}
@@ -112,3 +116,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.projectDate {
+  white-space: nowrap;
+}
+</style>
