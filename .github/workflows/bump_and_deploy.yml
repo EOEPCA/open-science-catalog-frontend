@@ -24,4 +24,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: eoepca/open-science-catalog-frontend
-          tags: ${{ steps.package-version.outputs.current-version }}
+          tags: "v${{ steps.package-version.outputs.current-version }}"
