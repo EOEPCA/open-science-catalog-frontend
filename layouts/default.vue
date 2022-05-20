@@ -201,6 +201,7 @@
           class="white--text text-decoration-none text-uppercase"
           v-text="title"
         />
+        <span v-if="devMode">[DEVELOPMENT VERSION]</span>
       </v-toolbar-title>
       <v-spacer />
       <a href="https://www.esa.int/" target="_blank" class="d-flex align-center">
@@ -249,7 +250,10 @@ export default {
   computed: {
     ...mapState([
       'appVersion'
-    ])
+    ]),
+    devMode () {
+      return window && !window.location.host.includes('esa.int')
+    }
   }
 }
 </script>
