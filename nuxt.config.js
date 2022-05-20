@@ -51,6 +51,7 @@ export default {
     '~/plugins/type-color',
     '~/plugins/axios',
     '~/plugins/markdown',
+    '~/plugins/extractSlug',
     { src: '~plugins/ol', ssr: false }
   ],
 

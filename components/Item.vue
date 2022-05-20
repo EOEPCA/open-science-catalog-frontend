@@ -15,7 +15,7 @@
             <h1
               class="primary--text"
               :class="$vuetify.breakpoint.mdAndUp ? 'mt-5' : 'mt-5'"
-              style="font-size: 3em; word-break: break-word; line-height: normal"
+              :style="`font-size: ${$vuetify.breakpoint.mdAndUp ? 3 : 2.3}em; word-break: break-word; line-height: normal`"
             >
               {{ title }}
             </h1>
@@ -58,7 +58,7 @@
               :to="`/projects/${chips.project.url}`"
               class="mr-2 mb-2 text-uppercase"
             >
-              {{ chips.project.url }}
+              {{ chips.project.name }}
             </v-chip>
             <v-chip
               v-if="chips.status"

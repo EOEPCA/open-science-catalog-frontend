@@ -16,7 +16,10 @@
       }"
       :nav="{
         theme: project.collection,
-        project: project.properties.title
+        project: {
+          url: $extractSlug(project),
+          name: project.properties.title
+        }
       }"
     >
       <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">

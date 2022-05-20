@@ -19,7 +19,7 @@
         >
           {{ item.type }}
         </v-chip>
-        <span class="text-capitalize">{{ item.text }}</span>
+        <span>{{ item.text }}</span>
       </v-breadcrumbs-item>
     </template>
   </v-breadcrumbs>
@@ -37,8 +37,8 @@ export default {
       default: null
     },
     project: {
-      type: String,
-      default: null
+      type: Object,
+      default: () => null
     },
     product: {
       type: String,
@@ -64,8 +64,8 @@ export default {
         ...(this.project
           ? [
               {
-                text: this.project,
-                href: `/projects/${this.slugify(this.project)}`,
+                text: this.project.name,
+                href: `/projects/${this.project.url}`,
                 type: 'project'
               }
             ]
@@ -102,5 +102,9 @@ export default {
 
 .navigationBreadcrumb li {
   font-size: 17px !important;
+}
+
+::v-deep .v-breadcrumbs__item {
+  display: inline;
 }
 </style>
