@@ -14,7 +14,7 @@
           <v-col>
             <h1
               class="primary--text"
-              :class="$vuetify.breakpoint.mdAndUp ? 'mt-5' : 'mt-5'"
+              :class="($vuetify.breakpoint.smAndDown && ($vuetify.breakpoint.width > $vuetify.breakpoint.height)) ? 'mt-0' : 'mt-5'"
               :style="`font-size: ${$vuetify.breakpoint.mdAndUp ? 3 : 2.3}em; word-break: break-word; line-height: normal`"
             >
               {{ title }}
