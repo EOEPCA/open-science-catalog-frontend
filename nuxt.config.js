@@ -8,6 +8,7 @@ const routerBase = process.env.ROUTER_BASE || '/'
 export default {
   publicRuntimeConfig: {
     staticEndpoint: process.env.STATIC_ENDPOINT,
+    staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE,
     dynamicEndpoint: process.env.DYNAMIC_ENDPOINT,
     backendEndpoint: process.env.BACKEND_ENDPOINT,
     authEnabled: process.env.ENABLE_AUTH

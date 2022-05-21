@@ -12,7 +12,7 @@ const getUriWithParam = (baseUrl, params) => {
 
 export default function ({
   $axios,
-  $config: { staticEndpoint, dynamicEndpoint, backendEndpoint }
+  $config: { staticEndpoint, staticBaseToReplace, dynamicEndpoint, backendEndpoint }
 }, inject) {
   const staticCatalog = $axios.create()
   staticCatalog.setBaseURL(staticEndpoint)
@@ -29,6 +29,7 @@ export default function ({
 
   const dynamicCatalog = $axios.create()
   dynamicCatalog.setBaseURL(dynamicEndpoint)
+  staticCatalog.baseToReplace = staticBaseToReplace
   // Add "f=json" query param to all requests going to the dynamic catalog
   dynamicCatalog.onRequest((config) => {
     const newUrl = getUriWithParam(config.baseURL + config.url, { f: 'json' })
