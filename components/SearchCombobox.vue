@@ -51,6 +51,7 @@
         :search-input.sync="searchText"
         outlined
         dense
+        autofocus
         hide-details
         class="headless-input customOutline"
         style="width: 0"
@@ -394,9 +395,6 @@ export default {
   },
   mounted () {
     this.$refs.headless.focus()
-    if (!this.embeddedMode) {
-      this.$refs.headless.activateMenu()
-    }
   },
   methods: {
     ...mapActions('dynamicCatalog', [
