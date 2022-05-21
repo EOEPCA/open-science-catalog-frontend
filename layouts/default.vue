@@ -224,9 +224,7 @@
       <v-spacer />
       <small class="justify-right">
         <a href="https://github.com/EOEPCA/open-science-catalog-frontend" target="_blank" class="white--text">open-science-catalog</a>
-        <span> v{{ `${$store.getters.appVersion
-          .split('.')[0]}.${$store.getters.appVersion
-          .split('.')[1]}` }} by</span>
+        <span> v{{ $store.getters.appVersion }} by</span>
         <a href="https://eox.at" target="_blank" class="white--text mx-1">
           <img :src="withBase('/img/EOX_Logo_weiss.svg')" height="11px" class="my-0">
         </a>
