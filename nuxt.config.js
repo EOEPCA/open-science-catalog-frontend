@@ -6,11 +6,11 @@ const version = JSON.parse(packageJson).version || 0
 const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
-  // Target: https://go.nuxtjs.dev/config-target
-  target: 'static',
-
-  generate: {
-    fallback: true
+  publicRuntimeConfig: {
+    staticEndpoint: process.env.STATIC_ENDPOINT,
+    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT,
+    backendEndpoint: process.env.BACKEND_ENDPOINT,
+    authEnabled: process.env.ENABLE_AUTH
   },
 
   router: {
@@ -52,6 +52,7 @@ export default {
     '~/plugins/type-color',
     '~/plugins/axios',
     '~/plugins/markdown',
+    '~/plugins/auth-temp', // TEMP while auth is disabled
     '~/plugins/staticCatalogHelpers',
     { src: '~plugins/ol', ssr: false }
   ],
@@ -71,7 +72,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    // '@nuxtjs/auth-next'
   ],
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -106,31 +107,31 @@ export default {
         }
       })
     ]
-  },
-
-  auth: {
-    strategies: {
-      oidc: {
-        scheme: 'openIDConnect',
-        clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
-        endpoints: {
-          configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
-        },
-        responseType: 'token id_token',
-        idToken: {
-          property: 'id_token',
-          maxAge: 1800
-        },
-        scope: 'profile email',
-        acrValues: ['passport_social']
-      }
-    },
-    redirect: {
-      login: '/login',
-      logout: '/',
-      callback: '/oauth-callback',
-      home: '/'
-    },
-    fullPathRedirect: true
   }
+
+  // auth: {
+  //   strategies: {
+  //     oidc: {
+  //       scheme: 'openIDConnect',
+  //       clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
+  //       endpoints: {
+  //         configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
+  //       },
+  //       responseType: 'token id_token',
+  //       idToken: {
+  //         property: 'id_token',
+  //         maxAge: 1800
+  //       },
+  //       scope: 'profile email',
+  //       acrValues: ['passport_social']
+  //     }
+  //   },
+  //   redirect: {
+  //     login: '/login',
+  //     logout: '/',
+  //     callback: '/oauth-callback',
+  //     home: '/'
+  //   },
+  //   fullPathRedirect: true
+  // }
 }

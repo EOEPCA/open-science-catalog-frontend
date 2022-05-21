@@ -56,7 +56,7 @@
               Products
             </v-chip>.
           </p>
-          <p>Choose a theme below to get started or access the <a href="https://opensciencedata.esa.int/api/docs/" target="_blank">API Documentation</a>!</p>
+          <p>Choose a theme below to get started or access the <a :href="$dynamicCatalog.defaults.baseURL" target="_blank">API Documentation</a>!</p>
           <p>
             <v-btn
               dark
@@ -133,9 +133,6 @@ import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'IndexPage',
-  async asyncData ({ store }) {
-    await store.dispatch('staticCatalog/retreiveMetrics')
-  },
   head: {
     titleTemplate: 'ESA Open Science Catalog'
   },
@@ -143,6 +140,9 @@ export default {
     ...mapState('staticCatalog', [
       'themes'
     ])
+  },
+  async created () {
+    await this.$store.dispatch('staticCatalog/retreiveMetrics')
   },
   methods: {
     ...mapActions('staticCatalog', [

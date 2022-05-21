@@ -1,66 +1,27 @@
-name: Bump version and deploy
+name: Build Docker Image
 
 on:
   push:
     branches:
-      - "main"
+      - "docker-image"
 
 jobs:
-  bump-and-deploy:
-    runs-on: ${{ matrix.os }}
+  push_to_registry:
+    name: Build and push Docker image to Docker Hub
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node: [16]
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout 🛎
+      - name: Check out the repo
         uses: actions/checkout@v2
-        with:  
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup node env 🏗
-        uses: actions/setup-node@v3.1.0
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
         with:
-          node-version: ${{ matrix.node }}
-          check-latest: true
-
-      - name: Cache node_modules 📦
-        uses: actions/cache@v3.0.1
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install dependencies 👨🏻‍💻
-        run: npm ci --prefer-offline --no-audit
-
-      - name: cat package.json 🔎
-        run: cat ./package.json
-
-      - name: Automated Version Bump ⏫
-        id: version-bump
-        uses: phips28/gh-action-bump-version@master
-        with:
-          tag-prefix: "v"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: cat package.json 🔎
-        run: cat ./package.json
-
-      - name: Output Step 🎉
-        env:
-          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: echo "new tag $NEW_TAG"
-
-      - name: Generate ⚙️
-        run: ROUTER_BASE=/${{ github.event.repository.name }}/ npm run generate
-
-      - name: Deploy 🚀
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: ./
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: eoepca/open-science-catalog-frontend
+          tags: "v${{ steps.package-version.outputs.current-version }}"
