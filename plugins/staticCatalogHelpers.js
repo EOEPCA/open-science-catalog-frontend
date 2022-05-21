@@ -9,15 +9,15 @@ export default ({ $staticCatalog }, inject) => {
       }
     }
     return selfLink
-      ? selfLink.replace($staticCatalog.defaults.baseURL, '')
+      ? selfLink.replace($staticCatalog.baseToReplace, '')
         .replace('/projects/', '')
         .replace('/products/', '')
         .replace('.json', '')
       : undefined
   })
   inject('replaceStaticBase', (link) => {
-    // TODO
     return link
-      .replace('https://eoepca.github.io/open-science-catalog-metadata', '')
+      .replace($staticCatalog.baseToReplace, '')
+      .replace('.json', '')
   })
 }

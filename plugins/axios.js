@@ -12,7 +12,8 @@ const getUriWithParam = (baseUrl, params) => {
 
 export default function ({ $axios }, inject) {
   const staticCatalog = $axios.create()
-  staticCatalog.setBaseURL('https://eoepca.github.io/open-science-catalog-metadata')
+  staticCatalog.setBaseURL('https://metadata.osc.develop.eoepca.org/open-science-catalog-metadata')
+  staticCatalog.baseToReplace = 'https://eoepca.github.io/open-science-catalog-metadata'
   // Add ".json" to all requests going to the static catalog
   staticCatalog.onRequest((config) => {
     const newUrl = `${config.url}.json`

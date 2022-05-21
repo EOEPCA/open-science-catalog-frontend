@@ -143,9 +143,10 @@ export default {
       // format products
       await Promise.all(this.variable.links.map(async (link) => {
         if (link.rel === 'item') {
-          await this.$staticCatalog.$get($replaceStaticBase(link.href)).then((productResponse) => {
-            this.products.push(productResponse)
-          }).catch(err => console.error(err))
+          await this.$staticCatalog
+            .$get(this.$replaceStaticBase(link.href)).then((productResponse) => {
+              this.products.push(productResponse)
+            }).catch(err => console.error(err))
         }
       }))
     }).catch(err => console.error(err))
