@@ -92,10 +92,10 @@ export default {
     title: 'Contributions Status'
   },
   async created () {
-    const themes = await this.$axios.$get(`${this.$metadataBackend}/items/themes?filter=pending`)
-    const variables = await this.$axios.$get(`${this.$metadataBackend}/items/variables?filter=pending`)
-    const projects = await this.$axios.$get(`${this.$metadataBackend}/items/projects?filter=pending`)
-    const products = await this.$axios.$get(`${this.$metadataBackend}/items/products?filter=pending`)
+    const themes = await this.$metadataBackend.$get('/items/themes?filter=pending')
+    const variables = await this.$metadataBackend.$get('/items/variables?filter=pending')
+    const projects = await this.$metadataBackend.$get('/items/projects?filter=pending')
+    const products = await this.$metadataBackend.$get('/items/products?filter=pending')
     this.pendingItems = {
       themes,
       variables,

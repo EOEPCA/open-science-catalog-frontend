@@ -22,51 +22,40 @@
       required
       :rules="[v => !!v || 'Name is required']"
     />
-    <v-select
+    <v-text-field
       v-else-if="selectedItemType === 'Theme'"
       v-model="name"
-      :items="themes"
-      item-value="name"
-      item-text="name"
-      label="Select theme"
+      label="Theme name"
       outlined
       required
-      :rules="[v => !!v || 'Theme is required']"
+      :rules="[v => !!v || 'Theme Name required']"
       @change="fillForm"
     />
-    <v-select
+    <v-text-field
       v-else-if="selectedItemType === 'Variable'"
       v-model="name"
-      :items="variables.map((variable) => variable.name.slice(0, -1))"
-      item-value="name"
-      item-text="name"
-      label="Select Variable"
+      label="Variable Name"
       outlined
       required
-      :rules="[v => !!v || 'Variable is required']"
+      :rules="[v => !!v || 'Variable Name required']"
       @change="fillForm"
     />
     <v-text-field
       v-else-if="selectedItemType === 'Project'"
       v-model="name"
-      label="Project ID"
-      hint="e.g. project-99 (case sensitive)"
+      label="Project Name"
       outlined
       required
-      :rules="[
-        (v) => !!v || 'Project ID is required',
-        (v) => /^[a-zA-Z]+-{1}[0-9]+$/.test(v) || 'Project ID format is incorrect'
-      ]"
+      :rules="[v => !!v || 'Project Name is required']"
       @change="fillForm"
     />
     <v-text-field
       v-else-if="selectedItemType === 'Product'"
       v-model="name"
-      label="Product ID"
-      hint="e.g. product-84 (case sensitive)"
+      label="Product Name"
       outlined
       required
-      :rules="[v => !!v || 'Product ID is required']"
+      :rules="[v => !!v || 'Product Name is required']"
       @change="fillForm"
     />
     <v-tabs
@@ -200,10 +189,8 @@
       v-model="WMSLink"
       label="WMS Link"
       outlined
-      required
       :rules="[
-        (v) => !!v || 'WMS link is required',
-        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'WMS link must be valid'
+        (v) => (!v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v)) || 'WMS link must be valid'
       ]"
     />
     <v-text-field
@@ -366,7 +353,8 @@ export default {
       loading: false,
       success: false,
       descriptionToggle: null,
-      deleteDialog: false
+      deleteDialog: false,
+      id: null
     }
   },
   head: {
@@ -386,21 +374,14 @@ export default {
     })
     if ('theme' in this.$route.query) {
       this.selectedItemType = 'Theme'
-      this.name = this.$route.query.theme.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-      this.fillForm()
     } else if ('variable' in this.$route.query) {
       this.selectedItemType = 'Variable'
-      this.name = this.$route.query.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-      this.fillForm()
     } else if ('project' in this.$route.query) {
       this.selectedItemType = 'Project'
-      this.name = this.$route.query.project
-      this.fillForm()
     } else if ('product' in this.$route.query) {
       this.selectedItemType = 'Product'
-      this.name = this.$route.query.product
-      this.fillForm()
     }
+    this.fillForm()
   },
   methods: {
     ...mapActions('staticCatalog', [
@@ -411,18 +392,23 @@ export default {
     async fillForm (clear) {
       if (clear !== 'clear') {
         if (this.selectedItemType === 'Theme') {
-          const selectedTheme = this.themes.find(theme => theme.name === this.name)
+          const selectedTheme = this.themes.find(theme => this.slugify(theme.name) === this.$route.query.theme)
+          this.name = selectedTheme.name
           this.description = selectedTheme.description
           this.eo4societyURL = selectedTheme.website
+          this.imageLink = selectedTheme.image
         } else if (this.selectedItemType === 'Variable') {
-          await this.retreiveVariable(this.slugify(this.name)).then((selectedVariable) => {
+          await this.retreiveVariable(this.$route.query.variable).then((selectedVariable) => {
             this.description = selectedVariable.description
             // temporary hack to pre-select parent theme
+            this.name = selectedVariable.id
             this.parentThemes = selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
             this.link = selectedVariable.links.find(link => link.rel === 'via').href
           }).catch(err => console.error(err))
         } else if (this.selectedItemType === 'Project') {
-          await this.retreiveProjects(this.name).then((selectedProject) => {
+          await this.retreiveProjects(this.$route.query.project).then((selectedProject) => {
+            this.name = selectedProject.properties.title
+            this.id = selectedProject.id
             this.description = selectedProject.properties.description
             this.parentThemes = selectedProject.properties['osc:themes']
             // TODO: cleanup
@@ -435,7 +421,9 @@ export default {
             console.error(err)
           })
         } else if (this.selectedItemType === 'Product') {
-          await this.retreiveProduct(this.slugify(this.name)).then((selectedProduct) => {
+          await this.retreiveProduct(this.$route.query.product).then((selectedProduct) => {
+            this.name = selectedProduct.properties.title
+            this.id = selectedProduct.id
             this.description = selectedProduct.properties.description
             this.parentThemes = selectedProduct.properties['osc:themes']
             this.parentVariables = selectedProduct.properties['osc:variable']
@@ -446,6 +434,7 @@ export default {
             this.satelliteMissions = selectedProduct.properties['osc:missions']
             this.eo4societyURL = selectedProduct.links[0].href
             this.link = selectedProduct.links[1].href
+            // TODO WMS link
           }).catch((err) => {
             console.error(err)
           })
@@ -468,8 +457,8 @@ export default {
         this.loading = true
         try {
           if (this.type === 'add') {
-            await this.$axios.$post(
-              `${this.$metadataBackend}/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+            await this.$metadataBackend.$post(
+              `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -482,8 +471,8 @@ export default {
                 link: this.link
               })
           } else {
-            await this.$axios.$put(
-              `${this.$metadataBackend}/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+            await this.$metadataBackend.$put(
+              `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -507,8 +496,8 @@ export default {
     },
     async deleteItem () {
       this.loading = true
-      await this.$axios.$delete(
-        `${this.$metadataBackend}/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {}
+      await this.$metadataBackend.$delete(
+        `/items/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false
