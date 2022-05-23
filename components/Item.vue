@@ -2,6 +2,7 @@
   <div>
     <client-only>
       <bread-crumb-nav
+        v-if="nav"
         :theme="nav.theme"
         :project="nav.project"
         :variable="nav.variable"
@@ -51,7 +52,7 @@
               {{ chips.variable }}
             </v-chip>
             <v-chip
-              v-if="chips.project"
+              v-if="chips.project && chips.project.url !== null"
               color="primary"
               dark
               label
@@ -136,7 +137,7 @@
               <strong class="text-uppercase mr-2">Consortium</strong> {{ details.consortium.join(', ') }}
             </div>
             <div
-              v-if="details['osc:project']"
+              v-if="details && details['osc:project']"
               class="mb-2"
             >
               <v-icon left>
@@ -144,10 +145,14 @@
               </v-icon>
               <strong class="text-uppercase mr-2">Project</strong>
               <a
+                v-if="chips.project"
                 :href="`/projects/${chips.project.url}`"
               >
                 {{ details['osc:project'] }}
               </a>
+              <span v-else>
+                {{ details['osc:project'] }}
+              </span>
             </div>
             <div v-if="details['osc:missions']" class="mb-2">
               <v-icon left>
