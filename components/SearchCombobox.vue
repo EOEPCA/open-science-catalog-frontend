@@ -166,6 +166,10 @@ export default {
     paginationLoop: {
       type: Boolean,
       default: false
+    },
+    sortOnCreated: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -392,6 +396,9 @@ export default {
         this.variables.push(variable.name)
       })
     })
+    if (this.sortOnCreated) {
+      this.filterProducts()
+    }
   },
   mounted () {
     if (!this.embeddedMode) {
