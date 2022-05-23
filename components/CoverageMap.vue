@@ -1,5 +1,5 @@
 <template>
-  <no-ssr>
+  <client-only>
     <div
       style="position: relative"
     >
@@ -19,7 +19,7 @@
         :style="`height: ${$vuetify.breakpoint.smOnly ? '200px' : '400px'}; width: 100%;`"
       />
     </div>
-  </no-ssr>
+  </client-only>
 </template>
 
 <script>

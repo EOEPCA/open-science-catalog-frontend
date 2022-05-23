@@ -121,13 +121,13 @@
       width="1000"
     >
       <div class="white">
-        <no-ssr>
+        <client-only>
           <CoverageMap
             ref="map"
             enable-draw
             @drawEnd="(e) => { handleDraw(e); showMap = false }"
           />
-        </no-ssr>
+        </client-only>
       </div>
     </v-dialog>
   </div>
@@ -394,7 +394,9 @@ export default {
     })
   },
   mounted () {
-    this.$refs.headless.focus()
+    if (!this.embeddedMode) {
+      this.$refs.headless.focus()
+    }
   },
   methods: {
     ...mapActions('dynamicCatalog', [
