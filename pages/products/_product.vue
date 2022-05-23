@@ -1,15 +1,15 @@
 <template>
-  <div v-if="product && project">
+  <div v-if="product">
     <Item
       :title="product.properties.title"
       :description="product.properties.description"
       :chips="{
         themes: product.properties['osc:themes'],
         variable: product.properties['osc:variable'],
-        project: {
+        project: project !== null ? {
           url: getProductLink(),
           name: project.properties.title
-        }
+        } : null
       }"
       :details="{
         start_datetime: product.properties.start_datetime,
@@ -21,10 +21,10 @@
       }"
       :nav="{
         theme: product['osc:theme'],
-        project: {
+        project: project !== null ? {
           url: $extractSlug(project),
           name: project.properties.title
-        },
+        } : null,
         product: product.properties.title
       }"
     >
@@ -75,9 +75,11 @@ export default {
     await this.retreiveProduct(this.$route.params.product).then((product) => {
       this.product = product
     }).catch(err => console.error(err))
-    await this.retreiveProjects(this.getProductLink()).then((project) => {
-      this.project = project
-    }).catch(err => console.error(err))
+    if (this.getProductLink()) {
+      await this.retreiveProjects(this.getProductLink()).then((project) => {
+        this.project = project
+      }).catch(err => console.error(err))
+    }
   },
   methods: {
     ...mapActions('staticCatalog', [
@@ -87,8 +89,8 @@ export default {
     getProductLink () {
       const projectLink = this.product.links.find((link) => {
         return link.rel === 'collection' && link.href.includes('/projects')
-      }).href.match(/projects\/([\s\S]*?)\.json/)
-      return projectLink[1]
+      })
+      return projectLink ? projectLink.href.match(/projects\/([\s\S]*?)\.json/)[1] : null
     }
   }
 }
