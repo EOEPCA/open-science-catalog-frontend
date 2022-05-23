@@ -24,7 +24,10 @@
     >
       <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
         <search-combobox
+          ref="searchBox"
           embedded-mode
+          :sort-by="productsFilterSortBy ? productsFilterSortBy : 'title'"
+          :sort-order="productsFilterOrder"
           :pre-selected-items="[
             {
               key: 'project',
@@ -36,6 +39,7 @@
             }
           ]"
           class="mt-8 mb-0"
+          @searchQuery="handleSearchEmit"
         />
         <v-row class="pt-8">
           <v-col cols="12" md="4">
@@ -49,11 +53,12 @@
               v-model="productsFilterSortBy"
               dense
               hide-details
-              :items="['Name']"
+              :items="[{ text: 'Name', value: 'title' }]"
               label="Sort by"
               outlined
               class="mr-2"
               :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
+              @change="filterProducts()"
             />
             <v-select
               v-model="productsFilterOrder"
@@ -63,6 +68,7 @@
               label="Order"
               outlined
               :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
+              @change="filterProducts()"
             />
           </v-col>
         </v-row>
@@ -97,8 +103,8 @@ export default {
       project: null,
       products: [],
       productsSearch: '',
-      productsFilterSortBy: 'Name',
-      productsFilterOrder: 'Ascending',
+      productsFilterSortBy: null,
+      productsFilterOrder: null,
       showDescription: false,
       page: 1,
       numberOfPages: 1
@@ -132,7 +138,18 @@ export default {
     ]),
     ...mapActions('staticCatalog', [
       'retreiveProjects'
-    ])
+    ]),
+    filterProducts (init) {
+      this.$nextTick(() => {
+        if (this.productsFilterSortBy && this.productsFilterOrder) {
+          this.$refs.searchBox.filterProducts(init)
+        }
+      })
+    },
+    handleSearchEmit (result) {
+      this.products = result.items
+      this.numberOfPages = result.numberOfPages
+    }
   }
 }
 </script>

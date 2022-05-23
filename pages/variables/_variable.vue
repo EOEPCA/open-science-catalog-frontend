@@ -16,7 +16,10 @@
     >
       <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
         <search-combobox
+          ref="searchBox"
           embedded-mode
+          :sort-by="productsFilterSortBy ? productsFilterSortBy : 'title'"
+          :sort-order="productsFilterOrder"
           :pre-selected-items="[
             {
               key: 'variable',
@@ -28,6 +31,7 @@
             }
           ]"
           class="mt-8 mb-0"
+          @searchQuery="handleSearchEmit"
         />
         <v-row class="pt-8">
           <v-col cols="12" md="4">
@@ -58,16 +62,6 @@
               class="mr-2"
               :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
               @change="filterProducts()"
-            />
-            <v-select
-              v-if="metrics"
-              v-model="productsFilterMission"
-              dense
-              hide-details
-              :items="metrics.missions.map(m => m.name).sort()"
-              label="Satellite mission"
-              :style="`max-width:${$vuetify.breakpoint.lgAndUp ? 150 : 120}px`"
-              outlined
             />
           </v-col>
         </v-row>
@@ -110,9 +104,8 @@ export default {
           value: 'description'
         }
       ],
-      productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending',
-      productsFilterMission: null,
+      productsFilterSortBy: null,
+      productsFilterOrder: null,
       metrics: null,
       page: 1,
       numberOfPages: 1,
@@ -161,22 +154,16 @@ export default {
       'retreiveMetrics',
       'retreiveVariable'
     ]),
-    async filterProducts () {
-      // const queryString = `/collections/metadata:main/items?type=dataset&q=${str}&sortby=${this.productsFilterSortBy}`
-      // TODO proper filtering (todo on backend)
-      const queryString = `/collections/metadata:main/items?type=dataset${
-        `&q=${this.$metaInfo.title}`}${
-          (this.productsSearch ? `&q=${this.productsSearch}` : '')}${
-            (this.productsFilterMission ? `&q=${this.productsFilterMission}` : '')}&sortby=${
-              this.productsFilterSortBy}&offset=${
-                (this.page - 1) * 12}`
-      await this.fetchCustomQuery(queryString).then((productsResponse) => {
-        if (this.productsFilterOrder === 'Descending') {
-          this.products = productsResponse.features.reverse()
+    filterProducts (init) {
+      this.$nextTick(() => {
+        if (this.productsFilterSortBy && this.productsFilterOrder) {
+          this.$refs.searchBox.filterProducts(init)
         }
-        this.products = productsResponse.features
-        this.numberOfPages = Math.round(productsResponse.numberMatched / 12)
       })
+    },
+    handleSearchEmit (result) {
+      this.products = result.items
+      this.numberOfPages = result.numberOfPages
     }
   }
 }
