@@ -209,7 +209,8 @@ export default {
       variablesDetailsRaw: [],
       variablesSearch: '',
       variablesDetailsOrder: 'Ascending',
-      showDescription: false
+      showDescription: false,
+      secondTabMounted: false
     }
   },
   head () {
@@ -224,6 +225,16 @@ export default {
     ...mapState('staticCatalog', [
       'themes'
     ])
+  },
+  watch: {
+    tab (newTab) {
+      if (newTab === 1 && !this.secondTabMounted) {
+        this.$nextTick(async () => {
+          await this.$refs.projectCombobox.filterProducts()
+          this.secondTabMounted = true
+        })
+      }
+    }
   },
   async created () {
     const theme = await this.$store.dispatch('staticCatalog/retreiveTheme', this.$route.params.theme)
@@ -254,11 +265,6 @@ export default {
     this.variablesDetailsRaw = variablesDetailsRaw
     this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
     this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
-  },
-  mounted () {
-    this.$nextTick(async () => {
-      await this.$refs.projectCombobox.filterProducts()
-    })
   },
   methods: {
     ...mapMutations([
