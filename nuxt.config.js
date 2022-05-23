@@ -11,7 +11,7 @@ export default {
     staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata',
     dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.osc.develop.eoepca.org',
     backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://open-science-catalog-backend.develop.eoepca.org',
-    authEnabled: process.env.ENABLE_AUTH || 'true'
+    authEnabled: process.env.ENABLE_AUTH || true
   },
 
   // Target: https://go.nuxtjs.dev/config-target

@@ -200,10 +200,8 @@
       v-model="WMSLink"
       label="WMS Link"
       outlined
-      required
       :rules="[
-        (v) => !!v || 'WMS link is required',
-        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'WMS link must be valid'
+        (v) => (!v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v)) || 'WMS link must be valid'
       ]"
     />
     <v-text-field
@@ -468,8 +466,8 @@ export default {
         this.loading = true
         try {
           if (this.type === 'add') {
-            await this.$axios.$post(
-              `${this.$metadataBackend}/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+            await this.$metadataBackend.$post(
+              `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -482,8 +480,8 @@ export default {
                 link: this.link
               })
           } else {
-            await this.$axios.$put(
-              `${this.$metadataBackend}/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+            await this.$metadataBackend.$put(
+              `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -507,8 +505,8 @@ export default {
     },
     async deleteItem () {
       this.loading = true
-      await this.$axios.$delete(
-        `${this.$metadataBackend}/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {}
+      await this.$metadataBackend.$delete(
+        `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false
