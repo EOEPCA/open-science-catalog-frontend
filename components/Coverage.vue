@@ -116,14 +116,14 @@
               cols="12"
               sm="7"
             >
-              <no-ssr>
+              <client-only>
                 <CoverageMap
                   v-if="products"
                   ref="map"
                   :features="products"
                   :highlight="currentHighlight"
                 />
-              </no-ssr>
+              </client-only>
             </v-col>
           </v-row>
         </v-container>
