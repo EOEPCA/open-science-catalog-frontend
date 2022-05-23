@@ -129,7 +129,7 @@
                     </v-btn>
                   </template>
                   <span>
-                    {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+                    {{ showEmptyItems ? 'Hide empty projects': 'Show empty projects' }}
                   </span>
                 </v-tooltip>
                 <v-select
