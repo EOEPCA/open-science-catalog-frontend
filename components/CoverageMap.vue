@@ -104,7 +104,7 @@ export default {
         })
       })
 
-      fetch('https://s2maps-tiles.eu/wmts/1.0.0/WMTSCapabilities.xml')
+      fetch('https://s2maps.eu/WMTSCapabilities.xml')
         .then((response) => {
           return response.text()
         })
