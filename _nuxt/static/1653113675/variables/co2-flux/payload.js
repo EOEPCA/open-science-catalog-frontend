@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/co2-flux", {data:[{}],fetch:{},mutations:[]});

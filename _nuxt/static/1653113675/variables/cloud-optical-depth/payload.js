@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/cloud-optical-depth", {data:[{}],fetch:{},mutations:[]});

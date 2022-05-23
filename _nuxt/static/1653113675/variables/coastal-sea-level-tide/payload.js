@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/coastal-sea-level-tide", {data:[{}],fetch:{},mutations:[]});

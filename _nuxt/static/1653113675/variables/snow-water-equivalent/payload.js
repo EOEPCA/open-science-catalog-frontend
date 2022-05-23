@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/snow-water-equivalent", {data:[{}],fetch:{},mutations:[]});

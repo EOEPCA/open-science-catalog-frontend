@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/earth-surface-short-wave-bidirectional-reflectance", {data:[{}],fetch:{},mutations:[]});

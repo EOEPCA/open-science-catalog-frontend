@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/ocean-diffuse-attenuation-coefficient-dac", {data:[{}],fetch:{},mutations:[]});

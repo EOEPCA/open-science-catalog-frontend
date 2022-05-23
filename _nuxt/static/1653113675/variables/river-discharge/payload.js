@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/river-discharge", {data:[{}],fetch:{},mutations:[]});

@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/ice-sheet-topography", {data:[{}],fetch:{},mutations:[]});

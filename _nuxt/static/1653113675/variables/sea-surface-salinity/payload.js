@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/sea-surface-salinity", {data:[{}],fetch:{},mutations:[]});

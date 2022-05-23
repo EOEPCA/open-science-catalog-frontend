@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/bathymetry", {data:[{}],fetch:{},mutations:[]});

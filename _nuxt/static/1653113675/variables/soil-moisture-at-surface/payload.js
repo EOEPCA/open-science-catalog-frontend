@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/soil-moisture-at-surface", {data:[{}],fetch:{},mutations:[]});

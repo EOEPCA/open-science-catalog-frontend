@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/ocean-surface-currents-vector", {data:[{}],fetch:{},mutations:[]});

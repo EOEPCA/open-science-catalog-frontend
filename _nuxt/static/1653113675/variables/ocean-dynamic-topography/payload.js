@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/ocean-dynamic-topography", {data:[{}],fetch:{},mutations:[]});

@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/ionospheric-plasma-density", {data:[{}],fetch:{},mutations:[]});

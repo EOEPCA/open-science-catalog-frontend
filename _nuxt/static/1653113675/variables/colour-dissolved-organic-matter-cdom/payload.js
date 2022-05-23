@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/colour-dissolved-organic-matter-cdom", {data:[{}],fetch:{},mutations:[]});

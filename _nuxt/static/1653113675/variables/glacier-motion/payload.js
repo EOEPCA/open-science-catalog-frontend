@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/glacier-motion", {data:[{}],fetch:{},mutations:[]});

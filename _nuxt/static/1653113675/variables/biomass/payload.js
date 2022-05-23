@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/biomass", {data:[{}],fetch:{},mutations:[]});

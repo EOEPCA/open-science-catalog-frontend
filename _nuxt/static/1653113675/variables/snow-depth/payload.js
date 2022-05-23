@@ -1,1 +1,0 @@
-__NUXT_JSONP__("/variables/snow-depth", {data:[{}],fetch:{},mutations:[]});
