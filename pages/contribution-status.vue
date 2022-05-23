@@ -92,10 +92,10 @@ export default {
     title: 'Contributions Status'
   },
   async created () {
-    const themes = await this.$axios.$get('https://open-science-catalog-backend.develop.eoepca.org/items/themes?filter=pending')
-    const variables = await this.$axios.$get('https://open-science-catalog-backend.develop.eoepca.org/items/variables?filter=pending')
-    const projects = await this.$axios.$get('https://open-science-catalog-backend.develop.eoepca.org/items/projects?filter=pending')
-    const products = await this.$axios.$get('https://open-science-catalog-backend.develop.eoepca.org/items/products?filter=pending')
+    const themes = await this.$axios.$get(`${this.$metadataBackend}/items/themes?filter=pending`)
+    const variables = await this.$axios.$get(`${this.$metadataBackend}/items/variables?filter=pending`)
+    const projects = await this.$axios.$get(`${this.$metadataBackend}/items/projects?filter=pending`)
+    const products = await this.$axios.$get(`${this.$metadataBackend}/items/products?filter=pending`)
     this.pendingItems = {
       themes,
       variables,

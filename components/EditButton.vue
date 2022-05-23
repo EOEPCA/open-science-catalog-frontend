@@ -112,7 +112,7 @@ export default {
     async deleteItem () {
       this.loading = true
       await this.$axios.$delete(
-        `https://open-science-catalog-backend.develop.eoepca.org/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.slugify(Object.values(this.$route.params)[0])}.json`, {}
+        `${$metadataBackend}/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.slugify(Object.values(this.$route.params)[0])}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false

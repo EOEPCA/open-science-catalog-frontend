@@ -1,9 +1,9 @@
-name: Bump version and deploy
+name: Bump version and static deploy
 
 on:
   push:
     branches:
-      - "main"
+      - "develop"
 
 jobs:
   bump-and-deploy:
@@ -57,7 +57,7 @@ jobs:
         run: echo "new tag $NEW_TAG"
 
       - name: Generate ⚙️
-        run: ROUTER_BASE=/${{ github.event.repository.name }}/ npm run generate
+        run: ROUTER_BASE=/${{ github.event.repository.name }}/ BUILD_MODE=STATIC npm run generate
 
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3

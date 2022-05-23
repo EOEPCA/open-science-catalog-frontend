@@ -10,10 +10,13 @@ const getUriWithParam = (baseUrl, params) => {
   return Url.toString()
 }
 
-export default function ({ $axios }, inject) {
+export default function ({
+  $axios,
+  $config: { staticEndpoint, staticBaseToReplace, dynamicEndpoint, backendEndpoint }
+}, inject) {
   const staticCatalog = $axios.create()
-  staticCatalog.setBaseURL('https://metadata.osc.develop.eoepca.org/open-science-catalog-metadata')
-  staticCatalog.baseToReplace = 'https://eoepca.github.io/open-science-catalog-metadata'
+  staticCatalog.setBaseURL(staticEndpoint)
+  staticCatalog.baseToReplace = staticBaseToReplace
   // Add ".json" to all requests going to the static catalog
   staticCatalog.onRequest((config) => {
     const newUrl = `${config.url}.json`
@@ -25,7 +28,7 @@ export default function ({ $axios }, inject) {
   inject('staticCatalog', staticCatalog)
 
   const dynamicCatalog = $axios.create()
-  dynamicCatalog.setBaseURL('https://resource-catalogue.osc.develop.eoepca.org')
+  dynamicCatalog.setBaseURL(dynamicEndpoint)
   // Add "f=json" query param to all requests going to the dynamic catalog
   dynamicCatalog.onRequest((config) => {
     const newUrl = getUriWithParam(config.baseURL + config.url, { f: 'json' })
@@ -35,4 +38,8 @@ export default function ({ $axios }, inject) {
     }
   })
   inject('dynamicCatalog', dynamicCatalog)
+
+  const metadataBackend = $axios.create()
+  metadataBackend.setBaseURL(backendEndpoint)
+  inject('metadataBackend', metadataBackend)
 }

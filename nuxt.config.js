@@ -6,9 +6,18 @@ const version = JSON.parse(packageJson).version || 0
 const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
-  // Target: https://go.nuxtjs.dev/config-target
-  target: 'static',
+  publicRuntimeConfig: {
+    staticEndpoint: process.env.STATIC_ENDPOINT,
+    staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE,
+    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT,
+    backendEndpoint: process.env.BACKEND_ENDPOINT,
+    authEnabled: process.env.ENABLE_AUTH
+  },
 
+  // Target: https://go.nuxtjs.dev/config-target
+  target: process.env.BUILD_MODE === 'STATIC' ? 'static' : 'server',
+
+  // only for static mode
   generate: {
     fallback: true
   },
@@ -121,7 +130,7 @@ export default {
           property: 'id_token',
           maxAge: 1800
         },
-        scope: 'profile email',
+        scope: 'profile',
         acrValues: ['passport_social']
       }
     },

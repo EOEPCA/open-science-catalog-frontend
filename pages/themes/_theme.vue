@@ -178,26 +178,6 @@ export default {
     Item,
     ItemGrid
   },
-  async asyncData ({ store, route }) {
-    // this.theme = await this.retreiveTheme(this.$route.params.theme)
-    const theme = await store.dispatch('staticCatalog/retreiveTheme', route.params.theme)
-    await store.dispatch('staticCatalog/retreiveMetrics')
-    // format theme variables data
-    const variablesDetailsRaw = []
-    store.state.staticCatalog.themes.forEach((element) => {
-      if (element.name === theme.id) {
-        element.variables.forEach((variable) => {
-          variablesDetailsRaw.push(variable)
-        })
-      }
-    })
-    const variablesDetails = variablesDetailsRaw
-    return {
-      theme,
-      variablesDetails,
-      variablesDetailsRaw
-    }
-  },
   data () {
     return {
       theme: null,
@@ -245,12 +225,40 @@ export default {
       'themes'
     ])
   },
+  async created () {
+    const theme = await this.$store.dispatch('staticCatalog/retreiveTheme', this.$route.params.theme)
+    await this.$store.dispatch('staticCatalog/retreiveMetrics')
+    // format theme variables data
+    const variablesDetailsRaw = []
+    this.$store.state.staticCatalog.themes.forEach((element) => {
+      if (element.name === theme.id) {
+        element.variables.forEach((variable) => {
+          variablesDetailsRaw.push(variable)
+        })
+      }
+    })
+    // format theme project data
+    const projectDetailsRaw = []
+    await Promise.all(theme.links.map(async (link) => {
+      if (link.rel === 'item') {
+        const projectResponse = await this.$staticCatalog.$get(this.$replaceStaticBase(link.href))
+        projectDetailsRaw.push(projectResponse)
+      }
+    }))
+    const variablesDetails = variablesDetailsRaw
+    const projectDetails = projectDetailsRaw
+    this.theme = theme
+    this.projectDetails = projectDetails
+    this.projectDetailsRaw = projectDetailsRaw
+    this.variablesDetails = variablesDetails
+    this.variablesDetailsRaw = variablesDetailsRaw
+    this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
+    this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
+  },
   mounted () {
     this.$nextTick(async () => {
       await this.$refs.projectCombobox.filterProducts()
     })
-    this.orderData('projects', this.projectsDetailsFilter, this.projectsDetailsOrder, this.projectsSearch, true)
-    this.orderData('variables', 'name', this.variablesDetailsOrder, this.variablesSearch)
   },
   methods: {
     ...mapMutations([
