@@ -7,11 +7,11 @@ const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
   publicRuntimeConfig: {
-    staticEndpoint: process.env.STATIC_ENDPOINT,
-    staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE,
-    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT,
-    backendEndpoint: process.env.BACKEND_ENDPOINT,
-    authEnabled: process.env.ENABLE_AUTH
+    staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.osc.develop.eoepca.org/open-science-catalog-metadata',
+    staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata',
+    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.osc.develop.eoepca.org',
+    backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://open-science-catalog-backend.develop.eoepca.org',
+    authEnabled: process.env.ENABLE_AUTH || 'true'
   },
 
   // Target: https://go.nuxtjs.dev/config-target
@@ -121,23 +121,23 @@ export default {
     strategies: {
       oidc: {
         scheme: 'openIDConnect',
-        clientId: '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
+        clientId: process.env.OAUTH_CLIENTID || '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
         endpoints: {
-          configuration: 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
+          configuration: process.env.OPENID_CONFIGURATION || 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
         },
         responseType: 'token id_token',
         idToken: {
           property: 'id_token',
           maxAge: 1800
         },
-        scope: 'profile',
+        scope: process.env.OAUTH_SCOPE || 'profile',
         acrValues: ['passport_social']
       }
     },
     redirect: {
       login: '/login',
-      logout: '/',
-      callback: '/oauth-callback',
+      logout: process.env.OAUTH_REDIRECT_LOGOUT || '/',
+      callback: process.env.OAUTH_REDIRECT_CALLBACK || '/oauth-callback',
       home: '/'
     },
     fullPathRedirect: true
