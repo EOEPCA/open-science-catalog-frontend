@@ -22,7 +22,7 @@
           <template #activator="{ on, attrs }">
             <v-btn
               icon
-              :class="$vuetify.breakpoint.lgAndUp ? 'mr-4' : 'mb-4'"
+              class="mr-4"
               v-bind="attrs"
               v-on="on"
               @click="TOGGLE_EMPTY_ITEMS"
@@ -33,7 +33,7 @@
             </v-btn>
           </template>
           <span>
-            {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+            {{ showEmptyItems ? 'Hide empty items': 'Show empty items' }}
           </span>
         </v-tooltip>
         <v-select
