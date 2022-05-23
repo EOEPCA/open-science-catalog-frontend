@@ -3,7 +3,7 @@ name: Bump version and static deploy
 on:
   push:
     branches:
-      - "develop"
+      - "dev"
 
 jobs:
   bump-and-deploy:
