@@ -394,7 +394,9 @@ export default {
     })
   },
   mounted () {
-    this.$refs.headless.focus()
+    if (!this.embeddedMode) {
+      this.$refs.headless.focus()
+    }
   },
   methods: {
     ...mapActions('dynamicCatalog', [
