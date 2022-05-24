@@ -6,7 +6,7 @@ The Open Science Catalog is one of the elements contributing to an Open Science 
 Adhering by design to the “FAIR” (findable, accessible, interoperable, reproducible/reusable) principles, the Open Science Catalogue aims to support better knowledge discovery and innovation, and facilitate data and knowledge integration and reuse by the scientific community.
 
 ## This repository
-This repository holds the static frontend app powered by [Nuxt](https://nuxtjs.org/). On every push to the `main` branch, a GitHub Action triggers a pre-rendering of the application and publishes it in the `gh-pages` branch, thus deploying a development version on the domain [eoepca.github.io/open-science-catalog-frontend](https://eoepca.github.io/open-science-catalog-frontend/). The production version is built as a docker image and is available at [opensciencedata.esa.int](https://opensciencedata.esa.int/).
+This repository holds the static frontend app powered by [Nuxt](https://nuxtjs.org/). On every push to the `dev` branch, a GitHub Action triggers a pre-rendering of the application and publishes it in the `gh-pages` branch, thus deploying a development version on the domain [eoepca.github.io/open-science-catalog-frontend](https://eoepca.github.io/open-science-catalog-frontend/). The production version is built on each push to the `main` branch as a docker image and is available at [opensciencedata.esa.int](https://opensciencedata.esa.int/).
 
 Every PR triggers GitHub Actions for linting and testing, and additionally checks for conventional style commits.
 ## Used EOEPCA endpoints
@@ -21,8 +21,6 @@ this.$dynamicCatalog.$get('/collections')
 ```
 
 Note that by default, all calls to the static endpoint add the `.json` file ending and all calls to the dynamic endpoint add the `f=json` query parameter to the request url for convenience.
-
-explain automatic addition of json, f=json
 
 These endpoints are primarily used within the application [central store](./store/): [staticCatalog.js](./store/staticCatalog.js) and [dynamicCatalog.js](./store/dynamicCatalog.js).
 
