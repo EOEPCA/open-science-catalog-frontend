@@ -161,7 +161,7 @@
               <strong class="text-uppercase mr-2">Satellite missions</strong> {{ details['osc:missions'].join(', ') }}
             </div>
             <v-btn
-              v-for="(link, key) in details.links.filter(el => el.rel === 'via').sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
+              v-for="(link, key) in details.links.filter(el => el.rel === 'via' && el.href).sort((a,b) => (a.title < b.title || !b.title) ? -1 : 1)"
               :key="key"
               color="primary"
               :outlined="link.title !== 'Access'"
