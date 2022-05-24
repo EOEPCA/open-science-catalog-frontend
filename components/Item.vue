@@ -186,7 +186,9 @@
       </v-container>
     </div>
     <slot />
-    <edit-button />
+    <edit-button
+      :item-id="id"
+    />
   </div>
 </template>
 
@@ -194,6 +196,10 @@
 export default {
   name: 'Item',
   props: {
+    id: {
+      type: String,
+      default: null
+    },
     title: {
       type: String,
       default: ''

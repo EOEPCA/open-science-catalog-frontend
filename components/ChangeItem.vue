@@ -1,5 +1,32 @@
 <template>
+  <v-banner
+    v-if="success"
+    two-line
+  >
+    <v-avatar
+      slot="icon"
+      color="success"
+      size="40"
+    >
+      <v-icon
+        color="white"
+      >
+        mdi-checkbox-marked-circle-outline
+      </v-icon>
+    </v-avatar>
+    Thank you for your contribution! Your proposed changes will be reviewed shortly.
+    <template #actions>
+      <v-btn
+        text
+        color="primary"
+        to="/contribution-status"
+      >
+        Check contribution status
+      </v-btn>
+    </template>
+  </v-banner>
   <v-form
+    v-else
     ref="form"
     v-model="valid"
     lazy-validation
@@ -205,10 +232,30 @@
       label="Add Image"
       outlined
     /> -->
+    <v-text-field
+      v-if="selectedItemType === 'Product'"
+      v-model="bbox"
+      label="Product Extent (draw an area in the map below)"
+      hint="Draw an area in the map below"
+      readonly
+      disabled
+      outlined
+    />
+    <CoverageMap
+      v-if="selectedItemType === 'Product'"
+      enable-draw
+      :features="mapFeatures"
+      class="mb-4"
+      @drawEnd="handleBBOXDraw"
+    />
     <div
       class="d-flex"
     >
-      <v-dialog v-model="deleteDialog" max-width="500">
+      <v-dialog
+        v-if="type === 'edit'"
+        v-model="deleteDialog"
+        max-width="500"
+      >
         <template #activator="{ on, attrs }">
           <v-btn
             v-if="true"
@@ -286,32 +333,6 @@
         Submit
       </v-btn>
     </div>
-    <v-banner
-      v-if="success"
-      two-line
-    >
-      <v-avatar
-        slot="icon"
-        color="success"
-        size="40"
-      >
-        <v-icon
-          color="white"
-        >
-          mdi-checkbox-marked-circle-outline
-        </v-icon>
-      </v-avatar>
-      Thank you for your contribution! Your proposed changes will be reviewed shortly.
-      <template #actions>
-        <v-btn
-          text
-          color="primary"
-          to="/contribution-status"
-        >
-          Check contribution status
-        </v-btn>
-      </template>
-    </v-banner>
   </v-form>
 </template>
 
@@ -348,6 +369,8 @@ export default {
       link: '',
       WMSLink: '',
       imageLink: '',
+      bbox: null,
+      mapFeatures: null,
       variables: [],
       valid: false,
       loading: false,
@@ -434,6 +457,8 @@ export default {
             this.satelliteMissions = selectedProduct.properties['osc:missions']
             this.eo4societyURL = selectedProduct.links[0].href
             this.link = selectedProduct.links[1].href
+            this.bbox = selectedProduct.bbox
+            this.mapFeatures = [selectedProduct]
             // TODO WMS link
           }).catch((err) => {
             console.error(err)
@@ -468,11 +493,38 @@ export default {
                 endDate: this.endDate,
                 satelliteMissions: this.satelliteMissions,
                 eo4societyURL: this.eo4societyURL,
-                link: this.link
+                link: this.link,
+                bbox: this.bbox,
+                geometry: this.bbox && {
+                  bbox: this.bbox,
+                  coordinates: [[
+                    [
+                      this.bbox[0],
+                      this.bbox[1]
+                    ],
+                    [
+                      this.bbox[2],
+                      this.bbox[1]
+                    ],
+                    [
+                      this.bbox[2],
+                      this.bbox[3]
+                    ],
+                    [
+                      this.bbox[0],
+                      this.bbox[3]
+                    ],
+                    [
+                      this.bbox[0],
+                      this.bbox[1]
+                    ]
+                  ]],
+                  type: 'Polygon'
+                }
               })
           } else {
             await this.$metadataBackend.$put(
-              `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+              `/items/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -482,7 +534,34 @@ export default {
                 endDate: this.endDate,
                 satelliteMissions: this.satelliteMissions,
                 eo4societyURL: this.eo4societyURL,
-                link: this.link
+                link: this.link,
+                bbox: this.bbox,
+                geometry: {
+                  bbox: this.bbox,
+                  coordinates: [[
+                    [
+                      this.bbox[0],
+                      this.bbox[1]
+                    ],
+                    [
+                      this.bbox[2],
+                      this.bbox[1]
+                    ],
+                    [
+                      this.bbox[2],
+                      this.bbox[3]
+                    ],
+                    [
+                      this.bbox[0],
+                      this.bbox[3]
+                    ],
+                    [
+                      this.bbox[0],
+                      this.bbox[1]
+                    ]
+                  ]],
+                  type: 'Polygon'
+                }
               })
           }
           this.loading = false
@@ -501,6 +580,9 @@ export default {
       )
       this.loading = false
       this.deleteDialog = false
+    },
+    handleBBOXDraw (newBbox) {
+      this.bbox = newBbox.getExtent()
     }
   }
 }

@@ -7,6 +7,7 @@
       <v-col cols="12">
         <change-item
           v-if="$route.query.theme || $route.query.variable || $route.query.project || $route.query.product"
+          type="edit"
         />
         <p
           v-else

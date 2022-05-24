@@ -42,7 +42,7 @@
         rounded
         color="red"
         style="cursor: pointer"
-        @click="$auth.loggedin
+        @click="$auth.loggedIn
           ? deleteDialog = true
           : $router
             .push(`/edit-item?${Object
@@ -103,6 +103,12 @@
 
 <script>
 export default {
+  props: {
+    itemId: {
+      type: String,
+      default: null
+    }
+  },
   data: () => ({
     fab: false,
     deleteDialog: false,
@@ -112,7 +118,7 @@ export default {
     async deleteItem () {
       this.loading = true
       await this.$metadataBackend.$delete(
-        `/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.slugify(Object.values(this.$route.params)[0])}.json`, {}
+        `/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.itemId || this.slugify(Object.values(this.$route.params)[0])}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false
