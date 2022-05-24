@@ -515,7 +515,7 @@ export default {
         const searchQuery = this.filterItems.reduce((acc, curr) => {
           const keywordKeys = ['theme', 'variable']
           if (keywordKeys.includes(curr.key)) {
-            filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:%${curr.value}%'`
+            filterQuery += `${filterQuery.length > 0 ? ' AND ' : ''}keywords ILIKE '%${curr.key}:${curr.value}%'`
           }
           return curr.key === 'type'
             ? `${acc}&type=${curr.value.toLowerCase() === 'project' ? 'datasetcollection' : 'dataset'}`
