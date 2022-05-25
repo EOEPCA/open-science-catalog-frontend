@@ -483,7 +483,7 @@ export default {
         try {
           if (this.type === 'add') {
             await this.$metadataBackend.$post(
-              `/items/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -524,7 +524,7 @@ export default {
               })
           } else {
             await this.$metadataBackend.$put(
-              `/items/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {
                 name: this.name,
                 description: this.description,
                 theme: this.parentThemes,
@@ -576,7 +576,7 @@ export default {
     async deleteItem () {
       this.loading = true
       await this.$metadataBackend.$delete(
-        `/items/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {}
+        `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false
