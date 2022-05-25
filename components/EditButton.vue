@@ -58,7 +58,7 @@
         rounded
         color="black"
         :href="`https://github.com/EOEPCA/open-science-catalog-metadata/tree/main/data/${
-          Object.keys($route.params)[0]}s/${Object.values($route.params)[0]}.json`"
+          Object.keys($route.params)[0]}s/${itemId || Object.values($route.params)[0]}.json`"
         target="_blank"
       >
         <v-icon left>
