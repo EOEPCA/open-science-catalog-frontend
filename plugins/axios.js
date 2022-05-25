@@ -1,4 +1,5 @@
 export default function ({
+  app,
   $axios,
   $config: { staticEndpoint, staticBaseToReplace, dynamicEndpoint, backendEndpoint }
 }, inject) {
@@ -29,5 +30,12 @@ export default function ({
 
   const metadataBackend = $axios.create()
   metadataBackend.setBaseURL(backendEndpoint)
+  // TEMP until this comes from the backend protection layer
+  metadataBackend.onRequest(() => {
+    if (app.$auth?.loggedIn) {
+      metadataBackend.setHeader('X-User', app.$auth.user.email)
+      metadataBackend.setHeader('X-OSCDataOwner', `${!!app.$auth.user.OSCDataOwner}`)
+    }
+  })
   inject('metadataBackend', metadataBackend)
 }

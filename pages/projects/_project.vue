@@ -1,6 +1,7 @@
 <template>
   <div v-if="project">
     <Item
+      :id="project.id"
       :title="project.properties.title"
       :subtitle="project.properties['osc:name']"
       :chips="{

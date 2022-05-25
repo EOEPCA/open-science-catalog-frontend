@@ -33,6 +33,7 @@
             <v-list-item
               v-for="(item, key) in pendingItems[itemType].items"
               :key="`${itemType}-${key}`"
+              class="pl-0"
             >
               <v-list-item-avatar>
                 <v-icon
@@ -44,7 +45,9 @@
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title v-text="item" />
+                <v-list-item-title>
+                  <strong>{{ item.change_type }} request</strong>: {{ item.filename }}
+                </v-list-item-title>
 
                 <v-list-item-subtitle>
                   <v-btn
@@ -62,6 +65,8 @@
                   color="black"
                   dark
                   small
+                  :href="item.url"
+                  target="_blank"
                 >
                   <v-icon
                     left

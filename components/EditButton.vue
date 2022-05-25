@@ -42,7 +42,7 @@
         rounded
         color="red"
         style="cursor: pointer"
-        @click="$auth.loggedin
+        @click="$auth.loggedIn
           ? deleteDialog = true
           : $router
             .push(`/edit-item?${Object
@@ -58,7 +58,7 @@
         rounded
         color="black"
         :href="`https://github.com/EOEPCA/open-science-catalog-metadata/tree/main/data/${
-          Object.keys($route.params)[0]}s/${Object.values($route.params)[0]}.json`"
+          Object.keys($route.params)[0]}s/${itemId || Object.values($route.params)[0]}.json`"
         target="_blank"
       >
         <v-icon left>
@@ -103,6 +103,12 @@
 
 <script>
 export default {
+  props: {
+    itemId: {
+      type: String,
+      default: null
+    }
+  },
   data: () => ({
     fab: false,
     deleteDialog: false,
@@ -112,7 +118,7 @@ export default {
     async deleteItem () {
       this.loading = true
       await this.$metadataBackend.$delete(
-        `/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.slugify(Object.values(this.$route.params)[0])}.json`, {}
+        `/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.itemId || this.slugify(Object.values(this.$route.params)[0])}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false

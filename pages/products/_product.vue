@@ -1,6 +1,7 @@
 <template>
   <div v-if="product">
     <Item
+      :id="product.id"
       :title="product.properties.title"
       :description="product.properties.description"
       :chips="{
