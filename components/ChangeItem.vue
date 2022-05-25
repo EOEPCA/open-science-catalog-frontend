@@ -34,89 +34,72 @@
   >
     <v-select
       v-model="selectedItemType"
-      :items="itemTypes"
+      :items="Object.keys(itemTypes)"
       label="Select an item type"
       outlined
       required
       :rules="[v => !!v || 'Item type is required']"
       @change="fillForm('clear')"
     />
-    <v-text-field
-      v-if="type === 'add' && !!selectedItemType"
-      v-model="name"
-      label="Name"
-      outlined
-      required
-      :rules="[v => !!v || 'Name is required']"
-    />
-    <v-text-field
-      v-else-if="selectedItemType === 'Theme'"
-      v-model="name"
-      label="Theme name"
-      outlined
-      required
-      :rules="[v => !!v || 'Theme Name required']"
-      @change="fillForm"
-    />
-    <v-text-field
-      v-else-if="selectedItemType === 'Variable'"
-      v-model="name"
-      label="Variable Name"
-      outlined
-      required
-      :rules="[v => !!v || 'Variable Name required']"
-      @change="fillForm"
-    />
-    <v-text-field
-      v-else-if="selectedItemType === 'Project'"
-      v-model="name"
-      label="Project Name"
-      outlined
-      required
-      :rules="[v => !!v || 'Project Name is required']"
-      @change="fillForm"
-    />
-    <v-text-field
-      v-else-if="selectedItemType === 'Product'"
-      v-model="name"
-      label="Product Name"
-      outlined
-      required
-      :rules="[v => !!v || 'Product Name is required']"
-      @change="fillForm"
-    />
-    <v-tabs
-      v-if="!!selectedItemType"
-      v-model="descriptionToggle"
-      tile
-      group
-    >
-      <v-tab>
-        Input
-      </v-tab>
-      <v-tab>
-        Preview
-      </v-tab>
-    </v-tabs>
-    <v-tabs-items
-      v-if="!!selectedItemType"
-      v-model="descriptionToggle"
-    >
-      <v-tab-item>
-        <v-textarea
-          v-model="description"
-          name="Description"
-          label="Description (markdown supported)"
-          class="mt-4"
-          outlined
-        />
-      </v-tab-item>
-      <v-tab-item>
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? $markdown(description) : 'Write in the input field to see preview here'" />
-      </v-tab-item>
-    </v-tabs-items>
-    <v-select
+    <template v-if="selectedItemType">
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('name')"
+        v-model="name"
+        :label="`${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name`"
+        outlined
+        required
+        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name required`]"
+      />
+      <v-tabs
+        v-if="itemTypes[selectedItemType].includes('description')"
+        v-model="descriptionToggle"
+        tile
+        group
+      >
+        <v-tab>
+          Input
+        </v-tab>
+        <v-tab>
+          Preview
+        </v-tab>
+      </v-tabs>
+      <v-tabs-items
+        v-if="itemTypes[selectedItemType].includes('description')"
+        v-model="descriptionToggle"
+      >
+        <v-tab-item>
+          <v-textarea
+            v-model="description"
+            name="Description"
+            label="Description (markdown supported)"
+            class="mt-4"
+            outlined
+          />
+        </v-tab-item>
+        <v-tab-item>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? $markdown(description) : 'Write in the input field to see preview here'" />
+        </v-tab-item>
+      </v-tabs-items>
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('link')"
+        v-model="eo4societyURL"
+        label="EO4Society URL"
+        outlined
+        :rules="[
+          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'EO4Society URL must be valid'
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('image')"
+        v-model="image"
+        label="Image Link"
+        outlined
+        required
+        :rules="[v => !!v || 'Image link is required']"
+      />
+    </template>
+    <!-- <v-select
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
       v-model="parentThemes"
       :items="themes"
@@ -151,8 +134,8 @@
       :rules="[
         (v) => !!v || 'Parent Project ID is required',
       ]"
-    />
-    <v-text-field
+    /> -->
+    <!-- <v-text-field
       v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
       v-model="startDate"
       type="datetime-local"
@@ -189,18 +172,7 @@
         (v) => !!v || 'Satellite missions are required',
         (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
       ]"
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Theme' || selectedItemType === 'Project' || selectedItemType === 'Product'"
-      v-model="eo4societyURL"
-      label="EO4Society URL"
-      outlined
-      required
-      :rules="[
-        (v) => !!v || 'EO4Society URL is required',
-        (v) => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'EO4Society URL must be valid'
-      ]"
-    />
+    /> -->
     <v-text-field
       v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
       v-model="link"
@@ -219,14 +191,6 @@
       :rules="[
         (v) => (!v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v)) || 'WMS link must be valid'
       ]"
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Theme'"
-      v-model="imageLink"
-      label="Image Link"
-      outlined
-      required
-      :rules="[v => !!v || 'Image link is required']"
     />
     <!-- <v-file-input
       label="Add Image"
@@ -349,12 +313,34 @@ export default {
   },
   data () {
     return {
-      itemTypes: [
-        'Theme',
-        'Variable',
-        'Project',
-        'Product'
-      ],
+      itemTypes: {
+        Theme: [
+          'name',
+          'description',
+          'eo4societyURL',
+          'image'
+        ],
+        // Variable: [
+        //   'name',
+        //   'description',
+        //   'link',
+        //   'theme'
+        // ],
+        // Project: [
+        //   // TODO
+        //   'name',
+        //   'description',
+        //   'link',
+        //   'image'
+        // ],
+        // Product: [
+        //   // TODO
+        //   'name',
+        //   'description',
+        //   'link',
+        //   'image'
+        // ]
+      },
       selectedItemType: '',
       name: '',
       description: '',
@@ -368,7 +354,7 @@ export default {
       eo4societyURL: '',
       link: '',
       WMSLink: '',
-      imageLink: '',
+      image: '',
       bbox: null,
       mapFeatures: null,
       variables: [],
@@ -419,7 +405,7 @@ export default {
           this.name = selectedTheme.name
           this.description = selectedTheme.description
           this.eo4societyURL = selectedTheme.website
-          this.imageLink = selectedTheme.image
+          this.image = selectedTheme.image
         } else if (this.selectedItemType === 'Variable') {
           await this.retreiveVariable(this.$route.query.variable).then((selectedVariable) => {
             this.description = selectedVariable.description
@@ -494,6 +480,7 @@ export default {
                 satelliteMissions: this.satelliteMissions,
                 eo4societyURL: this.eo4societyURL,
                 link: this.link,
+                image: this.image,
                 bbox: this.bbox,
                 geometry: this.bbox && {
                   bbox: this.bbox,
@@ -525,43 +512,46 @@ export default {
           } else {
             await this.$metadataBackend.$put(
               `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {
-                name: this.name,
-                description: this.description,
-                theme: this.parentThemes,
-                parentVariables: this.parentVariables,
-                parentProject: this.parentProject,
-                startDate: this.startDate,
-                endDate: this.endDate,
-                satelliteMissions: this.satelliteMissions,
-                eo4societyURL: this.eo4societyURL,
-                link: this.link,
-                bbox: this.bbox,
-                geometry: {
-                  bbox: this.bbox,
-                  coordinates: [[
-                    [
-                      this.bbox[0],
-                      this.bbox[1]
-                    ],
-                    [
-                      this.bbox[2],
-                      this.bbox[1]
-                    ],
-                    [
-                      this.bbox[2],
-                      this.bbox[3]
-                    ],
-                    [
-                      this.bbox[0],
-                      this.bbox[3]
-                    ],
-                    [
-                      this.bbox[0],
-                      this.bbox[1]
-                    ]
-                  ]],
-                  type: 'Polygon'
-                }
+                ...(this.itemTypes[this.selectedItemType].includes('name') && { name: this.name }),
+                ...(this.itemTypes[this.selectedItemType].includes('description') && { description: this.description }),
+                ...(this.itemTypes[this.selectedItemType].includes('eo4societyURL') && { link: this.eo4societyURL }),
+                ...(this.itemTypes[this.selectedItemType].includes('image') && { image: this.image })
+                // theme: this.parentThemes,
+                // parentVariables: this.parentVariables,
+                // parentProject: this.parentProject,
+                // startDate: this.startDate,
+                // endDate: this.endDate,
+                // satelliteMissions: this.satelliteMissions,
+                // eo4societyURL: this.eo4societyURL,
+                // link: this.link,
+                // image: this.image,
+                // bbox: this.bbox,
+                // geometry: {
+                //   bbox: this.bbox,
+                //   coordinates: [[
+                //     [
+                //       this.bbox[0],
+                //       this.bbox[1]
+                //     ],
+                //     [
+                //       this.bbox[2],
+                //       this.bbox[1]
+                //     ],
+                //     [
+                //       this.bbox[2],
+                //       this.bbox[3]
+                //     ],
+                //     [
+                //       this.bbox[0],
+                //       this.bbox[3]
+                //     ],
+                //     [
+                //       this.bbox[0],
+                //       this.bbox[1]
+                //     ]
+                //   ]],
+                //   type: 'Polygon'
+                // }
               })
           }
           this.loading = false
