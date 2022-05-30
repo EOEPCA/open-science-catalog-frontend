@@ -118,7 +118,7 @@ export default {
     async deleteItem () {
       this.loading = true
       await this.$metadataBackend.$delete(
-        `/items/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.itemId || this.slugify(Object.values(this.$route.params)[0])}.json`, {}
+        `/item-requests/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.itemId || this.slugify(Object.values(this.$route.params)[0])}.json`, {}
       )
       this.loading = false
       this.deleteDialog = false
