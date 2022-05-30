@@ -62,6 +62,7 @@ export default {
     '~/plugins/axios',
     '~/plugins/markdown',
     '~/plugins/staticCatalogHelpers',
+    '~/plugins/item',
     { src: '~plugins/ol', ssr: false }
   ],
 
