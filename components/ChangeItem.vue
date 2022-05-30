@@ -98,120 +98,148 @@
         required
         :rules="[v => !!v || 'Image link is required']"
       />
+      <v-select
+        v-if="itemTypes[selectedItemType].includes('theme')"
+        v-model="parentThemes"
+        :items="themes"
+        item-value="name"
+        item-text="name"
+        chips
+        multiple
+        label="Themes"
+        outlined
+        required
+        :rules="[v => !!v || 'Parent theme is required']"
+      />
+      <v-select
+        v-if="itemTypes[selectedItemType].includes('status')"
+        v-model="status"
+        :items="[
+          'ONGOING',
+          'COMPLETED',
+          'PLANNED'
+        ]"
+        outlined
+        required
+        label="Status"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('technical_officer')"
+        v-model="technical_officer"
+        label="Technical officer"
+        outlined
+        required
+        :rules="[
+          (v) => !!v || 'Technical officer name is required',
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('technical_officer')"
+        v-model="email"
+        label="Technical officer e-mail"
+        outlined
+        required
+        :rules="[
+          (v) => !!v || 'Technical officer e-mail is required',
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('Consortium')"
+        v-model="consortium"
+        label="Consortium"
+        outlined
+        required
+        :rules="[v => !!v || 'Consortium is required']"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('start_datetime')"
+        v-model="startDate"
+        type="datetime-local"
+        label="Start date"
+        outlined
+        required
+        :rules="[v => !!v || 'Start date is required']"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('end_datetime')"
+        v-model="endDate"
+        type="datetime-local"
+        label="End date"
+        outlined
+        required
+        :rules="[v => !!v || 'End date is required']"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('datetime')"
+        v-model="datetime"
+        type="datetime-local"
+        label="Datetime"
+        outlined
+        required
+        :rules="[v => !!v || 'Date time is required']"
+      />
+      <v-select
+        v-if="itemTypes[selectedItemType].includes('variable')"
+        v-model="parentVariables"
+        :items="variables"
+        item-value="name"
+        item-text="name"
+        chips
+        multiple
+        label="Variables"
+        hint="Separate multiple variables by comma"
+        outlined
+        required
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('project')"
+        v-model="parentProject"
+        label="Parent Project"
+        outlined
+        required
+        :rules="[
+          (v) => !!v || 'Parent Project ID is required',
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('missions')"
+        v-model="satelliteMissions"
+        label="Satellite Missions"
+        hint="Separate multiple missions by comma"
+        outlined
+        required
+        :rules="[
+          (v) => !!v || 'Satellite missions are required',
+          (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('region')"
+        v-model="region"
+        label="Region"
+        outlined
+        required
+        :rules="[
+          (v) => !!v || 'Region is required'
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('geometry')"
+        v-model="bbox"
+        label="Product Extent (draw an area in the map below)"
+        hint="Draw an area in the map below"
+        readonly
+        disabled
+        outlined
+      />
+      <CoverageMap
+        v-if="itemTypes[selectedItemType].includes('geometry')"
+        enable-draw
+        :features="mapFeatures"
+        class="mb-4"
+        @drawEnd="handleBBOXDraw"
+      />
     </template>
-    <!-- <v-select
-      v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
-      v-model="parentThemes"
-      :items="themes"
-      item-value="name"
-      item-text="name"
-      chips
-      multiple
-      label="Themes"
-      outlined
-      required
-      :rules="[v => !!v || 'Parent theme is required']"
-    />
-    <v-select
-      v-if="selectedItemType === 'Product' && type === 'add'"
-      v-model="parentVariables"
-      :items="variables"
-      item-value="name"
-      item-text="name"
-      chips
-      multiple
-      label="Variables"
-      hint="Separate multiple variables by comma"
-      outlined
-      required
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Product'"
-      v-model="parentProject"
-      label="Parent Project"
-      outlined
-      required
-      :rules="[
-        (v) => !!v || 'Parent Project ID is required',
-      ]"
-    /> -->
-    <!-- <v-text-field
-      v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
-      v-model="startDate"
-      type="datetime-local"
-      label="Start date"
-      outlined
-      required
-      :rules="[v => !!v || 'Start date is required']"
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Project' || selectedItemType === 'Product'"
-      v-model="endDate"
-      type="datetime-local"
-      label="End date"
-      outlined
-      required
-      :rules="[v => !!v || 'End date is required']"
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Project'"
-      v-model="consortium"
-      label="Consortium"
-      outlined
-      required
-      :rules="[v => !!v || 'Consortium is required']"
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Product'"
-      v-model="satelliteMissions"
-      label="Satellite Missions"
-      hint="Separate multiple missions by comma"
-      outlined
-      required
-      :rules="[
-        (v) => !!v || 'Satellite missions are required',
-        (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
-      ]"
-    /> -->
-    <v-text-field
-      v-if="selectedItemType === 'Variable' || selectedItemType === 'Project' || selectedItemType === 'Product'"
-      v-model="link"
-      label="Link"
-      outlined
-      required
-      :rules="[
-        (v) => !!v || 'Link is required'
-      ]"
-    />
-    <v-text-field
-      v-if="selectedItemType === 'Product'"
-      v-model="WMSLink"
-      label="WMS Link"
-      outlined
-      :rules="[
-        (v) => (!v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v)) || 'WMS link must be valid'
-      ]"
-    />
-    <!-- <v-file-input
-      label="Add Image"
-      outlined
-    /> -->
-    <v-text-field
-      v-if="selectedItemType === 'Product'"
-      v-model="bbox"
-      label="Product Extent (draw an area in the map below)"
-      hint="Draw an area in the map below"
-      readonly
-      disabled
-      outlined
-    />
-    <CoverageMap
-      v-if="selectedItemType === 'Product'"
-      enable-draw
-      :features="mapFeatures"
-      class="mb-4"
-      @drawEnd="handleBBOXDraw"
-    />
     <div
       class="d-flex"
     >
@@ -317,29 +345,42 @@ export default {
         Theme: [
           'name',
           'description',
-          'eo4societyURL',
+          'link',
           'image'
         ],
-        // Variable: [
-        //   'name',
-        //   'description',
-        //   'link',
-        //   'theme'
-        // ],
-        // Project: [
-        //   // TODO
-        //   'name',
-        //   'description',
-        //   'link',
-        //   'image'
-        // ],
-        // Product: [
-        //   // TODO
-        //   'name',
-        //   'description',
-        //   'link',
-        //   'image'
-        // ]
+        Variable: [
+          'name',
+          'description',
+          'link',
+          'theme'
+        ],
+        Project: [
+          'name',
+          'description',
+          'theme',
+          'status',
+          'technical_officer',
+          'consortium',
+          'start_datetime',
+          'end_datetime',
+          'datetime',
+          'link'
+        ],
+        Product: [
+          'name',
+          'description',
+          'theme',
+          'status',
+          'start_datetime',
+          'end_datetime',
+          'datetime',
+          'link',
+          'missions',
+          'project',
+          'variable',
+          'region',
+          'geometry'
+        ]
       },
       selectedItemType: '',
       name: '',
@@ -363,7 +404,13 @@ export default {
       success: false,
       descriptionToggle: null,
       deleteDialog: false,
-      id: null
+      id: null,
+      status: null,
+      technical_officer: null,
+      email: null,
+      datetime: null,
+      region: null,
+      fullName: null
     }
   },
   head: {
@@ -418,19 +465,25 @@ export default {
           await this.retreiveProjects(this.$route.query.project).then((selectedProject) => {
             this.name = selectedProject.properties.title
             this.id = selectedProject.id
+            this.fullName = selectedProject.properties['osc:name']
             this.description = selectedProject.properties.description
             this.parentThemes = selectedProject.properties['osc:themes']
             // TODO: cleanup
             this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().toString().slice(0, -8)
             this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().toString().slice(0, -8)
+            this.datetime = new Date(selectedProject.properties.datetime).toISOString().toString().slice(0, -8)
             this.consortium = selectedProject.properties['osc:consortium']
             this.eo4societyURL = selectedProject.links[0].href
             this.link = selectedProject.links[1].href
+            this.status = selectedProject.properties['osc:status']
+            this.technical_officer = selectedProject.properties['osc:technical_officer'].name
+            this.email = selectedProject.properties['osc:technical_officer']['e-mail']
           }).catch((err) => {
             console.error(err)
           })
         } else if (this.selectedItemType === 'Product') {
           await this.retreiveProduct(this.$route.query.product).then((selectedProduct) => {
+            console.log(selectedProduct)
             this.name = selectedProduct.properties.title
             this.id = selectedProduct.id
             this.description = selectedProduct.properties.description
@@ -440,9 +493,12 @@ export default {
             // TODO: cleanup
             this.startDate = new Date(selectedProduct.properties.start_datetime).toISOString().toString().slice(0, -8)
             this.endDate = new Date(selectedProduct.properties.end_datetime).toISOString().toString().slice(0, -8)
+            this.datetime = new Date(selectedProduct.properties.datetime).toISOString().toString().slice(0, -8)
             this.satelliteMissions = selectedProduct.properties['osc:missions']
             this.eo4societyURL = selectedProduct.links[0].href
             this.link = selectedProduct.links[1].href
+            this.status = selectedProduct.properties['osc:status']
+            this.region = selectedProduct.properties['osc:region']
             this.bbox = selectedProduct.bbox
             this.mapFeatures = [selectedProduct]
             // TODO WMS link
@@ -467,22 +523,58 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true
         try {
-          if (this.type === 'add') {
-            await this.$metadataBackend.$post(
-              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, {
+          let itemData
+          switch (this.selectedItemType) {
+            case 'Theme':
+              itemData = new this.$Theme({
                 name: this.name,
                 description: this.description,
-                theme: this.parentThemes,
-                parentVariables: this.parentVariables,
-                parentProject: this.parentProject,
-                startDate: this.startDate,
-                endDate: this.endDate,
-                satelliteMissions: this.satelliteMissions,
                 eo4societyURL: this.eo4societyURL,
-                link: this.link,
-                image: this.image,
-                bbox: this.bbox,
-                geometry: this.bbox && {
+                image: this.image
+              })
+              break
+            case 'Variable':
+              itemData = new this.$Variable({
+                name: this.name,
+                description: this.description,
+                eo4societyURL: this.eo4societyURL,
+                theme: this.parentThemes
+              })
+              break
+            case 'Project':
+              itemData = new this.$Project({
+                id: this.id,
+                title: this.name,
+                description: this.description,
+                name: this.fullName,
+                themes: this.parentThemes,
+                status: this.status,
+                technical_officer: this.technical_officer,
+                email: this.email,
+                consortium: this.consortium,
+                start_datetime: this.startDate,
+                end_datetime: this.endDate,
+                datetime: this.datetime,
+                link: this.eo4societyURL
+              })
+              break
+            case 'Product':
+              itemData = new this.$Product({
+                id: this.id,
+                title: this.name,
+                description: this.description,
+                themes: this.parentThemes,
+                status: this.status,
+                variable: this.parentVariables,
+                missions: this.satelliteMissions,
+                project: this.parentProject,
+                start_datetime: this.startDate,
+                end_datetime: this.endDate,
+                datetime: this.datetime,
+                link: this.eo4societyURL,
+                region: this.region,
+                geometry: {
+                  type: 'Polygon',
                   bbox: this.bbox,
                   coordinates: [[
                     [
@@ -505,54 +597,17 @@ export default {
                       this.bbox[0],
                       this.bbox[1]
                     ]
-                  ]],
-                  type: 'Polygon'
-                }
+                  ]]
+                },
+                bbox: this.bbox
               })
+          }
+          if (this.type === 'add') {
+            await this.$metadataBackend.$post(
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, itemData)
           } else {
             await this.$metadataBackend.$put(
-              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {
-                ...(this.itemTypes[this.selectedItemType].includes('name') && { name: this.name }),
-                ...(this.itemTypes[this.selectedItemType].includes('description') && { description: this.description }),
-                ...(this.itemTypes[this.selectedItemType].includes('eo4societyURL') && { link: this.eo4societyURL }),
-                ...(this.itemTypes[this.selectedItemType].includes('image') && { image: this.image })
-                // theme: this.parentThemes,
-                // parentVariables: this.parentVariables,
-                // parentProject: this.parentProject,
-                // startDate: this.startDate,
-                // endDate: this.endDate,
-                // satelliteMissions: this.satelliteMissions,
-                // eo4societyURL: this.eo4societyURL,
-                // link: this.link,
-                // image: this.image,
-                // bbox: this.bbox,
-                // geometry: {
-                //   bbox: this.bbox,
-                //   coordinates: [[
-                //     [
-                //       this.bbox[0],
-                //       this.bbox[1]
-                //     ],
-                //     [
-                //       this.bbox[2],
-                //       this.bbox[1]
-                //     ],
-                //     [
-                //       this.bbox[2],
-                //       this.bbox[3]
-                //     ],
-                //     [
-                //       this.bbox[0],
-                //       this.bbox[3]
-                //     ],
-                //     [
-                //       this.bbox[0],
-                //       this.bbox[1]
-                //     ]
-                //   ]],
-                //   type: 'Polygon'
-                // }
-              })
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, itemData)
           }
           this.loading = false
           this.success = true
