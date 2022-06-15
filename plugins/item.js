@@ -4,7 +4,7 @@ class Theme {
   constructor (item) {
     this.name = item.name
     this.description = item.description
-    this.link = item.eo4societyURL
+    this.link = item.linkWebsite
     this.image = item.image
   }
 }
@@ -13,7 +13,7 @@ class Variable {
   constructor (item) {
     this.name = item.name
     this.description = item.description
-    this.link = item.eo4societyURL
+    this.link = item.linkWebsite
     this.theme = item.theme
   }
 }
@@ -43,8 +43,13 @@ class Project {
     this.links = [
       {
         rel: 'via',
-        href: item.link,
+        href: item.linkWebsite,
         title: 'Website'
+      },
+      {
+        rel: 'via',
+        href: item.linkEo4Society,
+        title: 'EO4Society Link'
       }
     ]
     this.assets = {}
@@ -77,8 +82,17 @@ class Product {
     this.links = [
       {
         rel: 'via',
-        href: item.link,
-        title: 'EO4Society Link'
+        href: item.linkWebsite
+      },
+      {
+        rel: 'via',
+        href: item.linkAccess,
+        title: 'Access'
+      },
+      {
+        rel: 'via',
+        href: item.linkDocumentation,
+        title: 'Documentation'
       }
     ]
     this.assets = {}
