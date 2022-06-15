@@ -106,6 +106,8 @@
         item-text="name"
         chips
         multiple
+        clearable
+        deletable-chips
         label="Themes"
         outlined
         required
@@ -186,8 +188,9 @@
         item-text="name"
         chips
         multiple
+        clearable
+        deletable-chips
         label="Variables"
-        hint="Separate multiple variables by comma"
         outlined
         required
       />
@@ -201,16 +204,21 @@
           (v) => !!v || 'Parent Project ID is required',
         ]"
       />
-      <v-text-field
+      <v-combobox
         v-if="itemTypes[selectedItemType].includes('missions')"
         v-model="satelliteMissions"
+        :items="missions"
+        item-text="name"
+        item-value="name"
+        multiple
+        chips
+        clearable
+        deletable-chips
         label="Satellite Missions"
-        hint="Separate multiple missions by comma"
         outlined
         required
         :rules="[
           (v) => !!v || 'Satellite missions are required',
-          (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
         ]"
       />
       <v-text-field
@@ -418,7 +426,8 @@ export default {
   },
   computed: {
     ...mapState('staticCatalog', [
-      'themes'
+      'themes',
+      'missions'
     ])
   },
   async mounted () {
@@ -602,13 +611,15 @@ export default {
                 bbox: this.bbox
               })
           }
-          if (this.type === 'add') {
-            await this.$metadataBackend.$post(
-              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, itemData)
-          } else {
-            await this.$metadataBackend.$put(
-              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, itemData)
-          }
+          console.log(itemData)
+          debugger
+          // if (this.type === 'add') {
+          //   await this.$metadataBackend.$post(
+          //     `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, itemData)
+          // } else {
+          //   await this.$metadataBackend.$put(
+          //     `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, itemData)
+          // }
           this.loading = false
           this.success = true
         } catch (error) {

@@ -10,7 +10,7 @@ export const state = () => ({
 
 export const mutations = {
   SET_MISSIONS (state, { items }) {
-    state.missions = items
+    state.missions = items.sort((a, b) => (b.name > a.name) ? -1 : 1)
   },
   SET_SUMMARY (state, { items }) {
     state.summary = items
