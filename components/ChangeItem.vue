@@ -183,7 +183,7 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('start_datetime')"
         v-model="startDate"
-        type="datetime-local"
+        type="date"
         label="Start date"
         outlined
         required
@@ -192,7 +192,7 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('end_datetime')"
         v-model="endDate"
-        type="datetime-local"
+        type="date"
         label="End date"
         outlined
         required
@@ -201,7 +201,7 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('datetime')"
         v-model="datetime"
-        type="datetime-local"
+        type="date"
         label="Datetime"
         outlined
         required
@@ -511,9 +511,9 @@ export default {
             this.description = selectedProject.properties.description
             this.parentThemes = selectedProject.properties['osc:themes']
             // TODO: cleanup
-            this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().toString().slice(0, -8)
-            this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().toString().slice(0, -8)
-            this.datetime = new Date(selectedProject.properties.datetime).toISOString().toString().slice(0, -8)
+            this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().split('T')[0]
+            this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().split('T')[0]
+            this.datetime = new Date(selectedProject.properties.datetime).toISOString().split('T')[0]
             this.consortium = selectedProject.properties['osc:consortium']
             this.linkWebsite = selectedProject.links.find(l => l.title === 'Website').href
             this.linkEo4Society = selectedProject.links.find(l => l.title === 'EO4Society Link').href
@@ -533,9 +533,9 @@ export default {
             this.parentVariables = selectedProduct.properties['osc:variable']
             this.parentProject = selectedProduct.properties['osc:project']
             // TODO: cleanup
-            this.startDate = new Date(selectedProduct.properties.start_datetime).toISOString().toString().slice(0, -8)
-            this.endDate = new Date(selectedProduct.properties.end_datetime).toISOString().toString().slice(0, -8)
-            this.datetime = new Date(selectedProduct.properties.datetime).toISOString().toString().slice(0, -8)
+            this.startDate = new Date(selectedProduct.properties.start_datetime).toISOString().split('T')[0]
+            this.endDate = new Date(selectedProduct.properties.end_datetime).toISOString().split('T')[0]
+            this.datetime = new Date(selectedProduct.properties.datetime).toISOString().split('T')[0]
             this.satelliteMissions = selectedProduct.properties['osc:missions']
             // this.link = selectedProduct.links[1].href
             this.linkWebsite = selectedProduct.links.find(l => l.rel === 'via' && !l.title)?.href
@@ -598,9 +598,9 @@ export default {
                 technical_officer: this.technical_officer,
                 email: this.email,
                 consortium: this.consortium,
-                start_datetime: this.startDate,
-                end_datetime: this.endDate,
-                datetime: this.datetime,
+                start_datetime: `${this.startDate}T00:00:00Z`,
+                end_datetime: `${this.endDate}T00:00:00Z`,
+                datetime: `${this.datetime}T00:00:00Z`,
                 linkWebsite: this.linkWebsite,
                 linkEo4Society: this.linkEo4Society
               })
@@ -615,9 +615,9 @@ export default {
                 variable: this.parentVariables,
                 missions: this.satelliteMissions,
                 project: this.parentProject,
-                start_datetime: this.startDate,
-                end_datetime: this.endDate,
-                datetime: this.datetime,
+                start_datetime: `${this.startDate}T00:00:00Z`,
+                end_datetime: `${this.endDate}T00:00:00Z`,
+                datetime: `${this.datetime}T00:00:00Z`,
                 linkWebsite: this.linkWebsite,
                 linkAccess: this.linkAccess,
                 linkDocumentation: this.linkDocumentation,
