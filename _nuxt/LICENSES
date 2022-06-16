@@ -27,6 +27,14 @@
 
 
 /*!
+* chartjs-plugin-annotation v1.4.0
+* https://www.chartjs.org/chartjs-plugin-annotation/index
+ * (c) 2022 chartjs-plugin-annotation Contributors
+ * Released under the MIT License
+ */
+
+
+/*!
   * vue-router v3.5.3
   * (c) 2021 Evan You
   * @license MIT
