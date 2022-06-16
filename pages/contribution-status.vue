@@ -32,6 +32,10 @@
               value: 'state'
             },
             {
+              text: 'Creation date',
+              value: 'created_at'
+            },
+            {
               text: 'Change type',
               value: 'change_type'
             },
@@ -40,7 +44,7 @@
               value: 'url'
             }
           ]"
-          :items="contributionItems"
+          :items="contributionItems.items"
           class="elevation-1"
           :loading="!loaded"
           dense
@@ -49,6 +53,19 @@
             'items-per-page-options': [10, 20, 30, 40, 50]
           }"
         >
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template #item.item_type="{ item }">
+            <v-chip
+              :color="$typeColor(item.item_type.toLowerCase().slice(0, -1))"
+              style="text-transform: capitalize"
+              small
+              label
+              dark
+            >
+              {{ item.item_type.slice(0, -1) }}
+            </v-chip>
+          </template>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template #item.state="{ item }">
             <v-chip
               :color="getStatusStyle(item.state).color"
@@ -61,16 +78,11 @@
               {{ item.state }}
             </v-chip>
           </template>
-          <template #item.item_type="{ item }">
-            <v-chip
-              :color="$typeColor(item.item_type.toLowerCase())"
-              small
-              label
-              dark
-            >
-              {{ item.item_type }}
-            </v-chip>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
+          <template #item.created_at="{ item }">
+            {{ item.created_at.split('T')[0] }}
           </template>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template #item.change_type="{ item }">
             <v-btn
               color="black"
@@ -87,6 +99,7 @@
               {{ item.change_type }}
             </v-btn>
           </template>
+          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template #item.url="{ item }">
             <v-btn
               color="black"
@@ -124,18 +137,7 @@ export default {
     title: 'Contributions Status'
   },
   async created () {
-    const [themes, variables, projects, products] = await Promise.all([
-      this.$metadataBackend.$get('/item-requests/themes'),
-      this.$metadataBackend.$get('/item-requests/variables'),
-      this.$metadataBackend.$get('/item-requests/projects'),
-      this.$metadataBackend.$get('/item-requests/products')
-    ])
-    this.contributionItems = [
-      ...themes.items.map(item => ({ ...item, item_type: 'Theme' })),
-      ...variables.items.map(item => ({ ...item, item_type: 'Variable' })),
-      ...projects.items.map(item => ({ ...item, item_type: 'Project' })),
-      ...products.items.map(item => ({ ...item, item_type: 'Product' }))
-    ]
+    this.contributionItems = await this.$metadataBackend.$get('/item-requests')
     this.loaded = true
   },
   methods: {
