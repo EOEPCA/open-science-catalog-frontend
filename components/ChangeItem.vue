@@ -651,15 +651,13 @@ export default {
                 bbox: this.bbox
               })
           }
-          console.log(itemData)
-          debugger
-          // if (this.type === 'add') {
-          //   await this.$metadataBackend.$post(
-          //     `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, itemData)
-          // } else {
-          //   await this.$metadataBackend.$put(
-          //     `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, itemData)
-          // }
+          if (this.type === 'add') {
+            await this.$metadataBackend.$post(
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, itemData)
+          } else {
+            await this.$metadataBackend.$put(
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, itemData)
+          }
           this.loading = false
           this.success = true
         } catch (error) {
