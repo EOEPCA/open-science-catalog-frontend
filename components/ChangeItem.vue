@@ -276,7 +276,7 @@
       />
     </template>
     <div
-      class="d-flex"
+      class="d-flex flex-column flex-sm-row"
     >
       <v-dialog
         v-if="type === 'edit'"
