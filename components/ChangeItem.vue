@@ -82,12 +82,39 @@
         </v-tab-item>
       </v-tabs-items>
       <v-text-field
-        v-if="itemTypes[selectedItemType].includes('link')"
-        v-model="eo4societyURL"
-        label="EO4Society URL"
+        v-if="itemTypes[selectedItemType].includes('linkWebsite')"
+        v-model="linkWebsite"
+        label="Website Link"
         outlined
         :rules="[
-          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'EO4Society URL must be valid'
+          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('linkAccess')"
+        v-model="linkAccess"
+        label="Access Link"
+        outlined
+        :rules="[
+          (v) => !!v || 'URL is required'
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('linkDocumentation')"
+        v-model="linkDocumentation"
+        label="Documentation Link"
+        outlined
+        :rules="[
+          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
+        ]"
+      />
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('linkEo4Society')"
+        v-model="linkEo4Society"
+        label="EO4Society Link"
+        outlined
+        :rules="[
+          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
       />
       <v-text-field
@@ -106,6 +133,8 @@
         item-text="name"
         chips
         multiple
+        clearable
+        deletable-chips
         label="Themes"
         outlined
         required
@@ -154,7 +183,7 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('start_datetime')"
         v-model="startDate"
-        type="datetime-local"
+        type="date"
         label="Start date"
         outlined
         required
@@ -163,7 +192,7 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('end_datetime')"
         v-model="endDate"
-        type="datetime-local"
+        type="date"
         label="End date"
         outlined
         required
@@ -172,7 +201,7 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('datetime')"
         v-model="datetime"
-        type="datetime-local"
+        type="date"
         label="Datetime"
         outlined
         required
@@ -186,8 +215,9 @@
         item-text="name"
         chips
         multiple
+        clearable
+        deletable-chips
         label="Variables"
-        hint="Separate multiple variables by comma"
         outlined
         required
       />
@@ -201,16 +231,21 @@
           (v) => !!v || 'Parent Project ID is required',
         ]"
       />
-      <v-text-field
+      <v-combobox
         v-if="itemTypes[selectedItemType].includes('missions')"
         v-model="satelliteMissions"
+        :items="missions"
+        item-text="name"
+        item-value="name"
+        multiple
+        chips
+        clearable
+        deletable-chips
         label="Satellite Missions"
-        hint="Separate multiple missions by comma"
         outlined
         required
         :rules="[
           (v) => !!v || 'Satellite missions are required',
-          (v) => /^[a-zA-Z0-9-]+(,[a-zA-Z0-9-]+)*$/.test(v) || 'Satellite missions must be separated by commas'
         ]"
       />
       <v-text-field
@@ -241,7 +276,7 @@
       />
     </template>
     <div
-      class="d-flex"
+      class="d-flex flex-column flex-sm-row"
     >
       <v-dialog
         v-if="type === 'edit'"
@@ -345,13 +380,13 @@ export default {
         Theme: [
           'name',
           'description',
-          'link',
+          'linkWebsite',
           'image'
         ],
         Variable: [
           'name',
           'description',
-          'link',
+          'linkWebsite',
           'theme'
         ],
         Project: [
@@ -364,7 +399,9 @@ export default {
           'start_datetime',
           'end_datetime',
           'datetime',
-          'link'
+          'linkWebsite',
+          'linkEo4Society',
+          'linkDocumentation'
         ],
         Product: [
           'name',
@@ -374,7 +411,9 @@ export default {
           'start_datetime',
           'end_datetime',
           'datetime',
-          'link',
+          'linkWebsite',
+          'linkAccess',
+          'linkDocumentation',
           'missions',
           'project',
           'variable',
@@ -392,8 +431,10 @@ export default {
       endDate: '',
       satelliteMissions: '',
       consortium: '',
-      eo4societyURL: '',
-      link: '',
+      linkWebsite: '',
+      linkAccess: '',
+      linkDocumentation: '',
+      linkEo4Society: '',
       WMSLink: '',
       image: '',
       bbox: null,
@@ -418,7 +459,8 @@ export default {
   },
   computed: {
     ...mapState('staticCatalog', [
-      'themes'
+      'themes',
+      'missions'
     ])
   },
   async mounted () {
@@ -451,7 +493,7 @@ export default {
           const selectedTheme = this.themes.find(theme => this.slugify(theme.name) === this.$route.query.theme)
           this.name = selectedTheme.name
           this.description = selectedTheme.description
-          this.eo4societyURL = selectedTheme.website
+          this.linkWebsite = selectedTheme.website
           this.image = selectedTheme.image
         } else if (this.selectedItemType === 'Variable') {
           await this.retreiveVariable(this.$route.query.variable).then((selectedVariable) => {
@@ -459,7 +501,7 @@ export default {
             // temporary hack to pre-select parent theme
             this.name = selectedVariable.id
             this.parentThemes = selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-            this.link = selectedVariable.links.find(link => link.rel === 'via').href
+            this.linkWebsite = selectedVariable.links.find(link => link.rel === 'via').href
           }).catch(err => console.error(err))
         } else if (this.selectedItemType === 'Project') {
           await this.retreiveProjects(this.$route.query.project).then((selectedProject) => {
@@ -469,12 +511,12 @@ export default {
             this.description = selectedProject.properties.description
             this.parentThemes = selectedProject.properties['osc:themes']
             // TODO: cleanup
-            this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().toString().slice(0, -8)
-            this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().toString().slice(0, -8)
-            this.datetime = new Date(selectedProject.properties.datetime).toISOString().toString().slice(0, -8)
+            this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().split('T')[0]
+            this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().split('T')[0]
+            this.datetime = new Date(selectedProject.properties.datetime).toISOString().split('T')[0]
             this.consortium = selectedProject.properties['osc:consortium']
-            this.eo4societyURL = selectedProject.links[0].href
-            this.link = selectedProject.links[1].href
+            this.linkWebsite = selectedProject.links.find(l => l.title === 'Website').href
+            this.linkEo4Society = selectedProject.links.find(l => l.title === 'EO4Society Link').href
             this.status = selectedProject.properties['osc:status']
             this.technical_officer = selectedProject.properties['osc:technical_officer'].name
             this.email = selectedProject.properties['osc:technical_officer']['e-mail']
@@ -491,12 +533,14 @@ export default {
             this.parentVariables = selectedProduct.properties['osc:variable']
             this.parentProject = selectedProduct.properties['osc:project']
             // TODO: cleanup
-            this.startDate = new Date(selectedProduct.properties.start_datetime).toISOString().toString().slice(0, -8)
-            this.endDate = new Date(selectedProduct.properties.end_datetime).toISOString().toString().slice(0, -8)
-            this.datetime = new Date(selectedProduct.properties.datetime).toISOString().toString().slice(0, -8)
+            this.startDate = new Date(selectedProduct.properties.start_datetime).toISOString().split('T')[0]
+            this.endDate = new Date(selectedProduct.properties.end_datetime).toISOString().split('T')[0]
+            this.datetime = new Date(selectedProduct.properties.datetime).toISOString().split('T')[0]
             this.satelliteMissions = selectedProduct.properties['osc:missions']
-            this.eo4societyURL = selectedProduct.links[0].href
-            this.link = selectedProduct.links[1].href
+            // this.link = selectedProduct.links[1].href
+            this.linkWebsite = selectedProduct.links.find(l => l.rel === 'via' && !l.title)?.href
+            this.linkAccess = selectedProduct.links.find(l => l.title === 'Access')?.href
+            this.linkDocumentation = selectedProduct.links.find(l => l.title === 'Documentation')?.href
             this.status = selectedProduct.properties['osc:status']
             this.region = selectedProduct.properties['osc:region']
             this.bbox = selectedProduct.bbox
@@ -515,8 +559,10 @@ export default {
         this.startDate = ''
         this.endDate = ''
         this.satelliteMissions = []
-        this.eo4societyURL = ''
-        this.link = ''
+        this.linkWebsite = ''
+        this.linkAccess = ''
+        this.linkDocumentation = ''
+        this.linkEo4Society = ''
       }
     },
     async submitForm () {
@@ -529,7 +575,7 @@ export default {
               itemData = new this.$Theme({
                 name: this.name,
                 description: this.description,
-                eo4societyURL: this.eo4societyURL,
+                linkWebsite: this.linkWebsite,
                 image: this.image
               })
               break
@@ -537,7 +583,7 @@ export default {
               itemData = new this.$Variable({
                 name: this.name,
                 description: this.description,
-                eo4societyURL: this.eo4societyURL,
+                linkWebsite: this.linkWebsite,
                 theme: this.parentThemes
               })
               break
@@ -552,10 +598,11 @@ export default {
                 technical_officer: this.technical_officer,
                 email: this.email,
                 consortium: this.consortium,
-                start_datetime: this.startDate,
-                end_datetime: this.endDate,
-                datetime: this.datetime,
-                link: this.eo4societyURL
+                start_datetime: `${this.startDate}T00:00:00Z`,
+                end_datetime: `${this.endDate}T00:00:00Z`,
+                datetime: `${this.datetime}T00:00:00Z`,
+                linkWebsite: this.linkWebsite,
+                linkEo4Society: this.linkEo4Society
               })
               break
             case 'Product':
@@ -568,10 +615,12 @@ export default {
                 variable: this.parentVariables,
                 missions: this.satelliteMissions,
                 project: this.parentProject,
-                start_datetime: this.startDate,
-                end_datetime: this.endDate,
-                datetime: this.datetime,
-                link: this.eo4societyURL,
+                start_datetime: `${this.startDate}T00:00:00Z`,
+                end_datetime: `${this.endDate}T00:00:00Z`,
+                datetime: `${this.datetime}T00:00:00Z`,
+                linkWebsite: this.linkWebsite,
+                linkAccess: this.linkAccess,
+                linkDocumentation: this.linkDocumentation,
                 region: this.region,
                 geometry: {
                   type: 'Polygon',
