@@ -7,10 +7,10 @@ const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
   publicRuntimeConfig: {
-    staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.osc.develop.eoepca.org/open-science-catalog-metadata',
-    staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata',
-    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.osc.develop.eoepca.org',
-    backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://open-science-catalog-backend.develop.eoepca.org',
+    staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.staging.185.52.192.220.nip.io/open-science-catalog-metadata-staging',
+    staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata-staging',
+    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.staging.185.52.192.220.nip.io',
+    backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://backend-api.staging.185.52.192.220.nip.io',
     authEnabled: process.env.ENABLE_AUTH || true
   },
 
