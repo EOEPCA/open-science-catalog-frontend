@@ -18,6 +18,7 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          :current-page="page"
           :sort-by="productsFilterSortBy ? productsFilterSortBy : 'title'"
           :sort-order="productsFilterOrder"
           :pre-selected-items="[
@@ -101,8 +102,8 @@ export default {
           value: 'description'
         }
       ],
-      productsFilterSortBy: null,
-      productsFilterOrder: null,
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending',
       metrics: null,
       page: 1,
       numberOfPages: 1,
@@ -128,19 +129,12 @@ export default {
     }
   },
   async created () {
-    await this.retreiveVariable(this.$route.params.variable).then(async (variable) => {
-      this.variable = variable
-      // format products
-      await Promise.all(this.variable.links.map(async (link) => {
-        if (link.rel === 'item') {
-          await this.$staticCatalog
-            .$get(this.$replaceStaticBase(link.href)).then((productResponse) => {
-              this.products.push(productResponse)
-            }).catch(err => console.error(err))
-        }
-      }))
-    }).catch(err => console.error(err))
-
+    try {
+      this.variable = await this.retreiveVariable(this.$route.params.variable)
+    } catch (err) {
+      console.error(err)
+    }
+    this.filterProducts()
     this.metrics = await this.retreiveMetrics()
   },
   methods: {

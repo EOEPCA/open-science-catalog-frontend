@@ -27,6 +27,7 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          :current-page="page"
           :sort-by="productsFilterSortBy ? productsFilterSortBy : 'title'"
           :sort-order="productsFilterOrder"
           :pre-selected-items="[
@@ -76,6 +77,9 @@
         <item-display
           :items="products"
           :number-of-pages="numberOfPages"
+          @input="filterProducts"
+          @next="filterProducts"
+          @previous="filterProducts"
         />
       </v-container>
     </Item>
@@ -99,8 +103,8 @@ export default {
       project: null,
       products: [],
       productsSearch: '',
-      productsFilterSortBy: null,
-      productsFilterOrder: null,
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending',
       showDescription: false,
       page: 1,
       numberOfPages: 1
@@ -117,16 +121,12 @@ export default {
     ])
   },
   async created () {
-    await this.retreiveProjects(this.$route.params.project).then(async (project) => {
-      this.project = project
-      await this.fetchProducts({
-        projectID: this.project.id,
-        page: (this.page - 1) * 12
-      }).then((productsResponse) => {
-        this.products = productsResponse.features
-        this.numberOfPages = Math.round(productsResponse.numberMatched / 12)
-      }).catch(err => console.error(err))
-    }).catch(err => console.error(err))
+    try {
+      this.project = await this.retreiveProjects(this.$route.params.project)
+    } catch (err) {
+      console.error(err)
+    }
+    this.filterProducts()
   },
   methods: {
     ...mapActions('dynamicCatalog', [
@@ -136,6 +136,9 @@ export default {
       'retreiveProjects'
     ]),
     filterProducts (init) {
+      if (typeof init === 'number') {
+        this.page = init
+      }
       this.$nextTick(() => {
         if (this.productsFilterSortBy && this.productsFilterOrder) {
           this.$refs.searchBox.filterProducts(init)
