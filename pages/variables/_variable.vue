@@ -65,20 +65,13 @@
             />
           </v-col>
         </v-row>
-        <item-grid
+        <item-display
           :items="products"
+          :number-of-pages="numberOfPages"
+          @input="filterProducts"
+          @next="filterProducts"
+          @previous="filterProducts"
         />
-        <v-row>
-          <v-col cols="12" class="text-center">
-            <v-pagination
-              v-model="page"
-              :length="numberOfPages"
-              @input="filterProducts"
-              @next="filterProducts"
-              @previous="filterProducts"
-            />
-          </v-col>
-        </v-row>
       </v-container>
     </Item>
   </div>
@@ -86,9 +79,13 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import ItemDisplay from '@/components/ItemDisplay.vue'
 
 export default {
   name: 'VariableSingle',
+  components: {
+    ItemDisplay
+  },
   data () {
     return {
       variable: null,
@@ -155,6 +152,9 @@ export default {
       'retreiveVariable'
     ]),
     filterProducts (init) {
+      if (typeof init === 'number') {
+        this.page = init
+      }
       this.$nextTick(() => {
         if (this.productsFilterSortBy && this.productsFilterOrder) {
           this.$refs.searchBox.filterProducts(init)

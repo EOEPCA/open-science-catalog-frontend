@@ -73,17 +73,10 @@
             />
           </v-col>
         </v-row>
-        <item-grid
+        <item-display
           :items="products"
+          :number-of-pages="numberOfPages"
         />
-        <v-row>
-          <v-col cols="12" class="text-center">
-            <v-pagination
-              v-model="page"
-              :length="numberOfPages"
-            />
-          </v-col>
-        </v-row>
       </v-container>
     </Item>
   </div>
@@ -93,11 +86,13 @@
 import { mapActions, mapState } from 'vuex'
 
 import Item from '@/components/Item.vue'
+import ItemDisplay from '~/components/ItemDisplay.vue'
 
 export default {
   name: 'ProjectSingle',
   components: {
-    Item
+    Item,
+    ItemDisplay
   },
   data () {
     return {

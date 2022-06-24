@@ -64,35 +64,28 @@
         <small>{{ numberOfItems }} items found</small>
       </v-col>
     </v-row>
-    <item-grid
+    <item-display
       :items="items"
       :show-empty-items="showEmptyItems"
+      :number-of-pages="numberOfPages"
+      @input="filterProducts"
+      @next="filterProducts"
+      @previous="filterProducts"
     />
-    <v-row>
-      <v-col cols="12" class="text-center">
-        <v-pagination
-          v-model="page"
-          :length="numberOfPages"
-          @input="filterProducts"
-          @next="filterProducts"
-          @previous="filterProducts"
-        />
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 
-import ItemGrid from '@/components/ItemGrid.vue'
 import SearchCombobox from '@/components/SearchCombobox.vue'
+import ItemDisplay from '@/components/ItemDisplay.vue'
 
 export default {
   name: 'Search',
   components: {
-    ItemGrid,
-    SearchCombobox
+    SearchCombobox,
+    ItemDisplay
   },
   data () {
     return {
@@ -145,6 +138,9 @@ export default {
       this.numberOfItems = result.numberOfItems
     },
     filterProducts (init) {
+      if (typeof init === 'number') {
+        this.page = init
+      }
       this.$nextTick(() => {
         this.$refs.searchBox.filterProducts(init)
       })
