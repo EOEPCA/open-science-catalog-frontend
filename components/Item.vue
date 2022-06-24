@@ -116,13 +116,13 @@
               <v-icon left>
                 mdi-calendar-today
               </v-icon>
-              <strong class="text-uppercase mr-2">Start Date</strong> {{ details.start_datetime }}
+              <strong class="text-uppercase mr-2">Start Date</strong> {{ details.start_datetime.split('T')[0] }}
             </div>
             <div v-if="details.end_datetime" class="mb-2">
               <v-icon left>
                 mdi-calendar
               </v-icon>
-              <strong class="text-uppercase mr-2">End Date</strong> {{ details.end_datetime }}
+              <strong class="text-uppercase mr-2">End Date</strong> {{ details.end_datetime.split('T')[0] }}
             </div>
             <div v-if="details.datetime" class="mb-2">
               <v-icon left>

@@ -30,14 +30,14 @@
               <v-icon small>
                 mdi-calendar-today
               </v-icon>
-              <small>{{ item.properties.start_datetime }}</small>
+              <small>{{ item.properties.start_datetime.split(' ')[0] }}</small>
               -
             </div>
             <div class="projectDate">
               <v-icon small>
                 mdi-calendar
               </v-icon>
-              <small>{{ item.properties.end_datetime }}</small>
+              <small>{{ item.properties.end_datetime.split(' ')[0] }}</small>
             </div>
           </template>
         </v-card-title>
