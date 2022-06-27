@@ -60,8 +60,10 @@
                 : 's' }}
             </template>
             <template v-else>
-              {{ item.links.filter(link => link.rel === 'item').length }} Products
-            </template>
+              {{ item.links.filter(link => link.rel === 'item').length }} Product{{ item.links.filter(link => link.rel === 'item').length === 1
+                ? ''
+                : 's' }}
+            </template> {{ $route.params.theme ? '(in current theme)' : '' }}
           </p>
           <div v-if="getType(item) === 'product' && 'osc:themes' in item.properties" class="mt-2">
             - {{ item.properties['osc:themes'].join(', ') }}
