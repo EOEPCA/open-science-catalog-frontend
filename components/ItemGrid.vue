@@ -65,8 +65,19 @@
                 : 's' }}
             </template> {{ $route.params.theme ? '(in current theme)' : '' }}
           </p>
-          <div v-if="getType(item) === 'product' && 'osc:themes' in item.properties" class="mt-2">
-            - {{ item.properties['osc:themes'].join(', ') }}
+          <div v-if="getType(item) === 'product' && item.properties.keywords.find(el => el.includes('theme:'))" class="mt-2">
+            <v-chip
+              v-for="theme in item.properties.keywords.filter(el => el.includes('theme:'))"
+              :key="theme"
+              x-small
+              color="grey"
+              dark
+              label
+              :to="`/themes/${slugify(theme.replace('theme:', ''))}`"
+              class="mr-2 mb-2 text-uppercase"
+            >
+              {{ theme.replace('theme:', '') }}
+            </v-chip>
           </div>
         </v-card-text>
       </v-card>
