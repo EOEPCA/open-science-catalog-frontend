@@ -18,6 +18,7 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          :current-page="page"
           :sort-by="productsFilterSortBy ? productsFilterSortBy : 'title'"
           :sort-order="productsFilterOrder"
           :pre-selected-items="[
@@ -65,20 +66,13 @@
             />
           </v-col>
         </v-row>
-        <item-grid
+        <item-display
           :items="products"
+          :number-of-pages="numberOfPages"
+          @input="filterProducts"
+          @next="filterProducts"
+          @previous="filterProducts"
         />
-        <v-row>
-          <v-col cols="12" class="text-center">
-            <v-pagination
-              v-model="page"
-              :length="numberOfPages"
-              @input="filterProducts"
-              @next="filterProducts"
-              @previous="filterProducts"
-            />
-          </v-col>
-        </v-row>
       </v-container>
     </Item>
   </div>
@@ -86,9 +80,13 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import ItemDisplay from '@/components/ItemDisplay.vue'
 
 export default {
   name: 'VariableSingle',
+  components: {
+    ItemDisplay
+  },
   data () {
     return {
       variable: null,
@@ -104,8 +102,8 @@ export default {
           value: 'description'
         }
       ],
-      productsFilterSortBy: null,
-      productsFilterOrder: null,
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending',
       metrics: null,
       page: 1,
       numberOfPages: 1,
@@ -131,19 +129,12 @@ export default {
     }
   },
   async created () {
-    await this.retreiveVariable(this.$route.params.variable).then(async (variable) => {
-      this.variable = variable
-      // format products
-      await Promise.all(this.variable.links.map(async (link) => {
-        if (link.rel === 'item') {
-          await this.$staticCatalog
-            .$get(this.$replaceStaticBase(link.href)).then((productResponse) => {
-              this.products.push(productResponse)
-            }).catch(err => console.error(err))
-        }
-      }))
-    }).catch(err => console.error(err))
-
+    try {
+      this.variable = await this.retreiveVariable(this.$route.params.variable)
+    } catch (err) {
+      console.error(err)
+    }
+    this.filterProducts()
     this.metrics = await this.retreiveMetrics()
   },
   methods: {
@@ -155,6 +146,9 @@ export default {
       'retreiveVariable'
     ]),
     filterProducts (init) {
+      if (typeof init === 'number') {
+        this.page = init
+      }
       this.$nextTick(() => {
         if (this.productsFilterSortBy && this.productsFilterOrder) {
           this.$refs.searchBox.filterProducts(init)

@@ -520,10 +520,10 @@ export default {
           return curr.key === 'type'
             ? `${acc}&type=${curr.value.toLowerCase() === 'project' ? 'datasetcollection' : 'dataset'}`
             : keywordKeys.includes(curr.key)
-              ? ''
+              ? acc
               : curr.key !== 'bbox'
                 ? `${acc}&q=${curr.value}`
-                : ''
+                : acc
         }, '')
         const queryString = `/collections/metadata:main/items?limit=12&sortby=${
           this.sortOrder === 'Descending' ? `-${this.sortBy}` : `${this.sortBy}`}&offset=${
@@ -555,7 +555,7 @@ export default {
           }
           this.$emit('searchQuery', {
             items: itemsResponse.features,
-            numberOfPages: Math.round(itemsResponse.numberMatched / 12),
+            numberOfPages: Math.ceil(itemsResponse.numberMatched / 12),
             numberOfItems: itemsResponse.numberMatched
           })
         }).catch(err => console.error(err))
