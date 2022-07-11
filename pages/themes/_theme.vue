@@ -82,7 +82,7 @@
                 />
               </v-col>
             </v-row>
-            <item-grid
+            <item-display
               :items="variablesDetails"
               :show-empty-items="showEmptyItems"
             />
@@ -156,7 +156,7 @@
                 />
               </v-col>
             </v-row>
-            <item-grid
+            <item-display
               :items="projectDetails"
               :show-empty-items="showEmptyItems"
             />
@@ -171,13 +171,13 @@
 import { mapActions, mapState, mapMutations } from 'vuex'
 
 import Item from '@/components/Item.vue'
-import ItemGrid from '@/components/ItemGrid.vue'
+import ItemDisplay from '~/components/ItemDisplay.vue'
 
 export default {
   name: 'ThemeSingle',
   components: {
     Item,
-    ItemGrid
+    ItemDisplay
   },
   data () {
     return {

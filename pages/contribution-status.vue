@@ -151,7 +151,7 @@ export default {
           styling.color = 'warning'
           styling.icon = 'mdi-progress-clock'
           break
-        case 'Accepted':
+        case 'Merged':
           styling.color = 'success'
           styling.icon = 'mdi-progress-check'
           break

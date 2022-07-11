@@ -30,14 +30,14 @@
               <v-icon small>
                 mdi-calendar-today
               </v-icon>
-              <small>{{ item.properties.start_datetime }}</small>
+              <small>{{ item.properties.start_datetime.split(' ')[0] }}</small>
               -
             </div>
             <div class="projectDate">
               <v-icon small>
                 mdi-calendar
               </v-icon>
-              <small>{{ item.properties.end_datetime }}</small>
+              <small>{{ item.properties.end_datetime.split(' ')[0] }}</small>
             </div>
           </template>
         </v-card-title>
@@ -60,11 +60,24 @@
                 : 's' }}
             </template>
             <template v-else>
-              {{ item.links.filter(link => link.rel === 'item').length }} Products
-            </template>
+              {{ item.links.filter(link => link.rel === 'item').length }} Product{{ item.links.filter(link => link.rel === 'item').length === 1
+                ? ''
+                : 's' }}
+            </template> {{ $route.params.theme ? '(in current theme)' : '' }}
           </p>
-          <div v-if="getType(item) === 'product' && 'osc:themes' in item.properties" class="mt-2">
-            - {{ item.properties['osc:themes'].join(', ') }}
+          <div v-if="getType(item) === 'product' && item.properties.keywords.find(el => el.includes('theme:'))" class="mt-2">
+            <v-chip
+              v-for="theme in item.properties.keywords.filter(el => el.includes('theme:'))"
+              :key="theme"
+              x-small
+              color="grey"
+              dark
+              label
+              :to="`/themes/${slugify(theme.replace('theme:', ''))}`"
+              class="mr-2 mb-2 text-uppercase"
+            >
+              {{ theme.replace('theme:', '') }}
+            </v-chip>
           </div>
         </v-card-text>
       </v-card>

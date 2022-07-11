@@ -27,6 +27,7 @@
         <search-combobox
           ref="searchBox"
           embedded-mode
+          :current-page="page"
           :sort-by="productsFilterSortBy ? productsFilterSortBy : 'title'"
           :sort-order="productsFilterOrder"
           :pre-selected-items="[
@@ -73,17 +74,13 @@
             />
           </v-col>
         </v-row>
-        <item-grid
+        <item-display
           :items="products"
+          :number-of-pages="numberOfPages"
+          @input="filterProducts"
+          @next="filterProducts"
+          @previous="filterProducts"
         />
-        <v-row>
-          <v-col cols="12" class="text-center">
-            <v-pagination
-              v-model="page"
-              :length="numberOfPages"
-            />
-          </v-col>
-        </v-row>
       </v-container>
     </Item>
   </div>
@@ -93,19 +90,21 @@
 import { mapActions, mapState } from 'vuex'
 
 import Item from '@/components/Item.vue'
+import ItemDisplay from '~/components/ItemDisplay.vue'
 
 export default {
   name: 'ProjectSingle',
   components: {
-    Item
+    Item,
+    ItemDisplay
   },
   data () {
     return {
       project: null,
       products: [],
       productsSearch: '',
-      productsFilterSortBy: null,
-      productsFilterOrder: null,
+      productsFilterSortBy: 'title',
+      productsFilterOrder: 'Ascending',
       showDescription: false,
       page: 1,
       numberOfPages: 1
@@ -122,16 +121,12 @@ export default {
     ])
   },
   async created () {
-    await this.retreiveProjects(this.$route.params.project).then(async (project) => {
-      this.project = project
-      await this.fetchProducts({
-        projectID: this.project.id,
-        page: (this.page - 1) * 12
-      }).then((productsResponse) => {
-        this.products = productsResponse.features
-        this.numberOfPages = Math.round(productsResponse.numberMatched / 12)
-      }).catch(err => console.error(err))
-    }).catch(err => console.error(err))
+    try {
+      this.project = await this.retreiveProjects(this.$route.params.project)
+    } catch (err) {
+      console.error(err)
+    }
+    this.filterProducts()
   },
   methods: {
     ...mapActions('dynamicCatalog', [
@@ -141,6 +136,9 @@ export default {
       'retreiveProjects'
     ]),
     filterProducts (init) {
+      if (typeof init === 'number') {
+        this.page = init
+      }
       this.$nextTick(() => {
         if (this.productsFilterSortBy && this.productsFilterOrder) {
           this.$refs.searchBox.filterProducts(init)
