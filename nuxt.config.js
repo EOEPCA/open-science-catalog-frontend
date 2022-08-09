@@ -7,11 +7,28 @@ const routerBase = process.env.ROUTER_BASE || '/'
 
 export default {
   publicRuntimeConfig: {
-    staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.staging.185.52.192.220.nip.io/open-science-catalog-metadata-staging',
+    staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.staging.opensciencedata.esa.int/open-science-catalog-metadata-staging',
     staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata-staging',
-    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.staging.185.52.192.220.nip.io',
-    backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://backend-api.staging.185.52.192.220.nip.io',
-    authEnabled: process.env.ENABLE_AUTH || true
+    dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.staging.opensciencedata.esa.int',
+    backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://backend-api.staging.opensciencedata.esa.int',
+    authEnabled: process.env.ENABLE_AUTH || true,
+    auth: {
+      strategies: {
+        oidc: {
+          clientId: process.env.OAUTH_CLIENTID || 'b71d5cb8-b371-42a6-9c27-a771c9775691',
+          endpoints: {
+            configuration: process.env.OPENID_CONFIGURATION || 'https://auth.staging.opensciencedata.esa.int/.well-known/openid-configuration'
+          },
+          responseType: 'token id_token',
+          idToken: {
+            property: 'id_token',
+            maxAge: 1800
+          },
+          scope: process.env.OAUTH_SCOPE || 'profile',
+          acrValues: ['passport_social']
+        }
+      }
+    }
   },
 
   // Target: https://go.nuxtjs.dev/config-target
@@ -121,18 +138,7 @@ export default {
   auth: {
     strategies: {
       oidc: {
-        scheme: 'openIDConnect',
-        clientId: process.env.OAUTH_CLIENTID || '2af21e66-bd47-4894-b91e-2f3d6c07d99e',
-        endpoints: {
-          configuration: process.env.OPENID_CONFIGURATION || 'https://auth.develop.eoepca.org/.well-known/openid-configuration'
-        },
-        responseType: 'token id_token',
-        idToken: {
-          property: 'id_token',
-          maxAge: 1800
-        },
-        scope: process.env.OAUTH_SCOPE || 'profile',
-        acrValues: ['passport_social']
+        scheme: '~/auth/runtimeConfigurableScheme.js'
       }
     },
     redirect: {
