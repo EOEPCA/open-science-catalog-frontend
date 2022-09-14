@@ -411,7 +411,6 @@ export default {
           'start_datetime',
           'end_datetime',
           'datetime',
-          'linkWebsite',
           'linkAccess',
           'linkDocumentation',
           'missions',
