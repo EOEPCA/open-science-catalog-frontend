@@ -210,11 +210,8 @@ export default {
           variables.push(variable)
         })
       })
-      variables.sort(function (a, b) {
-        if (a.name < b.name) { return -1 }
-        if (a.name > b.name) { return 1 }
-        if (a.name > b.name) { return 1 }
-        return 0
+      variables.sort((a, b) => {
+        return a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
       })
       if (!this.showEmptyItems) {
         if (!silent) {

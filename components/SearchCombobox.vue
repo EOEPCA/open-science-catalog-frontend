@@ -99,7 +99,7 @@
           </v-list-item>
         </template>
         <template #item="data">
-          <span :class="data.item.operator ? '' : 'text-capitalize'">
+          <span :class="data.item.filter ? 'text-capitalize' : ''">
             {{ data.item.field_name }}
           </span>
         </template>
@@ -309,7 +309,9 @@ export default {
                     }
                   }
                 })
-                .sort((a, b) => a.field_name < b.field_name ? -1 : 1)
+                .sort((a, b) => a.field_name.localeCompare(b.field_name, 'en', {
+                  sensitivity: 'base'
+                }))
             }
           } else {
             items = [
@@ -396,6 +398,8 @@ export default {
         this.variables.push(variable.name)
       })
     })
+    this.variables = this.variables
+      .sort((a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' }))
     if (this.sortOnCreated) {
       this.filterProducts()
     }
