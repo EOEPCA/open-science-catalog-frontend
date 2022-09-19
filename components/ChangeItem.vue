@@ -119,6 +119,9 @@
         label="Website Link"
         outlined
         :rules="[
+          ...selectedItemType === 'Project'
+            ? [(v) => (!!v || !!linkEo4Society) || 'Website Link is required (alternatively, provide an EO4Society link)']
+            : [],
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
       >
@@ -194,6 +197,9 @@
         label="EO4Society Link"
         outlined
         :rules="[
+          ...selectedItemType === 'Project'
+            ? [(v) => (!!v || !!linkWebsite) || 'EO4Society Link is required (alternatively, provide a website link)']
+            : [],
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
       >
@@ -781,6 +787,14 @@ export default {
       'themes',
       'missions'
     ])
+  },
+  watch: {
+    linkWebsite () {
+      this.$refs.form.validate()
+    },
+    linkEo4Society () {
+      this.$refs.form.validate()
+    }
   },
   async mounted () {
     await this.$store.dispatch('staticCatalog/retreiveMetrics')
