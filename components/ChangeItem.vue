@@ -50,8 +50,8 @@
         required
         :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name required`]"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -59,10 +59,13 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span v-if="selectedItemType == 'Theme'">Provide new theme - scientific domain of the project</span>
+            <span v-if="selectedItemType == 'Variable'">Provide new variable name</span>
+            <span v-if="selectedItemType == 'Project'">Provide new project name</span>
+            <span v-if="selectedItemType == 'Product'">Provide product name to add</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -91,8 +94,8 @@
             class="mt-4"
             outlined
           >
-            <template #append-outer>
-              <v-tooltip top>
+            <template #append>
+              <v-tooltip left>
                 <template #activator="{ on, attrs }">
                   <v-icon
                     color="primary"
@@ -100,10 +103,13 @@
                     v-bind="attrs"
                     v-on="on"
                   >
-                    mdi-help
+                    mdi-help-circle-outline
                   </v-icon>
                 </template>
-                <span>Placeholder hint</span>
+                <span v-if="selectedItemType == 'Theme'">Add a short description for the Theme</span>
+                <span v-if="selectedItemType == 'Variable'">Variable definition or short description</span>
+                <span v-if="selectedItemType == 'Project'">Add short item's description</span>
+                <span v-if="selectedItemType == 'Product'">Add short product's description</span>
               </v-tooltip>
             </template>
           </v-textarea>
@@ -125,8 +131,8 @@
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -134,10 +140,12 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span v-if="selectedItemType == 'Theme'">Provide URL to the theme's website (e.g. Science Clusters on EO4Society: https://eo4society.esa.int/communities/scientists/)</span>
+            <span v-if="selectedItemType == 'Variable'">Provide URL to the variable's website (e.g. refer to variables in the website: https://space.oscar.wmo.int/variables)</span>
+            <span v-if="selectedItemType == 'Project'">Provide URL to the project's dedicated website (if exists)</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -150,8 +158,8 @@
           (v) => !!v || 'URL is required'
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -159,24 +167,24 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Provide URL to access the data</span>
           </v-tooltip>
         </template>
       </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkDocumentation')"
         v-model="linkDocumentation"
-        label="Documentation Link"
+        :label="`Documentation Link${selectedItemType === 'Product' ? '/DOI' : ''}`"
         outlined
         :rules="[
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -184,10 +192,11 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span v-if="selectedItemType == 'Project'">Provide URL to the project's documentation (if exists)</span>
+            <span v-if="selectedItemType == 'Product'">Provide URL to product's documentation (ideally provide DOI number)</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -203,8 +212,8 @@
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -212,10 +221,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Provide URL to EO4Society website of the project (if exists)</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -227,8 +236,8 @@
         required
         :rules="[v => !!v || 'Image link is required']"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -236,10 +245,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Provide a link to the image to be used as thumbnail</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -258,8 +267,8 @@
         required
         :rules="[v => !!v || 'Parent theme is required']"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -267,10 +276,12 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span v-if="selectedItemType == 'Variable'">Select one or multiple themes for the variable</span>
+            <span v-if="selectedItemType == 'Project'">Select one or multiple themes for the project</span>
+            <span v-if="selectedItemType == 'Product'">Select one or multiple themes for the project</span>
           </v-tooltip>
         </template>
       </v-select>
@@ -286,8 +297,8 @@
         required
         label="Status"
       >
-        <template #append-outer>
-          <v-tooltip top>
+        <template #append>
+          <v-tooltip left>
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -295,10 +306,11 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span v-if="selectedItemType == 'Project'">Select status of the project (ongoing, completed or planned)</span>
+            <span v-if="selectedItemType == 'Product'">Select status of the product (ongoing, completed or planned)</span>
           </v-tooltip>
         </template>
       </v-select>
@@ -312,8 +324,8 @@
           (v) => !!v || 'Technical officer name is required',
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -321,10 +333,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Full name of Technical Officer</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -338,8 +350,8 @@
           (v) => !!v || 'Technical officer e-mail is required',
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -347,23 +359,23 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Technical Officer's e-mail address</span>
           </v-tooltip>
         </template>
       </v-text-field>
       <v-text-field
-        v-if="itemTypes[selectedItemType].includes('Consortium')"
+        v-if="itemTypes[selectedItemType].includes('consortium')"
         v-model="consortium"
         label="Consortium"
         outlined
         required
         :rules="[v => !!v || 'Consortium is required']"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -371,10 +383,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Consortium name</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -387,8 +399,8 @@
         required
         :rules="[v => !!v || 'Start date is required']"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -396,10 +408,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Start date of the project</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -412,8 +424,8 @@
         required
         :rules="[v => !!v || 'End date is required']"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -421,10 +433,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>End date of the project</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -432,13 +444,13 @@
         v-if="itemTypes[selectedItemType].includes('datetime')"
         v-model="datetime"
         type="date"
-        label="Datetime"
+        label="Release date"
         outlined
         required
         :rules="[v => !!v || 'Date time is required']"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -446,10 +458,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Date of product's release</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -467,8 +479,8 @@
         outlined
         required
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -476,10 +488,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Select one or multiple variables to which the product applies</span>
           </v-tooltip>
         </template>
       </v-select>
@@ -493,8 +505,8 @@
           (v) => !!v || 'Parent Project ID is required',
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -502,10 +514,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Select project under which product was developed</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -526,8 +538,8 @@
           (v) => !!v || 'Satellite missions are required',
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -535,10 +547,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Select one or more satellite missions that were used to produce the results</span>
           </v-tooltip>
         </template>
       </v-combobox>
@@ -552,8 +564,8 @@
           (v) => !!v || 'Region is required'
         ]"
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -561,10 +573,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>Write for which region the product has been generated and/or applied (eg. Europe/Asia/Global etc)</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -577,8 +589,8 @@
         disabled
         outlined
       >
-        <template #append-outer>
-          <v-tooltip top style="margin-bottom: -10px;">
+        <template #append>
+          <v-tooltip left style="margin-bottom: -10px;">
             <template #activator="{ on, attrs }">
               <v-icon
                 color="primary"
@@ -586,10 +598,10 @@
                 v-bind="attrs"
                 v-on="on"
               >
-                mdi-help
+                mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Placeholder hint</span>
+            <span>On the map below, draw an area covered by product</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -724,7 +736,6 @@ export default {
           'consortium',
           'start_datetime',
           'end_datetime',
-          'datetime',
           'linkWebsite',
           'linkEo4Society',
           'linkDocumentation'
@@ -846,7 +857,6 @@ export default {
             // TODO: cleanup
             this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().split('T')[0]
             this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().split('T')[0]
-            this.datetime = new Date(selectedProject.properties.datetime).toISOString().split('T')[0]
             this.consortium = selectedProject.properties['osc:consortium']
             this.linkWebsite = selectedProject.links.find(l => l.title === 'Website').href
             this.linkEo4Society = selectedProject.links.find(l => l.title === 'EO4Society Link').href
@@ -871,7 +881,6 @@ export default {
             this.datetime = new Date(selectedProduct.properties.datetime).toISOString().split('T')[0]
             this.satelliteMissions = selectedProduct.properties['osc:missions']
             // this.link = selectedProduct.links[1].href
-            this.linkWebsite = selectedProduct.links.find(l => l.rel === 'via' && !l.title)?.href
             this.linkAccess = selectedProduct.links.find(l => l.title === 'Access')?.href
             this.linkDocumentation = selectedProduct.links.find(l => l.title === 'Documentation')?.href
             this.status = selectedProduct.properties['osc:status']
@@ -933,7 +942,6 @@ export default {
                 consortium: this.consortium,
                 start_datetime: `${this.startDate}T00:00:00Z`,
                 end_datetime: `${this.endDate}T00:00:00Z`,
-                datetime: `${this.datetime}T00:00:00Z`,
                 linkWebsite: this.linkWebsite,
                 linkEo4Society: this.linkEo4Society
               })
@@ -951,7 +959,6 @@ export default {
                 start_datetime: `${this.startDate}T00:00:00Z`,
                 end_datetime: `${this.endDate}T00:00:00Z`,
                 datetime: `${this.datetime}T00:00:00Z`,
-                linkWebsite: this.linkWebsite,
                 linkAccess: this.linkAccess,
                 linkDocumentation: this.linkDocumentation,
                 region: this.region,
@@ -1014,3 +1021,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+::v-deep .v-select__selections {
+  min-height: 56px !important;
+}
+</style>
