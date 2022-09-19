@@ -49,7 +49,23 @@
         outlined
         required
         :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name required`]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-tabs
         v-if="itemTypes[selectedItemType].includes('description')"
         v-model="descriptionToggle"
@@ -74,7 +90,23 @@
             label="Description (markdown supported)"
             class="mt-4"
             outlined
-          />
+          >
+            <template #append-outer>
+              <v-tooltip top>
+                <template #activator="{ on, attrs }">
+                  <v-icon
+                    color="primary"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    mdi-help
+                  </v-icon>
+                </template>
+                <span>Placeholder hint</span>
+              </v-tooltip>
+            </template>
+          </v-textarea>
         </v-tab-item>
         <v-tab-item>
           <!-- eslint-disable-next-line vue/no-v-html -->
@@ -89,7 +121,23 @@
         :rules="[
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkAccess')"
         v-model="linkAccess"
@@ -98,7 +146,23 @@
         :rules="[
           (v) => !!v || 'URL is required'
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkDocumentation')"
         v-model="linkDocumentation"
@@ -107,7 +171,23 @@
         :rules="[
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkEo4Society')"
         v-model="linkEo4Society"
@@ -116,7 +196,23 @@
         :rules="[
           (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('image')"
         v-model="image"
@@ -124,7 +220,23 @@
         outlined
         required
         :rules="[v => !!v || 'Image link is required']"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-select
         v-if="itemTypes[selectedItemType].includes('theme')"
         v-model="parentThemes"
@@ -139,7 +251,23 @@
         outlined
         required
         :rules="[v => !!v || 'Parent theme is required']"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-select>
       <v-select
         v-if="itemTypes[selectedItemType].includes('status')"
         v-model="status"
@@ -151,7 +279,23 @@
         outlined
         required
         label="Status"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-select>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('technical_officer')"
         v-model="technical_officer"
@@ -161,7 +305,23 @@
         :rules="[
           (v) => !!v || 'Technical officer name is required',
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('technical_officer')"
         v-model="email"
@@ -171,7 +331,23 @@
         :rules="[
           (v) => !!v || 'Technical officer e-mail is required',
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('Consortium')"
         v-model="consortium"
@@ -179,7 +355,23 @@
         outlined
         required
         :rules="[v => !!v || 'Consortium is required']"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('start_datetime')"
         v-model="startDate"
@@ -188,7 +380,23 @@
         outlined
         required
         :rules="[v => !!v || 'Start date is required']"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('end_datetime')"
         v-model="endDate"
@@ -197,7 +405,23 @@
         outlined
         required
         :rules="[v => !!v || 'End date is required']"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('datetime')"
         v-model="datetime"
@@ -206,7 +430,23 @@
         outlined
         required
         :rules="[v => !!v || 'Date time is required']"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-select
         v-if="itemTypes[selectedItemType].includes('variable')"
         v-model="parentVariables"
@@ -220,7 +460,23 @@
         label="Variables"
         outlined
         required
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-select>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('project')"
         v-model="parentProject"
@@ -230,7 +486,23 @@
         :rules="[
           (v) => !!v || 'Parent Project ID is required',
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-combobox
         v-if="itemTypes[selectedItemType].includes('missions')"
         v-model="satelliteMissions"
@@ -247,7 +519,23 @@
         :rules="[
           (v) => !!v || 'Satellite missions are required',
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-combobox>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('region')"
         v-model="region"
@@ -257,7 +545,23 @@
         :rules="[
           (v) => !!v || 'Region is required'
         ]"
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('geometry')"
         v-model="bbox"
@@ -266,7 +570,23 @@
         readonly
         disabled
         outlined
-      />
+      >
+        <template #append-outer>
+          <v-tooltip top style="margin-bottom: -10px;">
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help
+              </v-icon>
+            </template>
+            <span>Placeholder hint</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
       <CoverageMap
         v-if="itemTypes[selectedItemType].includes('geometry')"
         enable-draw
