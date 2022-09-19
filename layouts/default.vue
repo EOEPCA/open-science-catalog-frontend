@@ -159,13 +159,13 @@
                   Hello, {{ $auth.user.name || 'unknown user' }}
                 </span>
               </p>
-              <p class="white--text text-center">
-                <small>OSCDataOwner: {{ $auth.user.OSCDataOwner }}</small>
+              <p v-if="$auth.user.OSCDataOwner" class="white--text text-center">
+                <small>OSC Data Owner</small>
                 <v-icon
                   small
-                  :color="$auth.user.OSCDataOwner ? 'success' : 'error'"
+                  color="success"
                 >
-                  {{ $auth.user.OSCDataOwner ? 'mdi-check-decagram' : 'mdi-close-circle-outline' }}
+                  mdi-check-decagram
                 </v-icon>
               </p>
             </template>
