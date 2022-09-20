@@ -20,10 +20,11 @@ export default {
             configuration: process.env.OPENID_CONFIGURATION || 'https://auth.staging.opensciencedata.esa.int/.well-known/openid-configuration'
           },
           responseType: 'token id_token',
-          idToken: {
-            property: 'id_token',
-            maxAge: 1800
-          },
+          // Not setting id token as it does not seem to be required for gluu
+          // idToken: {
+          //   property: 'id_token',
+          //   maxAge: 1800
+          // },
           scope: process.env.OAUTH_SCOPE || 'profile',
           acrValues: ['passport_social']
         }
