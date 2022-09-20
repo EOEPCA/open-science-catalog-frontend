@@ -411,7 +411,8 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Start date of the project</span>
+            <span v-if="selectedItemType == 'Project'">Start date of the project</span>
+            <span v-if="selectedItemType == 'Product'">Start date of the product</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -436,7 +437,8 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>End date of the project</span>
+            <span v-if="selectedItemType == 'Project'">End date of the project</span>
+            <span v-if="selectedItemType == 'Product'">End date of the product</span>
           </v-tooltip>
         </template>
       </v-text-field>
