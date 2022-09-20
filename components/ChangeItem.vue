@@ -807,6 +807,9 @@ export default {
     },
     linkEo4Society () {
       this.$refs.form.validate()
+    },
+    selectedItemType () {
+      this.$nextTick(() => this.$refs.form.resetValidation())
     }
   },
   async mounted () {
