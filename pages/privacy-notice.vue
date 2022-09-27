@@ -1,7 +1,7 @@
 <template>
   <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
     <h2 class="text-h2 mt-3 mb-5">
-      Privacy Policy
+      Privacy Notice
     </h2>
     <v-row>
       <v-col cols="12">
