@@ -99,7 +99,8 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxt/content'
   ],
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {

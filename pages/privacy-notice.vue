@@ -2,8 +2,7 @@
   <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
     <v-row>
       <v-col cols="12">
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <p v-html="parsedNotice" />
+        <nuxt-content :document="parsedContent" />
       </v-col>
     </v-row>
   </v-container>
@@ -12,11 +11,10 @@
 <script>
 export default {
   data: () => ({
-    parsedNotice: null
+    parsedContent: null
   }),
   async created () {
-    const notice = await this.$axios.$get(this.withBase('/privacy-notice.md'))
-    this.parsedNotice = this.$markdown(notice)
+    this.parsedContent = await this.$content('privacy-notice').fetch()
   }
 }
 </script>
