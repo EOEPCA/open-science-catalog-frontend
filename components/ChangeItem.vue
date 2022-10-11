@@ -834,7 +834,6 @@ export default {
         this.parentProjectItems = response.features
         this.parentProjectNumber = response.numberMatched
         setTimeout(() => {
-          this.$refs.parentProject.blur()
           this.$refs.parentProject.focus()
           this.$refs.parentProject.activateMenu()
         }, 500)
