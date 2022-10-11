@@ -15,7 +15,7 @@ export default {
     parsedTerms: null
   }),
   async created () {
-    const terms = await this.$axios.$get('./terms.md')
+    const terms = await this.$axios.$get(this.withBase('/terms.md'))
     this.parsedTerms = this.$markdown(terms)
   }
 }

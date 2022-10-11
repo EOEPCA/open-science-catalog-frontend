@@ -15,7 +15,7 @@ export default {
     parsedNotice: null
   }),
   async created () {
-    const notice = await this.$axios.$get('./privacy-notice.md')
+    const notice = await this.$axios.$get(this.withBase('/privacy-notice.md'))
     this.parsedNotice = this.$markdown(notice)
   }
 }
