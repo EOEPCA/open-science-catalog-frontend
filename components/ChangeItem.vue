@@ -619,9 +619,12 @@
         v-model="bbox"
         label="Product Extent (draw an area in the map below)"
         hint="Draw an area in the map below"
-        readonly
-        disabled
         outlined
+        required
+        :rules="[
+          (v) => !!v || 'Geometry is required',
+          (v) => bboxFormat.test(v) || 'Geometry needs to be in correct format (<lon1>,<lat1>,<lon2>,<lat2>)'
+        ]"
       >
         <template #append>
           <v-tooltip left style="margin-bottom: -10px;">
@@ -809,6 +812,7 @@ export default {
       WMSLink: '',
       image: '',
       bbox: null,
+      bboxFormat: /^(([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?),\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?))+(,|$))*$/,
       mapFeatures: null,
       variables: [],
       valid: false,
@@ -839,6 +843,17 @@ export default {
     ])
   },
   watch: {
+    bbox (newBbox) {
+      if (this.bboxFormat.test(newBbox)) {
+        const bbox = Array.isArray(newBbox)
+          ? newBbox
+          : newBbox.split(',').map(n => parseFloat(n))
+        this.mapFeatures = [{
+          type: 'Feature',
+          geometry: this.createBboxGeometry(bbox)
+        }]
+      }
+    },
     linkWebsite () {
       this.$refs.form.validate()
     },
@@ -1026,32 +1041,7 @@ export default {
                 linkAccess: this.linkAccess,
                 linkDocumentation: this.linkDocumentation,
                 region: this.region,
-                geometry: {
-                  type: 'Polygon',
-                  bbox: this.bbox,
-                  coordinates: [[
-                    [
-                      this.bbox[0],
-                      this.bbox[1]
-                    ],
-                    [
-                      this.bbox[2],
-                      this.bbox[1]
-                    ],
-                    [
-                      this.bbox[2],
-                      this.bbox[3]
-                    ],
-                    [
-                      this.bbox[0],
-                      this.bbox[3]
-                    ],
-                    [
-                      this.bbox[0],
-                      this.bbox[1]
-                    ]
-                  ]]
-                },
+                geometry: this.createBboxGeometry(this.bbox),
                 bbox: this.bbox
               })
           }
@@ -1081,6 +1071,34 @@ export default {
     },
     handleBBOXDraw (newBbox) {
       this.bbox = newBbox.getExtent()
+    },
+    createBboxGeometry (bbox) {
+      return {
+        type: 'Polygon',
+        bbox,
+        coordinates: [[
+          [
+            bbox[0],
+            bbox[1]
+          ],
+          [
+            bbox[2],
+            bbox[1]
+          ],
+          [
+            bbox[2],
+            bbox[3]
+          ],
+          [
+            bbox[0],
+            bbox[3]
+          ],
+          [
+            bbox[0],
+            bbox[1]
+          ]
+        ]]
+      }
     }
   }
 }
