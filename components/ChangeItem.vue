@@ -497,8 +497,9 @@
           </v-tooltip>
         </template>
       </v-select>
-      <v-autocomplete
+      <v-combobox
         v-if="itemTypes[selectedItemType].includes('project')"
+        ref="parentProject"
         v-model="parentProject"
         label="Parent Project"
         outlined
@@ -529,7 +530,7 @@
             <span>Select project under which product was developed</span>
           </v-tooltip>
         </template>
-      </v-autocomplete>
+      </v-combobox>
       <v-combobox
         v-if="itemTypes[selectedItemType].includes('missions')"
         v-model="satelliteMissions"
@@ -826,13 +827,17 @@ export default {
       if (!val || val.length === 0) { return }
       // Items have already been requested
       // if (this.parentProjectLoading) { return }
-
       this.parentProjectLoading = true
 
       try {
         const response = await this.fetchCustomQuery(`/collections/metadata:main/items?limit=100&sortby=title&offset=0&type=datasetcollection&q=${val}`)
         this.parentProjectItems = response.features
         this.parentProjectNumber = response.numberMatched
+        setTimeout(() => {
+          this.$refs.parentProject.blur()
+          this.$refs.parentProject.focus()
+          this.$refs.parentProject.activateMenu()
+        }, 500)
       } catch (error) {
         console.error(error)
       }
@@ -932,7 +937,7 @@ export default {
         this.description = ''
         this.parentThemes = []
         this.parentVariables = []
-        this.parentProject = []
+        this.parentProject = ''
         this.startDate = ''
         this.endDate = ''
         this.satelliteMissions = []
