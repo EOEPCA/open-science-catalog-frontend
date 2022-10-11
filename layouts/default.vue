@@ -216,10 +216,17 @@
       dark
       fixed
       app
+      class="justify-center"
     >
       <small class="justify-right">
         <span>&copy; {{ new Date().getFullYear() }} by </span>
         <a href="https://www.esa.int/" target="_blank" class="white--text">ESA</a>
+      </small>
+      <v-spacer />
+      <small class="justify-right">
+        <a href="/terms" target="_blank" class="white--text">Terms and Conditions</a>
+        <span> | </span>
+        <a href="/privacy-notice" target="_blank" class="white--text">Privacy Notice</a>
       </small>
       <v-spacer />
       <small class="justify-right">

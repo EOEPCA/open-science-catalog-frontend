@@ -30,7 +30,7 @@
     ref="form"
     v-model="valid"
     lazy-validation
-    class="white pa-5 rounded"
+    class="white rounded"
   >
     <v-select
       v-model="selectedItemType"
@@ -497,11 +497,19 @@
           </v-tooltip>
         </template>
       </v-select>
-      <v-text-field
+      <v-combobox
         v-if="itemTypes[selectedItemType].includes('project')"
+        ref="parentProject"
         v-model="parentProject"
         label="Parent Project"
         outlined
+        :items="parentProjectItems"
+        :search-input.sync="parentProjectSearch"
+        :loading="parentProjectLoading"
+        item-text="properties.title"
+        hide-no-data
+        placeholder="Start typing to Search"
+        item-value="id"
         required
         :rules="[
           (v) => !!v || 'Parent Project ID is required',
@@ -522,7 +530,7 @@
             <span>Select project under which product was developed</span>
           </v-tooltip>
         </template>
-      </v-text-field>
+      </v-combobox>
       <v-combobox
         v-if="itemTypes[selectedItemType].includes('missions')"
         v-model="satelliteMissions"
@@ -789,7 +797,11 @@ export default {
       email: null,
       datetime: null,
       region: null,
-      fullName: null
+      fullName: null,
+      parentProjectItems: [],
+      parentProjectSearch: null,
+      parentProjectLoading: null,
+      parentProjectNumber: null
     }
   },
   head: {
@@ -810,6 +822,26 @@ export default {
     },
     selectedItemType () {
       this.$nextTick(() => this.$refs.form.resetValidation())
+    },
+    async parentProjectSearch (val) {
+      if (!val || val.length === 0) { return }
+      // Items have already been requested
+      // if (this.parentProjectLoading) { return }
+      this.parentProjectLoading = true
+
+      try {
+        const response = await this.fetchCustomQuery(`/collections/metadata:main/items?limit=100&sortby=title&offset=0&type=datasetcollection&q=${val}`)
+        this.parentProjectItems = response.features
+        this.parentProjectNumber = response.numberMatched
+        setTimeout(() => {
+          this.$refs.parentProject.blur()
+          this.$refs.parentProject.focus()
+          this.$refs.parentProject.activateMenu()
+        }, 500)
+      } catch (error) {
+        console.error(error)
+      }
+      this.parentProjectLoading = false
     }
   },
   async mounted () {
@@ -835,6 +867,9 @@ export default {
       'retreiveVariable',
       'retreiveProjects',
       'retreiveProduct'
+    ]),
+    ...mapActions('dynamicCatalog', [
+      'fetchCustomQuery'
     ]),
     async fillForm (clear) {
       if (clear !== 'clear') {
@@ -902,7 +937,7 @@ export default {
         this.description = ''
         this.parentThemes = []
         this.parentVariables = []
-        this.parentProject = []
+        this.parentProject = ''
         this.startDate = ''
         this.endDate = ''
         this.satelliteMissions = []
