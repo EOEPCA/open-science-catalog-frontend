@@ -45,10 +45,10 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('name')"
         v-model="name"
-        :label="`${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name`"
+        :label="`${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} ${selectedItemType === 'Project' ? 'Short ' : ''}Name`"
         outlined
         required
-        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name required`]"
+        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} ${selectedItemType === 'Project' ? 'Short ' : ''}Name required`]"
       >
         <template #append>
           <v-tooltip left>
@@ -64,8 +64,32 @@
             </template>
             <span v-if="selectedItemType == 'Theme'">Provide new theme - scientific domain of the project</span>
             <span v-if="selectedItemType == 'Variable'">Provide new variable name</span>
-            <span v-if="selectedItemType == 'Project'">Provide new project name</span>
+            <span v-if="selectedItemType == 'Project'">Provide new project short name</span>
             <span v-if="selectedItemType == 'Product'">Provide product name to add</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('fullName')"
+        v-model="fullName"
+        label="Project Full Name"
+        outlined
+        required
+        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Full Name required`]"
+      >
+        <template #append>
+          <v-tooltip left>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help-circle-outline
+              </v-icon>
+            </template>
+            <span v-if="selectedItemType == 'Project'">Provide the full name of the new project</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -595,9 +619,12 @@
         v-model="bbox"
         label="Product Extent (draw an area in the map below)"
         hint="Draw an area in the map below"
-        readonly
-        disabled
         outlined
+        required
+        :rules="[
+          (v) => !!v || 'Geometry is required',
+          (v) => bboxFormat.test(v) || 'Geometry needs to be in correct format (<lon1>,<lat1>,<lon2>,<lat2>)'
+        ]"
       >
         <template #append>
           <v-tooltip left style="margin-bottom: -10px;">
@@ -739,6 +766,7 @@ export default {
         ],
         Project: [
           'name',
+          'fullName',
           'description',
           'theme',
           'status',
@@ -784,6 +812,7 @@ export default {
       WMSLink: '',
       image: '',
       bbox: null,
+      bboxFormat: /^(([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?),\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?))+(,|$))*$/,
       mapFeatures: null,
       variables: [],
       valid: false,
@@ -814,6 +843,17 @@ export default {
     ])
   },
   watch: {
+    bbox (newBbox) {
+      if (this.bboxFormat.test(newBbox)) {
+        const bbox = Array.isArray(newBbox)
+          ? newBbox
+          : newBbox.split(',').map(n => parseFloat(n))
+        this.mapFeatures = [{
+          type: 'Feature',
+          geometry: this.createBboxGeometry(bbox)
+        }]
+      }
+    },
     linkWebsite () {
       this.$refs.form.validate()
     },
@@ -970,7 +1010,7 @@ export default {
               break
             case 'Project':
               itemData = new this.$Project({
-                id: this.id,
+                id: this.id || this.slugify(this.name),
                 title: this.name,
                 description: this.description,
                 name: this.fullName,
@@ -987,7 +1027,7 @@ export default {
               break
             case 'Product':
               itemData = new this.$Product({
-                id: this.id,
+                id: this.id || this.slugify(this.name),
                 title: this.name,
                 description: this.description,
                 themes: this.parentThemes,
@@ -1001,32 +1041,7 @@ export default {
                 linkAccess: this.linkAccess,
                 linkDocumentation: this.linkDocumentation,
                 region: this.region,
-                geometry: {
-                  type: 'Polygon',
-                  bbox: this.bbox,
-                  coordinates: [[
-                    [
-                      this.bbox[0],
-                      this.bbox[1]
-                    ],
-                    [
-                      this.bbox[2],
-                      this.bbox[1]
-                    ],
-                    [
-                      this.bbox[2],
-                      this.bbox[3]
-                    ],
-                    [
-                      this.bbox[0],
-                      this.bbox[3]
-                    ],
-                    [
-                      this.bbox[0],
-                      this.bbox[1]
-                    ]
-                  ]]
-                },
+                geometry: this.createBboxGeometry(this.bbox),
                 bbox: this.bbox
               })
           }
@@ -1056,6 +1071,34 @@ export default {
     },
     handleBBOXDraw (newBbox) {
       this.bbox = newBbox.getExtent()
+    },
+    createBboxGeometry (bbox) {
+      return {
+        type: 'Polygon',
+        bbox,
+        coordinates: [[
+          [
+            bbox[0],
+            bbox[1]
+          ],
+          [
+            bbox[2],
+            bbox[1]
+          ],
+          [
+            bbox[2],
+            bbox[3]
+          ],
+          [
+            bbox[0],
+            bbox[3]
+          ],
+          [
+            bbox[0],
+            bbox[1]
+          ]
+        ]]
+      }
     }
   }
 }

@@ -59,6 +59,29 @@ export default {
     }
   },
   watch: {
+    features: {
+      deep: true,
+      handler (newFeatures) {
+        if (!this.vectorSource) {
+          return
+        }
+        const geojsonObject = {
+          type: 'FeatureCollection',
+          crs: {
+            type: 'name',
+            properties: {
+              name: 'EPSG:4326'
+            }
+          },
+          features: newFeatures ? newFeatures.filter(f => !!f.geometry) : []
+        }
+        const features = new this.$ol.GeoJSON().readFeatures(geojsonObject, {
+          dataProjection: 'EPSG:4326', featureProjection: 'EPSG:4326'
+        })
+        this.vectorSource.clear()
+        this.vectorSource.addFeatures(features)
+      }
+    },
     highlight (feature) {
       this.vectorSource.getFeatures().forEach(f => f.setStyle(this.defaultStyle))
       if (this.map && feature && feature.geometry) {
