@@ -45,10 +45,10 @@
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('name')"
         v-model="name"
-        :label="`${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name`"
+        :label="`${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} ${selectedItemType === 'Project' ? 'Short ' : ''}Name`"
         outlined
         required
-        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Name required`]"
+        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} ${selectedItemType === 'Project' ? 'Short ' : ''}Name required`]"
       >
         <template #append>
           <v-tooltip left>
@@ -64,8 +64,32 @@
             </template>
             <span v-if="selectedItemType == 'Theme'">Provide new theme - scientific domain of the project</span>
             <span v-if="selectedItemType == 'Variable'">Provide new variable name</span>
-            <span v-if="selectedItemType == 'Project'">Provide new project name</span>
+            <span v-if="selectedItemType == 'Project'">Provide new project short name</span>
             <span v-if="selectedItemType == 'Product'">Provide product name to add</span>
+          </v-tooltip>
+        </template>
+      </v-text-field>
+      <v-text-field
+        v-if="itemTypes[selectedItemType].includes('fullName')"
+        v-model="fullName"
+        label="Project Full Name"
+        outlined
+        required
+        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Full Name required`]"
+      >
+        <template #append>
+          <v-tooltip left>
+            <template #activator="{ on, attrs }">
+              <v-icon
+                color="primary"
+                dark
+                v-bind="attrs"
+                v-on="on"
+              >
+                mdi-help-circle-outline
+              </v-icon>
+            </template>
+            <span v-if="selectedItemType == 'Project'">Provide the full name of the new project</span>
           </v-tooltip>
         </template>
       </v-text-field>
@@ -739,6 +763,7 @@ export default {
         ],
         Project: [
           'name',
+          'fullName',
           'description',
           'theme',
           'status',
@@ -970,7 +995,7 @@ export default {
               break
             case 'Project':
               itemData = new this.$Project({
-                id: this.id,
+                id: this.id || this.slugify(this.name),
                 title: this.name,
                 description: this.description,
                 name: this.fullName,
@@ -987,7 +1012,7 @@ export default {
               break
             case 'Product':
               itemData = new this.$Product({
-                id: this.id,
+                id: this.id || this.slugify(this.name),
                 title: this.name,
                 description: this.description,
                 themes: this.parentThemes,
