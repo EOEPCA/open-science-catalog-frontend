@@ -194,10 +194,28 @@
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Provide URL to access the data</span>
+            <span>Provide URL to access the data. Alternatively, upload a file</span>
+          </v-tooltip>
+        </template>
+        <template #append-outer>
+          <v-tooltip right>
+            <template #activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                class="mb-2"
+                style="transform: translateY(-8px)"
+                v-on="on"
+                @click="enableFileUpload = !enableFileUpload"
+              >
+                <v-icon>{{ !enableFileUpload ? 'mdi-cloud-upload' : 'mdi-close' }}</v-icon>
+              </v-btn>
+            </template>
+            <span>{{ !enableFileUpload ? 'Upload file' : 'Cancel file selection' }}</span>
           </v-tooltip>
         </template>
       </v-text-field>
+      <FileUpload v-if="itemTypes[selectedItemType].includes('linkAccess') && enableFileUpload" />
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkDocumentation')"
         v-model="linkDocumentation"
@@ -830,7 +848,8 @@ export default {
       parentProjectItems: [],
       parentProjectSearch: null,
       parentProjectLoading: null,
-      parentProjectNumber: null
+      parentProjectNumber: null,
+      enableFileUpload: null
     }
   },
   head: {
