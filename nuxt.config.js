@@ -15,7 +15,7 @@ export default {
     auth: {
       strategies: {
         oidc: {
-          clientId: process.env.OAUTH_CLIENTID || 'b71d5cb8-b371-42a6-9c27-a771c9775691',
+          clientId: process.env.OAUTH_CLIENTID || '8c9fe79e-e0d7-45c9-8b0a-34c25058f8c1',
           endpoints: {
             configuration: process.env.OPENID_CONFIGURATION || 'https://auth.staging.opensciencedata.esa.int/.well-known/openid-configuration'
           },
