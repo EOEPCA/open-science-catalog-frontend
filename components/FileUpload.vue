@@ -43,20 +43,26 @@
       </v-progress-linear>
     </div>
 
-    <v-alert v-if="message" border="left" color="primary" dark>
+    <v-text-field
+      v-model="currentPath"
+      label="Upload Path (optional)"
+      outlined
+      prefix="/"
+      placeholder="path/to/folder/"
+      hide-details
+      class="my-2"
+      dense
+    />
+
+    <v-alert
+      v-if="message"
+      border="left"
+      color="info"
+      dark
+      icon="mdi-info"
+    >
       {{ message }}
     </v-alert>
-
-    <v-card v-if="fileInfos.length > 0" class="mx-auto">
-      <v-list>
-        <v-subheader>List of Files</v-subheader>
-        <v-list-item-group color="primary">
-          <v-list-item v-for="(file, index) in fileInfos" :key="index">
-            <a :href="file.url">{{ file.name }}</a>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </v-card>
   </div>
 </template>
 
@@ -69,8 +75,7 @@ export default {
       currentPath: undefined,
       progress: 0,
       message: null,
-      error: null,
-      fileInfos: []
+      error: null
     }
   },
   methods: {
@@ -78,47 +83,38 @@ export default {
       this.progress = 0
       this.currentFile = file
     },
-    upload () {
+    async upload () {
       if (!this.currentFile) {
         this.message = 'Please select a file!'
         return
       }
       this.message = ''
 
-      const upload = (file, onUploadProgress) => {
+      try {
         this.error = null
+
+        const onUploadProgress = (event) => {
+          this.progress = Math.round((100 * event.loaded) / event.total)
+        }
+
         const formData = new FormData()
-
-        formData.append('upload_file', file)
-
-        return this.$metadataBackend.post(`/upload/${this.currentPath}${this.currentFile.name}`, formData, {
+        formData.append('upload_file', this.currentFile)
+        const response = await this.$metadataBackend.post(`/upload/${this.currentPath}${this.currentFile.name}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },
           onUploadProgress
         })
+        if (response) {
+          this.message = 'Success!'
+          this.$emit('upload', response.data)
+        }
+      } catch (error) {
+        this.progress = 0
+        this.error = `Could not upload the file! ${error.message}`
+        this.currentFile = undefined
       }
-      upload(this.currentFile, (event) => {
-        this.progress = Math.round((100 * event.loaded) / event.total)
-      })
-        .then((response) => {
-          this.message = response.data.message
-          // return UploadService.getFiles();
-        })
-        .then((files) => {
-          this.fileInfos = files.data
-        })
-        .catch((error) => {
-          this.progress = 0
-          this.error = `Could not upload the file! ${error.message}`
-          this.currentFile = undefined
-        })
     }
   }
-  // mounted() {
-  //   UploadService.getFiles().then((response) => {
-  //     this.fileInfos = response.data;
-  //   });
-  // },
 }
 </script>

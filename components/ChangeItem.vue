@@ -215,7 +215,10 @@
           </v-tooltip>
         </template>
       </v-text-field>
-      <FileUpload v-if="itemTypes[selectedItemType].includes('linkAccess') && enableFileUpload" />
+      <FileUpload
+        v-if="itemTypes[selectedItemType].includes('linkAccess') && enableFileUpload"
+        @upload="(fileUrl) => linkAccess = fileUrl"
+      />
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkDocumentation')"
         v-model="linkDocumentation"
