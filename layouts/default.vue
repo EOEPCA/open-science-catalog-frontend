@@ -199,8 +199,10 @@
         <nuxt-link
           to="/"
           class="white--text text-decoration-none text-uppercase"
-          v-text="title"
-        />
+          title
+        >
+          {{ title }}
+        </nuxt-link>
         <span v-if="devMode">[DEVELOPMENT VERSION]</span>
       </v-toolbar-title>
       <v-spacer />
