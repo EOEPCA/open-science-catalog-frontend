@@ -9,13 +9,14 @@ export default {
   publicRuntimeConfig: {
     staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.staging.opensciencedata.esa.int/open-science-catalog-metadata-staging',
     staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata-staging',
+    githubDataRoot: process.env.GITHUB_DATA_ROOT || 'https://github.com/EOEPCA/open-science-catalog-metadata-staging/tree/main/data',
     dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.staging.opensciencedata.esa.int',
     backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://backend-api.staging.opensciencedata.esa.int',
     authEnabled: process.env.ENABLE_AUTH || true,
     auth: {
       strategies: {
         oidc: {
-          clientId: process.env.OAUTH_CLIENTID || 'b71d5cb8-b371-42a6-9c27-a771c9775691',
+          clientId: process.env.OAUTH_CLIENTID || '8c9fe79e-e0d7-45c9-8b0a-34c25058f8c1',
           endpoints: {
             configuration: process.env.OPENID_CONFIGURATION || 'https://auth.staging.opensciencedata.esa.int/.well-known/openid-configuration'
           },

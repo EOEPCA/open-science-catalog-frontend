@@ -5,7 +5,8 @@
         <v-col>
           <h1
             class="primary--text"
-            :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'">
+            :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'"
+          >
             Welcome to the Open Science Catalog
           </h1>
         </v-col>
