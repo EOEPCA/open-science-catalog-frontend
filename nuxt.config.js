@@ -9,6 +9,7 @@ export default {
   publicRuntimeConfig: {
     staticEndpoint: process.env.STATIC_ENDPOINT || 'https://metadata.staging.opensciencedata.esa.int/open-science-catalog-metadata-staging',
     staticBaseToReplace: process.env.STATIC_BASE_TO_REPLACE || 'https://eoepca.github.io/open-science-catalog-metadata-staging',
+    githubDataRoot: process.env.GITHUB_DATA_ROOT || 'https://github.com/EOEPCA/open-science-catalog-metadata-staging/tree/main/data',
     dynamicEndpoint: process.env.DYNAMIC_ENDPOINT || 'https://resource-catalogue.staging.opensciencedata.esa.int',
     backendEndpoint: process.env.BACKEND_ENDPOINT || 'https://backend-api.staging.opensciencedata.esa.int',
     authEnabled: process.env.ENABLE_AUTH || true,
