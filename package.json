@@ -18,7 +18,7 @@
     "@nuxtjs/auth-next": "5.0.0-1648802546.c9880dc",
     "@nuxtjs/axios": "^5.13.6",
     "chart.js": "^3.7.1",
-    "chartjs-plugin-annotation": "^1.4.0",
+    "chartjs-plugin-annotation": "^2.0.1",
     "core-js": "^3.26.0",
     "marked": "^4.2.2",
     "md5": "^2.3.0",
