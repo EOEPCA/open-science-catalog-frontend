@@ -197,7 +197,10 @@
             <span>Provide URL to access the data. Alternatively, upload a file</span>
           </v-tooltip>
         </template>
-        <template #append-outer>
+        <template
+          v-if="$config.devMode"
+          #append-outer
+        >
           <v-tooltip right>
             <template #activator="{ on, attrs }">
               <v-btn

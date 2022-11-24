@@ -26,16 +26,6 @@
 
 <br />
 
-<sup>Prepared by: Anca Anghelea</sup>  
-<sup>​EOP-SDD</sup>  
-<sup>Document Type: REC</sup>  
-<sup>Reference: DPNR ID1855</sup>  
-<sup>Issue/Revision: ​1.​0</sup>  
-<sup>Date of Issue: 27/09/2022</sup>  
-<sup>Status: Issued</sup>  
-
-<br />
-
 ---
 
 <br />

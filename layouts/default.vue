@@ -199,9 +199,11 @@
         <nuxt-link
           to="/"
           class="white--text text-decoration-none text-uppercase"
-          v-text="title"
-        />
-        <span v-if="devMode">[DEVELOPMENT VERSION]</span>
+          title
+        >
+          {{ title }}
+        </nuxt-link>
+        <span v-if="$config.devMode">[DEVELOPMENT VERSION]</span>
       </v-toolbar-title>
       <v-spacer />
       <a href="https://www.esa.int/" target="_blank" class="d-flex align-center">
@@ -249,17 +251,13 @@ export default {
     return {
       drawer: false,
       search: '',
-      title: 'Open Science Catalog',
-      devMode: null
+      title: 'Open Science Catalog'
     }
   },
   computed: {
     ...mapState([
       'appVersion'
     ])
-  },
-  mounted () {
-    this.devMode = window && !window.location.host.includes('esa.int')
   }
 }
 </script>
