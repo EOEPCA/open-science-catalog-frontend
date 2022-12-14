@@ -58,7 +58,7 @@
             </v-chip>.
           </p>
           <p>Choose a theme below to get started or access the <a :href="$dynamicCatalog.defaults.baseURL" target="_blank">API Documentation</a>!</p>
-          <p>If you have any questions or feedback regarding Open Science Catalog, please contact us at <a href="mailto:EOScience@esa.int">EOScience@esa.int</a>.</p>
+          <p>If you have any questions or feedback regarding Open Science Catalog, please contact us at <a href="mailto:opensciencedata@esa.int">opensciencedata@esa.int</a>.</p>
           <p>
             <v-btn
               dark
