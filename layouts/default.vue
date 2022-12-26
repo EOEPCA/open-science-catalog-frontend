@@ -98,6 +98,49 @@
           </v-list-group>
         </client-only>
 
+        <client-only>
+          <v-list-group
+            v-if="$auth.loggedIn && $config.devMode"
+            prepend-icon="mdi-cloud-cog-outline"
+            no-action
+          >
+            <template #activator>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Process Data
+                </v-list-item-title>
+              </v-list-item-content>
+            </template>
+
+            <v-list-item
+              to="/new-process"
+              router
+              exact
+              class="pl-10 primary"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-cloud-plus-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                New Process
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              to="/processing-status"
+              router
+              exact
+              class="pl-10 primary"
+            >
+              <v-list-item-icon>
+                <v-icon>mdi-cloud-clock-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Processing Status
+              </v-list-item-title>
+            </v-list-item>
+          </v-list-group>
+        </client-only>
+
         <v-list-item
           to="/metrics"
           router

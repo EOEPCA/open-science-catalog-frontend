@@ -9,10 +9,17 @@
       lg="3"
     >
       <v-card
-        :to="`/${getType(item)}s/${getType(item) === 'variable'
-          ? slugify(item.name)
-          : $extractSlug(item)}`"
+        :to="selectionMode
+          ? null
+          : (`/${getType(item)}s/${getType(item) === 'variable'
+            ? slugify(item.name)
+            : $extractSlug(item)}`)"
         outlined
+        @click="() => {
+          selectionMode
+            ? $emit('selectItem', item)
+            : null
+        }"
       >
         <v-card-title>
           <v-chip
@@ -95,6 +102,9 @@ export default {
     showEmptyItems: {
       type: Boolean,
       default: () => false
+    },
+    selectionMode: {
+      type: Boolean
     }
   },
   computed: {

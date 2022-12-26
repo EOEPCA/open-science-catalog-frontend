@@ -104,6 +104,30 @@
                 <small v-html="description" />
               </p>
             </template>
+            <template
+              v-if="processing.length"
+            >
+              <h6 class="text-h6 mb-2 d-flex align-center">
+                <v-icon left>
+                  mdi-cloud-cog-outline
+                </v-icon>
+                Available Processes
+              </h6>
+              <v-btn
+                v-for="(process, index) in processing"
+                :key="index"
+                color="primary"
+                small
+                :to="`/new-process?process=${process}&product=${title}`"
+              >
+                <v-icon
+                  left
+                >
+                  mdi-cog-outline
+                </v-icon>
+                {{ process }}
+              </v-btn>
+            </template>
           </v-col>
           <v-col cols="12" md="4">
             <h6 class="text-h6 mb-2 d-flex align-center">
@@ -223,6 +247,10 @@ export default {
     nav: {
       type: Object,
       default: () => ({})
+    },
+    processing: {
+      type: Array,
+      default: () => []
     }
   },
   data () {

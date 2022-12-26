@@ -27,6 +27,10 @@ export default {
           //   property: 'id_token',
           //   maxAge: 1800
           // },
+          refreshToken: {
+            property: 'refresh_token',
+            maxAge: 60 * 60 * 24 * 30
+          },
           scope: process.env.OAUTH_SCOPE || 'profile',
           acrValues: ['passport_social']
         }
@@ -152,5 +156,19 @@ export default {
       home: '/'
     },
     fullPathRedirect: true
-  }
+  },
+
+  // axios: {
+  //   credentials: false
+  // },
+
+  // axios: {
+  //   proxy: process.env.NODE_ENV === 'development'
+  // },
+  // proxy: process.env.NODE_ENV === 'development' && {
+  //   '/token': {
+  //     target: 'https://auth.eoepca-staging.spaceapplications.com/oxauth/restv1/token',
+  //     changeOrigin: true
+  //   }
+  // },
 }
