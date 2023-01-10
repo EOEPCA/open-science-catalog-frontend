@@ -6,24 +6,27 @@
       :subtitle="project.properties['osc:name']"
       :chips="{
         themes: project.properties['osc:themes'],
-        status: project.properties['osc:status']
+        status: project.properties['osc:status'],
       }"
       :description="project.properties.description"
       :details="{
         start_datetime: project.properties.start_datetime,
         end_datetime: project.properties.end_datetime,
         consortium: project.properties['osc:consortium'],
-        links: project.links
+        links: project.links,
       }"
       :nav="{
         theme: project.collection,
         project: {
           url: $extractSlug(project),
-          name: project.properties.title
-        }
+          name: project.properties.title,
+        },
       }"
     >
-      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+      <v-container
+        class="white"
+        :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'"
+      >
         <search-combobox
           ref="searchBox"
           embedded-mode
@@ -33,21 +36,19 @@
           :pre-selected-items="[
             {
               key: 'project',
-              value: project.id
+              value: project.id,
             },
             {
               key: 'type',
-              value: 'product'
-            }
+              value: 'product',
+            },
           ]"
           class="mt-8 mb-0"
           @searchQuery="handleSearchEmit"
         />
         <v-row class="pt-8">
           <v-col cols="12" md="4">
-            <span class="text-h4">
-              Products
-            </span>
+            <span class="text-h4"> Products </span>
           </v-col>
           <v-col cols="12" md="8" class="d-flex">
             <v-spacer />
@@ -87,68 +88,65 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from "vuex";
 
-import Item from '@/components/Item.vue'
-import ItemDisplay from '~/components/ItemDisplay.vue'
+import Item from "@/components/Item.vue";
+import ItemDisplay from "~/components/ItemDisplay.vue";
 
 export default {
-  name: 'ProjectSingle',
+  name: "ProjectSingle",
   components: {
     Item,
-    ItemDisplay
+    ItemDisplay,
   },
-  data () {
+  data() {
     return {
       project: null,
       products: [],
-      productsSearch: '',
-      productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending',
+      productsSearch: "",
+      productsFilterSortBy: "title",
+      productsFilterOrder: "Ascending",
       showDescription: false,
       page: 1,
-      numberOfPages: 1
-    }
+      numberOfPages: 1,
+    };
   },
-  head () {
+  head() {
     return {
-      title: this.$route.params.project.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-    }
+      title: this.$route.params.project.replace(
+        /(^\w{1})|(\s+\w{1})/g,
+        (letter) => letter.toUpperCase()
+      ),
+    };
   },
   computed: {
-    ...mapState('staticCatalog', [
-      'projects'
-    ])
+    ...mapState("staticCatalog", ["projects"]),
   },
-  async created () {
+  async created() {
     try {
-      this.project = await this.retreiveProjects(this.$route.params.project)
+      this.project = await this.retreiveProjects(this.$route.params.project);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-    this.filterProducts()
+    this.filterProducts();
   },
   methods: {
-    ...mapActions('dynamicCatalog', [
-      'fetchProducts'
-    ]),
-    ...mapActions('staticCatalog', [
-      'retreiveProjects'
-    ]),
-    filterProducts (init) {
-      if (typeof init === 'number') {
-        this.page = init
+    ...mapActions("dynamicCatalog", ["fetchProducts"]),
+    ...mapActions("staticCatalog", ["retreiveProjects"]),
+    filterProducts(init) {
+      if (typeof init === "number") {
+        this.page = init;
       }
       this.$nextTick(() => {
         if (this.productsFilterSortBy && this.productsFilterOrder) {
-          this.$refs.searchBox.filterProducts(init)
+          this.$refs.searchBox.filterProducts(init);
         }
-      })
+      });
     },
-    handleSearchEmit (result) {
-      this.products = result.items
-      this.numberOfPages = result.numberOfPages
-    }
-  }
-}
+    handleSearchEmit(result) {
+      this.products = result.items;
+      this.numberOfPages = result.numberOfPages;
+    },
+  },
+};
 </script>

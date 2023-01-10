@@ -7,10 +7,13 @@
       :chips="{
         themes: product.properties['osc:themes'],
         variable: product.properties['osc:variable'],
-        project: project !== null ? {
-          url: getProductLink(),
-          name: project.properties.title
-        } : null
+        project:
+          project !== null
+            ? {
+                url: getProductLink(),
+                name: project.properties.title,
+              }
+            : null,
       }"
       :details="{
         start_datetime: product.properties.start_datetime,
@@ -18,29 +21,30 @@
         datetime: product.properties.datetime,
         'osc:project': product.properties['osc:project'],
         'osc:missions': product.properties['osc:missions'],
-        links: product.links
+        links: product.links,
       }"
       :nav="{
         theme: product['osc:theme'],
-        project: project !== null ? {
-          url: $extractSlug(project),
-          name: project.properties.title
-        } : null,
-        product: product.properties.title
+        project:
+          project !== null
+            ? {
+                url: $extractSlug(project),
+                name: project.properties.title,
+              }
+            : null,
+        product: product.properties.title,
       }"
     >
-      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+      <v-container
+        class="white"
+        :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'"
+      >
         <h6 class="text-h6 mt-8 mb-2 d-flex align-center">
-          <v-icon left>
-            mdi-image-size-select-large
-          </v-icon>
+          <v-icon left> mdi-image-size-select-large </v-icon>
           Product Extent
         </h6>
         <client-only>
-          <CoverageMap
-            ref="map"
-            :features="[product]"
-          />
+          <CoverageMap ref="map" :features="[product]" />
         </client-only>
       </v-container>
     </Item>
@@ -48,51 +52,57 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from "vuex";
 
-import Item from '@/components/Item.vue'
-import CoverageMap from '@/components/CoverageMap.vue'
+import Item from "@/components/Item.vue";
+import CoverageMap from "@/components/CoverageMap.vue";
 
 export default {
-  name: 'ProductSingle',
+  name: "ProductSingle",
   components: {
     CoverageMap,
-    Item
+    Item,
   },
-  data () {
+  data() {
     return {
       product: null,
       project: null,
       productsDialog: false,
-      showDescription: false
-    }
+      showDescription: false,
+    };
   },
-  head () {
+  head() {
     return {
-      title: this.$route.params.product.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-    }
+      title: this.$route.params.product.replace(
+        /(^\w{1})|(\s+\w{1})/g,
+        (letter) => letter.toUpperCase()
+      ),
+    };
   },
-  async created () {
-    await this.retreiveProduct(this.$route.params.product).then((product) => {
-      this.product = product
-    }).catch(err => console.error(err))
+  async created() {
+    await this.retreiveProduct(this.$route.params.product)
+      .then((product) => {
+        this.product = product;
+      })
+      .catch((err) => console.error(err));
     if (this.getProductLink()) {
-      await this.retreiveProjects(this.getProductLink()).then((project) => {
-        this.project = project
-      }).catch(err => console.error(err))
+      await this.retreiveProjects(this.getProductLink())
+        .then((project) => {
+          this.project = project;
+        })
+        .catch((err) => console.error(err));
     }
   },
   methods: {
-    ...mapActions('staticCatalog', [
-      'retreiveProduct',
-      'retreiveProjects'
-    ]),
-    getProductLink () {
+    ...mapActions("staticCatalog", ["retreiveProduct", "retreiveProjects"]),
+    getProductLink() {
       const projectLink = this.product.links.find((link) => {
-        return link.rel === 'collection' && link.href.includes('/projects')
-      })
-      return projectLink ? projectLink.href.match(/projects\/([\s\S]*?)\.json/)[1] : null
-    }
-  }
-}
+        return link.rel === "collection" && link.href.includes("/projects");
+      });
+      return projectLink
+        ? projectLink.href.match(/projects\/([\s\S]*?)\.json/)[1]
+        : null;
+    },
+  },
+};
 </script>

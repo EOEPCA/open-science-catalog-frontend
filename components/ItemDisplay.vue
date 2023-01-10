@@ -1,9 +1,6 @@
 <template>
   <div>
-    <item-grid
-      :items="items"
-      :show-empty-items="showEmptyItems"
-    />
+    <item-grid :items="items" :show-empty-items="showEmptyItems" />
     <v-row>
       <v-col cols="12" class="text-center">
         <v-pagination
@@ -23,21 +20,21 @@ export default {
   props: {
     items: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     showEmptyItems: {
       type: Boolean,
-      default: () => true
+      default: () => true,
     },
     numberOfPages: {
       type: Number,
-      default: () => 1
-    }
+      default: () => 1,
+    },
   },
-  data () {
+  data() {
     return {
-      page: 1
-    }
-  }
-}
+      page: 1,
+    };
+  },
+};
 </script>

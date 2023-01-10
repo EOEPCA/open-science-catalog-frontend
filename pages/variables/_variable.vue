@@ -3,18 +3,25 @@
     <Item
       :title="variable.id"
       :chips="{
-        themes: [variable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())]
+        themes: [
+          variable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, (letter) =>
+            letter.toUpperCase()
+          ),
+        ],
       }"
       :description="variable.description"
       :details="{
-        links: variable.links
+        links: variable.links,
       }"
       :nav="{
         theme: variable['osc:theme'],
-        variable: variable.id
+        variable: variable.id,
       }"
     >
-      <v-container class="white" :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'">
+      <v-container
+        class="white"
+        :class="$vuetify.breakpoint.lgAndUp ? 'px-15' : 'pa-2'"
+      >
         <search-combobox
           ref="searchBox"
           embedded-mode
@@ -24,21 +31,19 @@
           :pre-selected-items="[
             {
               key: 'variable',
-              value: variable.id
+              value: variable.id,
             },
             {
               key: 'type',
-              value: 'product'
-            }
+              value: 'product',
+            },
           ]"
           class="mt-8 mb-0"
           @searchQuery="handleSearchEmit"
         />
         <v-row class="pt-8">
           <v-col cols="12" md="4">
-            <span class="text-h4">
-              Products
-            </span>
+            <span class="text-h4"> Products </span>
           </v-col>
           <v-col cols="12" md="8" class="d-flex">
             <v-spacer />
@@ -79,93 +84,91 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
-import ItemDisplay from '@/components/ItemDisplay.vue'
+import { mapActions, mapState } from "vuex";
+import ItemDisplay from "@/components/ItemDisplay.vue";
 
 export default {
-  name: 'VariableSingle',
+  name: "VariableSingle",
   components: {
-    ItemDisplay
+    ItemDisplay,
   },
-  data () {
+  data() {
     return {
       variable: null,
       products: [],
-      productsSearch: '',
+      productsSearch: "",
       productsFilterOptions: [
         {
-          text: 'Name',
-          value: 'title'
+          text: "Name",
+          value: "title",
         },
         {
-          text: 'Description',
-          value: 'description'
-        }
+          text: "Description",
+          value: "description",
+        },
       ],
-      productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending',
+      productsFilterSortBy: "title",
+      productsFilterOrder: "Ascending",
       metrics: null,
       page: 1,
       numberOfPages: 1,
-      showDescription: false
-    }
+      showDescription: false,
+    };
   },
-  head () {
+  head() {
     return {
-      title: this.$route.params.variable.replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-    }
+      title: this.$route.params.variable.replace(
+        /(^\w{1})|(\s+\w{1})/g,
+        (letter) => letter.toUpperCase()
+      ),
+    };
   },
   computed: {
-    ...mapState('staticCatalog', [
-      'missions',
-      'summary',
-      'themes',
-      'variables'
-    ])
+    ...mapState("staticCatalog", [
+      "missions",
+      "summary",
+      "themes",
+      "variables",
+    ]),
   },
   watch: {
-    productsFilterMission () {
-      this.filterProducts()
-    }
+    productsFilterMission() {
+      this.filterProducts();
+    },
   },
-  async created () {
+  async created() {
     try {
-      this.variable = await this.retreiveVariable(this.$route.params.variable)
+      this.variable = await this.retreiveVariable(this.$route.params.variable);
     } catch (err) {
-      console.error(err)
+      console.error(err);
     }
-    this.filterProducts()
-    this.metrics = await this.retreiveMetrics()
+    this.filterProducts();
+    this.metrics = await this.retreiveMetrics();
   },
   methods: {
-    ...mapActions('dynamicCatalog', [
-      'fetchCustomQuery'
-    ]),
-    ...mapActions('staticCatalog', [
-      'retreiveMetrics',
-      'retreiveVariable'
-    ]),
-    filterProducts (init) {
-      if (typeof init === 'number') {
-        this.page = init
+    ...mapActions("dynamicCatalog", ["fetchCustomQuery"]),
+    ...mapActions("staticCatalog", ["retreiveMetrics", "retreiveVariable"]),
+    filterProducts(init) {
+      if (typeof init === "number") {
+        this.page = init;
       }
       this.$nextTick(() => {
         if (this.productsFilterSortBy && this.productsFilterOrder) {
-          this.$refs.searchBox.filterProducts(init)
+          this.$refs.searchBox.filterProducts(init);
         }
-      })
+      });
     },
-    handleSearchEmit (result) {
-      this.products = result.items
-      this.numberOfPages = result.numberOfPages
-    }
-  }
-}
+    handleSearchEmit(result) {
+      this.products = result.items;
+      this.numberOfPages = result.numberOfPages;
+    },
+  },
+};
 </script>
 
 <style scoped>
 .variableHeaderContainer {
-  border-bottom: 0.25em solid #335E6F;
+  border-bottom: 0.25em solid #335e6f;
 }
 .variableLink {
   text-decoration: none;

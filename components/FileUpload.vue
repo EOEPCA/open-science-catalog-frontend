@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="pa-4 grey lighten-4 rounded-xl mb-4"
-  >
+  <div class="pa-4 grey lighten-4 rounded-xl mb-4">
     <v-file-input
       clearable
       dense
@@ -23,9 +21,7 @@
           @click="upload"
         >
           Upload
-          <v-icon right dark>
-            mdi-cloud-upload
-          </v-icon>
+          <v-icon right dark> mdi-cloud-upload </v-icon>
         </v-btn>
       </template>
     </v-file-input>
@@ -54,13 +50,7 @@
       dense
     />
 
-    <v-alert
-      v-if="message"
-      border="left"
-      color="info"
-      dark
-      icon="mdi-info"
-    >
+    <v-alert v-if="message" border="left" color="info" dark icon="mdi-info">
       {{ message }}
     </v-alert>
   </div>
@@ -68,53 +58,57 @@
 
 <script>
 export default {
-  name: 'UploadFiles',
-  data () {
+  name: "UploadFiles",
+  data() {
     return {
       currentFile: undefined,
       currentPath: undefined,
       progress: 0,
       message: null,
-      error: null
-    }
+      error: null,
+    };
   },
   methods: {
-    selectFile (file) {
-      this.progress = 0
-      this.currentFile = file
+    selectFile(file) {
+      this.progress = 0;
+      this.currentFile = file;
     },
-    async upload () {
+    async upload() {
       if (!this.currentFile) {
-        this.message = 'Please select a file!'
-        return
+        this.message = "Please select a file!";
+        return;
       }
-      this.message = ''
+      this.message = "";
 
       try {
-        this.error = null
+        this.error = null;
 
         const onUploadProgress = (event) => {
-          this.progress = Math.round((100 * event.loaded) / event.total)
-        }
+          this.progress = Math.round((100 * event.loaded) / event.total);
+        };
 
-        const formData = new FormData()
-        formData.append('upload_file', this.currentFile)
-        const response = await this.$metadataBackend.post(`/upload/${this.currentPath}${this.currentFile.name}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          onUploadProgress
-        })
+        const formData = new FormData();
+        formData.append("upload_file", this.currentFile);
+        const response = await this.$metadataBackend.post(
+          `/upload/${this.currentPath}${this.currentFile.name}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+            onUploadProgress,
+          }
+        );
         if (response) {
-          this.message = 'Success!'
-          this.$emit('upload', response.data)
+          this.message = "Success!";
+          this.$emit("upload", response.data);
         }
       } catch (error) {
-        this.progress = 0
-        this.error = `Could not upload the file! ${error.message}`
-        this.currentFile = undefined
+        this.progress = 0;
+        this.error = `Could not upload the file! ${error.message}`;
+        this.currentFile = undefined;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

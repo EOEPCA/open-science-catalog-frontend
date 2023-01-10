@@ -1,14 +1,7 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    scrollable
-    width="1000"
-  >
+  <v-dialog v-model="dialog" scrollable width="1000">
     <template #activator="{ on, attrs }">
-      <v-tooltip
-        v-model="showActivatorTooltip"
-        top
-      >
+      <v-tooltip v-model="showActivatorTooltip" top>
         <template #activator="{}">
           <v-btn
             icon
@@ -19,25 +12,27 @@
             @mouseover="showActivatorTooltip = true"
             @mouseleave="showActivatorTooltip = false"
           >
-            <v-icon>{{ variable ? 'mdi-earth' : 'mdi-map-marker' }}</v-icon>
+            <v-icon>{{ variable ? "mdi-earth" : "mdi-map-marker" }}</v-icon>
           </v-btn>
         </template>
         <span>Coverage</span>
       </v-tooltip>
     </template>
-    <v-card
-      v-if="products"
-    >
+    <v-card v-if="products">
       <v-card-title class="text-h6">
         <v-icon color="applications" left>
-          {{ products.length === 1 ? 'mdi-map-marker' : 'mdi-earth' }}
+          {{ products.length === 1 ? "mdi-map-marker" : "mdi-earth" }}
         </v-icon>
-        <span>{{ products.length === 1 ? products[0].properties.title : variable && variable.name }} Coverage</span>
-        <v-spacer />
-        <v-btn
-          icon
-          @click="dialog = false"
+        <span
+          >{{
+            products.length === 1
+              ? products[0].properties.title
+              : variable && variable.name
+          }}
+          Coverage</span
         >
+        <v-spacer />
+        <v-btn icon @click="dialog = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -47,18 +42,9 @@
       <v-card-text class="px-0 black--text pb-0 pb-md-3">
         <v-container>
           <v-row>
-            <v-col
-              cols="12"
-              sm="5"
-            >
-              <v-list
-                v-if="!!variable"
-                dense
-                subheader
-              >
-                <v-subheader class="px-0">
-                  Products
-                </v-subheader>
+            <v-col cols="12" sm="5">
+              <v-list v-if="!!variable" dense subheader>
+                <v-subheader class="px-0"> Products </v-subheader>
                 <v-divider />
                 <v-list-item
                   v-for="product in products"
@@ -69,11 +55,11 @@
                   @mouseleave="currentHighlight = null"
                 >
                   <v-list-item-content>
-                    <v-list-item-title>{{ product.properties.title }}</v-list-item-title>
+                    <v-list-item-title>{{
+                      product.properties.title
+                    }}</v-list-item-title>
                   </v-list-item-content>
-                  <v-list-item-action
-                    class="flex-row"
-                  >
+                  <v-list-item-action class="flex-row">
                     <v-btn
                       v-if="variable"
                       icon
@@ -100,11 +86,11 @@
                 </div>
                 <div><strong>Region</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties['osc:region'] }}
+                  {{ products[0].properties["osc:region"] }}
                 </div>
                 <div><strong>Satellite missions</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties['osc:missions'].join(', ') }}
+                  {{ products[0].properties["osc:missions"].join(", ") }}
                 </div>
                 <div><strong>BBOX</strong></div>
                 <div class="mb-2">
@@ -112,10 +98,7 @@
                 </div>
               </template>
             </v-col>
-            <v-col
-              cols="12"
-              sm="7"
-            >
+            <v-col cols="12" sm="7">
               <client-only>
                 <CoverageMap
                   v-if="products"
@@ -133,55 +116,49 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="primary"
-          text
-          @click="dialog = false"
-        >
-          Close
-        </v-btn>
+        <v-btn color="primary" text @click="dialog = false"> Close </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-import CoverageMap from '@/components/CoverageMap.vue'
+import CoverageMap from "@/components/CoverageMap.vue";
 
 export default {
-  name: 'CoverageDialog',
+  name: "CoverageDialog",
   components: {
-    CoverageMap
+    CoverageMap,
   },
   props: {
     products: {
       type: Array,
-      default: null
+      default: null,
     },
     variable: {
       type: Object,
-      default: null
+      default: null,
     },
     disable: {
       type: Boolean,
-      default: () => (false)
-    }
+      default: () => false,
+    },
   },
-  data () {
+  data() {
     return {
       dialog: false,
       showActivatorTooltip: false,
-      currentHighlight: null
-    }
+      currentHighlight: null,
+    };
   },
   watch: {
-    dialog (on) {
+    dialog(on) {
       if (on) {
         if (this.variable && !this.products) {
-          this.$emit('loadProducts')
+          this.$emit("loadProducts");
         }
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

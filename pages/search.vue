@@ -2,7 +2,9 @@
   <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
     <v-row class="py-5">
       <v-col>
-        <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'">
+        <h1
+          :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'"
+        >
           Search
         </h1>
       </v-col>
@@ -28,12 +30,16 @@
               @click="TOGGLE_EMPTY_ITEMS"
             >
               <v-icon>
-                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+                {{
+                  showEmptyItems
+                    ? "mdi-archive-check-outline"
+                    : "mdi-archive-cancel-outline"
+                }}
               </v-icon>
             </v-btn>
           </template>
           <span>
-            {{ showEmptyItems ? 'Hide empty items': 'Show empty items' }}
+            {{ showEmptyItems ? "Hide empty items" : "Show empty items" }}
           </span>
         </v-tooltip>
         <v-select
@@ -76,18 +82,18 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from "vuex";
 
-import SearchCombobox from '@/components/SearchCombobox.vue'
-import ItemDisplay from '@/components/ItemDisplay.vue'
+import SearchCombobox from "@/components/SearchCombobox.vue";
+import ItemDisplay from "@/components/ItemDisplay.vue";
 
 export default {
-  name: 'Search',
+  name: "Search",
   components: {
     SearchCombobox,
-    ItemDisplay
+    ItemDisplay,
   },
-  data () {
+  data() {
     return {
       items: [],
       page: 1,
@@ -95,69 +101,67 @@ export default {
       numberOfItems: 0,
       productsFilterOptions: [
         {
-          text: 'Name',
-          value: 'title'
+          text: "Name",
+          value: "title",
         },
         {
-          text: 'Description',
-          value: 'description'
-        }
+          text: "Description",
+          value: "description",
+        },
       ],
-      productsFilterSortBy: 'title',
-      productsFilterOrder: 'Ascending'
-    }
+      productsFilterSortBy: "title",
+      productsFilterOrder: "Ascending",
+    };
   },
   head: {
-    title: 'Search'
+    title: "Search",
   },
   computed: {
-    ...mapState([
-      'showEmptyItems'
-    ])
+    ...mapState(["showEmptyItems"]),
   },
-  mounted () {
-    this.filterProducts(true)
+  mounted() {
+    this.filterProducts(true);
   },
   methods: {
-    ...mapMutations([
-      'TOGGLE_EMPTY_ITEMS'
-    ]),
-    ...mapActions('staticCatalog', [
-      'retreiveProjects'
-    ]),
-    async handleSearchEmit (result) {
-      await Promise.all(result.items.map(async (item) => {
-        if (item.id.substring(0, 7) === 'project') {
-          await this.retreiveProjects(this.$extractSlug(item)).then((projectResponse) => {
-            item.links = projectResponse.links
-          }).catch(err => console.log(err))
-        }
-      }))
-      this.items = result.items
-      this.numberOfPages = result.numberOfPages
-      this.numberOfItems = result.numberOfItems
+    ...mapMutations(["TOGGLE_EMPTY_ITEMS"]),
+    ...mapActions("staticCatalog", ["retreiveProjects"]),
+    async handleSearchEmit(result) {
+      await Promise.all(
+        result.items.map(async (item) => {
+          if (item.id.substring(0, 7) === "project") {
+            await this.retreiveProjects(this.$extractSlug(item))
+              .then((projectResponse) => {
+                item.links = projectResponse.links;
+              })
+              .catch((err) => console.log(err));
+          }
+        })
+      );
+      this.items = result.items;
+      this.numberOfPages = result.numberOfPages;
+      this.numberOfItems = result.numberOfItems;
     },
-    filterProducts (init) {
-      if (typeof init === 'number') {
-        this.page = init
+    filterProducts(init) {
+      if (typeof init === "number") {
+        this.page = init;
       }
       this.$nextTick(() => {
-        this.$refs.searchBox.filterProducts(init)
-      })
-    }
-  }
-}
+        this.$refs.searchBox.filterProducts(init);
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
 ::v-deep .v-select__slot {
-  .v-input__append-inner  {
+  .v-input__append-inner {
     display: none;
   }
 }
 .headless-input {
   ::v-deep .v-input__control > .v-input__slot:before {
-    border: none
+    border: none;
   }
   label {
     display: none;
