@@ -12,6 +12,7 @@
 
 <script>
 export default {
+  name: "LoginPage",
   async mounted() {
     if (!this.$config.authEnabled) {
       return;

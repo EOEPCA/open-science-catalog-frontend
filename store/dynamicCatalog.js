@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export const state = () => ({});
 export const actions = {
-  async fetchCustomQuery({ commit }, queryString) {
+  async fetchCustomQuery(_, queryString) {
     try {
       const response = await this.$dynamicCatalog.$get(queryString);
       return response;
@@ -9,7 +8,7 @@ export const actions = {
       return error;
     }
   },
-  async fetchProducts({ commit }, { projectID, page }) {
+  async fetchProducts(_, { projectID, page }) {
     try {
       const response = await this.$dynamicCatalog.$get(
         `/collections/${projectID}/items?offset=${page}`

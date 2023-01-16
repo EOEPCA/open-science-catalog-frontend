@@ -183,7 +183,7 @@
 
 <script>
 export default {
-  name: "Item",
+  name: "ItemComponent",
   props: {
     id: {
       type: String,

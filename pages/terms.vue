@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  name: "TermsPage",
   data: () => ({
     parsedContent: null,
   }),

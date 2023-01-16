@@ -88,7 +88,7 @@ import SearchCombobox from "@/components/SearchCombobox.vue";
 import ItemDisplay from "@/components/ItemDisplay.vue";
 
 export default {
-  name: "Search",
+  name: "SearchPage",
   components: {
     SearchCombobox,
     ItemDisplay,

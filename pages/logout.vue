@@ -10,6 +10,7 @@
 
 <script>
 export default {
+  name: "LogoutPage",
   mounted() {
     if (this.$auth.loggedIn) {
       this.$auth.$storage.setState("redirect", undefined);

@@ -158,8 +158,7 @@ export default {
   methods: {
     async fetchVariables() {
       // chart breaks if this is removed :D
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const response = await this.$staticCatalog.$get("/metrics");
+      await this.$staticCatalog.$get("/metrics");
 
       // Number of products bar chart setup
       const productsDataset = {};

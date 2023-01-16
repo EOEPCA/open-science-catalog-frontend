@@ -154,7 +154,7 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import MetricsStatistics from "@/components/MetricsStatistics.vue";
 
 export default {
-  name: "Metrics",
+  name: "MetricsPage",
   components: {
     MetricsStatistics,
   },
