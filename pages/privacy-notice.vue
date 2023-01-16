@@ -11,12 +11,12 @@
 <script>
 export default {
   data: () => ({
-    parsedContent: null
+    parsedContent: null,
   }),
-  async created () {
-    this.parsedContent = await this.$content('privacy-notice').fetch()
-  }
-}
+  async created() {
+    this.parsedContent = await this.$content("privacy-notice").fetch();
+  },
+};
 </script>
 
 <style scoped>

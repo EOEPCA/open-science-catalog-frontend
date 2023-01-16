@@ -1,14 +1,7 @@
 <template>
-  <v-breadcrumbs
-    class="navigationBreadcrumb"
-    :items="navigationBreadcrumb"
-  >
+  <v-breadcrumbs class="navigationBreadcrumb" :items="navigationBreadcrumb">
     <template #item="{ item }">
-      <v-breadcrumbs-item
-        :to="item.href"
-        nuxt
-        :disabled="item.disabled"
-      >
+      <v-breadcrumbs-item :to="item.href" nuxt :disabled="item.disabled">
         <v-chip
           v-if="item === navigationBreadcrumb[navigationBreadcrumb.length - 1]"
           :color="$typeColor(item.type)"
@@ -30,35 +23,35 @@ export default {
   props: {
     theme: {
       type: String,
-      default: null
+      default: null,
     },
     variable: {
       type: String,
-      default: null
+      default: null,
     },
     project: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     product: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   computed: {
-    navigationBreadcrumb () {
+    navigationBreadcrumb() {
       return [
         {
-          text: 'Catalog',
-          href: '/'
+          text: "Catalog",
+          href: "/",
         },
         ...(this.theme
           ? [
               {
                 text: this.theme,
                 href: `/themes/${this.slugify(this.theme)}`,
-                type: 'theme'
-              }
+                type: "theme",
+              },
             ]
           : []),
         ...(this.project
@@ -66,8 +59,8 @@ export default {
               {
                 text: this.project.name,
                 href: `/projects/${this.project.url}`,
-                type: 'project'
-              }
+                type: "project",
+              },
             ]
           : []),
         ...(this.variable
@@ -75,8 +68,8 @@ export default {
               {
                 text: this.variable,
                 href: `/variables/${this.slugify(this.variable)}`,
-                type: 'variable'
-              }
+                type: "variable",
+              },
             ]
           : []),
         ...(this.product
@@ -84,14 +77,14 @@ export default {
               {
                 text: this.product,
                 href: `/products/${this.slugify(this.product)}`,
-                type: 'product'
-              }
+                type: "product",
+              },
             ]
-          : [])
-      ]
-    }
-  }
-}
+          : []),
+      ];
+    },
+  },
+};
 </script>
 
 <style scoped>

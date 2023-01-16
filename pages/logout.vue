@@ -10,13 +10,14 @@
 
 <script>
 export default {
-  mounted () {
+  name: "LogoutPage",
+  mounted() {
     if (this.$auth.loggedIn) {
-      this.$auth.$storage.setState('redirect', undefined)
-      this.$auth.logout()
+      this.$auth.$storage.setState("redirect", undefined);
+      this.$auth.logout();
     } else {
-      this.$router.push('/')
+      this.$router.push("/");
     }
-  }
-}
+  },
+};
 </script>

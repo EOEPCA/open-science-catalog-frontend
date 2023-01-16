@@ -1,17 +1,27 @@
 <template>
   <v-container
-    :class="$vuetify.breakpoint.lgAndUp
-      ? 'px-15 pt-8'
-      : (($vuetify.breakpoint.smAndDown && ($vuetify.breakpoint.width > $vuetify.breakpoint.height))
+    :class="
+      $vuetify.breakpoint.lgAndUp
+        ? 'px-15 pt-8'
+        : $vuetify.breakpoint.smAndDown &&
+          $vuetify.breakpoint.width > $vuetify.breakpoint.height
         ? 'pa-0'
-        : 'pa-4')"
+        : 'pa-4'
+    "
   >
     <v-row
-      v-if="!($vuetify.breakpoint.smAndDown && ($vuetify.breakpoint.width > $vuetify.breakpoint.height))"
+      v-if="
+        !(
+          $vuetify.breakpoint.smAndDown &&
+          $vuetify.breakpoint.width > $vuetify.breakpoint.height
+        )
+      "
       class="py-5"
     >
       <v-col>
-        <h1 :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'">
+        <h1
+          :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'"
+        >
           Metrics
         </h1>
       </v-col>
@@ -19,9 +29,13 @@
     <v-row
       v-if="metrics"
       class="white"
-      :style="`z-index: 5; ${showMobileFilters
-        ? 'position: absolute; width: 95vw; display: flex; box-shadow: 0 5px 20px 5px #0005'
-        : ($vuetify.breakpoint.smOnly ? 'display: none' : 'display: flex')}`"
+      :style="`z-index: 5; ${
+        showMobileFilters
+          ? 'position: absolute; width: 95vw; display: flex; box-shadow: 0 5px 20px 5px #0005'
+          : $vuetify.breakpoint.smOnly
+          ? 'display: none'
+          : 'display: flex'
+      }`"
     >
       <v-col class="d-flex align-center">
         <v-tooltip v-if="$vuetify.breakpoint.smAndUp" top>
@@ -31,15 +45,25 @@
               v-bind="attrs"
               class="mr-3"
               v-on="on"
-              @click="() => { TOGGLE_EMPTY_ITEMS(); }"
+              @click="
+                () => {
+                  TOGGLE_EMPTY_ITEMS();
+                }
+              "
             >
               <v-icon>
-                {{ showEmptyItems ? 'mdi-archive-check-outline' : 'mdi-archive-cancel-outline' }}
+                {{
+                  showEmptyItems
+                    ? "mdi-archive-check-outline"
+                    : "mdi-archive-cancel-outline"
+                }}
               </v-icon>
             </v-btn>
           </template>
           <span>
-            {{ showEmptyItems ? 'Hide empty variables': 'Show empty variables' }}
+            {{
+              showEmptyItems ? "Hide empty variables" : "Show empty variables"
+            }}
           </span>
         </v-tooltip>
         <search-combobox
@@ -69,11 +93,7 @@
         <v-container>
           <v-row align="center">
             <v-col cols="6" class="py-2 py-sm-1 py-md-2">
-              <v-dialog
-                v-model="dialog"
-                scrollable
-                width="1000"
-              >
+              <v-dialog v-model="dialog" scrollable width="1000">
                 <template #activator="{ on, attrs }">
                   <v-btn
                     v-bind="attrs"
@@ -83,9 +103,7 @@
                     :block="$vuetify.breakpoint.xsOnly"
                     v-on="on"
                   >
-                    <v-icon left>
-                      mdi-poll
-                    </v-icon>
+                    <v-icon left> mdi-poll </v-icon>
                     Statistics
                   </v-btn>
                 </template>
@@ -101,11 +119,14 @@
                 text
                 @click="showMobileFilters = !showMobileFilters"
               >
-                {{ showMobileFilters ? 'hide' : 'show' }} filters
+                {{ showMobileFilters ? "hide" : "show" }} filters
               </v-btn>
             </v-col>
             <v-spacer />
-            <v-col cols="6" class="d-flex align-center justify-end py-2 py-sm-1 py-md-2">
+            <v-col
+              cols="6"
+              class="d-flex align-center justify-end py-2 py-sm-1 py-md-2"
+            >
               <v-slider
                 v-model="tableZoom"
                 hide-details
@@ -129,108 +150,98 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from 'vuex'
-import MetricsStatistics from '@/components/MetricsStatistics.vue'
+import { mapActions, mapState, mapMutations } from "vuex";
+import MetricsStatistics from "@/components/MetricsStatistics.vue";
 
 export default {
-  name: 'Metrics',
+  name: "MetricsPage",
   components: {
-    MetricsStatistics
+    MetricsStatistics,
   },
-  data () {
+  data() {
     return {
       dialog: false,
-      filter: '',
+      filter: "",
       metrics: null,
       variables: [],
       staticVariables: [],
       tableZoom: 1,
       showMobileFilters: false,
-      filteredProducts: []
-    }
+      filteredProducts: [],
+    };
   },
   head: {
-    title: 'Metrics'
+    title: "Metrics",
   },
   computed: {
-    ...mapState([
-      'showEmptyItems'
-    ]),
-    ...mapState('staticCatalog', [
-      'missions',
-      'summary',
-      'themes'
-    ])
+    ...mapState(["showEmptyItems"]),
+    ...mapState("staticCatalog", ["missions", "summary", "themes"]),
   },
   watch: {
-    showEmptyItems (status) {
+    showEmptyItems(status) {
       if (status === false) {
-        this.$refs.searchBox.filterProducts()
-        this.filterItems(true)
+        this.$refs.searchBox.filterProducts();
+        this.filterItems(true);
       } else {
-        this.filterItems()
+        this.filterItems();
       }
-    }
+    },
   },
-  mounted () {
-    this.filterItems(null)
+  mounted() {
+    this.filterItems(null);
   },
   methods: {
-    ...mapMutations([
-      'TOGGLE_EMPTY_ITEMS'
-    ]),
-    ...mapActions('staticCatalog', [
-      'retreiveMetrics'
-    ]),
-    handleSearchEmit (result) {
-      const filteredResults = []
-      this.filteredProducts = result.items
+    ...mapMutations(["TOGGLE_EMPTY_ITEMS"]),
+    ...mapActions("staticCatalog", ["retreiveMetrics"]),
+    handleSearchEmit(result) {
+      const filteredResults = [];
+      this.filteredProducts = result.items;
       result.items.forEach((item) => {
         item.properties.keywords.forEach((keyword) => {
-          if (keyword.substring(0, 9) === 'variable:') {
-            filteredResults.push(keyword.substring(9, keyword.length))
+          if (keyword.substring(0, 9) === "variable:") {
+            filteredResults.push(keyword.substring(9, keyword.length));
           }
-        })
-      })
+        });
+      });
       const auxVar = this.staticVariables.filter((variable) => {
-        return filteredResults.find(result => result === variable.name)
-      })
+        return filteredResults.find((result) => result === variable.name);
+      });
 
-      this.variables = auxVar
+      this.variables = auxVar;
     },
-    clearFilter () {
-      this.variables = this.staticVariables
+    clearFilter() {
+      this.variables = this.staticVariables;
     },
-    async filterItems (silent) {
-      this.metrics = await this.retreiveMetrics()
-      const variables = []
+    async filterItems(silent) {
+      this.metrics = await this.retreiveMetrics();
+      const variables = [];
 
       this.metrics.themes.forEach((theme) => {
         theme.variables.forEach((variable) => {
-          variables.push(variable)
-        })
-      })
+          variables.push(variable);
+        });
+      });
       variables.sort((a, b) => {
-        return a.name.localeCompare(b.name, 'en', { sensitivity: 'base' })
-      })
+        return a.name.localeCompare(b.name, "en", { sensitivity: "base" });
+      });
       if (!this.showEmptyItems) {
         if (!silent) {
           this.variables = [
-            ...variables.filter(v => v.summary.numberOfProducts >= 1)
-          ]
+            ...variables.filter((v) => v.summary.numberOfProducts >= 1),
+          ];
         }
         this.staticVariables = [
-          ...variables.filter(v => v.summary.numberOfProducts >= 1)
-        ]
+          ...variables.filter((v) => v.summary.numberOfProducts >= 1),
+        ];
       } else {
         if (!silent) {
-          this.variables = variables
+          this.variables = variables;
         }
-        this.staticVariables = variables
+        this.staticVariables = variables;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

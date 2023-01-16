@@ -1,8 +1,6 @@
 <template>
   <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
-    <h2 class="text-h2 mt-3 mb-5">
-      Add item
-    </h2>
+    <h2 class="text-h2 mt-3 mb-5">Add item</h2>
     <v-row class="d-flex justify-center">
       <v-col cols="12">
         <change-item type="add" />
@@ -12,16 +10,16 @@
 </template>
 
 <script>
-import ChangeItem from '@/components/ChangeItem.vue'
+import ChangeItem from "@/components/ChangeItem.vue";
 
 export default {
-  name: 'AddItem',
+  name: "AddItem",
   components: {
-    ChangeItem
+    ChangeItem,
   },
-  middleware: 'auth',
+  middleware: "auth",
   head: {
-    title: 'Add item'
-  }
-}
+    title: "Add item",
+  },
+};
 </script>
