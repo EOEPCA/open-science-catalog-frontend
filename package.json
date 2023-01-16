@@ -8,8 +8,10 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint": "eslint . --ext js,vue --fix",
+    "lint": "eslint . --ext js,vue",
+    "lint:fix": "eslint . --ext js,vue --fix",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "jest"
   },
   "dependencies": {
