@@ -25,7 +25,6 @@
  * Released under the MIT License
  */
 
-
 /*!
   * vue-router v3.5.3
   * (c) 2021 Evan You
@@ -56,19 +55,4 @@
  * vuex v3.6.2
  * (c) 2021 Evan You
  * @license MIT
- */
-
-
-/*!
- * Chart.js v3.7.1
- * https://www.chartjs.org
- * (c) 2022 Chart.js Contributors
- * Released under the MIT License
- */
-
-/*!
-* chartjs-plugin-annotation v1.4.0
-* https://www.chartjs.org/chartjs-plugin-annotation/index
- * (c) 2022 chartjs-plugin-annotation Contributors
- * Released under the MIT License
  */
