@@ -1,17 +1,17 @@
-import Vue from 'vue'
+import Vue from "vue";
 
 const mixin = {
   methods: {
-    withBase (path) {
-      let newPath = path
+    withBase(path) {
+      let newPath = path;
       if (process.env.ROUTER_BASE) {
-        newPath = `${process.env.ROUTER_BASE}${path.replace('/', '')}`
+        newPath = `${process.env.ROUTER_BASE}${path.replace("/", "")}`;
       }
-      return newPath
-    }
-  }
-}
+      return newPath;
+    },
+  },
+};
 
-Vue.mixin(mixin)
+Vue.mixin(mixin);
 
-export default mixin
+export default mixin;

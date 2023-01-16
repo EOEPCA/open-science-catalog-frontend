@@ -63,9 +63,7 @@
               }}
             </template>
             <template v-else>
-              {{
-                item.links.filter((link) => link.rel === "item").length
-              }}
+              {{ item.links.filter((link) => link.rel === "item").length }}
               Product{{
                 item.links.filter((link) => link.rel === "item").length === 1
                   ? ""

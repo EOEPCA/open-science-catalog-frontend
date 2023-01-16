@@ -1,12 +1,12 @@
 // Ref: https://github.com/nuxt-community/vuetify-module#customvariables
 
-@font-face{
-  font-family: 'NotesESABold';
-  src: url('@/assets/notesesabol-webfont.ttf') format('truetype');
+@font-face {
+  font-family: "NotesESABold";
+  src: url("@/assets/notesesabol-webfont.ttf") format("truetype");
 }
 
-$body-font-family: 'Arial', sans-serif;
-$heading-font-family: 'NotesESABold';
+$body-font-family: "Arial", sans-serif;
+$heading-font-family: "NotesESABold";
 
 .v-application h1,
 .v-application h2,
