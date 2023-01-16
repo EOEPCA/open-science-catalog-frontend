@@ -25,24 +25,24 @@ export default {
   props: {
     items: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     showEmptyItems: {
       type: Boolean,
-      default: () => true
+      default: () => true,
     },
     numberOfPages: {
       type: Number,
-      default: () => 1
+      default: () => 1,
     },
     selectionMode: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
-  data () {
+  data() {
     return {
-      page: 1
-    }
-  }
-}
+      page: 1,
+    };
+  },
+};
 </script>

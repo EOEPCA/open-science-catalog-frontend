@@ -5,7 +5,9 @@
         <v-col>
           <h1
             class="primary--text"
-            :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'"
+            :class="
+              $vuetify.breakpoint.mdAndUp ? 'text-h2 mt-5' : 'text-h4 mt-5'
+            "
           >
             Welcome to the Open Science Catalog
           </h1>
@@ -13,11 +15,24 @@
       </v-row>
       <v-row class="pb-5 pt-0">
         <v-col>
-          <p>A catalog of publicly available geoscience products, datasets and resources developed in the frame of scientific research Projects funded by ESA EO (Earth Observation). Products vary in geographical and temporal extent, production methodology, validation and quality. Please refer to the documentation of each product for details.</p>
+          <p>
+            A catalog of publicly available geoscience products, datasets and
+            resources developed in the frame of scientific research Projects
+            funded by ESA EO (Earth Observation). Products vary in geographical
+            and temporal extent, production methodology, validation and quality.
+            Please refer to the documentation of each product for details.
+          </p>
           <p>
             <strong>What products can I find here?</strong>
           </p>
-          <p>The majority of pages on opensciencedata.esa.int  only hold metadata for each product and project. The actual data and its documentation are maintained and accessible at the data providers, outside of esa.int, for the majority of cases. This catalog provides the metadata and links to the data as it exists in those many other locations.</p>
+          <p>
+            The majority of pages on opensciencedata.esa.int only hold metadata
+            for each product and project. The actual data and its documentation
+            are maintained and accessible at the data providers, outside of
+            esa.int, for the majority of cases. This catalog provides the
+            metadata and links to the data as it exists in those many other
+            locations.
+          </p>
           <p>
             Explore the catalog, consisting of
             <v-chip
@@ -27,8 +42,8 @@
               :color="$typeColor('theme')"
               class="mb-2 mb-sm-0 text-uppercase"
             >
-              Themes
-            </v-chip>,
+              Themes </v-chip
+            >,
             <v-chip
               dark
               small
@@ -36,8 +51,8 @@
               :color="$typeColor('project')"
               class="mb-2 mb-sm-0 text-uppercase"
             >
-              Projects
-            </v-chip>,
+              Projects </v-chip
+            >,
             <v-chip
               dark
               small
@@ -46,7 +61,8 @@
               class="mb-2 mb-sm-0 text-uppercase"
             >
               Variables
-            </v-chip> and
+            </v-chip>
+            and
             <v-chip
               dark
               small
@@ -54,36 +70,28 @@
               :color="$typeColor('product')"
               class="mb-2 mb-sm-0 text-uppercase"
             >
-              Products
-            </v-chip>.
+              Products </v-chip
+            >.
           </p>
-          <p>Choose a theme below to get started or access the <a :href="$dynamicCatalog.defaults.baseURL" target="_blank">API Documentation</a>!</p>
-          <p>If you have any questions or feedback regarding Open Science Catalog, please contact us at <a href="mailto:opensciencedata@esa.int">opensciencedata@esa.int</a>.</p>
           <p>
-            <v-btn
-              dark
-              small
-              color="primary"
-              to="/metrics"
-            >
-              <v-icon
-                left
-              >
-                mdi-poll
-              </v-icon>
+            Choose a theme below to get started or access the
+            <a :href="$dynamicCatalog.defaults.baseURL" target="_blank"
+              >API Documentation</a
+            >!
+          </p>
+          <p>
+            If you have any questions or feedback regarding Open Science
+            Catalog, please contact us at
+            <a href="mailto:opensciencedata@esa.int">opensciencedata@esa.int</a
+            >.
+          </p>
+          <p>
+            <v-btn dark small color="primary" to="/metrics">
+              <v-icon left> mdi-poll </v-icon>
               Metrics
             </v-btn>
-            <v-btn
-              dark
-              small
-              color="primary"
-              to="/search"
-            >
-              <v-icon
-                left
-              >
-                mdi-magnify
-              </v-icon>
+            <v-btn dark small color="primary" to="/search">
+              <v-icon left> mdi-magnify </v-icon>
               Search
             </v-btn>
           </p>
@@ -91,11 +99,7 @@
       </v-row>
     </v-container>
     <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-0' : 'pa-2'">
-      <v-row
-        justify="center"
-        align="center"
-        no-gutters
-      >
+      <v-row justify="center" align="center" no-gutters>
         <v-col
           v-for="theme in themes"
           :key="theme.name"
@@ -103,23 +107,23 @@
           md="4"
           class="pa-1"
         >
-          <nuxt-link
-            :to="`/themes/${slugify(theme.name)}`"
-          >
+          <nuxt-link :to="`/themes/${slugify(theme.name)}`">
             <div
               class="d-flex align-center elevation-2 rounded"
-              style="position: relative; height: 300px; overflow: hidden;
-              border-bottom: 0.25em solid rgb(51, 94, 111);"
+              style="
+                position: relative;
+                height: 300px;
+                overflow: hidden;
+                border-bottom: 0.25em solid rgb(51, 94, 111);
+              "
             >
               <v-img
                 :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
                 width="100%"
                 height="100%"
               >
-                <span
-                  class="h1 imageLabel elevation-2"
-                >
-                  {{ theme.name.replace('_', ' ') }}
+                <span class="h1 imageLabel elevation-2">
+                  {{ theme.name.replace("_", " ") }}
                 </span>
               </v-img>
             </div>
@@ -131,27 +135,23 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from "vuex";
 
 export default {
-  name: 'IndexPage',
+  name: "IndexPage",
   head: {
-    titleTemplate: 'ESA Open Science Catalog'
+    titleTemplate: "ESA Open Science Catalog",
   },
   computed: {
-    ...mapState('staticCatalog', [
-      'themes'
-    ])
+    ...mapState("staticCatalog", ["themes"]),
   },
-  async created () {
-    await this.$store.dispatch('staticCatalog/retreiveMetrics')
+  async created() {
+    await this.$store.dispatch("staticCatalog/retreiveMetrics");
   },
   methods: {
-    ...mapActions('staticCatalog', [
-      'retreiveMetrics'
-    ])
-  }
-}
+    ...mapActions("staticCatalog", ["retreiveMetrics"]),
+  },
+};
 </script>
 
 <style>

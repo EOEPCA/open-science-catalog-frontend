@@ -8,19 +8,9 @@
       :style="`bottom: ${$vuetify.application.footer + 16}px`"
     >
       <template #activator>
-        <v-btn
-          v-model="fab"
-          color="info"
-          dark
-          rounded
-          x-large
-        >
-          <v-icon v-if="fab" left>
-            mdi-close
-          </v-icon>
-          <v-icon v-else left>
-            mdi-pencil
-          </v-icon>
+        <v-btn v-model="fab" color="info" dark rounded x-large>
+          <v-icon v-if="fab" left> mdi-close </v-icon>
+          <v-icon v-else left> mdi-pencil </v-icon>
           Suggest changes
         </v-btn>
       </template>
@@ -29,12 +19,12 @@
         dark
         rounded
         color="green"
-        :to="`/edit-item?${Object.keys($route.params)[0]}=${Object.values($route.params)[0]}`"
+        :to="`/edit-item?${Object.keys($route.params)[0]}=${
+          Object.values($route.params)[0]
+        }`"
         style="cursor: pointer"
       >
-        <v-icon left>
-          mdi-pencil
-        </v-icon>
+        <v-icon left> mdi-pencil </v-icon>
         Edit metadata
       </v-btn>
       <v-btn
@@ -42,28 +32,29 @@
         rounded
         color="red"
         style="cursor: pointer"
-        @click="$auth.loggedIn
-          ? deleteDialog = true
-          : $router
-            .push(`/edit-item?${Object
-              .keys($route.params)[0]}=${Object.values($route.params)[0]}`)"
+        @click="
+          $auth.loggedIn
+            ? (deleteDialog = true)
+            : $router.push(
+                `/edit-item?${Object.keys($route.params)[0]}=${
+                  Object.values($route.params)[0]
+                }`
+              )
+        "
       >
-        <v-icon left>
-          mdi-delete
-        </v-icon>
+        <v-icon left> mdi-delete </v-icon>
         Request deletion
       </v-btn>
       <v-btn
         dark
         rounded
         color="black"
-        :href="`${$config.githubDataRoot}/${
-          Object.keys($route.params)[0]}s/${itemId || Object.values($route.params)[0]}.json`"
+        :href="`${$config.githubDataRoot}/${Object.keys($route.params)[0]}s/${
+          itemId || Object.values($route.params)[0]
+        }.json`"
         target="_blank"
       >
-        <v-icon left>
-          mdi-github
-        </v-icon>
+        <v-icon left> mdi-github </v-icon>
         View file on GitHub
       </v-btn>
     </v-speed-dial>
@@ -74,25 +65,12 @@
         </v-card-title>
         <v-card-actions>
           <v-spacer />
-          <v-btn
-            color="blue"
-            dark
-            @click="deleteDialog = false"
-          >
-            <v-icon left>
-              mdi-cancel
-            </v-icon>
+          <v-btn color="blue" dark @click="deleteDialog = false">
+            <v-icon left> mdi-cancel </v-icon>
             Cancel
           </v-btn>
-          <v-btn
-            color="red"
-            dark
-            :loading="loading"
-            @click="deleteItem"
-          >
-            <v-icon left>
-              mdi-delete
-            </v-icon>
+          <v-btn color="red" dark :loading="loading" @click="deleteItem">
+            <v-icon left> mdi-delete </v-icon>
             Request deletion
           </v-btn>
         </v-card-actions>
@@ -106,25 +84,28 @@ export default {
   props: {
     itemId: {
       type: String,
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     fab: false,
     deleteDialog: false,
-    loading: false
+    loading: false,
   }),
   methods: {
-    async deleteItem () {
-      this.loading = true
+    async deleteItem() {
+      this.loading = true;
       await this.$metadataBackend.$delete(
-        `/item-requests/${this.slugify(Object.keys(this.$route.params)[0])}s/${this.itemId || this.slugify(Object.values(this.$route.params)[0])}.json`, {}
-      )
-      this.loading = false
-      this.deleteDialog = false
-    }
-  }
-}
+        `/item-requests/${this.slugify(Object.keys(this.$route.params)[0])}s/${
+          this.itemId || this.slugify(Object.values(this.$route.params)[0])
+        }.json`,
+        {}
+      );
+      this.loading = false;
+      this.deleteDialog = false;
+    },
+  },
+};
 </script>
 
 <style scoped>
