@@ -6,17 +6,44 @@
         <v-stepper v-model="currentStep" vertical>
           <v-stepper-step :complete="currentStep > 1" step="1">
             Select a process<span v-if="selectedProcess" class="grey--text">
-              - {{ selectedProcess }}</span
+              - {{ selectedProcess.name }}</span
             >
           </v-stepper-step>
 
           <v-stepper-content step="1">
             <v-autocomplete
               v-model="selectedProcess"
-              :items="['Test Process']"
+              :items="availableProcesses"
+              item-text="name"
+              item-value="id"
+              return-object
               outlined
               required
-            ></v-autocomplete>
+            >
+              <template #item="{ item }">
+                <strong>{{ item.name }}</strong
+                ><span class="mx-1">-</span><span>{{ item.doc }}</span>
+              </template>
+              <template #selection="{ item }">
+                <strong>{{ item.name }}</strong
+                ><span class="mx-1">-</span><span>{{ item.doc }}</span>
+              </template>
+            </v-autocomplete>
+            <template v-if="selectedProcess">
+              <p><strong>Input Parameters:</strong></p>
+              <template v-for="parameter in selectedProcess.parameters">
+                <v-text-field
+                  v-if="
+                    parameter.type === 'number' || parameter.type === 'string'
+                  "
+                  :key="parameter.id"
+                  v-model="selectedParameters[parameter.id]"
+                  :label="parameter.label"
+                  :type="parameter.type"
+                ></v-text-field>
+              </template>
+            </template>
+
             <v-btn
               color="primary"
               :disabled="!selectedProcess"
@@ -111,7 +138,9 @@
           </v-stepper-content>
 
           <v-stepper-step :complete="currentStep > 3" step="3">
-            Select cloud
+            Select cloud<span v-if="selectedCloud" class="grey--text">
+              - {{ selectedCloud }}</span
+            >
           </v-stepper-step>
 
           <v-stepper-content step="3">
@@ -135,11 +164,25 @@
           </v-stepper-step>
           <v-stepper-content step="4">
             <h1>Summary</h1>
-            <p>Process: {{ selectedProcess }}</p>
-            <p v-if="selectedProduct">
-              Product: {{ selectedProduct.properties.title }}
+            <p v-if="selectedProcess">
+              <strong>Process:</strong> {{ selectedProcess.name }}
             </p>
-            <p>Cloud: {{ selectedCloud }}</p>
+            <p class="mb-0"><strong>Parameters:</strong></p>
+            <ul v-if="selectedParameters" class="mb-4">
+              <li
+                v-for="parameter in Object.keys(selectedParameters)"
+                :key="parameter"
+              >
+                {{
+                  selectedProcess.parameters.find((p) => p.id === parameter)
+                    .label
+                }}: {{ selectedParameters[parameter] }}
+              </li>
+            </ul>
+            <p v-if="selectedProduct">
+              <strong>Product:</strong> {{ selectedProduct.properties.title }}
+            </p>
+            <p><strong>Cloud:</strong> {{ selectedCloud }}</p>
             <v-checkbox
               v-model="tosAgreed"
               label="I agree to the processing Terms of Service"
@@ -184,7 +227,9 @@ import axios from "axios";
 export default {
   data: () => ({
     currentStep: 1,
+    availableProcesses: [],
     selectedProcess: null,
+    selectedParameters: {},
     products: [],
     productsSearch: "",
     productsFilterSortBy: "title",
@@ -211,8 +256,9 @@ export default {
       this.currentStep = 3;
     }
   },
-  mounted() {
+  async mounted() {
     this.filterProducts();
+    this.availableProcesses = await this.$processingBackend.$get("/processes");
   },
   methods: {
     filterProducts(init) {
