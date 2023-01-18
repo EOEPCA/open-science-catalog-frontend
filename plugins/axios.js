@@ -120,6 +120,7 @@ export default function (
       product_id: "chaos-field-model-spline-4d-earth-swarm",
       result: "#",
       logs: "#",
+      message: "Test message",
     },
     {
       jobID: "2744-7214-7973",
@@ -130,6 +131,7 @@ export default function (
       product_id: "aerosol-dust-od-averaged-livas",
       result: "#",
       logs: "#",
+      message: "Test message",
     },
     {
       jobID: "1843-9735-1298",
@@ -140,6 +142,7 @@ export default function (
       product_id: "sea-ice-snow-depth-lpf-cassis",
       result: "#",
       logs: "#",
+      message: "Test message",
     },
   ]);
 
