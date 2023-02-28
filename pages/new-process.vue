@@ -6,7 +6,7 @@
         <v-stepper v-model="currentStep" vertical>
           <v-stepper-step :complete="currentStep > 1" step="1">
             Select a process<span v-if="selectedProcess" class="grey--text">
-              - {{ selectedProcess.name }}</span
+              - {{ availableProcesses[selectedProcess].title }}</span
             >
           </v-stepper-step>
 
@@ -14,32 +14,34 @@
             <v-autocomplete
               v-model="selectedProcess"
               :items="availableProcesses"
-              item-text="name"
-              item-value="id"
               return-object
               outlined
               required
+              :loading="availableProcessesLoading"
             >
               <template #item="{ item }">
-                <strong>{{ item.name }}</strong
-                ><span class="mx-1">-</span><span>{{ item.doc }}</span>
+                <strong>{{ item.title }}</strong
+                ><span class="mx-1">-</span><span>{{ item.description }}</span>
               </template>
               <template #selection="{ item }">
-                <strong>{{ item.name }}</strong
-                ><span class="mx-1">-</span><span>{{ item.doc }}</span>
+                <strong>{{ item.title }}</strong
+                ><span class="mx-1">-</span><span>{{ item.description }}</span>
               </template>
             </v-autocomplete>
-            <template v-if="selectedProcess">
+            <template v-if="selectedProcess && selectedProcess.inputs">
               <p><strong>Input Parameters:</strong></p>
-              <template v-for="parameter in selectedProcess.parameters">
+              <template v-for="([inputId, input]) in Object.entries(selectedProcess.inputs)">
+                <!-- <div v-if="input.title === 'Product'"></div> -->
                 <v-text-field
                   v-if="
-                    parameter.type === 'number' || parameter.type === 'string'
+                    input.schema.type === 'number' || input.schema.type === 'string'
                   "
-                  :key="parameter.id"
-                  v-model="selectedParameters[parameter.id]"
-                  :label="parameter.label"
-                  :type="parameter.type"
+                  :key="inputId"
+                  v-model="selectedParameters[inputId]"
+                  :label="input.title"
+                  :hint="input.description"
+                  :placeholder="input.schema.default"
+                  :type="input.schema.type"
                 ></v-text-field>
               </template>
             </template>
@@ -165,7 +167,7 @@
           <v-stepper-content step="4">
             <h1>Summary</h1>
             <p v-if="selectedProcess">
-              <strong>Process:</strong> {{ selectedProcess.name }}
+              <strong>Process:</strong> {{ selectedProcess.title }}
             </p>
             <p class="mb-0"><strong>Parameters:</strong></p>
             <ul v-if="selectedParameters" class="mb-4">
@@ -174,8 +176,7 @@
                 :key="parameter"
               >
                 {{
-                  selectedProcess.parameters.find((p) => p.id === parameter)
-                    .label
+                  selectedProcess.inputs[parameter].title
                 }}: {{ selectedParameters[parameter] }}
               </li>
             </ul>
@@ -223,11 +224,13 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import axios from "axios";
+
 export default {
   data: () => ({
     currentStep: 1,
-    availableProcesses: [],
+    availableProcesses: {},
     selectedProcess: null,
     selectedParameters: {},
     products: [],
@@ -242,11 +245,17 @@ export default {
     processingStarted: null,
     processingError: null,
     processingInfo: null,
+    availableProcessesLoading: null,
   }),
   head() {
     return {
       title: "New process",
     };
+  },
+  watch: {
+    selectedProcess (newProcess) {
+      this.getProcessDetails(newProcess)
+    }
   },
   created() {
     const { process, product } = this.$route.query;
@@ -258,9 +267,19 @@ export default {
   },
   async mounted() {
     this.filterProducts();
-    this.availableProcesses = await this.$processingBackend.$get("/processes");
+    try {
+      const result = await this.fetchApplications()
+      if (result.features) {
+        result.features.forEach(process => {
+          this.availableProcesses[process.id] = process
+        })
+      }
+    } catch (error) {
+      console.error(error)
+    }
   },
   methods: {
+    ...mapActions("dynamicCatalog", ["fetchApplications"]),
     filterProducts(init) {
       if (typeof init === "number") {
         this.page = init;
@@ -279,54 +298,39 @@ export default {
       this.products = result.items;
       this.numberOfPages = result.numberOfPages;
     },
+    async getProcessDetails(processId) {
+      if (!this.availableProcesses[processId]?.inputs) {
+        try {
+          this.availableProcessesLoading = true;
+          // TODO: get CWL contents from $processingBackend /applications endpoint and show the user possible inputs
+          this.availableProcessesLoading = false;
+        } catch (error) {
+          console.error(console.error);
+          this.availableProcessesLoading = false;
+        }
+      }
+    },
     async startProcessing() {
       this.processingInfo = null;
       this.processingStarted = true;
 
       console.log(this.selectedProduct);
-
       try {
-        const params = new URLSearchParams();
-        params.append("scope", "openid user_name is_operator");
-        params.append("grant_type", "password");
-        params.append("username", "osc");
-        params.append("password", "<pwd>");
-        params.append("client_id", "eba82eb7-5cb0-4f5e-99ab-3830eef383e2");
-        const auth = await axios.post(
-          "https://auth.eoepca-staging.spaceapplications.com/oxauth/restv1/token",
-          params,
-          {
-            headers: {
-              "Cache-Control": "no-cache",
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          }
-        );
-        const process = await axios.post(
-          "https://eoepca-staging.spaceapplications.com/ades/osc/wps3/processes/python-sleeper-0_0_2/execution",
-          {
+        const process = await this.$processingBackend.$post(`/processes/${this.selectedProcess.id}/execution`, {
+          // TEMP, TODO replace with actual user inputs
+          
             inputs: {
               min_sleep_seconds: 10,
               max_sleep_seconds: 10,
               ignored_product:
                 "https://eoepca.github.io/open-science-catalog-metadata/projects/4d-antarctica.json",
             },
-            outputs: {
-              wf_outputs: {
-                transmissionMode: "value",
-              },
-            },
-          },
-          {
-            headers: {
-              Accept: "application/json",
-              "X-User-Id": auth.data.id_token,
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${auth.data.id_token}`,
-              Prefer: "respond-async",
-            },
-          }
-        );
+            // outputs: {
+            //   wf_outputs: {
+            //     transmissionMode: "value",
+            //   },
+            // },
+        })
 
         console.log(process);
         this.processingInfo = `Process started successfully!`;
@@ -337,6 +341,6 @@ export default {
         console.error(error);
       }
     },
-  },
+  }
 };
 </script>

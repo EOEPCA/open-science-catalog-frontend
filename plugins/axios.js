@@ -53,98 +53,39 @@ export default function (
   inject("metadataBackend", metadataBackend);
 
   const processingBackend = $axios.create();
-
-  // TEMP: mock API until we have a real processing backend
-  const mockAxios = new MockAdapter(processingBackend);
-  mockAxios.onGet("/processes").reply(200, [
-    {
-      id: "python-sleeper",
-      doc: "Run a Python sleeper for between min and max seconds randomly",
-      name: "Python Sleeper",
-      version: "0_0_2",
-      parameters: [
+  processingBackend.setBaseURL(`${backendEndpoint}/processing/eoepca-staging-spaceapplications`);
+  // TEMP until this comes from the auth layer
+  // TODO remove hardcoded auth info!
+  processingBackend.onRequest(async (config) => {
+    if (!app.$auth?.loggedIn) {
+      return;
+    }
+    try {
+      const params = new URLSearchParams();
+      params.append("scope", "openid user_name is_operator");
+      params.append("grant_type", "password");
+      params.append("username", "osc");
+      params.append("password", "OSCClientPassword!");
+      params.append("client_id", "eba82eb7-5cb0-4f5e-99ab-3830eef383e2");
+      const auth = await $axios.post(
+        "https://auth.eoepca-staging.spaceapplications.com/oxauth/restv1/token",
+        params,
         {
-          id: "min_sleep_seconds",
-          type: "string",
-          doc: "Min sleeping seconds",
-          label: "Min sleeping seconds",
-        },
-        {
-          id: "max_sleep_seconds",
-          type: "string",
-          doc: "Max sleeping seconds",
-          label: "Max sleeping seconds",
-        },
-        {
-          id: "ignored_product",
-          type: "Directory",
-          doc: "Ignored product",
-          label: "Product",
-        },
-      ],
-    },
-    {
-      id: "test",
-      name: "Test Process",
-      doc: "A test process to showcase selection in the GUI",
-      version: "0_0_1",
-      parameters: [
-        {
-          id: "test_param",
-          type: "number",
-          doc: "A number parameter",
-          label: "A number parameter",
-        },
-        {
-          id: "test_param2",
-          type: "string",
-          doc: "A string parameter",
-          label: "A string parameter",
-        },
-        {
-          id: "test_param3",
-          type: "string",
-          doc: "Another string parameter",
-          label: "Another string parameter",
-        },
-      ],
-    },
-  ]);
-  mockAxios.onGet("/jobs").reply(200, [
-    {
-      jobID: "1343-6398-4365",
-      status: "running",
-      start_datetime: "2023-01-17T09:32:01Z",
-      end_datetime: null,
-      process_id: "python-sleeper",
-      product_id: "chaos-field-model-spline-4d-earth-swarm",
-      result: "#",
-      logs: "#",
-      message: "Test message",
-    },
-    {
-      jobID: "2744-7214-7973",
-      status: "successful",
-      start_datetime: "2023-01-16T13:55:20Z",
-      end_datetime: "2023-01-16T13:58:22Z",
-      process_id: "python-sleeper",
-      product_id: "aerosol-dust-od-averaged-livas",
-      result: "#",
-      logs: "#",
-      message: "Test message",
-    },
-    {
-      jobID: "1843-9735-1298",
-      status: "failed",
-      start_datetime: "2023-01-16T16:02:44Z",
-      end_datetime: "2023-01-16T16:02:58Z",
-      process_id: "test",
-      product_id: "sea-ice-snow-depth-lpf-cassis",
-      result: "#",
-      logs: "#",
-      message: "Test message",
-    },
-  ]);
-
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      processingBackend.setHeader("Accept", "application/json");
+      processingBackend.setHeader("Content-Type", "application/json");
+      processingBackend.setHeader("X-User-Id", auth.data.id_token);
+      processingBackend.setHeader("Authorization", `Bearer ${auth.data.id_token}`);
+      processingBackend.setHeader("Prefer", `respond-async`);
+    } catch (error) {
+      console.error(error);
+    }
+    return config;
+  });
   inject("processingBackend", processingBackend);
 }

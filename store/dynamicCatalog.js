@@ -8,10 +8,20 @@ export const actions = {
       return error;
     }
   },
-  async fetchProducts(_, { projectID, page }) {
+  // async fetchProducts(_, { projectID, page }) {
+  //   try {
+  //     const response = await this.$dynamicCatalog.$get(
+  //       `/collections/${projectID}/items?offset=${page}`
+  //     );
+  //     return response;
+  //   } catch (error) {
+  //     return error;
+  //   }
+  // },
+  async fetchApplications() {
     try {
       const response = await this.$dynamicCatalog.$get(
-        `/collections/${projectID}/items?offset=${page}`
+        `/collections/metadata:main/items?type=application`
       );
       return response;
     } catch (error) {

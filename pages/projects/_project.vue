@@ -131,7 +131,6 @@ export default {
     this.filterProducts();
   },
   methods: {
-    ...mapActions("dynamicCatalog", ["fetchProducts"]),
     ...mapActions("staticCatalog", ["retreiveProjects"]),
     filterProducts(init) {
       if (typeof init === "number") {

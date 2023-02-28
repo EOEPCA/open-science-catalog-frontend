@@ -5,40 +5,7 @@
       <v-col cols="12">
         <v-data-table
           v-if="jobs"
-          :headers="[
-            {
-              text: 'Job ID',
-              value: 'jobID',
-            },
-            {
-              text: 'Status',
-              value: 'status',
-            },
-            {
-              text: 'Process',
-              value: 'process_id',
-            },
-            {
-              text: 'Product',
-              value: 'product_id',
-            },
-            {
-              text: 'Start',
-              value: 'start_datetime',
-            },
-            {
-              text: 'End',
-              value: 'end_datetime',
-            },
-            {
-              text: 'Result',
-              value: 'result',
-            },
-            {
-              text: 'Logs',
-              value: 'logs',
-            },
-          ]"
+          :headers="headers"
           :items="jobs"
           dense
           :items-per-page="20"
@@ -68,13 +35,13 @@
               <small>{{ item.message }}</small>
             </v-tooltip>
           </template>
-          <template #item.logs="{ item }">
+          <template #item.statusLink="{ item }">
             <v-btn
-              v-if="item.logs"
+              v-if="item.statusLink"
               color="primary"
               plain
               small
-              :href="`https://eoepca-staging.spaceapplications.com/ades${item.logs.href}`"
+              :href="`https://eoepca-staging.spaceapplications.com/ades${item.statusLink}`"
               target="_blank"
               class="px-0"
             >
@@ -88,9 +55,9 @@
                   </v-icon> -->
             </v-btn>
           </template>
-          <template #item.result="{ item }">
+          <template #item.resultLink="{ item }">
             <v-btn
-              v-if="item.result"
+              v-if="item.resultLink"
               color="primary"
               text
               small
@@ -98,7 +65,7 @@
               class="px-0"
               @click="
                 fetchItem(
-                  `https://eoepca-staging.spaceapplications.com/ades${item.result.href}`
+                  `https://eoepca-staging.spaceapplications.com/ades${item.resultLink}`
                 )
               "
             >
@@ -122,9 +89,52 @@
 export default {
   data: () => ({
     jobs: null,
+    headers: [
+            {
+              text: 'Job ID',
+              value: 'jobID',
+            },
+            {
+              text: 'Status',
+              value: 'status',
+            },
+            {
+              text: 'Process',
+              value: 'process_id',
+            },
+            {
+              text: 'Product',
+              value: 'product_id',
+            },
+            {
+              text: 'Start',
+              value: 'start_datetime',
+            },
+            {
+              text: 'End',
+              value: 'end_datetime',
+            },
+            {
+              text: 'Status location',
+              value: 'statusLink',
+            },
+            {
+              text: 'Result location',
+              value: 'resultLink',
+            },
+          ]
   }),
   async created() {
-    this.jobs = await this.$processingBackend.$get("/jobs");
+    try {
+      const response = await this.$processingBackend.$get("/jobs");
+      this.jobs = response.jobs.map((job) => ({
+        ...job,
+        statusLink: job.links.find(l => l.rel === "status")?.href,
+        resultLink: job.links.find(l => l.rel.includes("/results"))?.href,
+      })).reverse();
+    } catch (error) {
+      console.error(error);
+    }
   },
   methods: {
     getStatusStyle(type) {
