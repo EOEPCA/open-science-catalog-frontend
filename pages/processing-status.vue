@@ -90,48 +90,50 @@ export default {
   data: () => ({
     jobs: null,
     headers: [
-            {
-              text: 'Job ID',
-              value: 'jobID',
-            },
-            {
-              text: 'Status',
-              value: 'status',
-            },
-            {
-              text: 'Process',
-              value: 'process_id',
-            },
-            {
-              text: 'Product',
-              value: 'product_id',
-            },
-            {
-              text: 'Start',
-              value: 'start_datetime',
-            },
-            {
-              text: 'End',
-              value: 'end_datetime',
-            },
-            {
-              text: 'Status location',
-              value: 'statusLink',
-            },
-            {
-              text: 'Result location',
-              value: 'resultLink',
-            },
-          ]
+      {
+        text: "Job ID",
+        value: "jobID",
+      },
+      {
+        text: "Status",
+        value: "status",
+      },
+      {
+        text: "Process",
+        value: "process_id",
+      },
+      {
+        text: "Product",
+        value: "product_id",
+      },
+      {
+        text: "Start",
+        value: "start_datetime",
+      },
+      {
+        text: "End",
+        value: "end_datetime",
+      },
+      {
+        text: "Status location",
+        value: "statusLink",
+      },
+      {
+        text: "Result location",
+        value: "resultLink",
+      },
+    ],
   }),
   async created() {
     try {
       const response = await this.$processingBackend.$get("/jobs");
-      this.jobs = response.jobs.map((job) => ({
-        ...job,
-        statusLink: job.links.find(l => l.rel === "status")?.href,
-        resultLink: job.links.find(l => l.rel.includes("/results"))?.href,
-      })).reverse();
+      this.jobs = response.jobs
+        .map((job) => ({
+          ...job,
+          statusLink: job.links.find((l) => l.rel === "status")?.href,
+          resultLink: job.links.find((l) => l.rel.includes("/results"))?.href,
+        }))
+        .reverse();
     } catch (error) {
       console.error(error);
     }
@@ -183,9 +185,9 @@ export default {
         },
       });
 
-      console.log(result)
+      console.log(result);
       window.open(result.StacCatalogUri, "_blank").focus();
-    }
+    },
   },
 };
 </script>

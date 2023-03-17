@@ -51,7 +51,9 @@ export default function (
   inject("metadataBackend", metadataBackend);
 
   const processingBackend = $axios.create();
-  processingBackend.setBaseURL(`${backendEndpoint}/processing/eoepca-staging-spaceapplications`);
+  processingBackend.setBaseURL(
+    `${backendEndpoint}/processing/eoepca-staging-spaceapplications`
+  );
   // TEMP until this comes from the auth layer
   // TODO remove hardcoded auth info!
   processingBackend.onRequest(async (config) => {
@@ -78,7 +80,10 @@ export default function (
       processingBackend.setHeader("Accept", "application/json");
       processingBackend.setHeader("Content-Type", "application/json");
       processingBackend.setHeader("X-User-Id", auth.data.id_token);
-      processingBackend.setHeader("Authorization", `Bearer ${auth.data.id_token}`);
+      processingBackend.setHeader(
+        "Authorization",
+        `Bearer ${auth.data.id_token}`
+      );
       processingBackend.setHeader("Prefer", `respond-async`);
     } catch (error) {
       console.error(error);

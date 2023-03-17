@@ -20,22 +20,30 @@
               :loading="availableProcessesLoading"
             >
               <template #item="{ item }">
-                  <strong>{{ availableProcesses[item].properties.title }}</strong
-                ><span class="mx-1">-</span><span>{{ availableProcesses[item].properties.description }}</span>
+                <strong>{{ availableProcesses[item].properties.title }}</strong
+                ><span class="mx-1">-</span
+                ><span>{{
+                  availableProcesses[item].properties.description
+                }}</span>
               </template>
               <template #selection="{ item }">
                 <strong>{{ availableProcesses[item].properties.title }}</strong
-                ><span class="mx-1">-</span><span>{{ availableProcesses[item].properties.description }}</span>
+                ><span class="mx-1">-</span
+                ><span>{{
+                  availableProcesses[item].properties.description
+                }}</span>
               </template>
             </v-autocomplete>
             <template v-if="selectedProcess && !availableProcessesLoading">
               <p><strong>Input Parameters:</strong></p>
-              <template v-for="([inputId, input]) in Object.entries(selectedProcessDetails.$graph[0].inputs)">
+              <template
+                v-for="[inputId, input] in Object.entries(
+                  selectedProcessDetails.$graph[0].inputs
+                )"
+              >
                 <!-- <div v-if="input.title === 'Product'"></div> -->
                 <v-text-field
-                  v-if="
-                    input.type === 'number' || input.type === 'string'
-                  "
+                  v-if="input.type === 'number' || input.type === 'string'"
                   :key="inputId"
                   v-model="selectedParameters[inputId]"
                   :label="input.label"
@@ -168,7 +176,8 @@
           <v-stepper-content step="4">
             <h1>Summary</h1>
             <p v-if="selectedProcess">
-              <strong>Process:</strong> {{ availableProcesses[selectedProcess].properties.title }}
+              <strong>Process:</strong>
+              {{ availableProcesses[selectedProcess].properties.title }}
             </p>
             <p class="mb-0"><strong>Parameters:</strong></p>
             <ul v-if="selectedParameters" class="mb-4">
@@ -176,9 +185,8 @@
                 v-for="parameter in Object.keys(selectedParameters)"
                 :key="parameter"
               >
-                {{
-                  selectedProcessDetails.$graph[0].inputs[parameter].label
-                }}: {{ selectedParameters[parameter] }}
+                {{ selectedProcessDetails.$graph[0].inputs[parameter].label }}:
+                {{ selectedParameters[parameter] }}
               </li>
             </ul>
             <p v-if="selectedProduct">
@@ -254,23 +262,22 @@ export default {
     };
   },
   watch: {
-    selectedProcess (newProcess) {
-      this.getProcessDetails(newProcess)
-    }
+    selectedProcess(newProcess) {
+      this.getProcessDetails(newProcess);
+    },
   },
-  created() {
-  },
+  created() {},
   async mounted() {
     this.filterProducts();
     try {
-      const result = await this.fetchApplications()
+      const result = await this.fetchApplications();
       if (result.features) {
-        result.features.forEach(process => {
-          this.availableProcesses[process.id] = process
-        })
+        result.features.forEach((process) => {
+          this.availableProcesses[process.id] = process;
+        });
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
     const { process, product } = this.$route.query;
     if (process && product) {
@@ -303,7 +310,9 @@ export default {
       if (!this.availableProcesses[processId]?.inputs) {
         try {
           this.availableProcessesLoading = true;
-          this.selectedProcessDetails = await this.$axios.$get(`https://backend-api.staging.opensciencedata.esa.int/applications/${this.selectedProcess}`)
+          this.selectedProcessDetails = await this.$axios.$get(
+            `https://backend-api.staging.opensciencedata.esa.int/applications/${this.selectedProcess}`
+          );
           this.availableProcessesLoading = false;
         } catch (error) {
           console.error(console.error);
@@ -316,16 +325,19 @@ export default {
       this.processingStarted = true;
 
       try {
-        await this.$processingBackend.$post(`/processes/${this.selectedProcess}/execution`, {          
+        await this.$processingBackend.$post(
+          `/processes/${this.selectedProcess}/execution`,
+          {
             inputs: {
-              ...this.selectedParameters
+              ...this.selectedParameters,
             },
             // outputs: {
             //   wf_outputs: {
             //     transmissionMode: "value",
             //   },
             // },
-        })
+          }
+        );
 
         this.processingInfo = `Process started successfully!`;
       } catch (error) {
@@ -335,6 +347,6 @@ export default {
         console.error(error);
       }
     },
-  }
+  },
 };
 </script>
