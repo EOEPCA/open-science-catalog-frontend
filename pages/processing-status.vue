@@ -157,6 +157,35 @@ export default {
       }
       return styling;
     },
+    async fetchItem(url) {
+      const params = new URLSearchParams();
+      params.append("scope", "openid user_name is_operator");
+      params.append("grant_type", "password");
+      params.append("username", "osc");
+      params.append("password", "OSCClientPassword!");
+      params.append("client_id", "eba82eb7-5cb0-4f5e-99ab-3830eef383e2");
+      const auth = await this.$axios.post(
+        "https://auth.eoepca-staging.spaceapplications.com/oxauth/restv1/token",
+        params,
+        {
+          headers: {
+            "Cache-Control": "no-cache",
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      const result = await this.$axios.$get(url, {
+        headers: {
+          Accept: "application/json",
+          "X-User-Id": auth.data.id_token,
+          "Content-Type": "application/json",
+          Prefer: "respond-async",
+        },
+      });
+
+      console.log(result)
+      window.open(result.StacCatalogUri, "_blank").focus();
+    }
   },
 };
 </script>

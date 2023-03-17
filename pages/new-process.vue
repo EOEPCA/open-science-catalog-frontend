@@ -6,42 +6,43 @@
         <v-stepper v-model="currentStep" vertical>
           <v-stepper-step :complete="currentStep > 1" step="1">
             Select a process<span v-if="selectedProcess" class="grey--text">
-              - {{ availableProcesses[selectedProcess].title }}</span
+              - {{ availableProcesses[selectedProcess].properties.title }}</span
             >
           </v-stepper-step>
 
           <v-stepper-content step="1">
             <v-autocomplete
               v-model="selectedProcess"
-              :items="availableProcesses"
+              :items="Object.keys(availableProcesses)"
               return-object
               outlined
               required
               :loading="availableProcessesLoading"
             >
               <template #item="{ item }">
-                <strong>{{ item.title }}</strong
-                ><span class="mx-1">-</span><span>{{ item.description }}</span>
+                  <strong>{{ availableProcesses[item].properties.title }}</strong
+                ><span class="mx-1">-</span><span>{{ availableProcesses[item].properties.description }}</span>
               </template>
               <template #selection="{ item }">
-                <strong>{{ item.title }}</strong
-                ><span class="mx-1">-</span><span>{{ item.description }}</span>
+                <strong>{{ availableProcesses[item].properties.title }}</strong
+                ><span class="mx-1">-</span><span>{{ availableProcesses[item].properties.description }}</span>
               </template>
             </v-autocomplete>
-            <template v-if="selectedProcess && selectedProcess.inputs">
+            <template v-if="selectedProcess && !availableProcessesLoading">
               <p><strong>Input Parameters:</strong></p>
-              <template v-for="([inputId, input]) in Object.entries(selectedProcess.inputs)">
+              <template v-for="([inputId, input]) in Object.entries(selectedProcessDetails.$graph[0].inputs)">
                 <!-- <div v-if="input.title === 'Product'"></div> -->
                 <v-text-field
                   v-if="
-                    input.schema.type === 'number' || input.schema.type === 'string'
+                    input.type === 'number' || input.type === 'string'
                   "
                   :key="inputId"
                   v-model="selectedParameters[inputId]"
-                  :label="input.title"
-                  :hint="input.description"
-                  :placeholder="input.schema.default"
-                  :type="input.schema.type"
+                  :label="input.label"
+                  :hint="input.doc"
+                  :placeholder="input.label"
+                  :type="input.type"
+                  outlined
                 ></v-text-field>
               </template>
             </template>
@@ -167,7 +168,7 @@
           <v-stepper-content step="4">
             <h1>Summary</h1>
             <p v-if="selectedProcess">
-              <strong>Process:</strong> {{ selectedProcess.title }}
+              <strong>Process:</strong> {{ availableProcesses[selectedProcess].properties.title }}
             </p>
             <p class="mb-0"><strong>Parameters:</strong></p>
             <ul v-if="selectedParameters" class="mb-4">
@@ -176,7 +177,7 @@
                 :key="parameter"
               >
                 {{
-                  selectedProcess.inputs[parameter].title
+                  selectedProcessDetails.$graph[0].inputs[parameter].label
                 }}: {{ selectedParameters[parameter] }}
               </li>
             </ul>
@@ -232,6 +233,7 @@ export default {
     currentStep: 1,
     availableProcesses: {},
     selectedProcess: null,
+    selectedProcessDetails: {},
     selectedParameters: {},
     products: [],
     productsSearch: "",
@@ -302,7 +304,7 @@ export default {
       if (!this.availableProcesses[processId]?.inputs) {
         try {
           this.availableProcessesLoading = true;
-          // TODO: get CWL contents from $processingBackend /applications endpoint and show the user possible inputs
+          this.selectedProcessDetails = await this.$axios.$get(`https://backend-api.staging.opensciencedata.esa.int/applications/${this.selectedProcess}`)
           this.availableProcessesLoading = false;
         } catch (error) {
           console.error(console.error);
@@ -316,14 +318,9 @@ export default {
 
       console.log(this.selectedProduct);
       try {
-        const process = await this.$processingBackend.$post(`/processes/${this.selectedProcess.id}/execution`, {
-          // TEMP, TODO replace with actual user inputs
-          
+        const process = await this.$processingBackend.$post(`/processes/${this.selectedProcess}/execution`, {          
             inputs: {
-              min_sleep_seconds: 10,
-              max_sleep_seconds: 10,
-              ignored_product:
-                "https://eoepca.github.io/open-science-catalog-metadata/projects/4d-antarctica.json",
+              ...this.selectedParameters
             },
             // outputs: {
             //   wf_outputs: {
