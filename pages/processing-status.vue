@@ -10,10 +10,10 @@
           dense
           :items-per-page="20"
         >
-          <template #item.jobID="{ item }">
+          <template #[`item.jobID`]="{ item }">
             <code>{{ item.jobID }}</code>
           </template>
-          <template #item.status="{ item }">
+          <template #[`item.status`]="{ item }">
             <v-tooltip right>
               <template #activator="{ on, attrs }">
                 <v-chip
@@ -35,7 +35,7 @@
               <small>{{ item.message }}</small>
             </v-tooltip>
           </template>
-          <template #item.statusLink="{ item }">
+          <template #[`item.statusLink`]="{ item }">
             <v-btn
               v-if="item.statusLink"
               color="primary"
@@ -55,7 +55,7 @@
                   </v-icon> -->
             </v-btn>
           </template>
-          <template #item.resultLink="{ item }">
+          <template #[`item.resultLink`]="{ item }">
             <v-btn
               v-if="item.resultLink"
               color="primary"

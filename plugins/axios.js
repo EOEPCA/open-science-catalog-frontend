@@ -1,5 +1,3 @@
-const MockAdapter = require("axios-mock-adapter");
-
 export default function (
   {
     app,

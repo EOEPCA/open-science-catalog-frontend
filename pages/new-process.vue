@@ -274,8 +274,6 @@ export default {
     }
     const { process, product } = this.$route.query;
     if (process && product) {
-      console.log(process);
-      console.log(this.availableProcesses[process]);
       this.selectedProcess = process;
       this.selectedProduct = { properties: { title: product } };
       this.currentStep = 3;
@@ -317,9 +315,8 @@ export default {
       this.processingInfo = null;
       this.processingStarted = true;
 
-      console.log(this.selectedProduct);
       try {
-        const process = await this.$processingBackend.$post(`/processes/${this.selectedProcess}/execution`, {          
+        await this.$processingBackend.$post(`/processes/${this.selectedProcess}/execution`, {          
             inputs: {
               ...this.selectedParameters
             },
@@ -330,7 +327,6 @@ export default {
             // },
         })
 
-        console.log(process);
         this.processingInfo = `Process started successfully!`;
       } catch (error) {
         this.processingStarted = false;
