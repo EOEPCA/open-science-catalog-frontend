@@ -4,7 +4,7 @@
       :id="product.id"
       :title="product.properties.title"
       :description="product.properties.description"
-      :processing="['Test Process']"
+      :processing="['python-sleeper']"
       :chips="{
         themes: product.properties['osc:themes'],
         variable: product.properties['osc:variable'],

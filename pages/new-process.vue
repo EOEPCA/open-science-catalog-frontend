@@ -226,7 +226,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import axios from "axios";
 
 export default {
   data: () => ({
@@ -260,12 +259,6 @@ export default {
     }
   },
   created() {
-    const { process, product } = this.$route.query;
-    if (process && product) {
-      this.selectedProcess = process;
-      this.selectedProduct = { properties: { title: product } };
-      this.currentStep = 3;
-    }
   },
   async mounted() {
     this.filterProducts();
@@ -278,6 +271,14 @@ export default {
       }
     } catch (error) {
       console.error(error)
+    }
+    const { process, product } = this.$route.query;
+    if (process && product) {
+      console.log(process);
+      console.log(this.availableProcesses[process]);
+      this.selectedProcess = process;
+      this.selectedProduct = { properties: { title: product } };
+      this.currentStep = 3;
     }
   },
   methods: {
