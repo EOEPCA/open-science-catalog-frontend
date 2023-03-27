@@ -34,16 +34,14 @@
                 }}</span>
               </template>
             </v-autocomplete>
-            <template v-if="selectedProcess && !availableProcessesLoading">
+            <!-- <template v-if="selectedProcess && !availableProcessesLoading">
               <p><strong>Input Parameters:</strong></p>
-              <template
-                v-for="[inputId, input] in Object.entries(
-                  selectedProcessDetails.$graph[0].inputs
-                )"
-              >
-                <!-- <div v-if="input.title === 'Product'"></div> -->
-                <v-text-field
-                  v-if="input.type === 'number' || input.type === 'string'"
+              <template v-for="([inputId, input]) in Object.entries(selectedProcessDetails.$graph[0].inputs)"> -->
+            <!-- <div v-if="input.title === 'Product'"></div> -->
+            <!-- <v-text-field
+                  v-if="
+                    input.type === 'number' || input.type === 'string'
+                  "
                   :key="inputId"
                   v-model="selectedParameters[inputId]"
                   :label="input.label"
@@ -53,7 +51,7 @@
                   outlined
                 ></v-text-field>
               </template>
-            </template>
+            </template> -->
 
             <v-btn
               color="primary"
@@ -149,12 +147,47 @@
           </v-stepper-content>
 
           <v-stepper-step :complete="currentStep > 3" step="3">
+            Select Input parameters
+          </v-stepper-step>
+
+          <v-stepper-content step="3">
+            <template v-if="selectedProcess && !availableProcessesLoading">
+              <template
+                v-for="[inputId, input] in Object.entries(
+                  selectedProcessDetails.$graph[0].inputs
+                )"
+              >
+                <!-- <div v-if="input.title === 'Product'"></div> -->
+                <v-text-field
+                  v-if="input.type === 'number' || input.type === 'string'"
+                  :key="inputId"
+                  v-model="selectedParameters[inputId]"
+                  :label="input.label"
+                  :hint="input.doc"
+                  :placeholder="input.label"
+                  :type="input.type"
+                  outlined
+                ></v-text-field>
+              </template>
+            </template>
+
+            <v-btn
+              color="primary"
+              :disabled="!selectedParameters"
+              @click="currentStep++"
+            >
+              Continue
+            </v-btn>
+            <v-btn text @click="currentStep--"> Back </v-btn>
+          </v-stepper-content>
+
+          <v-stepper-step :complete="currentStep > 4" step="4">
             Select cloud<span v-if="selectedCloud" class="grey--text">
               - {{ selectedCloud }}</span
             >
           </v-stepper-step>
 
-          <v-stepper-content step="3">
+          <v-stepper-content step="4">
             <v-autocomplete
               v-model="selectedCloud"
               :items="['Space Applications Services', 'Terradue']"
@@ -170,10 +203,10 @@
             <v-btn text @click="currentStep--"> Back </v-btn>
           </v-stepper-content>
 
-          <v-stepper-step step="4">
+          <v-stepper-step step="5">
             Review and start processing
           </v-stepper-step>
-          <v-stepper-content step="4">
+          <v-stepper-content step="5">
             <h1>Summary</h1>
             <p v-if="selectedProcess">
               <strong>Process:</strong>
