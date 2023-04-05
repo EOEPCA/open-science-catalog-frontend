@@ -75,12 +75,12 @@ export default {
         hid: "description",
         name: "description",
         content:
-          "The Open Science Data Catalogue features open access geoscience products, datasets and other resources produced by scientific research projects funded by ESA EO (Earth Observation).",
+          "The Open Science Data Catalog features open access geoscience products, datasets and other resources produced by scientific research projects funded by ESA EO (Earth Observation).",
       },
       {
         property: "og:description",
         content:
-          "The Open Science Data Catalogue features open access geoscience products, datasets and other resources produced by scientific research projects funded by ESA EO (Earth Observation).",
+          "The Open Science Data Catalog features open access geoscience products, datasets and other resources produced by scientific research projects funded by ESA EO (Earth Observation).",
       },
       {
         name: "keywords",
