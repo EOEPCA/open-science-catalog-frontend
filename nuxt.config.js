@@ -75,12 +75,12 @@ export default {
         hid: "description",
         name: "description",
         content:
-          "The European Space Agency portal features the latest news in space exploration, human spaceflight, launchers, telecommunications, navigation, monitoring and space science. ",
+          "The Open Science Data Catalogue features open access geoscience products, datasets and other resources produced by scientific research projects funded by ESA EO (Earth Observation).",
       },
       {
         property: "og:description",
         content:
-          "The European Space Agency portal features the latest news in space exploration, human spaceflight, launchers, telecommunications, navigation, monitoring and space science.",
+          "The Open Science Data Catalogue features open access geoscience products, datasets and other resources produced by scientific research projects funded by ESA EO (Earth Observation).",
       },
       {
         name: "keywords",
