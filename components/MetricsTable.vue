@@ -21,23 +21,28 @@
       <v-btn
         v-if="item.summary.numberOfProducts && !isExpanded"
         icon
-        @click="() => {expand(true); expandVariable(item)}"
+        @click="
+          () => {
+            expand(true);
+            expandVariable(item);
+          }
+        "
       >
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
       <v-btn
         v-else-if="item.summary.numberOfProducts && isExpanded"
         icon
-        @click="() => {expand(false); expandVariable(item)}"
+        @click="
+          () => {
+            expand(false);
+            expandVariable(item);
+          }
+        "
       >
         <v-icon>mdi-chevron-up</v-icon>
       </v-btn>
-      <div
-        v-else
-        class="noAvailableProduct"
-      >
-        No products available
-      </div>
+      <div v-else class="noAvailableProduct">No products available</div>
     </template>
     <template #expanded-item="{ item }">
       <td
@@ -46,12 +51,12 @@
         class="pa-0"
         style="z-index: 0 !important"
       >
-        <table style="width: 100%; border-spacing: 0;">
+        <table style="width: 100%; border-spacing: 0">
           <tbody>
             <tr
               v-for="product in getProducts(item.name)"
               :key="product.id"
-              style="line-height: 3;"
+              style="line-height: 3"
             >
               <td class="px-4 text-start subCell">
                 <v-tooltip top>
@@ -64,70 +69,64 @@
                       target="_blank"
                       v-on="on"
                     >
-                      <v-icon>
-                        mdi-open-in-new
-                      </v-icon>
+                      <v-icon> mdi-open-in-new </v-icon>
                     </v-btn>
                   </template>
                   <span>Go to {{ product.properties.title }} product</span>
                 </v-tooltip>
               </td>
               <td class="px-4 py-2 subCell">
-                <v-tooltip
-                  top
-                >
+                <v-tooltip top>
                   <template #activator="{ on }">
                     <nuxt-link
                       :to="`/products/${$extractSlug(product)}`"
                       style="text-decoration: none"
                     >
-                      <small
-                        style="cursor: pointer"
-                        v-on="on"
-                      >{{ product.properties.title }}</small>
+                      <small style="cursor: pointer" v-on="on">{{
+                        product.properties.title
+                      }}</small>
                     </nuxt-link>
                   </template>
                   <span>Go to {{ product.properties.title }} product</span>
                 </v-tooltip>
               </td>
-              <td
-                v-for="year in headers"
-                :key="year"
-                class="subCell"
-              >
+              <td v-for="year in headers" :key="year" class="subCell">
                 <v-progress-linear
-                  v-if="(product.properties.start_datetime) && product.properties.start_datetime.slice(0, 4) <= year
-                    && (product.properties.end_datetime) && product.properties.end_datetime.slice(0, 4) >= year"
+                  v-if="
+                    product.properties.start_datetime &&
+                    product.properties.start_datetime.slice(0, 4) <= year &&
+                    product.properties.end_datetime &&
+                    product.properties.end_datetime.slice(0, 4) >= year
+                  "
                   :key="year"
                   color="applications"
                   height="15"
                   value="100"
                   :style="`border-radius: ${
-                    product.properties.start_datetime.slice(0, 4) == year ? 5 : 0
+                    product.properties.start_datetime.slice(0, 4) == year
+                      ? 5
+                      : 0
                   }px ${
                     product.properties.end_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
                     product.properties.end_datetime.slice(0, 4) == year ? 5 : 0
                   }px ${
-                    product.properties.start_datetime.slice(0, 4) == year ? 5 : 0
+                    product.properties.start_datetime.slice(0, 4) == year
+                      ? 5
+                      : 0
                   }px`"
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
               <td class="subCell">
-                <Coverage
-                  :products="[product]"
-                />
+                <Coverage :products="[product]" />
               </td>
             </tr>
           </tbody>
         </table>
       </td>
     </template>
-    <template
-      v-for="(year, index) in headers"
-      #[`item.${year}`]="{ item }"
-    >
+    <template v-for="(year, index) in headers" #[`item.${year}`]="{ item }">
       <v-progress-linear
         v-if="item.summary.years.includes(year)"
         :key="year"
@@ -136,19 +135,13 @@
         value="100"
         :style="`border-radius: ${
           !item.summary.years.includes(headers[index - 1]) ? 5 : 0
-        }px ${
+        }px ${!item.summary.years.includes(headers[index + 1]) ? 5 : 0}px ${
           !item.summary.years.includes(headers[index + 1]) ? 5 : 0
-        }px ${
-          !item.summary.years.includes(headers[index + 1]) ? 5 : 0
-        }px ${
-          !item.summary.years.includes(headers[index - 1]) ? 5 : 0
-        }px;`"
+        }px ${!item.summary.years.includes(headers[index - 1]) ? 5 : 0}px;`"
       />
     </template>
     <template #[`item.name`]="{ item }">
-      <v-tooltip
-        top
-      >
+      <v-tooltip top>
         <template #activator="{ on }">
           <nuxt-link
             style="cursor: pointer; font-size: 12px; text-decoration: none"
@@ -173,133 +166,148 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from "vuex";
 
-import Coverage from '@/components/Coverage.vue'
+import Coverage from "@/components/Coverage.vue";
 
 export default {
-  name: 'MetricsTable',
+  name: "MetricsTable",
   components: {
-    Coverage
+    Coverage,
   },
   props: {
     filteredProducts: {
       type: Array,
-      default: () => ([])
+      default: () => [],
     },
     headers: {
       type: Array,
-      default: () => ([])
+      default: () => [],
     },
     items: {
       type: Array,
-      default: () => ([])
+      default: () => [],
     },
     tableZoom: {
       type: Number,
-      default: 100
-    }
+      default: 100,
+    },
   },
-  data () {
+  data() {
     return {
       isMounted: false,
       expanded: [],
       variablesList: {},
-      products: {}
-    }
+      products: {},
+    };
   },
   computed: {
-    ...mapState('staticCatalog', [
-      'variables'
-    ]),
-    transformedHeaders () {
-      const newHeaders = this.headers.map(h => ({
+    ...mapState("staticCatalog", ["variables"]),
+    transformedHeaders() {
+      const newHeaders = this.headers.map((h) => ({
         text: h,
-        value: h
-      }))
+        value: h,
+      }));
       newHeaders.unshift({
-        text: 'Name',
-        value: 'name'
-      })
+        text: "Name",
+        value: "name",
+      });
       newHeaders.push({
-        text: 'Coverage',
-        value: 'coverage'
-      })
-      return newHeaders
+        text: "Coverage",
+        value: "coverage",
+      });
+      return newHeaders;
     },
-    cssProps () {
+    cssProps() {
       if (!this.isMounted) {
-        return
+        return;
       }
-      const width = this.tableZoom * (this.$vuetify.breakpoint.smOnly ? 1.6 : 1.8) * this.$refs.table.$el.clientWidth / 100
+      const width =
+        (this.tableZoom *
+          (this.$vuetify.breakpoint.smOnly ? 1.6 : 1.8) *
+          this.$refs.table.$el.clientWidth) /
+        100;
       return {
-        '--table-cell': `${width}px`
-      }
-    }
+        "--table-cell": `${width}px`,
+      };
+    },
   },
   watch: {
-    tableZoom () {
+    tableZoom() {
       // TODO this keeps the table scrolled right, but ideally it stays at the current center point
       this.$nextTick(() => {
-        document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
-      })
-    }
+        document.querySelector(".v-data-table__wrapper").scrollLeft = 10000;
+      });
+    },
   },
-  mounted () {
-    this.isMounted = true
+  mounted() {
+    this.isMounted = true;
     this.$nextTick(() => {
-      document.querySelector('.v-data-table__wrapper').scrollLeft = 10000
-      document.querySelector('table').addEventListener('mouseover', (e) => {
-        const hoveredCell = e.target
-        const allCells = hoveredCell.parentNode.children
-        const itemIndex = Array.prototype.indexOf.call(allCells, hoveredCell)
-        document.querySelectorAll('.hoverCell').forEach((cell) => {
-          cell.classList.remove('hoverCell')
-        })
-        if (itemIndex !== 0 && itemIndex !== 1 && itemIndex !== allCells.length - 1) {
-          document.querySelectorAll(`td:nth-child(${itemIndex + 1})`).forEach((cell) => {
-            cell.classList.add('hoverCell')
-          })
+      document.querySelector(".v-data-table__wrapper").scrollLeft = 10000;
+      document.querySelector("table").addEventListener("mouseover", (e) => {
+        const hoveredCell = e.target;
+        const allCells = hoveredCell.parentNode.children;
+        const itemIndex = Array.prototype.indexOf.call(allCells, hoveredCell);
+        document.querySelectorAll(".hoverCell").forEach((cell) => {
+          cell.classList.remove("hoverCell");
+        });
+        if (
+          itemIndex !== 0 &&
+          itemIndex !== 1 &&
+          itemIndex !== allCells.length - 1
+        ) {
+          document
+            .querySelectorAll(`td:nth-child(${itemIndex + 1})`)
+            .forEach((cell) => {
+              cell.classList.add("hoverCell");
+            });
         }
-      })
-    })
+      });
+    });
   },
   methods: {
-    ...mapActions('staticCatalog', [
-      'retreiveVariable'
-    ]),
-    async expandVariable (item) {
-      const variableSlug = this.slugify(item.name)
+    ...mapActions("staticCatalog", ["retreiveVariable"]),
+    async expandVariable(item) {
+      const variableSlug = this.slugify(item.name);
       if (!this.products[variableSlug]) {
-        await this.retreiveVariable(variableSlug).then(async (variable) => {
-          this.$set(this.variablesList, variableSlug, this.variable)
-          const products = []
-          // TODO: use dynamic endpoint instead of static here
-          await Promise.all(variable.links.map(async (link) => {
-            if (link.rel === 'item') {
-              await this.$staticCatalog.$get(this.$replaceStaticBase(link.href)).then((productResponse) => {
-                products.push(productResponse)
-              }).catch(err => console.error(err))
-            }
-          }))
-          this.$set(this.products, variableSlug, products)
-        }).catch(err => console.error(err))
+        await this.retreiveVariable(variableSlug)
+          .then(async (variable) => {
+            this.$set(this.variablesList, variableSlug, this.variable);
+            const products = [];
+            // TODO: use dynamic endpoint instead of static here
+            await Promise.all(
+              variable.links.map(async (link) => {
+                if (link.rel === "item") {
+                  await this.$staticCatalog
+                    .$get(this.$replaceStaticBase(link.href))
+                    .then((productResponse) => {
+                      products.push(productResponse);
+                    })
+                    .catch((err) => console.error(err));
+                }
+              })
+            );
+            this.$set(this.products, variableSlug, products);
+          })
+          .catch((err) => console.error(err));
       }
     },
-    getProducts (name) {
-      let products = []
+    getProducts(name) {
+      let products = [];
       if (this.products[this.slugify(name)]) {
-        products = this.products[this.slugify(name)]
+        products = this.products[this.slugify(name)];
         if (this.filteredProducts.length > 0) {
           products = products.filter((product) => {
-            return this.filteredProducts.find(filteredProduct => (filteredProduct.id === product.id))
-          })
+            return this.filteredProducts.find(
+              (filteredProduct) => filteredProduct.id === product.id
+            );
+          });
         }
       }
-      return products
-    }
-  }
-}
+      return products;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -433,28 +441,45 @@ export default {
   max-width: var(--table-cell);
 }
 
-.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(odd) {
+.hide-even
+  ::v-deep
+  th:not(:first-child, :nth-child(2), :last-child):nth-child(odd) {
   z-index: 3;
   text-align: center;
 }
-.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) {
+.hide-even
+  ::v-deep
+  th:not(:first-child, :nth-child(2), :last-child):nth-child(even) {
   z-index: 2;
 }
-.hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(even) > span {
+.hide-even
+  ::v-deep
+  th:not(:first-child, :nth-child(2), :last-child):nth-child(even)
+  > span {
   visibility: hidden;
 }
 @media (max-width: 900px) {
-  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) {
+  .hide-even
+    ::v-deep
+    th:not(:first-child, :nth-child(2), :last-child):nth-child(n) {
     z-index: 2;
   }
-  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(n) > span {
+  .hide-even
+    ::v-deep
+    th:not(:first-child, :nth-child(2), :last-child):nth-child(n)
+    > span {
     visibility: hidden;
   }
-  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) {
+  .hide-even
+    ::v-deep
+    th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) {
     z-index: 3;
     text-align: center;
   }
-  .hide-even ::v-deep th:not(:first-child, :nth-child(2), :last-child):nth-child(6n) > span {
+  .hide-even
+    ::v-deep
+    th:not(:first-child, :nth-child(2), :last-child):nth-child(6n)
+    > span {
     visibility: visible;
   }
 }

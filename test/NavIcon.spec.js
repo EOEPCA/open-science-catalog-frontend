@@ -1,38 +1,38 @@
-import Vuetify from 'vuetify'
-import Vuex from 'vuex'
+import Vuetify from "vuetify";
+import Vuex from "vuex";
 
-import { createLocalVue, mount } from '@vue/test-utils'
-import DefaultLayout from '@/layouts/default.vue'
+import { createLocalVue, mount } from "@vue/test-utils";
+import DefaultLayout from "@/layouts/default.vue";
 
-describe('DefaultLayout', () => {
-  let localVue
-  let vuetify
-  let wrapper
+describe("DefaultLayout", () => {
+  let localVue;
+  let vuetify;
+  let wrapper;
 
   beforeEach(() => {
-    localVue = createLocalVue() // because of vuetify, we should use a localVue instance
-    vuetify = new Vuetify()
-  })
-  it('reveals sidebar', () => {
+    localVue = createLocalVue(); // because of vuetify, we should use a localVue instance
+    vuetify = new Vuetify();
+  });
+  it("reveals sidebar", () => {
     const getters = {
-      appVersion: () => '0.0.1'
-    }
+      appVersion: () => "0.0.1",
+    };
     const mockStore = new Vuex.Store({
-      getters
-    })
+      getters,
+    });
     wrapper = mount(DefaultLayout, {
       mocks: {
-        $dynamicCatalog: { defaults: { baseURL: '#' } },
-        $auth: { loggedIn: true, user: { name: 'FooBar' } },
-        $config: {}
+        $dynamicCatalog: { defaults: { baseURL: "#" } },
+        $auth: { loggedIn: true, user: { name: "FooBar" } },
+        $config: {},
       },
       localVue,
       store: mockStore,
       vuetify,
-      stubs: ['nuxt-link', 'router-link', 'client-only', 'Nuxt']
-    })
+      stubs: ["nuxt-link", "router-link", "client-only", "Nuxt"],
+    });
     // console.log(wrapper.html())
-    const homeButton = wrapper.find('.v-list-item__title')
-    expect(homeButton.text()).toContain('Home')
-  })
-})
+    const homeButton = wrapper.find(".v-list-item__title");
+    expect(homeButton.text()).toContain("Home");
+  });
+});

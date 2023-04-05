@@ -10,11 +10,12 @@
 
 <script>
 export default {
+  name: "TermsPage",
   data: () => ({
-    parsedContent: null
+    parsedContent: null,
   }),
-  async created () {
-    this.parsedContent = await this.$content('terms').fetch()
-  }
-}
+  async created() {
+    this.parsedContent = await this.$content("terms").fetch();
+  },
+};
 </script>

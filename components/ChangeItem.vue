@@ -1,26 +1,12 @@
 <template>
-  <v-banner
-    v-if="success"
-    two-line
-  >
-    <v-avatar
-      slot="icon"
-      color="success"
-      size="40"
-    >
-      <v-icon
-        color="white"
-      >
-        mdi-checkbox-marked-circle-outline
-      </v-icon>
+  <v-banner v-if="success" two-line>
+    <v-avatar slot="icon" color="success" size="40">
+      <v-icon color="white"> mdi-checkbox-marked-circle-outline </v-icon>
     </v-avatar>
-    Thank you for your contribution! Your proposed changes will be reviewed shortly.
+    Thank you for your contribution! Your proposed changes will be reviewed
+    shortly.
     <template #actions>
-      <v-btn
-        text
-        color="primary"
-        to="/contribution-status"
-      >
+      <v-btn text color="primary" to="/contribution-status">
         Check contribution status
       </v-btn>
     </template>
@@ -38,34 +24,46 @@
       label="Select an item type"
       outlined
       required
-      :rules="[v => !!v || 'Item type is required']"
+      :rules="[(v) => !!v || 'Item type is required']"
       @change="fillForm('clear')"
     />
     <template v-if="selectedItemType">
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('name')"
         v-model="name"
-        :label="`${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} ${selectedItemType === 'Project' ? 'Short ' : ''}Name`"
+        :label="`${
+          selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)
+        } ${selectedItemType === 'Project' ? 'Short ' : ''}Name`"
         outlined
         required
-        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} ${selectedItemType === 'Project' ? 'Short ' : ''}Name required`]"
+        :rules="[
+          (v) =>
+            !!v ||
+            `${
+              selectedItemType.charAt(0).toUpperCase() +
+              selectedItemType.slice(1)
+            } ${selectedItemType === 'Project' ? 'Short ' : ''}Name required`,
+        ]"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Theme'">Provide new theme - scientific domain of the project</span>
-            <span v-if="selectedItemType == 'Variable'">Provide new variable name</span>
-            <span v-if="selectedItemType == 'Project'">Provide new project short name</span>
-            <span v-if="selectedItemType == 'Product'">Provide product name to add</span>
+            <span v-if="selectedItemType == 'Theme'"
+              >Provide new theme - scientific domain of the project</span
+            >
+            <span v-if="selectedItemType == 'Variable'"
+              >Provide new variable name</span
+            >
+            <span v-if="selectedItemType == 'Project'"
+              >Provide new project short name</span
+            >
+            <span v-if="selectedItemType == 'Product'"
+              >Provide product name to add</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -75,21 +73,25 @@
         label="Project Full Name"
         outlined
         required
-        :rules="[v => !!v || `${selectedItemType.charAt(0).toUpperCase() + selectedItemType.slice(1)} Full Name required`]"
+        :rules="[
+          (v) =>
+            !!v ||
+            `${
+              selectedItemType.charAt(0).toUpperCase() +
+              selectedItemType.slice(1)
+            } Full Name required`,
+        ]"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Project'">Provide the full name of the new project</span>
+            <span v-if="selectedItemType == 'Project'"
+              >Provide the full name of the new project</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -99,12 +101,8 @@
         tile
         group
       >
-        <v-tab>
-          Input
-        </v-tab>
-        <v-tab>
-          Preview
-        </v-tab>
+        <v-tab> Input </v-tab>
+        <v-tab> Preview </v-tab>
       </v-tabs>
       <v-tabs-items
         v-if="itemTypes[selectedItemType].includes('description')"
@@ -121,26 +119,37 @@
             <template #append>
               <v-tooltip left>
                 <template #activator="{ on, attrs }">
-                  <v-icon
-                    color="primary"
-                    dark
-                    v-bind="attrs"
-                    v-on="on"
-                  >
+                  <v-icon color="primary" dark v-bind="attrs" v-on="on">
                     mdi-help-circle-outline
                   </v-icon>
                 </template>
-                <span v-if="selectedItemType == 'Theme'">Add a short description for the Theme</span>
-                <span v-if="selectedItemType == 'Variable'">Variable definition or short description</span>
-                <span v-if="selectedItemType == 'Project'">Add short item's description</span>
-                <span v-if="selectedItemType == 'Product'">Add short product's description</span>
+                <span v-if="selectedItemType == 'Theme'"
+                  >Add a short description for the Theme</span
+                >
+                <span v-if="selectedItemType == 'Variable'"
+                  >Variable definition or short description</span
+                >
+                <span v-if="selectedItemType == 'Project'"
+                  >Add short item's description</span
+                >
+                <span v-if="selectedItemType == 'Product'"
+                  >Add short product's description</span
+                >
               </v-tooltip>
             </template>
           </v-textarea>
         </v-tab-item>
         <v-tab-item>
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <div class="mt-2 mb-4 mx-2 py-3" style="display: block" v-html="description ? $markdown(description) : 'Write in the input field to see preview here'" />
+          <div
+            class="mt-2 mb-4 mx-2 py-3"
+            style="display: block"
+            v-html="
+              description
+                ? $markdown(description)
+                : 'Write in the input field to see preview here'
+            "
+          />
         </v-tab-item>
       </v-tabs-items>
       <v-text-field
@@ -149,27 +158,41 @@
         label="Website Link"
         outlined
         :rules="[
-          ...selectedItemType === 'Project'
-            ? [(v) => (!!v || !!linkEo4Society) || 'Website Link is required (alternatively, provide an EO4Society link)']
-            : [],
-          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
+          ...(selectedItemType === 'Project'
+            ? [
+                (v) =>
+                  !!v ||
+                  !!linkEo4Society ||
+                  'Website Link is required (alternatively, provide an EO4Society link)',
+              ]
+            : []),
+          (v) =>
+            !v ||
+            /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(
+              v
+            ) ||
+            'URL must be valid',
         ]"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Theme'">Provide URL to the theme's website (e.g. Science Clusters on EO4Society: https://eo4society.esa.int/communities/scientists/)</span>
-            <span v-if="selectedItemType == 'Variable'">Provide URL to the variable's website (e.g. refer to variables in the website: https://space.oscar.wmo.int/variables)</span>
-            <span v-if="selectedItemType == 'Project'">Provide URL to the project's dedicated website (if exists)</span>
+            <span v-if="selectedItemType == 'Theme'"
+              >Provide URL to the theme's website (e.g. Science Clusters on
+              EO4Society:
+              https://eo4society.esa.int/communities/scientists/)</span
+            >
+            <span v-if="selectedItemType == 'Variable'"
+              >Provide URL to the variable's website (e.g. refer to variables in
+              the website: https://space.oscar.wmo.int/variables)</span
+            >
+            <span v-if="selectedItemType == 'Project'"
+              >Provide URL to the project's dedicated website (if exists)</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -178,29 +201,22 @@
         v-model="linkAccess"
         label="Access Link"
         outlined
-        :rules="[
-          (v) => !!v || 'URL is required'
-        ]"
+        :rules="[(v) => !!v || 'URL is required']"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Provide URL to access the data. Alternatively, upload a file</span>
+            <span
+              >Provide URL to access the data. Alternatively, upload a
+              file</span
+            >
           </v-tooltip>
         </template>
-        <template
-          v-if="$config.devMode"
-          #append-outer
-        >
+        <template v-if="$config.devMode" #append-outer>
           <v-tooltip right>
             <template #activator="{ on, attrs }">
               <v-btn
@@ -211,40 +227,53 @@
                 v-on="on"
                 @click="enableFileUpload = !enableFileUpload"
               >
-                <v-icon>{{ !enableFileUpload ? 'mdi-cloud-upload' : 'mdi-close' }}</v-icon>
+                <v-icon>{{
+                  !enableFileUpload ? "mdi-cloud-upload" : "mdi-close"
+                }}</v-icon>
               </v-btn>
             </template>
-            <span>{{ !enableFileUpload ? 'Upload file' : 'Cancel file selection' }}</span>
+            <span>{{
+              !enableFileUpload ? "Upload file" : "Cancel file selection"
+            }}</span>
           </v-tooltip>
         </template>
       </v-text-field>
       <FileUpload
-        v-if="itemTypes[selectedItemType].includes('linkAccess') && enableFileUpload"
-        @upload="(fileUrl) => linkAccess = fileUrl"
+        v-if="
+          itemTypes[selectedItemType].includes('linkAccess') && enableFileUpload
+        "
+        @upload="(fileUrl) => (linkAccess = fileUrl)"
       />
       <v-text-field
         v-if="itemTypes[selectedItemType].includes('linkDocumentation')"
         v-model="linkDocumentation"
-        :label="`Documentation Link${selectedItemType === 'Product' ? '/DOI' : ''}`"
+        :label="`Documentation Link${
+          selectedItemType === 'Product' ? '/DOI' : ''
+        }`"
         outlined
         :rules="[
-          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
+          (v) =>
+            !v ||
+            /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(
+              v
+            ) ||
+            'URL must be valid',
         ]"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Project'">Provide URL to the project's documentation (if exists)</span>
-            <span v-if="selectedItemType == 'Product'">Provide URL to product's documentation (ideally provide DOI number)</span>
+            <span v-if="selectedItemType == 'Project'"
+              >Provide URL to the project's documentation (if exists)</span
+            >
+            <span v-if="selectedItemType == 'Product'"
+              >Provide URL to product's documentation (ideally provide DOI
+              number)</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -254,25 +283,33 @@
         label="EO4Society Link"
         outlined
         :rules="[
-          ...selectedItemType === 'Project'
-            ? [(v) => (!!v || !!linkWebsite) || 'EO4Society Link is required (alternatively, provide a website link)']
-            : [],
-          (v) => !v || /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(v) || 'URL must be valid'
+          ...(selectedItemType === 'Project'
+            ? [
+                (v) =>
+                  !!v ||
+                  !!linkWebsite ||
+                  'EO4Society Link is required (alternatively, provide a website link)',
+              ]
+            : []),
+          (v) =>
+            !v ||
+            /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(
+              v
+            ) ||
+            'URL must be valid',
         ]"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Provide URL to EO4Society website of the project (if exists)</span>
+            <span
+              >Provide URL to EO4Society website of the project (if
+              exists)</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -282,17 +319,12 @@
         label="Image Link"
         outlined
         required
-        :rules="[v => !!v || 'Image link is required']"
+        :rules="[(v) => !!v || 'Image link is required']"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -313,34 +345,31 @@
         label="Themes"
         outlined
         required
-        :rules="[v => !!v || 'Parent theme is required']"
+        :rules="[(v) => !!v || 'Parent theme is required']"
       >
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Variable'">Select one or multiple themes for the variable</span>
-            <span v-if="selectedItemType == 'Project'">Select one or multiple themes for the project</span>
-            <span v-if="selectedItemType == 'Product'">Select one or multiple themes for the project</span>
+            <span v-if="selectedItemType == 'Variable'"
+              >Select one or multiple themes for the variable</span
+            >
+            <span v-if="selectedItemType == 'Project'"
+              >Select one or multiple themes for the project</span
+            >
+            <span v-if="selectedItemType == 'Product'"
+              >Select one or multiple themes for the project</span
+            >
           </v-tooltip>
         </template>
       </v-select>
       <v-select
         v-if="itemTypes[selectedItemType].includes('status')"
         v-model="status"
-        :items="[
-          'ONGOING',
-          'COMPLETED',
-          'PLANNED'
-        ]"
+        :items="['ONGOING', 'COMPLETED', 'PLANNED']"
         outlined
         required
         label="Status"
@@ -348,17 +377,18 @@
         <template #append>
           <v-tooltip left>
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Project'">Select status of the project (ongoing, completed or planned)</span>
-            <span v-if="selectedItemType == 'Product'">Select status of the product (ongoing, completed or planned)</span>
+            <span v-if="selectedItemType == 'Project'"
+              >Select status of the project (ongoing, completed or
+              planned)</span
+            >
+            <span v-if="selectedItemType == 'Product'"
+              >Select status of the product (ongoing, completed or
+              planned)</span
+            >
           </v-tooltip>
         </template>
       </v-select>
@@ -368,19 +398,12 @@
         label="Technical officer"
         outlined
         required
-        :rules="[
-          (v) => !!v || 'Technical officer name is required',
-        ]"
+        :rules="[(v) => !!v || 'Technical officer name is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -394,19 +417,12 @@
         label="Technical officer e-mail"
         outlined
         required
-        :rules="[
-          (v) => !!v || 'Technical officer e-mail is required',
-        ]"
+        :rules="[(v) => !!v || 'Technical officer e-mail is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -420,17 +436,12 @@
         label="Consortium"
         outlined
         required
-        :rules="[v => !!v || 'Consortium is required']"
+        :rules="[(v) => !!v || 'Consortium is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -445,22 +456,21 @@
         label="Start date"
         outlined
         required
-        :rules="[v => !!v || 'Start date is required']"
+        :rules="[(v) => !!v || 'Start date is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Project'">Start date of the project</span>
-            <span v-if="selectedItemType == 'Product'">Start date of the product</span>
+            <span v-if="selectedItemType == 'Project'"
+              >Start date of the project</span
+            >
+            <span v-if="selectedItemType == 'Product'"
+              >Start date of the product</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -471,22 +481,21 @@
         label="End date"
         outlined
         required
-        :rules="[v => !!v || 'End date is required']"
+        :rules="[(v) => !!v || 'End date is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span v-if="selectedItemType == 'Project'">End date of the project</span>
-            <span v-if="selectedItemType == 'Product'">End date of the product</span>
+            <span v-if="selectedItemType == 'Project'"
+              >End date of the project</span
+            >
+            <span v-if="selectedItemType == 'Product'"
+              >End date of the product</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -497,17 +506,12 @@
         label="Release date"
         outlined
         required
-        :rules="[v => !!v || 'Date time is required']"
+        :rules="[(v) => !!v || 'Date time is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -530,18 +534,16 @@
         required
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Select one or multiple variables to which the product applies</span>
+            <span
+              >Select one or multiple variables to which the product
+              applies</span
+            >
           </v-tooltip>
         </template>
       </v-select>
@@ -559,19 +561,12 @@
         placeholder="Start typing to Search"
         item-value="id"
         required
-        :rules="[
-          (v) => !!v || 'Parent Project ID is required',
-        ]"
+        :rules="[(v) => !!v || 'Parent Project ID is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -592,23 +587,19 @@
         label="Satellite Missions"
         outlined
         required
-        :rules="[
-          (v) => !!v || 'Satellite missions are required',
-        ]"
+        :rules="[(v) => !!v || 'Satellite missions are required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Select one or more satellite missions that were used to produce the results</span>
+            <span
+              >Select one or more satellite missions that were used to produce
+              the results</span
+            >
           </v-tooltip>
         </template>
       </v-combobox>
@@ -618,23 +609,19 @@
         label="Region"
         outlined
         required
-        :rules="[
-          (v) => !!v || 'Region is required'
-        ]"
+        :rules="[(v) => !!v || 'Region is required']"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
-            <span>Write for which region the product has been generated and/or applied (eg. Europe/Asia/Global etc)</span>
+            <span
+              >Write for which region the product has been generated and/or
+              applied (eg. Europe/Asia/Global etc)</span
+            >
           </v-tooltip>
         </template>
       </v-text-field>
@@ -647,18 +634,15 @@
         required
         :rules="[
           (v) => !!v || 'Geometry is required',
-          (v) => bboxFormat.test(v) || 'Geometry needs to be in correct format (<lon1>,<lat1>,<lon2>,<lat2>)'
+          (v) =>
+            bboxFormat.test(v) ||
+            'Geometry needs to be in correct format (<lon1>,<lat1>,<lon2>,<lat2>)',
         ]"
       >
         <template #append>
-          <v-tooltip left style="margin-bottom: -10px;">
+          <v-tooltip left style="margin-bottom: -10px">
             <template #activator="{ on, attrs }">
-              <v-icon
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-              >
+              <v-icon color="primary" dark v-bind="attrs" v-on="on">
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -674,14 +658,8 @@
         @drawEnd="handleBBOXDraw"
       />
     </template>
-    <div
-      class="d-flex flex-column flex-sm-row"
-    >
-      <v-dialog
-        v-if="type === 'edit'"
-        v-model="deleteDialog"
-        max-width="500"
-      >
+    <div class="d-flex flex-column flex-sm-row">
+      <v-dialog v-if="type === 'edit'" v-model="deleteDialog" max-width="500">
         <template #activator="{ on, attrs }">
           <v-btn
             v-if="true"
@@ -694,9 +672,7 @@
             :class="$vuetify.breakpoint.smAndUp ? 'mr-2' : 'mb-2'"
             v-on="on"
           >
-            <v-icon left>
-              mdi-delete
-            </v-icon>
+            <v-icon left> mdi-delete </v-icon>
             Request deletion
           </v-btn>
         </template>
@@ -706,25 +682,12 @@
           </v-card-title>
           <v-card-actions>
             <v-spacer />
-            <v-btn
-              color="blue"
-              dark
-              @click="deleteDialog = false"
-            >
-              <v-icon left>
-                mdi-cancel
-              </v-icon>
+            <v-btn color="blue" dark @click="deleteDialog = false">
+              <v-icon left> mdi-cancel </v-icon>
               Cancel
             </v-btn>
-            <v-btn
-              color="red"
-              dark
-              :loading="loading"
-              @click="deleteItem"
-            >
-              <v-icon left>
-                mdi-delete
-              </v-icon>
+            <v-btn color="red" dark :loading="loading" @click="deleteItem">
+              <v-icon left> mdi-delete </v-icon>
               Request deletion
             </v-btn>
           </v-card-actions>
@@ -739,9 +702,7 @@
         :class="$vuetify.breakpoint.smAndUp ? 'mr-2' : 'mb-2'"
         to="/"
       >
-        <v-icon left>
-          mdi-cancel
-        </v-icon>
+        <v-icon left> mdi-cancel </v-icon>
         Cancel
       </v-btn>
       <v-btn
@@ -753,9 +714,7 @@
         :block="$vuetify.breakpoint.xsOnly"
         @click="submitForm"
       >
-        <v-icon left>
-          mdi-checkbox-marked-circle-outline
-        </v-icon>
+        <v-icon left> mdi-checkbox-marked-circle-outline </v-icon>
         Submit
       </v-btn>
     </div>
@@ -763,80 +722,71 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState } from "vuex";
 
 export default {
-  name: 'ChangeItem',
+  name: "ChangeItem",
   props: {
     type: {
       type: String,
-      default: () => ''
-    }
+      default: () => "",
+    },
   },
-  data () {
+  data() {
     return {
       itemTypes: {
-        Theme: [
-          'name',
-          'description',
-          'linkWebsite',
-          'image'
-        ],
-        Variable: [
-          'name',
-          'description',
-          'linkWebsite',
-          'theme'
-        ],
+        Theme: ["name", "description", "linkWebsite", "image"],
+        Variable: ["name", "description", "linkWebsite", "theme"],
         Project: [
-          'name',
-          'fullName',
-          'description',
-          'theme',
-          'status',
-          'technical_officer',
-          'consortium',
-          'start_datetime',
-          'end_datetime',
-          'linkWebsite',
-          'linkEo4Society',
-          'linkDocumentation'
+          "name",
+          "fullName",
+          "description",
+          "theme",
+          "status",
+          "technical_officer",
+          "consortium",
+          "start_datetime",
+          "end_datetime",
+          "linkWebsite",
+          "linkEo4Society",
+          "linkDocumentation",
         ],
         Product: [
-          'name',
-          'description',
-          'theme',
-          'status',
-          'start_datetime',
-          'end_datetime',
-          'datetime',
-          'linkAccess',
-          'linkDocumentation',
-          'missions',
-          'project',
-          'variable',
-          'region',
-          'geometry'
-        ]
+          "name",
+          "description",
+          "theme",
+          "status",
+          "start_datetime",
+          "end_datetime",
+          "datetime",
+          "linkAccess",
+          "linkDocumentation",
+          "missions",
+          "project",
+          "variable",
+          "region",
+          "geometry",
+        ],
       },
-      selectedItemType: '',
-      name: '',
-      description: '',
+      selectedItemType: "",
+      name: "",
+      description: "",
       parentThemes: [],
-      parentVariables: '',
-      parentProject: '',
-      startDate: '',
-      endDate: '',
-      satelliteMissions: '',
-      consortium: '',
-      linkWebsite: '',
-      linkAccess: '',
-      linkDocumentation: '',
-      linkEo4Society: '',
-      WMSLink: '',
-      image: '',
+      parentVariables: "",
+      parentProject: "",
+      startDate: "",
+      endDate: "",
+      satelliteMissions: "",
+      consortium: "",
+      linkWebsite: "",
+      linkAccess: "",
+      linkDocumentation: "",
+      linkEo4Society: "",
+      WMSLink: "",
+      image: "",
       bbox: null,
-      bboxFormat: /^(([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?),\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?))+(,|$))*$/,
+      bboxFormat:
+        /^(([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?),\s*[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?))+(,|$))*$/,
       mapFeatures: null,
       variables: [],
       valid: false,
@@ -855,185 +805,224 @@ export default {
       parentProjectSearch: null,
       parentProjectLoading: null,
       parentProjectNumber: null,
-      enableFileUpload: null
-    }
+      enableFileUpload: null,
+    };
   },
   head: {
-    title: 'Add item'
+    title: "Add item",
   },
   computed: {
-    ...mapState('staticCatalog', [
-      'themes',
-      'missions'
-    ])
+    ...mapState("staticCatalog", ["themes", "missions"]),
   },
   watch: {
-    bbox (newBbox) {
+    bbox(newBbox) {
       if (this.bboxFormat.test(newBbox)) {
         const bbox = Array.isArray(newBbox)
           ? newBbox
-          : newBbox.split(',').map(n => parseFloat(n))
-        this.mapFeatures = [{
-          type: 'Feature',
-          geometry: this.createBboxGeometry(bbox)
-        }]
+          : newBbox.split(",").map((n) => parseFloat(n));
+        this.mapFeatures = [
+          {
+            type: "Feature",
+            geometry: this.createBboxGeometry(bbox),
+          },
+        ];
       }
     },
-    linkWebsite () {
-      this.$refs.form.validate()
+    linkWebsite() {
+      this.$refs.form.validate();
     },
-    linkEo4Society () {
-      this.$refs.form.validate()
+    linkEo4Society() {
+      this.$refs.form.validate();
     },
-    selectedItemType () {
-      this.$nextTick(() => this.$refs.form.resetValidation())
+    selectedItemType() {
+      this.$nextTick(() => this.$refs.form.resetValidation());
     },
-    async parentProjectSearch (val) {
-      if (!val || val.length === 0) { return }
+    async parentProjectSearch(val) {
+      if (!val || val.length === 0) {
+        return;
+      }
       // Items have already been requested
       // if (this.parentProjectLoading) { return }
-      this.parentProjectLoading = true
+      this.parentProjectLoading = true;
 
       try {
-        const response = await this.fetchCustomQuery(`/collections/metadata:main/items?limit=100&sortby=title&offset=0&type=datasetcollection&q=${val}`)
-        this.parentProjectItems = response.features
-        this.parentProjectNumber = response.numberMatched
+        const response = await this.fetchCustomQuery(
+          `/collections/metadata:main/items?limit=100&sortby=title&offset=0&type=datasetcollection&q=${val}`
+        );
+        this.parentProjectItems = response.features;
+        this.parentProjectNumber = response.numberMatched;
         setTimeout(() => {
-          this.$refs.parentProject.focus()
-          this.$refs.parentProject.activateMenu()
-        }, 500)
+          this.$refs.parentProject.focus();
+          this.$refs.parentProject.activateMenu();
+        }, 500);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-      this.parentProjectLoading = false
-    }
+      this.parentProjectLoading = false;
+    },
   },
-  async mounted () {
-    await this.$store.dispatch('staticCatalog/retreiveMetrics')
+  async mounted() {
+    await this.$store.dispatch("staticCatalog/retreiveMetrics");
     this.themes.forEach((theme) => {
       theme.variables.forEach((variable) => {
-        this.variables.push(variable)
-      })
-    })
-    if ('theme' in this.$route.query) {
-      this.selectedItemType = 'Theme'
-    } else if ('variable' in this.$route.query) {
-      this.selectedItemType = 'Variable'
-    } else if ('project' in this.$route.query) {
-      this.selectedItemType = 'Project'
-    } else if ('product' in this.$route.query) {
-      this.selectedItemType = 'Product'
+        this.variables.push(variable);
+      });
+    });
+    if ("theme" in this.$route.query) {
+      this.selectedItemType = "Theme";
+    } else if ("variable" in this.$route.query) {
+      this.selectedItemType = "Variable";
+    } else if ("project" in this.$route.query) {
+      this.selectedItemType = "Project";
+    } else if ("product" in this.$route.query) {
+      this.selectedItemType = "Product";
     }
-    this.fillForm()
+    this.fillForm();
   },
   methods: {
-    ...mapActions('staticCatalog', [
-      'retreiveVariable',
-      'retreiveProjects',
-      'retreiveProduct'
+    ...mapActions("staticCatalog", [
+      "retreiveVariable",
+      "retreiveProjects",
+      "retreiveProduct",
     ]),
-    ...mapActions('dynamicCatalog', [
-      'fetchCustomQuery'
-    ]),
-    async fillForm (clear) {
-      if (clear !== 'clear') {
-        if (this.selectedItemType === 'Theme') {
-          const selectedTheme = this.themes.find(theme => this.slugify(theme.name) === this.$route.query.theme)
-          this.name = selectedTheme.name
-          this.description = selectedTheme.description
-          this.linkWebsite = selectedTheme.website
-          this.image = selectedTheme.image
-        } else if (this.selectedItemType === 'Variable') {
-          await this.retreiveVariable(this.$route.query.variable).then((selectedVariable) => {
-            this.description = selectedVariable.description
-            // temporary hack to pre-select parent theme
-            this.name = selectedVariable.id
-            this.parentThemes = selectedVariable['osc:theme'].replace(/(^\w{1})|(\s+\w{1})/g, letter => letter.toUpperCase())
-            this.linkWebsite = selectedVariable.links.find(link => link.rel === 'via').href
-          }).catch(err => console.error(err))
-        } else if (this.selectedItemType === 'Project') {
-          await this.retreiveProjects(this.$route.query.project).then((selectedProject) => {
-            this.name = selectedProject.properties.title
-            this.id = selectedProject.id
-            this.fullName = selectedProject.properties['osc:name']
-            this.description = selectedProject.properties.description
-            this.parentThemes = selectedProject.properties['osc:themes']
-            // TODO: cleanup
-            this.startDate = new Date(selectedProject.properties.start_datetime).toISOString().split('T')[0]
-            this.endDate = new Date(selectedProject.properties.end_datetime).toISOString().split('T')[0]
-            this.consortium = selectedProject.properties['osc:consortium']
-            this.linkWebsite = selectedProject.links.find(l => l.title === 'Website').href
-            this.linkEo4Society = selectedProject.links.find(l => l.title === 'EO4Society Link').href
-            this.status = selectedProject.properties['osc:status']
-            this.technical_officer = selectedProject.properties['osc:technical_officer'].name
-            this.email = selectedProject.properties['osc:technical_officer']['e-mail']
-          }).catch((err) => {
-            console.error(err)
-          })
-        } else if (this.selectedItemType === 'Product') {
-          await this.retreiveProduct(this.$route.query.product).then((selectedProduct) => {
-            console.log(selectedProduct)
-            this.name = selectedProduct.properties.title
-            this.id = selectedProduct.id
-            this.description = selectedProduct.properties.description
-            this.parentThemes = selectedProduct.properties['osc:themes']
-            this.parentVariables = selectedProduct.properties['osc:variable']
-            this.parentProject = selectedProduct.properties['osc:project']
-            // TODO: cleanup
-            this.startDate = new Date(selectedProduct.properties.start_datetime).toISOString().split('T')[0]
-            this.endDate = new Date(selectedProduct.properties.end_datetime).toISOString().split('T')[0]
-            this.datetime = new Date(selectedProduct.properties.datetime).toISOString().split('T')[0]
-            this.satelliteMissions = selectedProduct.properties['osc:missions']
-            // this.link = selectedProduct.links[1].href
-            this.linkAccess = selectedProduct.links.find(l => l.title === 'Access')?.href
-            this.linkDocumentation = selectedProduct.links.find(l => l.title === 'Documentation')?.href
-            this.status = selectedProduct.properties['osc:status']
-            this.region = selectedProduct.properties['osc:region']
-            this.bbox = selectedProduct.bbox
-            this.mapFeatures = [selectedProduct]
-            // TODO WMS link
-          }).catch((err) => {
-            console.error(err)
-          })
+    ...mapActions("dynamicCatalog", ["fetchCustomQuery"]),
+    async fillForm(clear) {
+      if (clear !== "clear") {
+        if (this.selectedItemType === "Theme") {
+          const selectedTheme = this.themes.find(
+            (theme) => this.slugify(theme.name) === this.$route.query.theme
+          );
+          this.name = selectedTheme.name;
+          this.description = selectedTheme.description;
+          this.linkWebsite = selectedTheme.website;
+          this.image = selectedTheme.image;
+        } else if (this.selectedItemType === "Variable") {
+          await this.retreiveVariable(this.$route.query.variable)
+            .then((selectedVariable) => {
+              this.description = selectedVariable.description;
+              // temporary hack to pre-select parent theme
+              this.name = selectedVariable.id;
+              this.parentThemes = selectedVariable["osc:theme"].replace(
+                /(^\w{1})|(\s+\w{1})/g,
+                (letter) => letter.toUpperCase()
+              );
+              this.linkWebsite = selectedVariable.links.find(
+                (link) => link.rel === "via"
+              ).href;
+            })
+            .catch((err) => console.error(err));
+        } else if (this.selectedItemType === "Project") {
+          await this.retreiveProjects(this.$route.query.project)
+            .then((selectedProject) => {
+              this.name = selectedProject.properties.title;
+              this.id = selectedProject.id;
+              this.fullName = selectedProject.properties["osc:name"];
+              this.description = selectedProject.properties.description;
+              this.parentThemes = selectedProject.properties["osc:themes"];
+              // TODO: cleanup
+              this.startDate = new Date(
+                selectedProject.properties.start_datetime
+              )
+                .toISOString()
+                .split("T")[0];
+              this.endDate = new Date(selectedProject.properties.end_datetime)
+                .toISOString()
+                .split("T")[0];
+              this.consortium = selectedProject.properties["osc:consortium"];
+              this.linkWebsite = selectedProject.links.find(
+                (l) => l.title === "Website"
+              ).href;
+              this.linkEo4Society = selectedProject.links.find(
+                (l) => l.title === "EO4Society Link"
+              ).href;
+              this.status = selectedProject.properties["osc:status"];
+              this.technical_officer =
+                selectedProject.properties["osc:technical_officer"].name;
+              this.email =
+                selectedProject.properties["osc:technical_officer"]["e-mail"];
+            })
+            .catch((err) => {
+              console.error(err);
+            });
+        } else if (this.selectedItemType === "Product") {
+          await this.retreiveProduct(this.$route.query.product)
+            .then((selectedProduct) => {
+              console.log(selectedProduct);
+              this.name = selectedProduct.properties.title;
+              this.id = selectedProduct.id;
+              this.description = selectedProduct.properties.description;
+              this.parentThemes = selectedProduct.properties["osc:themes"];
+              this.parentVariables = selectedProduct.properties["osc:variable"];
+              this.parentProject = selectedProduct.properties["osc:project"];
+              // TODO: cleanup
+              this.startDate = new Date(
+                selectedProduct.properties.start_datetime
+              )
+                .toISOString()
+                .split("T")[0];
+              this.endDate = new Date(selectedProduct.properties.end_datetime)
+                .toISOString()
+                .split("T")[0];
+              this.datetime = new Date(selectedProduct.properties.datetime)
+                .toISOString()
+                .split("T")[0];
+              this.satelliteMissions =
+                selectedProduct.properties["osc:missions"];
+              // this.link = selectedProduct.links[1].href
+              this.linkAccess = selectedProduct.links.find(
+                (l) => l.title === "Access"
+              )?.href;
+              this.linkDocumentation = selectedProduct.links.find(
+                (l) => l.title === "Documentation"
+              )?.href;
+              this.status = selectedProduct.properties["osc:status"];
+              this.region = selectedProduct.properties["osc:region"];
+              this.bbox = selectedProduct.bbox;
+              this.mapFeatures = [selectedProduct];
+              // TODO WMS link
+            })
+            .catch((err) => {
+              console.error(err);
+            });
         }
       } else {
-        this.name = ''
-        this.description = ''
-        this.parentThemes = []
-        this.parentVariables = []
-        this.parentProject = ''
-        this.startDate = ''
-        this.endDate = ''
-        this.satelliteMissions = []
-        this.linkWebsite = ''
-        this.linkAccess = ''
-        this.linkDocumentation = ''
-        this.linkEo4Society = ''
+        this.name = "";
+        this.description = "";
+        this.parentThemes = [];
+        this.parentVariables = [];
+        this.parentProject = "";
+        this.startDate = "";
+        this.endDate = "";
+        this.satelliteMissions = [];
+        this.linkWebsite = "";
+        this.linkAccess = "";
+        this.linkDocumentation = "";
+        this.linkEo4Society = "";
       }
     },
-    async submitForm () {
+    async submitForm() {
       if (this.$refs.form.validate()) {
-        this.loading = true
+        this.loading = true;
         try {
-          let itemData
+          let itemData;
           switch (this.selectedItemType) {
-            case 'Theme':
+            case "Theme":
               itemData = new this.$Theme({
                 name: this.name,
                 description: this.description,
                 linkWebsite: this.linkWebsite,
-                image: this.image
-              })
-              break
-            case 'Variable':
+                image: this.image,
+              });
+              break;
+            case "Variable":
               itemData = new this.$Variable({
                 name: this.name,
                 description: this.description,
                 linkWebsite: this.linkWebsite,
-                theme: this.parentThemes
-              })
-              break
-            case 'Project':
+                theme: this.parentThemes,
+              });
+              break;
+            case "Project":
               itemData = new this.$Project({
                 id: this.id || this.slugify(this.name),
                 title: this.name,
@@ -1047,10 +1036,10 @@ export default {
                 start_datetime: `${this.startDate}T00:00:00Z`,
                 end_datetime: `${this.endDate}T00:00:00Z`,
                 linkWebsite: this.linkWebsite,
-                linkEo4Society: this.linkEo4Society
-              })
-              break
-            case 'Product':
+                linkEo4Society: this.linkEo4Society,
+              });
+              break;
+            case "Product":
               itemData = new this.$Product({
                 id: this.id || this.slugify(this.name),
                 title: this.name,
@@ -1067,66 +1056,64 @@ export default {
                 linkDocumentation: this.linkDocumentation,
                 region: this.region,
                 geometry: this.createBboxGeometry(this.bbox),
-                bbox: this.bbox
-              })
+                bbox: this.bbox,
+              });
           }
-          if (this.type === 'add') {
+          if (this.type === "add") {
             await this.$metadataBackend.$post(
-              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.slugify(this.name)}.json`, itemData)
+              `/item-requests/${this.slugify(
+                this.selectedItemType
+              )}s/${this.slugify(this.name)}.json`,
+              itemData
+            );
           } else {
             await this.$metadataBackend.$put(
-              `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, itemData)
+              `/item-requests/${this.slugify(this.selectedItemType)}s/${
+                this.id || this.slugify(this.name)
+              }.json`,
+              itemData
+            );
           }
-          this.loading = false
-          this.success = true
+          this.loading = false;
+          this.success = true;
         } catch (error) {
-          console.error(error)
-          this.loading = false
-          this.success = false
+          console.error(error);
+          this.loading = false;
+          this.success = false;
         }
       }
     },
-    async deleteItem () {
-      this.loading = true
+    async deleteItem() {
+      this.loading = true;
       await this.$metadataBackend.$delete(
-        `/item-requests/${this.slugify(this.selectedItemType)}s/${this.id || this.slugify(this.name)}.json`, {}
-      )
-      this.loading = false
-      this.deleteDialog = false
+        `/item-requests/${this.slugify(this.selectedItemType)}s/${
+          this.id || this.slugify(this.name)
+        }.json`,
+        {}
+      );
+      this.loading = false;
+      this.deleteDialog = false;
     },
-    handleBBOXDraw (newBbox) {
-      this.bbox = newBbox.getExtent()
+    handleBBOXDraw(newBbox) {
+      this.bbox = newBbox.getExtent();
     },
-    createBboxGeometry (bbox) {
+    createBboxGeometry(bbox) {
       return {
-        type: 'Polygon',
+        type: "Polygon",
         bbox,
-        coordinates: [[
+        coordinates: [
           [
-            bbox[0],
-            bbox[1]
+            [bbox[0], bbox[1]],
+            [bbox[2], bbox[1]],
+            [bbox[2], bbox[3]],
+            [bbox[0], bbox[3]],
+            [bbox[0], bbox[1]],
           ],
-          [
-            bbox[2],
-            bbox[1]
-          ],
-          [
-            bbox[2],
-            bbox[3]
-          ],
-          [
-            bbox[0],
-            bbox[3]
-          ],
-          [
-            bbox[0],
-            bbox[1]
-          ]
-        ]]
-      }
-    }
-  }
-}
+        ],
+      };
+    },
+  },
+};
 </script>
 
 <style scoped>
