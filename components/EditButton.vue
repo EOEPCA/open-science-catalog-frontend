@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="editButton">
     <v-speed-dial
       v-model="fab"
       fixed
@@ -49,9 +49,7 @@
         dark
         rounded
         color="black"
-        :href="`${$config.githubDataRoot}/${Object.keys($route.params)[0]}s/${
-          itemId || Object.values($route.params)[0]
-        }.json`"
+        :href="`${$config.githubDataRoot}/${Object.values($route.params)[0]}/collection.json`"
         target="_blank"
       >
         <v-icon left> mdi-github </v-icon>
@@ -111,5 +109,12 @@ export default {
 <style scoped>
 ::v-deep .v-speed-dial__list {
   align-items: flex-end;
+}
+.editButton {
+  position:relative;
+  float: right;
+  right:10px;
+  bottom:35px;
+  transition: 0.5s;
 }
 </style>

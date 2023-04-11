@@ -1,9 +1,12 @@
 <template>
-    <iframe
-        src="http://localhost:8081/external/constantinius.github.io/osc-demo/collection.json"
-        border="none"
-        style="width: 100%; height: 100%"
-    ></iframe>
+    <div class="browse">
+        <iframe
+            src="http://localhost:8080/external/constantinius.github.io/osc-demo/collection.json"
+            border="none"
+            style="width: 100%; height: 100%"
+        ></iframe>
+        <edit-button />
+    </div>
 </template>
 
 <script>
@@ -41,3 +44,10 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.browse {
+    width: 100%;
+    height: 100%;
+}
+</style>
