@@ -14,7 +14,7 @@
           Suggest changes
         </v-btn>
       </template>
-      <v-btn
+      <!-- <v-btn
         v-if="true"
         dark
         rounded
@@ -44,7 +44,7 @@
       >
         <v-icon left> mdi-delete </v-icon>
         Request deletion
-      </v-btn>
+      </v-btn> -->
       <v-btn
         dark
         rounded

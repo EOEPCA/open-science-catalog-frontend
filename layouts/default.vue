@@ -22,7 +22,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <client-only>
+        <!-- <client-only>
           <v-list-group
             v-if="$auth.loggedIn"
             prepend-icon="mdi-plus-circle-outline"
@@ -58,7 +58,7 @@
               <v-list-item-title> Status </v-list-item-title>
             </v-list-item>
           </v-list-group>
-        </client-only>
+        </client-only> -->
 
         <v-list-item to="/metrics" router exact>
           <v-list-item-action>
