@@ -36,6 +36,8 @@ export const actions = {
   async fetchMetrics({ commit }) {
     try {
       const metrics = await this.$staticCatalog.$get("/metrics");
+      // temporary fix 2022 years
+      metrics.summary.years = metrics.summary.years.slice(1984)
       commit("SET_MISSIONS", { items: metrics.missions });
       commit("SET_SUMMARY", { items: metrics.summary });
       commit("SET_THEMES", { items: metrics.themes });

@@ -26,7 +26,7 @@
         <span
           >{{
             products.length === 1
-              ? products[0].properties.title
+              ? products[0].title
               : variable && variable.name
           }}
           Coverage</span
@@ -56,7 +56,7 @@
                 >
                   <v-list-item-content>
                     <v-list-item-title>{{
-                      product.properties.title
+                      product.title
                     }}</v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action class="flex-row">
@@ -82,19 +82,19 @@
               <template v-else-if="products[0]">
                 <div><strong>Name</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties.title }}
+                  {{ products[0].title }}
                 </div>
                 <div><strong>Region</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties["osc:region"] }}
+                  {{ products[0]["osc:region"] }}
                 </div>
                 <div><strong>Satellite missions</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties["osc:missions"].join(", ") }}
+                  {{ products[0]["osc:missions"].join(", ") }}
                 </div>
                 <div><strong>BBOX</strong></div>
                 <div class="mb-2">
-                  {{ products[0].bbox }}
+                  {{ products[0].extent.spatial.bbox }}
                 </div>
               </template>
             </v-col>
@@ -103,7 +103,40 @@
                 <CoverageMap
                   v-if="products"
                   ref="map"
-                  :features="products"
+                  :features="products.map(product => {
+                    return {
+                      ...product,
+                      geometry: {
+                        bbox: product.extent.spatial.bbox[0],
+                        coordinates: [
+                          [
+                            [
+                              product.extent.spatial.bbox[0][0],
+                              product.extent.spatial.bbox[0][1]
+                            ],
+                            [
+                              product.extent.spatial.bbox[0][2],
+                              product.extent.spatial.bbox[0][1]
+                            ],
+                            [
+                              product.extent.spatial.bbox[0][2],
+                              product.extent.spatial.bbox[0][3],
+                            ],
+                            [
+                              product.extent.spatial.bbox[0][0],
+                              product.extent.spatial.bbox[0][3]
+                            ],
+                            [
+                              product.extent.spatial.bbox[0][0],
+                              product.extent.spatial.bbox[0][1]
+                            ]
+                          ]
+                        ],
+                        type: 'Polygon'
+                      },
+                      type: 'Feature'
+                    }
+                  })"
                   :highlight="currentHighlight"
                 />
               </client-only>
