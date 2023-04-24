@@ -103,18 +103,10 @@
                   height="15"
                   value="100"
                   :style="`border-radius: ${
-                    product.start_datetime.slice(0, 4) == year
-                      ? 5
-                      : 0
-                  }px ${
+                    product.start_datetime.slice(0, 4) == year ? 5 : 0
+                  }px ${product.end_datetime.slice(0, 4) == year ? 5 : 0}px ${
                     product.end_datetime.slice(0, 4) == year ? 5 : 0
-                  }px ${
-                    product.end_datetime.slice(0, 4) == year ? 5 : 0
-                  }px ${
-                    product.start_datetime.slice(0, 4) == year
-                      ? 5
-                      : 0
-                  }px`"
+                  }px ${product.start_datetime.slice(0, 4) == year ? 5 : 0}px`"
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
@@ -271,11 +263,12 @@ export default {
     async expandVariable(item) {
       const variableSlug = this.slugify(item.name);
       if (!this.products[variableSlug]) {
-        await this.fetchCustomQuery(`collections/metadata:main/items?limit=12&sortby=title&offset=0&filter=keywords%20ILIKE%20%27%variable:${item.name}%%27&f=json`)
-          .then((response) => {
-            this.$set(this.variablesList, variableSlug, this.variable);
-            this.$set(this.products, variableSlug, response.features);
-          })
+        await this.fetchCustomQuery(
+          `collections/metadata:main/items?limit=12&sortby=title&offset=0&filter=keywords%20ILIKE%20%27%variable:${item.name}%%27&f=json`
+        ).then((response) => {
+          this.$set(this.variablesList, variableSlug, this.variable);
+          this.$set(this.products, variableSlug, response.features);
+        });
         // await this.retreiveVariable(variableSlug)
         //   .then(async (variable) => {
         //     this.$set(this.variablesList, variableSlug, this.variable);
