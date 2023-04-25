@@ -69,7 +69,7 @@
                     <v-btn
                       icon
                       color="primary"
-                      :to="`/products/${$extractSlug(product)}`"
+                      :to="`/products/${product.id}`"
                       target="_blank"
                     >
                       <v-icon>mdi-open-in-new</v-icon>
