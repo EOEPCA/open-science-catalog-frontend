@@ -22,12 +22,12 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/browse" router exact>
+        <v-list-item to="/catalog" router exact>
           <v-list-item-action>
             <v-icon>mdi-compass</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title> Browse </v-list-item-title>
+            <v-list-item-title> Catalog </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
 

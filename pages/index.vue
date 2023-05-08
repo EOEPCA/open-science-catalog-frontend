@@ -107,7 +107,7 @@
           md="4"
           class="pa-1"
         >
-          <nuxt-link :to="`/themes/${slugify(theme.name)}`">
+          <nuxt-link :to="`/themes/${theme.name}/catalog`">
             <div
               class="d-flex align-center elevation-2 rounded"
               style="
