@@ -10,7 +10,7 @@ export default {
     devMode: process.env.NODE_ENV !== "production",
     staticEndpoint:
       process.env.STATIC_ENDPOINT ||
-      "https://metadata.staging.opensciencedata.esa.int/open-science-catalog-metadata-testing",
+      "https://metadata.testing.opensciencedata.esa.int/open-science-catalog-metadata-testing",
     staticBaseToReplace:
       process.env.STATIC_BASE_TO_REPLACE ||
       "https://eoepca.github.io/open-science-catalog-metadata-testing",
