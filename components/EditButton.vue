@@ -49,7 +49,7 @@
         dark
         rounded
         color="black"
-        :href="`${$config.githubDataRoot}/${Object.values($route.params)[0]}/collection.json`"
+        :href="`${$config.githubDataRoot}${currentPath}.json`"
         target="_blank"
       >
         <v-icon left> mdi-github </v-icon>
@@ -89,7 +89,15 @@ export default {
     fab: false,
     deleteDialog: false,
     loading: false,
+    currentPath: null,
   }),
+  watch: {
+    fab(on) {
+      if (on) {
+        this.currentPath = window.location.pathname;
+      }
+    },
+  },
   methods: {
     async deleteItem() {
       this.loading = true;
@@ -111,10 +119,10 @@ export default {
   align-items: flex-end;
 }
 .editButton {
-  position:relative;
+  position: relative;
   float: right;
-  right:10px;
-  bottom:35px;
+  right: 10px;
+  bottom: 35px;
   transition: 0.5s;
 }
 </style>
