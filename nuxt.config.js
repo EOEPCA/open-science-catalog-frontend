@@ -10,13 +10,13 @@ export default {
     devMode: process.env.NODE_ENV !== "production",
     staticEndpoint:
       process.env.STATIC_ENDPOINT ||
-      "https://metadata.testing.opensciencedata.esa.int/osc-demo",
+      "https://metadata.testing.opensciencedata.esa.int/open-science-catalog-metadata-testing",
     staticBaseToReplace:
       process.env.STATIC_BASE_TO_REPLACE ||
-      "https://constantinius.github.io/osc-demo",
+      "https://eoepca.github.io/open-science-catalog-metadata-testing",
     githubDataRoot:
       process.env.GITHUB_DATA_ROOT ||
-      "https://github.com/constantinius/osc-demo/blob/main",
+      "https://github.com/EOEPCA/open-science-catalog-metadata-testing/blob/main",
     dynamicEndpoint:
       process.env.DYNAMIC_ENDPOINT ||
       "https://resource-catalogue.testing.opensciencedata.esa.int",
