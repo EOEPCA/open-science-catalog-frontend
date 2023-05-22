@@ -65,56 +65,48 @@
                       icon
                       small
                       color="applications"
-                      :to="`/products/${$extractSlug(product)}`"
+                      :to="`/products/${product.id}`"
                       target="_blank"
                       v-on="on"
                     >
                       <v-icon> mdi-open-in-new </v-icon>
                     </v-btn>
                   </template>
-                  <span>Go to {{ product.properties.title }} product</span>
+                  <span>Go to {{ product.title }} product</span>
                 </v-tooltip>
               </td>
               <td class="px-4 py-2 subCell">
                 <v-tooltip top>
                   <template #activator="{ on }">
                     <nuxt-link
-                      :to="`/products/${$extractSlug(product)}`"
+                      :to="`/products/${product.id}`"
                       style="text-decoration: none"
                     >
                       <small style="cursor: pointer" v-on="on">{{
-                        product.properties.title
+                        product.title
                       }}</small>
                     </nuxt-link>
                   </template>
-                  <span>Go to {{ product.properties.title }} product</span>
+                  <span>Go to {{ product.title }} product</span>
                 </v-tooltip>
               </td>
               <td v-for="year in headers" :key="year" class="subCell">
                 <v-progress-linear
                   v-if="
-                    product.properties.start_datetime &&
-                    product.properties.start_datetime.slice(0, 4) <= year &&
-                    product.properties.end_datetime &&
-                    product.properties.end_datetime.slice(0, 4) >= year
+                    product.start_datetime &&
+                    product.start_datetime.slice(0, 4) <= year &&
+                    product.end_datetime &&
+                    product.end_datetime.slice(0, 4) >= year
                   "
                   :key="year"
                   color="applications"
                   height="15"
                   value="100"
                   :style="`border-radius: ${
-                    product.properties.start_datetime.slice(0, 4) == year
-                      ? 5
-                      : 0
-                  }px ${
-                    product.properties.end_datetime.slice(0, 4) == year ? 5 : 0
-                  }px ${
-                    product.properties.end_datetime.slice(0, 4) == year ? 5 : 0
-                  }px ${
-                    product.properties.start_datetime.slice(0, 4) == year
-                      ? 5
-                      : 0
-                  }px`"
+                    product.start_datetime.slice(0, 4) == year ? 5 : 0
+                  }px ${product.end_datetime.slice(0, 4) == year ? 5 : 0}px ${
+                    product.end_datetime.slice(0, 4) == year ? 5 : 0
+                  }px ${product.start_datetime.slice(0, 4) == year ? 5 : 0}px`"
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
@@ -267,29 +259,36 @@ export default {
   },
   methods: {
     ...mapActions("staticCatalog", ["retreiveVariable"]),
+    ...mapActions("dynamicCatalog", ["fetchCustomQuery"]),
     async expandVariable(item) {
       const variableSlug = this.slugify(item.name);
       if (!this.products[variableSlug]) {
-        await this.retreiveVariable(variableSlug)
-          .then(async (variable) => {
-            this.$set(this.variablesList, variableSlug, this.variable);
-            const products = [];
-            // TODO: use dynamic endpoint instead of static here
-            await Promise.all(
-              variable.links.map(async (link) => {
-                if (link.rel === "item") {
-                  await this.$staticCatalog
-                    .$get(this.$replaceStaticBase(link.href))
-                    .then((productResponse) => {
-                      products.push(productResponse);
-                    })
-                    .catch((err) => console.error(err));
-                }
-              })
-            );
-            this.$set(this.products, variableSlug, products);
-          })
-          .catch((err) => console.error(err));
+        await this.fetchCustomQuery(
+          `collections/metadata:main/items?limit=12&sortby=title&offset=0&filter=keywords%20ILIKE%20%27%variable:${item.name}%%27&f=json`
+        ).then((response) => {
+          this.$set(this.variablesList, variableSlug, this.variable);
+          this.$set(this.products, variableSlug, response.features);
+        });
+        // await this.retreiveVariable(variableSlug)
+        //   .then(async (variable) => {
+        //     this.$set(this.variablesList, variableSlug, this.variable);
+        //     const products = [];
+        //     // TODO: use dynamic endpoint instead of static here
+        //     await Promise.all(
+        //       variable.links.map(async (link) => {
+        //         if (link.rel === "item") {
+        //           await this.$staticCatalog
+        //             .$get(this.$replaceStaticBase(link.href))
+        //             .then((productResponse) => {
+        //               products.push(productResponse);
+        //             })
+        //             .catch((err) => console.error(err));
+        //         }
+        //       })
+        //     );
+        //     this.$set(this.products, variableSlug, products);
+        //   })
+        //   .catch((err) => console.error(err));
       }
     },
     getProducts(name) {

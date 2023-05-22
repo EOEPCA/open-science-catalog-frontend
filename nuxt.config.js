@@ -22,7 +22,7 @@ export default {
       "https://resource-catalogue.testing.opensciencedata.esa.int",
     backendEndpoint:
       process.env.BACKEND_ENDPOINT ||
-      "https://backend-api.staging.opensciencedata.esa.int",
+      "https://backend-api.testing.opensciencedata.esa.int",
     authEnabled: process.env.ENABLE_AUTH || true,
     auth: {
       strategies: {
