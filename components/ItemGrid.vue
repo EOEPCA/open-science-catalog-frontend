@@ -14,10 +14,7 @@
         }`"
         outlined
       > -->
-      <v-card
-        :to="`/${getType(item)}s/${item.id}/collection`"
-        outlined
-      >
+      <v-card :to="`/${getType(item)}s/${item.id}/collection`" outlined>
         <v-card-title>
           <v-chip
             small
@@ -45,10 +42,7 @@
           {{ getType(item) === "variable" ? item.name : item.title }}
         </v-card-title>
         <v-card-subtitle v-if="getType(item) === 'project'">
-          <span
-            v-for="consort in item['osc:consortium']"
-            :key="consort"
-          >
+          <span v-for="consort in item['osc:consortium']" :key="consort">
             {{ consort }}
           </span>
         </v-card-subtitle>
@@ -142,7 +136,7 @@ export default {
       //   type = "variable";
       // }
       // return type;
-      return item["osc:type"].toLowerCase()
+      return item["osc:type"].toLowerCase();
     },
   },
 };
