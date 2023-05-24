@@ -22,7 +22,16 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/catalog" router exact>
+        <v-list-item
+          to="/catalog"
+          router
+          :class="{
+            'v-list-item--active':
+              $route.path.includes('/catalog') ||
+              $route.path.includes('/collection'),
+          }"
+          @click="catalogClick"
+        >
           <v-list-item-action>
             <v-icon>mdi-compass</v-icon>
           </v-list-item-action>
@@ -214,6 +223,17 @@ export default {
   },
   computed: {
     ...mapState(["appVersion"]),
+  },
+  methods: {
+    catalogClick() {
+      const loadedIframe = document.querySelector("iframe#stacBrowser");
+      if (loadedIframe) {
+        // if the stac browser iframe is already shown, force a refresh
+        // allowing the user to return to catalog root on menu entry click
+        // eslint-disable-next-line no-self-assign
+        loadedIframe.src = loadedIframe.src;
+      }
+    },
   },
 };
 </script>

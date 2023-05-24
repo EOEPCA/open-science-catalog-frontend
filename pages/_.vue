@@ -1,6 +1,7 @@
 <template>
   <div class="browse">
     <iframe
+      id="stacBrowser"
       :src="iframeSrc"
       border="none"
       style="width: 100%; height: 100%"
