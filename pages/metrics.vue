@@ -45,11 +45,7 @@
               v-bind="attrs"
               class="mr-3"
               v-on="on"
-              @click="
-                () => {
-                  TOGGLE_EMPTY_ITEMS();
-                }
-              "
+              @click="showEmptyItems = !showEmptyItems"
             >
               <v-icon>
                 {{
@@ -66,200 +62,130 @@
             }}
           </span>
         </v-tooltip>
-        <search-combobox
-          ref="searchBox"
-          embedded-mode
-          pagination-loop
-          class="my-4 flex-grow-1"
-          @searchQuery="handleSearchEmit"
-          @clearEvent="clearFilter"
-        />
       </v-col>
     </v-row>
     <v-row class="mt-0 mt-md-3">
       <v-col cols="12" class="pa-0 py-md-3">
         <MetricsTable
           v-if="metrics"
-          :filtered-products="filteredProducts"
-          :headers="metrics.summary.years"
-          :items="variables"
+          :headers="Object.keys(metrics.years)"
+          :items="
+            Object.values(metrics.variables)
+              .filter((i) =>
+                showEmptyItems ? true : Object.keys(i.products).length
+              )
+              .sort((a, b) => {
+                return a.name.localeCompare(b.name, 'en', {
+                  sensitivity: 'base',
+                });
+              })
+          "
           :table-zoom="tableZoom"
         />
         <v-progress-linear v-else indeterminate />
       </v-col>
     </v-row>
-    <v-row>
-      <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
-        <v-container>
-          <v-row align="center">
-            <v-col cols="6" class="py-2 py-sm-1 py-md-2">
-              <v-dialog v-model="dialog" scrollable width="1000">
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    v-bind="attrs"
-                    class="align-self-center"
-                    color="applications"
-                    dark
-                    :block="$vuetify.breakpoint.xsOnly"
-                    v-on="on"
-                  >
-                    <v-icon left> mdi-poll </v-icon>
-                    Statistics
-                  </v-btn>
-                </template>
-                <MetricsStatistics
-                  v-if="metrics && variables"
-                  :metrics="metrics"
-                  :variables="variables"
-                  @close="dialog = false"
-                />
-              </v-dialog>
-              <v-btn
-                v-if="$vuetify.breakpoint.smOnly"
-                text
-                @click="showMobileFilters = !showMobileFilters"
-              >
-                {{ showMobileFilters ? "hide" : "show" }} filters
-              </v-btn>
-            </v-col>
-            <v-spacer />
-            <v-col
-              cols="6"
-              class="d-flex align-center justify-end py-2 py-sm-1 py-md-2"
-            >
-              <v-slider
-                v-model="tableZoom"
-                hide-details
-                min="1"
-                max="3"
-                step="1"
-                ticks="always"
-                tick-size="4"
-                style="max-width: 300px"
-                :prepend-icon="'mdi-magnify-minus-outline'"
-                :append-icon="'mdi-magnify-plus-outline'"
-                @click:prepend="tableZoom > 1 ? tableZoom-- : null"
-                @click:append="tableZoom < 3 ? tableZoom++ : null"
-              />
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-col>
-    </v-row>
+    <eox-itemfilter></eox-itemfilter>
   </v-container>
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
-import MetricsStatistics from "@/components/MetricsStatistics.vue";
-
 export default {
-  name: "MetricsPage",
-  components: {
-    MetricsStatistics,
-  },
-  data() {
-    return {
-      dialog: false,
-      filter: "",
-      metrics: null,
-      variables: [],
-      staticVariables: [],
-      tableZoom: 1,
-      showMobileFilters: false,
-      filteredProducts: [],
+  data: () => ({
+    variables: null,
+    items: null,
+    metrics: null,
+    tableZoom: 1,
+    showEmptyItems: false,
+  }),
+  async mounted() {
+    this.variables = await this.fetchVariables();
+    const items = await this.fetchItems();
+    const itemFilter = document.querySelector("eox-itemfilter");
+    itemFilter.config = {
+      titleProperty: "title",
+      filterProperties: ["osc:themes", "osc:variables"],
+      enableSearch: true,
+      enableHighlighting: true,
+      aggregateResults: "osc:variables",
+      fuseConfig: {
+        keys: ["title", "osc:themes", "osc:variables"],
+      },
+      onSearch: (items) => {
+        const metrics = this.createMetrics(items);
+        this.metrics = {
+          ...metrics,
+          variables: {
+            ...this.variables,
+            ...metrics.variables,
+          },
+        };
+      },
     };
-  },
-  head: {
-    title: "Metrics",
-  },
-  computed: {
-    ...mapState(["showEmptyItems"]),
-    ...mapState("staticCatalog", ["missions", "summary", "themes"]),
-  },
-  watch: {
-    showEmptyItems(status) {
-      if (status === false) {
-        this.$refs.searchBox.filterProducts();
-        this.filterItems(true);
-      } else {
-        this.filterItems();
-      }
-    },
-  },
-  mounted() {
-    this.filterItems(null);
+    itemFilter.apply(items);
+    const metrics = this.createMetrics(items);
+    this.metrics = {
+      ...metrics,
+      variables: {
+        ...this.variables,
+        ...metrics.variables,
+      },
+    };
+    this.items = items;
   },
   methods: {
-    ...mapMutations(["TOGGLE_EMPTY_ITEMS"]),
-    ...mapActions("staticCatalog", ["retreiveMetrics"]),
-    handleSearchEmit(result) {
-      const filteredResults = [];
-      this.filteredProducts = result.items;
-      result.items.forEach((item) => {
-        item.properties.keywords.forEach((keyword) => {
-          if (keyword.substring(0, 9) === "variable:") {
-            filteredResults.push(keyword.substring(9, keyword.length));
+    async fetchVariables() {
+      let variables = {};
+      await this.$staticCatalog
+        .$get("/variables/catalog")
+        .then((response) => {
+          response.links
+            .filter((l) => l.rel === "child")
+            .forEach((v) => {
+              const variableId = v.href.substring(
+                v.href.indexOf("./") + 2,
+                v.href.indexOf("/catalog.json")
+              );
+              variables[variableId] = {
+                id: variableId,
+                name: v.title,
+                products: {},
+                years: {},
+              };
+            });
+        })
+        .catch((err) => console.error(err));
+      return variables;
+    },
+    async fetchItems() {
+      let items;
+      await this.$dynamicCatalog
+        .$get("/collections/metadata:main/items?type=collection")
+        .then(async (itemsResponse) => {
+          const additionalPages =
+            itemsResponse.numberMatched / itemsResponse.numberReturned;
+          let currPage = 1;
+          for (let pageCount = 1; pageCount < additionalPages; pageCount++) {
+            currPage++;
+            await this.$dynamicCatalog
+              .$get(
+                `/collections/metadata:main/items?type=collection&limit=500&offset=${
+                  (currPage - 1) * 500
+                }`
+              )
+              .then((response) => {
+                itemsResponse.features = [
+                  ...itemsResponse.features,
+                  ...response.features,
+                ];
+              })
+              .catch((err) => console.error(err));
           }
-        });
-      });
-      const auxVar = this.staticVariables.filter((variable) => {
-        return filteredResults.find((result) => result === variable.name);
-      });
-
-      this.variables = auxVar;
-    },
-    clearFilter() {
-      this.variables = this.staticVariables;
-    },
-    async filterItems(silent) {
-      this.metrics = await this.retreiveMetrics();
-      const variables = [];
-
-      this.metrics.themes.forEach((theme) => {
-        theme.variables.forEach((variable) => {
-          variables.push(variable);
-        });
-      });
-      variables.sort((a, b) => {
-        return a.name.localeCompare(b.name, "en", { sensitivity: "base" });
-      });
-      if (!this.showEmptyItems) {
-        if (!silent) {
-          this.variables = [
-            ...variables.filter((v) => v.summary.numberOfProducts >= 1),
-          ];
-        }
-        this.staticVariables = [
-          ...variables.filter((v) => v.summary.numberOfProducts >= 1),
-        ];
-      } else {
-        if (!silent) {
-          this.variables = variables;
-        }
-        this.staticVariables = variables;
-      }
+          items = itemsResponse.features;
+        })
+        .catch((err) => console.error(err));
+      return items;
     },
   },
 };
 </script>
-
-<style scoped lang="scss">
-.v-tabs {
-  ::v-deep {
-    .v-tab {
-      min-width: 0;
-      text-transform: unset;
-      padding: 0 10px;
-      font-size: 80%;
-    }
-    .v-tabs-slider-wrapper {
-      transition: none;
-    }
-    .v-tabs-bar--is-mobile > .v-slide-group__prev,
-    .v-tabs-bar--is-mobile > .v-slide-group__next {
-      display: none !important;
-    }
-  }
-}
-</style>

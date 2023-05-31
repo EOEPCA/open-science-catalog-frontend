@@ -19,24 +19,22 @@
     </template>
     <template #[`item.data-table-expand`]="{ item, isExpanded, expand }">
       <v-btn
-        v-if="item.summary.numberOfProducts && !isExpanded"
+        v-if="Object.keys(item.products).length && !isExpanded"
         icon
         @click="
           () => {
             expand(true);
-            expandVariable(item);
           }
         "
       >
         <v-icon>mdi-chevron-down</v-icon>
       </v-btn>
       <v-btn
-        v-else-if="item.summary.numberOfProducts && isExpanded"
+        v-else-if="Object.keys(item.products).length && isExpanded"
         icon
         @click="
           () => {
             expand(false);
-            expandVariable(item);
           }
         "
       >
@@ -46,7 +44,7 @@
     </template>
     <template #expanded-item="{ item }">
       <td
-        v-if="getProducts(item.name).length > 0"
+        v-if="Object.keys(item.products).length > 0"
         :colspan="transformedHeaders.length + 1"
         class="pa-0"
         style="z-index: 0 !important"
@@ -54,7 +52,7 @@
         <table style="width: 100%; border-spacing: 0">
           <tbody>
             <tr
-              v-for="product in getProducts(item.name)"
+              v-for="product in Object.values(item.products)"
               :key="product.id"
               style="line-height: 3"
             >
@@ -65,48 +63,55 @@
                       icon
                       small
                       color="applications"
-                      :to="`/products/${product.id}`"
+                      :to="`/products/${product.id}/collection`"
                       target="_blank"
                       v-on="on"
                     >
                       <v-icon> mdi-open-in-new </v-icon>
                     </v-btn>
                   </template>
-                  <span>Go to {{ product.title }} product</span>
+                  <span>Go to {{ product.name }} product</span>
                 </v-tooltip>
               </td>
               <td class="px-4 py-2 subCell">
                 <v-tooltip top>
                   <template #activator="{ on }">
                     <nuxt-link
-                      :to="`/products/${product.id}`"
+                      :to="`/products/${product.id}/collection`"
                       style="text-decoration: none"
                     >
                       <small style="cursor: pointer" v-on="on">{{
-                        product.title
+                        product.name
                       }}</small>
                     </nuxt-link>
                   </template>
-                  <span>Go to {{ product.title }} product</span>
+                  <span>Go to {{ product.name }} product</span>
                 </v-tooltip>
               </td>
-              <td v-for="year in headers" :key="year" class="subCell">
+              <td v-for="(year, index) in headers" :key="year" class="subCell">
                 <v-progress-linear
-                  v-if="
-                    product.start_datetime &&
-                    product.start_datetime.slice(0, 4) <= year &&
-                    product.end_datetime &&
-                    product.end_datetime.slice(0, 4) >= year
-                  "
+                  v-if="Object.keys(product.years).includes(year)"
                   :key="year"
                   color="applications"
                   height="15"
                   value="100"
                   :style="`border-radius: ${
-                    product.start_datetime.slice(0, 4) == year ? 5 : 0
-                  }px ${product.end_datetime.slice(0, 4) == year ? 5 : 0}px ${
-                    product.end_datetime.slice(0, 4) == year ? 5 : 0
-                  }px ${product.start_datetime.slice(0, 4) == year ? 5 : 0}px`"
+                    !Object.keys(product.years).includes(headers[index - 1])
+                      ? 5
+                      : 0
+                  }px ${
+                    !Object.keys(product.years).includes(headers[index + 1])
+                      ? 5
+                      : 0
+                  }px ${
+                    !Object.keys(product.years).includes(headers[index + 1])
+                      ? 5
+                      : 0
+                  }px ${
+                    !Object.keys(product.years).includes(headers[index - 1])
+                      ? 5
+                      : 0
+                  }px;`"
                 />
                 <span v-else style="visibility: hidden">no data</span>
               </td>
@@ -120,16 +125,20 @@
     </template>
     <template v-for="(year, index) in headers" #[`item.${year}`]="{ item }">
       <v-progress-linear
-        v-if="item.summary.years.includes(year)"
+        v-if="Object.keys(item.years).includes(year)"
         :key="year"
         color="secondary"
         height="15"
         value="100"
         :style="`border-radius: ${
-          !item.summary.years.includes(headers[index - 1]) ? 5 : 0
-        }px ${!item.summary.years.includes(headers[index + 1]) ? 5 : 0}px ${
-          !item.summary.years.includes(headers[index + 1]) ? 5 : 0
-        }px ${!item.summary.years.includes(headers[index - 1]) ? 5 : 0}px;`"
+          !Object.keys(item.years).includes(headers[index - 1]) ? 5 : 0
+        }px ${
+          !Object.keys(item.years).includes(headers[index + 1]) ? 5 : 0
+        }px ${
+          !Object.keys(item.years).includes(headers[index + 1]) ? 5 : 0
+        }px ${
+          !Object.keys(item.years).includes(headers[index - 1]) ? 5 : 0
+        }px;`"
       />
     </template>
     <template #[`item.name`]="{ item }">
@@ -137,7 +146,7 @@
         <template #activator="{ on }">
           <nuxt-link
             style="cursor: pointer; font-size: 12px; text-decoration: none"
-            :to="`variables/${slugify(item.name)}`"
+            :to="`variables/${item.id}/catalog`"
             v-on="on"
           >
             {{ item.name }}
@@ -149,9 +158,8 @@
     <template #[`item.coverage`]="{ item }">
       <Coverage
         :variable="item"
-        :products="products[slugify(item.name)]"
-        :disable="!item.summary.numberOfProducts"
-        @loadProducts="expandVariable(item)"
+        :products="Object.values(item.products)"
+        :disable="!Object.keys(item.products).length"
       />
     </template>
   </v-data-table>
@@ -258,52 +266,8 @@ export default {
     });
   },
   methods: {
-    ...mapActions("staticCatalog", ["retreiveVariable"]),
-    ...mapActions("dynamicCatalog", ["fetchCustomQuery"]),
-    async expandVariable(item) {
-      const variableSlug = this.slugify(item.name);
-      if (!this.products[variableSlug]) {
-        await this.fetchCustomQuery(
-          `collections/metadata:main/items?limit=12&sortby=title&offset=0&filter=keywords%20ILIKE%20%27%variable:${item.name}%%27&f=json`
-        ).then((response) => {
-          this.$set(this.variablesList, variableSlug, this.variable);
-          this.$set(this.products, variableSlug, response.features);
-        });
-        // await this.retreiveVariable(variableSlug)
-        //   .then(async (variable) => {
-        //     this.$set(this.variablesList, variableSlug, this.variable);
-        //     const products = [];
-        //     // TODO: use dynamic endpoint instead of static here
-        //     await Promise.all(
-        //       variable.links.map(async (link) => {
-        //         if (link.rel === "item") {
-        //           await this.$staticCatalog
-        //             .$get(this.$replaceStaticBase(link.href))
-        //             .then((productResponse) => {
-        //               products.push(productResponse);
-        //             })
-        //             .catch((err) => console.error(err));
-        //         }
-        //       })
-        //     );
-        //     this.$set(this.products, variableSlug, products);
-        //   })
-        //   .catch((err) => console.error(err));
-      }
-    },
-    getProducts(name) {
-      let products = [];
-      if (this.products[this.slugify(name)]) {
-        products = this.products[this.slugify(name)];
-        if (this.filteredProducts.length > 0) {
-          products = products.filter((product) => {
-            return this.filteredProducts.find(
-              (filteredProduct) => filteredProduct.id === product.id
-            );
-          });
-        }
-      }
-      return products;
+    getProducts() {
+      return [];
     },
   },
 };
