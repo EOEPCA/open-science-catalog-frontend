@@ -27,7 +27,6 @@
       </v-col>
     </v-row>
     <v-row
-      v-if="metrics"
       class="white"
       :style="`z-index: 5; ${
         showMobileFilters
@@ -58,10 +57,24 @@
           </template>
           <span>
             {{
-              showEmptyItems ? "Hide empty variables" : "Show empty variables"
+              showEmptyItems
+                ? `Hide empty ${aggregationProperty}`
+                : `Show empty ${aggregationProperty}`
             }}
           </span>
         </v-tooltip>
+        <v-select
+          v-if="metrics"
+          v-model="aggregationProperty"
+          label="Aggregate by"
+          outlined
+          :items="
+            Object.keys(metrics).filter(
+              (m) => !['numberOfProducts', 'years'].includes(m)
+            )
+          "
+        ></v-select>
+        <eox-itemfilter></eox-itemfilter>
       </v-col>
     </v-row>
     <v-row class="mt-0 mt-md-3">
@@ -70,7 +83,7 @@
           v-if="metrics"
           :headers="Object.keys(metrics.years)"
           :items="
-            Object.values(metrics.variables)
+            Object.values(metrics[aggregationProperty])
               .filter((i) =>
                 showEmptyItems ? true : Object.keys(i.products).length
               )
@@ -143,52 +156,68 @@
         </v-container>
       </v-col>
     </v-row>
-    <!-- <eox-itemfilter></eox-itemfilter> -->
   </v-container>
 </template>
 
 <script>
 export default {
   data: () => ({
-    variables: null,
+    aggregationProperty: "eo-missions",
+    allAggregationItems: null,
     items: null,
     metrics: null,
     tableZoom: 1,
     showEmptyItems: false,
     showMobileFilters: false,
   }),
+  watch: {
+    aggregationProperty() {
+      this.allAggregationItems = null;
+      const previousSetting = this.showEmptyItems;
+      this.showEmptyItems = null;
+      this.$nextTick(() => {
+        this.showEmptyItems = previousSetting;
+      });
+    },
+    showEmptyItems(activated) {
+      if (activated && !this.allAggregationItems) {
+        this.fetchAllAggregationItems(this.aggregationProperty);
+      }
+    },
+  },
   async mounted() {
-    this.variables = await this.fetchVariables();
     const items = await this.fetchItems();
-    // const itemFilter = document.querySelector("eox-itemfilter");
-    // itemFilter.config = {
-    //   titleProperty: "title",
-    //   filterProperties: ["osc:themes", "osc:variables"],
-    //   enableSearch: true,
-    //   enableHighlighting: true,
-    //   aggregateResults: "osc:variables",
-    //   fuseConfig: {
-    //     keys: ["title", "osc:themes", "osc:variables"],
-    //   },
-    //   onSearch: (items) => {
-    //     const metrics = this.createMetrics(items);
-    //     if (this.showEmptyItems) {
-    //       metrics[this.aggregationProperty] = {
-    //         ...this.allAggregationItems,
-    //         ...metrics[this.aggregationProperty]
-    //       }
-    //     }
-    //     this.metrics = metrics;
-    //   },
-    // };
-    // itemFilter.apply(items);
+    const itemFilter = document.querySelector("eox-itemfilter");
+    itemFilter.config = {
+      titleProperty: "title",
+      filterProperties: ["osc:themes", "osc:variables"],
+      // enableSearch: true,
+      // enableHighlighting: true,
+      // aggregateResults: "osc:variables",
+      showResults: false,
+      fuseConfig: {
+        keys: ["title", "osc:themes", "osc:variables"],
+      },
+      onSearch: (items) => {
+        const metrics = this.createMetrics(items);
+        if (this.showEmptyItems) {
+          metrics[this.aggregationProperty] = {
+            ...this.allAggregationItems,
+            ...metrics[this.aggregationProperty],
+          };
+        }
+        this.metrics = metrics;
+      },
+    };
+    itemFilter.apply(items);
+    this.metrics = this.createMetrics(items);
     this.items = items;
   },
   methods: {
-    async fetchVariables() {
-      let variables = {};
+    async fetchAllAggregationItems(type) {
+      let allItems = {};
       await this.$staticCatalog
-        .$get("/variables/catalog")
+        .$get(`/${type}/catalog`)
         .then((response) => {
           response.links
             .filter((l) => l.rel === "child")
@@ -197,7 +226,7 @@ export default {
                 v.href.indexOf("./") + 2,
                 v.href.indexOf("/catalog.json")
               );
-              variables[variableId] = {
+              allItems[variableId] = {
                 id: variableId,
                 name: v.title,
                 products: {},
@@ -206,7 +235,15 @@ export default {
             });
         })
         .catch((err) => console.error(err));
-      return variables;
+      this.allAggregationItems = allItems;
+      const metrics = this.createMetrics(this.items);
+      if (this.showEmptyItems) {
+        metrics[this.aggregationProperty] = {
+          ...this.allAggregationItems,
+          ...metrics[this.aggregationProperty],
+        };
+      }
+      this.metrics = metrics;
     },
     async fetchItems() {
       let items;

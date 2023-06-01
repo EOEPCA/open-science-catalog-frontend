@@ -107,6 +107,8 @@ export default {
     "~/plugins/markdown",
     "~/plugins/staticCatalogHelpers",
     "~/plugins/item",
+    "~/plugins/metrics",
+    "~/plugins/eox-itemfilter.client",
     { src: "~plugins/ol", ssr: false },
   ],
 

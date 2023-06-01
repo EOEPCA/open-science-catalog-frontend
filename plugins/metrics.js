@@ -80,7 +80,7 @@ const mixin = {
         aggregateProperty("/eo-missions/", eoMissions);
       }
       return {
-        eoMissions,
+        "eo-missions": eoMissions,
         numberOfProducts,
         variables,
         years,
