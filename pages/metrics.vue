@@ -85,7 +85,65 @@
         <v-progress-linear v-else indeterminate />
       </v-col>
     </v-row>
-    <eox-itemfilter></eox-itemfilter>
+    <v-row>
+      <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
+        <v-container>
+          <v-row align="center">
+            <v-col cols="6" class="py-2 py-sm-1 py-md-2">
+              <v-dialog v-model="dialog" scrollable width="1000">
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="align-self-center"
+                    color="applications"
+                    dark
+                    :block="$vuetify.breakpoint.xsOnly"
+                    v-on="on"
+                  >
+                    <v-icon left> mdi-poll </v-icon>
+                    Statistics
+                  </v-btn>
+                </template>
+                <!-- <MetricsStatistics
+                  v-if="metrics && variables"
+                  :metrics="metrics"
+                  :variables="variables"
+                  @close="dialog = false"
+                /> -->
+              </v-dialog>
+              <v-btn
+                v-if="$vuetify.breakpoint.smOnly"
+                text
+                @click="showMobileFilters = !showMobileFilters"
+              >
+                {{ showMobileFilters ? "hide" : "show" }} filters
+              </v-btn>
+            </v-col>
+            <v-spacer />
+            <v-col
+              cols="6"
+              class="d-flex align-center justify-end py-2 py-sm-1 py-md-2"
+            >
+              <v-slider
+                v-model="tableZoom"
+                hide-details
+                min="1"
+                max="3"
+                step="1"
+                ticks="always"
+                tick-size="4"
+                style="max-width: 300px"
+                :prepend-icon="'mdi-magnify-minus-outline'"
+                :append-icon="'mdi-magnify-plus-outline'"
+                @click:prepend="tableZoom > 1 ? tableZoom-- : null"
+                @click:append="tableZoom < 3 ? tableZoom++ : null"
+              />
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-col>
+    </v-row>
+    <!-- <eox-itemfilter></eox-itemfilter> -->
   </v-container>
 </template>
 
@@ -97,40 +155,33 @@ export default {
     metrics: null,
     tableZoom: 1,
     showEmptyItems: false,
+    showMobileFilters: false,
   }),
   async mounted() {
     this.variables = await this.fetchVariables();
     const items = await this.fetchItems();
-    const itemFilter = document.querySelector("eox-itemfilter");
-    itemFilter.config = {
-      titleProperty: "title",
-      filterProperties: ["osc:themes", "osc:variables"],
-      enableSearch: true,
-      enableHighlighting: true,
-      aggregateResults: "osc:variables",
-      fuseConfig: {
-        keys: ["title", "osc:themes", "osc:variables"],
-      },
-      onSearch: (items) => {
-        const metrics = this.createMetrics(items);
-        this.metrics = {
-          ...metrics,
-          variables: {
-            ...this.variables,
-            ...metrics.variables,
-          },
-        };
-      },
-    };
-    itemFilter.apply(items);
-    const metrics = this.createMetrics(items);
-    this.metrics = {
-      ...metrics,
-      variables: {
-        ...this.variables,
-        ...metrics.variables,
-      },
-    };
+    // const itemFilter = document.querySelector("eox-itemfilter");
+    // itemFilter.config = {
+    //   titleProperty: "title",
+    //   filterProperties: ["osc:themes", "osc:variables"],
+    //   enableSearch: true,
+    //   enableHighlighting: true,
+    //   aggregateResults: "osc:variables",
+    //   fuseConfig: {
+    //     keys: ["title", "osc:themes", "osc:variables"],
+    //   },
+    //   onSearch: (items) => {
+    //     const metrics = this.createMetrics(items);
+    //     if (this.showEmptyItems) {
+    //       metrics[this.aggregationProperty] = {
+    //         ...this.allAggregationItems,
+    //         ...metrics[this.aggregationProperty]
+    //       }
+    //     }
+    //     this.metrics = metrics;
+    //   },
+    // };
+    // itemFilter.apply(items);
     this.items = items;
   },
   methods: {
