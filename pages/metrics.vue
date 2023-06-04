@@ -117,12 +117,11 @@
                     Statistics
                   </v-btn>
                 </template>
-                <!-- <MetricsStatistics
-                  v-if="metrics && variables"
-                  :metrics="metrics"
-                  :variables="variables"
+                <MetricsStatistics
+                  v-if="metrics"
+                  :metrics="filteredMetrics"
                   @close="dialog = false"
-                /> -->
+                />
               </v-dialog>
               <v-btn
                 v-if="$vuetify.breakpoint.smOnly"
@@ -162,6 +161,7 @@
 <script>
 export default {
   data: () => ({
+    dialog: false,
     aggregationProperty: "eo-missions",
     allAggregationItems: null,
     items: null,
@@ -169,6 +169,7 @@ export default {
     tableZoom: 1,
     showEmptyItems: false,
     showMobileFilters: false,
+    filteredMetrics: {},
   }),
   watch: {
     aggregationProperty() {
@@ -183,6 +184,9 @@ export default {
       if (activated && !this.allAggregationItems) {
         this.fetchAllAggregationItems(this.aggregationProperty);
       }
+    },
+    metrics(newMetrics) {
+      this.filteredMetrics = newMetrics;
     },
   },
   async mounted() {
