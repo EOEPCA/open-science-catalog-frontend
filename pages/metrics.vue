@@ -119,6 +119,7 @@
                 </template>
                 <MetricsStatistics
                   v-if="metrics"
+                  :key="filteredMetrics.numberOfProducts"
                   :metrics="filteredMetrics"
                   @close="dialog = false"
                 />
