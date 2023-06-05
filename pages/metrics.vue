@@ -32,7 +32,7 @@
       <v-col cols="12">
         <eox-itemfilter
           class="row"
-          style="position: relative; z-index: 1"
+          style="position: relative; z-index: 5"
         ></eox-itemfilter>
       </v-col>
     </v-row>
