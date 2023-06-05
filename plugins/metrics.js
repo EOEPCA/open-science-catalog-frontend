@@ -8,6 +8,7 @@ const mixin = {
       const variables = {};
       const eoMissions = {};
       const projects = {};
+      const themes = {};
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
@@ -81,6 +82,7 @@ const mixin = {
             };
           }
         };
+        aggregateProperty("/themes/", themes);
         aggregateProperty("/variables/", variables);
         aggregateProperty("/eo-missions/", eoMissions);
         aggregateProperty("/projects/", projects);
@@ -89,6 +91,7 @@ const mixin = {
         "eo-missions": eoMissions,
         numberOfProducts,
         projects,
+        themes,
         variables,
         years,
       };

@@ -166,7 +166,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState } from "vuex";
 
 import Coverage from "@/components/Coverage.vue";
 
@@ -279,7 +279,7 @@ export default {
   font-weight: 700;
 }
 ::v-deep .v-data-table__wrapper {
-  max-height: 70vh;
+  width: 100%;
 }
 ::v-deep table th:not(:first-child, :nth-child(2), :last-child),
 ::v-deep table td:not(:first-child, :nth-child(2), :last-child) {

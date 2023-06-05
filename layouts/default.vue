@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark style="overflow: hidden; height: 100vh">
     <v-navigation-drawer v-model="drawer" color="background" dark fixed app>
       <v-list class="pt-0">
         <div
@@ -168,7 +168,7 @@
         <img :src="withBase('/img/ESA_Logo.svg')" />
       </a>
     </v-app-bar>
-    <v-main>
+    <v-main class="fill-height">
       <Nuxt />
     </v-main>
     <v-footer color="primary" dark fixed app class="justify-center">
