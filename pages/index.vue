@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="overflow-y: auto; max-height: 100%">
     <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-0' : 'pa-2'">
       <v-row class="pt-5 pb-0">
         <v-col>
@@ -41,6 +41,7 @@
               label
               :color="$typeColor('theme')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/themes/catalog"
             >
               Themes </v-chip
             >,
@@ -50,6 +51,7 @@
               label
               :color="$typeColor('project')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/projects/catalog"
             >
               Projects </v-chip
             >,
@@ -59,6 +61,7 @@
               label
               :color="$typeColor('variable')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/variables/catalog"
             >
               Variables
             </v-chip>
@@ -69,6 +72,7 @@
               label
               :color="$typeColor('product')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/products/catalog"
             >
               Products </v-chip
             >.
@@ -102,12 +106,12 @@
       <v-row justify="center" align="center" no-gutters>
         <v-col
           v-for="theme in themes"
-          :key="theme.name"
+          :key="theme.title"
           cols="12"
           md="4"
           class="pa-1"
         >
-          <nuxt-link :to="`/themes/${theme.name}/catalog`">
+          <nuxt-link :to="`/themes/${theme.title}/catalog`">
             <div
               class="d-flex align-center elevation-2 rounded"
               style="
@@ -118,12 +122,12 @@
               "
             >
               <v-img
-                :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
+                :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.title}/${theme.image}`"
                 width="100%"
                 height="100%"
               >
                 <span class="h1 imageLabel elevation-2">
-                  {{ theme.name.replace("_", " ") }}
+                  {{ theme.title.replace("_", " ") }}
                 </span>
               </v-img>
             </div>
@@ -135,21 +139,29 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-
 export default {
   name: "IndexPage",
+  data: () => ({
+    themes: [],
+  }),
   head: {
     titleTemplate: "ESA Open Science Catalog",
   },
-  computed: {
-    ...mapState("staticCatalog", ["themes"]),
-  },
-  async created() {
-    await this.$store.dispatch("staticCatalog/retreiveMetrics");
-  },
-  methods: {
-    ...mapActions("staticCatalog", ["retreiveMetrics"]),
+  async mounted() {
+    const themes = await this.$staticCatalog.$get("/themes/catalog");
+    const themesLinks = themes.links.filter((l) => l.rel === "child");
+    for (let t of themesLinks) {
+      const i = await this.$axios.$get(
+        `${this.$staticCatalog.defaults.baseURL}/themes${t.href.replace(
+          "./",
+          "/"
+        )}`
+      );
+      t.image = i.links
+        .find((l) => l.rel === "preview")
+        .href.replace("./", "/");
+    }
+    this.themes = themesLinks;
   },
 };
 </script>
