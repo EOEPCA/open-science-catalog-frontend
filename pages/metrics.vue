@@ -163,7 +163,7 @@
 export default {
   data: () => ({
     dialog: false,
-    aggregationProperty: "eo-missions",
+    aggregationProperty: "variables",
     allAggregationItems: null,
     items: null,
     metrics: null,
@@ -195,13 +195,13 @@ export default {
     const itemFilter = document.querySelector("eox-itemfilter");
     itemFilter.config = {
       titleProperty: "title",
-      filterProperties: ["osc:themes", "osc:variables"],
+      filterProperties: ["osc:themes", "osc:variables", "osc:project"],
       // enableSearch: true,
       // enableHighlighting: true,
       // aggregateResults: "osc:variables",
       showResults: false,
       fuseConfig: {
-        keys: ["title", "osc:themes", "osc:variables"],
+        keys: ["title", "osc:themes", "osc:variables", "osc:project"],
       },
       onSearch: (items) => {
         const metrics = this.createMetrics(items);

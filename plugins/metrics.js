@@ -7,6 +7,7 @@ const mixin = {
       const years = {};
       const variables = {};
       const eoMissions = {};
+      const projects = {};
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
@@ -36,6 +37,7 @@ const mixin = {
           coverage: item.extent.spatial.bbox,
           region: item["osc:region"],
           missions: item["osc:missions"] || [],
+          project: item["osc:project"],
           // geometry: {
           //   extent: item.extent
           // }
@@ -44,13 +46,16 @@ const mixin = {
         // aggregated properties
         const aggregateProperty = (propertyCheck, target) => {
           const currentProperties = item.links.filter((l) =>
-            l.href.includes(propertyCheck)
+            l.href.includes(`..${propertyCheck}`)
           );
           for (let propI = 0; propI < currentProperties.length; propI++) {
             const propId = currentProperties[propI].href.substring(
               currentProperties[propI].href.indexOf(propertyCheck) +
                 propertyCheck.length,
-              currentProperties[propI].href.indexOf("/catalog.json")
+              Math.max(
+                currentProperties[propI].href.indexOf("/catalog.json"),
+                currentProperties[propI].href.indexOf("/collection.json")
+              )
             );
             const propTitle = currentProperties[propI].title.substring(
               currentProperties[propI].title.indexOf(": ") + 2
@@ -78,10 +83,12 @@ const mixin = {
         };
         aggregateProperty("/variables/", variables);
         aggregateProperty("/eo-missions/", eoMissions);
+        aggregateProperty("/projects/", projects);
       }
       return {
         "eo-missions": eoMissions,
         numberOfProducts,
+        projects,
         variables,
         years,
       };
