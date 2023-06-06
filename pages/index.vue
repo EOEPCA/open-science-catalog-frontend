@@ -78,10 +78,17 @@
             >.
           </p>
           <p>
-            Choose a theme below to get started or access the
+            Choose a theme below to explore available products/projects or
+            programmatically access the catalog via the
             <a :href="$dynamicCatalog.defaults.baseURL" target="_blank"
               >API Documentation</a
             >!
+          </p>
+          <p>
+            To suggest changes and/or contribute to continuously growing number
+            of available products, you can
+            <router-link to="/login">register here</router-link>, and make your
+            contribution to the catalog!
           </p>
           <p>
             If you have any questions or feedback regarding Open Science
