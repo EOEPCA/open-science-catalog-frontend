@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@eox/itemfilter": "^0.3.0",
+    "@eox/itemfilter": "^0.4.0",
     "@nuxt/content": "^1.15.1",
     "@nuxtjs/auth-next": "5.0.0-1648802546.c9880dc",
     "@nuxtjs/axios": "^5.13.6",

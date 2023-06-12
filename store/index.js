@@ -54,6 +54,7 @@ export const actions = {
         variable: i["osc:variables"],
         project: i["osc:project"],
         "eo-mission": i["osc:missions"],
+        region: i["osc:region"],
       }))
       .sort((a, b) =>
         a.title.localeCompare(b.title, "en", {

@@ -187,7 +187,13 @@ export default {
     const itemFilter = document.querySelector("eox-itemfilter");
     itemFilter.config = {
       titleProperty: "title",
-      filterProperties: ["theme", "variable", "project", "eo-mission"],
+      filterProperties: [
+        { key: "theme" },
+        { key: "variable" },
+        { key: "project" },
+        { key: "eo-mission" },
+        { key: "region" },
+      ],
       enableSearch: true,
       // enableHighlighting: true,
       // aggregateResults: "osc:variables",
@@ -201,6 +207,7 @@ export default {
           "project",
           "description",
           "eo-mission",
+          "region",
         ],
         // threshold: 0.4,
         // distance: 100,

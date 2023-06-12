@@ -28,56 +28,83 @@
         </h1>
       </v-col>
     </v-row>
-    <v-row class="white flex-grow-0">
-      <v-col cols="12">
-        <eox-itemfilter
-          class="row"
-          style="position: relative; z-index: 1"
-        ></eox-itemfilter>
-      </v-col>
-    </v-row>
     <v-progress-linear v-if="!items" indeterminate></v-progress-linear>
-    <v-row
-      v-if="results"
-      class="d-flex flex-grow-1"
-      style="overflow-y: auto; max-height: 100%"
-    >
+    <v-row class="fill-height flex-grow-1" style="height: 0">
+      <v-col v-if="results" cols="12" md="3" class="px-4 py-0 order-1">
+        <h2>Filters</h2>
+      </v-col>
       <v-col
-        v-for="result in results"
-        :key="result.id"
+        v-if="results"
         cols="12"
-        class="px-4 pt-4 pb-0"
+        md="9"
+        class="px-4 py-0 order-3 order-md-2"
       >
-        <v-card :to="`/products/${result.id}/collection`" outlined>
-          <v-card-title
-            class="text-subtitle-2 text-uppercase"
-            style="word-break: break-word"
+        <h2>Results ({{ results.length }})</h2>
+      </v-col>
+      <v-col
+        cols="12"
+        md="3"
+        class="order-2 order-md-3"
+        style="position: relative"
+      >
+        <v-row>
+          <v-col cols="12">
+            <eox-itemfilter
+              class="row mb-4"
+              style="position: relative; z-index: 1"
+            ></eox-itemfilter>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col
+        cols="12"
+        md="9"
+        class="fill-height order-4"
+        style="position: relative"
+      >
+        <v-row
+          v-if="results"
+          class="my-0"
+          style="overflow-y: auto; max-height: 100%"
+        >
+          <v-col
+            v-for="result in results"
+            :key="result.id"
+            cols="12"
+            class="px-4 pt-0 pb-4"
           >
-            {{ result.title }}
-          </v-card-title>
-          <v-card-text>
-            <p>
-              {{
-                result.description
-                  ? `${result.description.substring(0, 150)} [...]`
-                  : "No description"
-              }}
-            </p>
-            <div class="mt-2">
-              <v-chip
-                v-for="keyword in result.keywords"
-                :key="keyword"
-                x-small
-                color="primary"
-                dark
-                label
-                class="mr-2 mb-2 text-uppercase"
+            <v-card :to="`/products/${result.id}/collection`" outlined>
+              <v-card-title
+                class="text-subtitle-2 text-uppercase"
+                style="word-break: break-word"
               >
-                {{ keyword }}
-              </v-chip>
-            </div>
-          </v-card-text>
-        </v-card>
+                {{ result.title }}
+              </v-card-title>
+              <v-card-text>
+                <p>
+                  {{
+                    result.description
+                      ? `${result.description.substring(0, 150)} [...]`
+                      : "No description"
+                  }}
+                </p>
+                <div class="mt-2">
+                  <v-chip
+                    v-for="keyword in result.keywords"
+                    :key="keyword"
+                    x-small
+                    color="primary"
+                    dark
+                    label
+                    class="mr-2 mb-2 text-uppercase"
+                  >
+                    {{ keyword }}
+                  </v-chip>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -97,12 +124,18 @@ export default {
     const itemFilter = document.querySelector("eox-itemfilter");
     itemFilter.config = {
       titleProperty: "title",
-      filterProperties: ["theme", "variable", "project", "eo-mission"],
+      filterProperties: [
+        { key: "theme" },
+        { key: "variable" },
+        { key: "project" },
+        { key: "eo-mission" },
+        { key: "region" },
+      ],
       enableSearch: true,
       // enableHighlighting: true,
       showResults: false,
       // aggregateResults: "osc:variables",
-      inlineMode: true,
+      // inlineMode: true,
       fuseConfig: {
         includeScore: true,
         keys: [
@@ -112,6 +145,7 @@ export default {
           "project",
           "description",
           "eo-mission",
+          "region",
         ],
         // threshold: 0.4,
         // distance: 100,
@@ -152,7 +186,7 @@ eox-itemfilter::part(details-filter) {
   background: #fff;
   border-radius: 4px;
   border: thin solid #0004;
-  line-height: 1.4;
+  padding: 5px 7px;
 }
 eox-itemfilter::part(input-search) {
   background: #fff;
