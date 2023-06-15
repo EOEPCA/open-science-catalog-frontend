@@ -118,7 +118,11 @@
           md="4"
           class="pa-1"
         >
-          <nuxt-link :to="`/themes/${theme.title}/catalog`">
+          <nuxt-link
+            :to="`/themes/${theme.href
+              .substring(theme.href.indexOf('/theme/'))
+              .replace('.json', '')}`"
+          >
             <div
               class="d-flex align-center elevation-2 rounded"
               style="
@@ -128,13 +132,7 @@
                 border-bottom: 0.25em solid rgb(51, 94, 111);
               "
             >
-              <v-img
-                :src="`${$staticCatalog.defaults.baseURL}/themes/${slugify(
-                  theme.title
-                )}/${theme.image}`"
-                width="100%"
-                height="100%"
-              >
+              <v-img :src="theme.image" width="100%" height="100%">
                 <span class="h1 imageLabel elevation-2">
                   {{ theme.title.replace("_", " ") }}
                 </span>
@@ -161,14 +159,22 @@ export default {
     const themesLinks = themes.links.filter((l) => l.rel === "child");
     for (let t of themesLinks) {
       const i = await this.$axios.$get(
-        `${this.$staticCatalog.defaults.baseURL}/themes${t.href.replace(
-          "./",
-          "/"
-        )}`
+        t.href.includes("./")
+          ? `${this.$staticCatalog.defaults.baseURL}/themes${t.href.replace(
+              "./",
+              "/"
+            )}`
+          : t.href
       );
-      t.image = i.links
-        .find((l) => l.rel === "preview")
-        .href.replace("./", "/");
+      t.image = i.links.find((l) => l.rel === "preview").href;
+      if (t.image.includes("./")) {
+        t.image = t.image.replace(
+          "./",
+          `${this.$staticCatalog.defaults.baseURL}/themes${t.href
+            .replace("./", "/")
+            .replace("/catalog.json", "/")}`
+        );
+      }
     }
     this.themes = themesLinks;
   },
