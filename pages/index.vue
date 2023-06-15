@@ -129,7 +129,9 @@
               "
             >
               <v-img
-                :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.title}/${theme.image}`"
+                :src="`${$staticCatalog.defaults.baseURL}/themes/${slugify(
+                  theme.title
+                )}/${theme.image}`"
                 width="100%"
                 height="100%"
               >
