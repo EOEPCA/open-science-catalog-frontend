@@ -62,6 +62,7 @@ const mixin = {
               currentProperties[propI].title.indexOf(": ") + 2
             );
             target[propId] = {
+              id: propId,
               name: propTitle,
               years: {
                 ...(target[propId]?.years
