@@ -1,5 +1,6 @@
 <template>
   <v-container
+    class="d-flex flex-column"
     :class="
       $vuetify.breakpoint.lgAndUp
         ? 'px-15 pt-8'
@@ -8,6 +9,7 @@
         ? 'pa-0'
         : 'pa-4'
     "
+    style="height: 100%"
   >
     <v-row
       v-if="
@@ -16,7 +18,7 @@
           $vuetify.breakpoint.width > $vuetify.breakpoint.height
         )
       "
-      class="py-5"
+      class="py-5 flex-grow-0"
     >
       <v-col>
         <h1
@@ -26,73 +28,41 @@
         </h1>
       </v-col>
     </v-row>
-    <v-row
-      v-if="metrics"
-      class="white"
-      :style="`z-index: 5; ${
-        showMobileFilters
-          ? 'position: absolute; width: 95vw; display: flex; box-shadow: 0 5px 20px 5px #0005'
-          : $vuetify.breakpoint.smOnly
-          ? 'display: none'
-          : 'display: flex'
-      }`"
-    >
-      <v-col class="d-flex align-center">
-        <v-tooltip v-if="$vuetify.breakpoint.smAndUp" top>
-          <template #activator="{ on, attrs }">
-            <v-btn
-              icon
-              v-bind="attrs"
-              class="mr-3"
-              v-on="on"
-              @click="
-                () => {
-                  TOGGLE_EMPTY_ITEMS();
-                }
-              "
-            >
-              <v-icon>
-                {{
-                  showEmptyItems
-                    ? "mdi-archive-check-outline"
-                    : "mdi-archive-cancel-outline"
-                }}
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>
-            {{
-              showEmptyItems ? "Hide empty variables" : "Show empty variables"
-            }}
-          </span>
-        </v-tooltip>
-        <search-combobox
-          ref="searchBox"
-          embedded-mode
-          pagination-loop
-          class="my-4 flex-grow-1"
-          @searchQuery="handleSearchEmit"
-          @clearEvent="clearFilter"
-        />
+    <v-row class="white flex-grow-0">
+      <v-col cols="12">
+        <eox-itemfilter
+          class="row"
+          style="position: relative; z-index: 5"
+        ></eox-itemfilter>
       </v-col>
     </v-row>
-    <v-row class="mt-0 mt-md-3">
-      <v-col cols="12" class="pa-0 py-md-3">
-        <MetricsTable
-          v-if="metrics"
-          :filtered-products="filteredProducts"
-          :headers="metrics.summary.years"
-          :items="variables"
-          :table-zoom="tableZoom"
-        />
-        <v-progress-linear v-else indeterminate />
-      </v-col>
+    <v-row class="d-flex flex-grow-1" style="overflow: hidden">
+      <MetricsTable
+        v-if="metrics"
+        :aggregation-property="aggregationProperty"
+        :headers="Object.keys(metrics.years)"
+        :items="
+          Object.values(metrics[aggregationProperty])
+            .filter((i) =>
+              showEmptyItems ? true : Object.keys(i.products).length
+            )
+            .sort((a, b) => {
+              return a.name.localeCompare(b.name, 'en', {
+                sensitivity: 'base',
+              });
+            })
+        "
+        :table-zoom="tableZoom"
+        class="d-flex flex-grow-1"
+        style="max-height: 100%"
+      />
+      <v-progress-linear v-else indeterminate />
     </v-row>
-    <v-row>
+    <v-row class="flex-grow-0">
       <v-col v-if="metrics" cols="12" class="pa-2 pa-sm-1 pa-md-2">
         <v-container>
           <v-row align="center">
-            <v-col cols="6" class="py-2 py-sm-1 py-md-2">
+            <v-col cols="6" class="py-2 py-sm-1 py-md-2 d-flex">
               <v-dialog v-model="dialog" scrollable width="1000">
                 <template #activator="{ on, attrs }">
                   <v-btn
@@ -108,25 +78,58 @@
                   </v-btn>
                 </template>
                 <MetricsStatistics
-                  v-if="metrics && variables"
-                  :metrics="metrics"
-                  :variables="variables"
+                  v-if="metrics"
+                  :key="filteredMetrics.numberOfProducts"
+                  :metrics="filteredMetrics"
                   @close="dialog = false"
                 />
               </v-dialog>
-              <v-btn
-                v-if="$vuetify.breakpoint.smOnly"
-                text
-                @click="showMobileFilters = !showMobileFilters"
-              >
-                {{ showMobileFilters ? "hide" : "show" }} filters
-              </v-btn>
+              <v-select
+                v-if="metrics"
+                v-model="aggregationProperty"
+                dense
+                hide-details
+                class="ml-4 text-capitalize"
+                label="Aggregate by"
+                outlined
+                :items="
+                  Object.keys(metrics).filter(
+                    (m) => !['numberOfProducts', 'years'].includes(m)
+                  )
+                "
+              ></v-select>
             </v-col>
             <v-spacer />
             <v-col
               cols="6"
               class="d-flex align-center justify-end py-2 py-sm-1 py-md-2"
             >
+              <v-tooltip v-if="$vuetify.breakpoint.smAndUp" top>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    class="mr-3"
+                    v-on="on"
+                    @click="showEmptyItems = !showEmptyItems"
+                  >
+                    <v-icon>
+                      {{
+                        showEmptyItems
+                          ? "mdi-archive-check-outline"
+                          : "mdi-archive-cancel-outline"
+                      }}
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span>
+                  {{
+                    showEmptyItems
+                      ? `Hide empty ${aggregationProperty}`
+                      : `Show empty ${aggregationProperty}`
+                  }}
+                </span>
+              </v-tooltip>
               <v-slider
                 v-model="tableZoom"
                 hide-details
@@ -150,116 +153,148 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
-import MetricsStatistics from "@/components/MetricsStatistics.vue";
-
+import { mapActions } from "vuex";
 export default {
-  name: "MetricsPage",
-  components: {
-    MetricsStatistics,
-  },
-  data() {
-    return {
-      dialog: false,
-      filter: "",
-      metrics: null,
-      variables: [],
-      staticVariables: [],
-      tableZoom: 1,
-      showMobileFilters: false,
-      filteredProducts: [],
-    };
-  },
-  head: {
-    title: "Metrics",
-  },
-  computed: {
-    ...mapState(["showEmptyItems"]),
-    ...mapState("staticCatalog", ["missions", "summary", "themes"]),
-  },
+  data: () => ({
+    dialog: false,
+    aggregationProperty: "variables",
+    allAggregationItems: null,
+    items: null,
+    metrics: null,
+    tableZoom: 1,
+    showEmptyItems: false,
+    filteredMetrics: {},
+  }),
   watch: {
-    showEmptyItems(status) {
-      if (status === false) {
-        this.$refs.searchBox.filterProducts();
-        this.filterItems(true);
-      } else {
-        this.filterItems();
+    aggregationProperty() {
+      this.allAggregationItems = null;
+      const previousSetting = this.showEmptyItems;
+      this.showEmptyItems = null;
+      this.$nextTick(() => {
+        this.showEmptyItems = previousSetting;
+      });
+    },
+    showEmptyItems(activated) {
+      if (activated && !this.allAggregationItems) {
+        this.fetchAllAggregationItems(this.aggregationProperty);
       }
     },
+    metrics(newMetrics) {
+      this.filteredMetrics = newMetrics;
+    },
   },
-  mounted() {
-    this.filterItems(null);
+  async mounted() {
+    const items = await this.retreiveProducts();
+    const itemFilter = document.querySelector("eox-itemfilter");
+    itemFilter.config = {
+      titleProperty: "title",
+      filterProperties: [
+        { key: "theme" },
+        { key: "variable" },
+        { key: "project" },
+        { key: "eo-mission" },
+        { key: "region" },
+      ],
+      enableSearch: true,
+      // enableHighlighting: true,
+      // aggregateResults: "osc:variables",
+      showResults: false,
+      inlineMode: true,
+      fuseConfig: {
+        keys: [
+          "title",
+          "theme",
+          "variable",
+          "project",
+          "description",
+          "eo-mission",
+          "region",
+        ],
+        // threshold: 0.4,
+        // distance: 100,
+      },
+      onSearch: (items) => {
+        const metrics = this.createMetrics(items);
+        if (this.showEmptyItems) {
+          metrics[this.aggregationProperty] = {
+            ...this.allAggregationItems,
+            ...metrics[this.aggregationProperty],
+          };
+        }
+        this.metrics = metrics;
+      },
+      // externalSearch: (input, filters) => {
+      //     const base = 'https://resource-catalogue.testing.opensciencedata.esa.int/collections/metadata:main/items?type=collection&f=json'
+      //     if (filters) {
+      //       let filterString = ''
+      //       Object.keys(filters).forEach((filter) => Object.entries(filters[filter]).forEach(([key, value]) => {
+      //         if (value) {
+      //           filterString += `${filter.replace('s', '')}:${key}`
+      //         }
+      //       }))
+      //       console.log(filterString)
+      //       return `${base}&q=${input}&filter=keywords%20ILIKE%20%27%${filterString}%%27`
+      //     } else {
+      //       return `${base}&q=${input}`
+      //     }
+      //   }
+    };
+    itemFilter.apply(items);
+    this.metrics = this.createMetrics(items);
+    this.items = items;
   },
   methods: {
-    ...mapMutations(["TOGGLE_EMPTY_ITEMS"]),
-    ...mapActions("staticCatalog", ["retreiveMetrics"]),
-    handleSearchEmit(result) {
-      const filteredResults = [];
-      this.filteredProducts = result.items;
-      result.items.forEach((item) => {
-        item.properties.keywords.forEach((keyword) => {
-          if (keyword.substring(0, 9) === "variable:") {
-            filteredResults.push(keyword.substring(9, keyword.length));
-          }
-        });
-      });
-      const auxVar = this.staticVariables.filter((variable) => {
-        return filteredResults.find((result) => result === variable.name);
-      });
-
-      this.variables = auxVar;
-    },
-    clearFilter() {
-      this.variables = this.staticVariables;
-    },
-    async filterItems(silent) {
-      this.metrics = await this.retreiveMetrics();
-      const variables = [];
-
-      this.metrics.themes.forEach((theme) => {
-        theme.variables.forEach((variable) => {
-          variables.push(variable);
-        });
-      });
-      variables.sort((a, b) => {
-        return a.name.localeCompare(b.name, "en", { sensitivity: "base" });
-      });
-      if (!this.showEmptyItems) {
-        if (!silent) {
-          this.variables = [
-            ...variables.filter((v) => v.summary.numberOfProducts >= 1),
-          ];
-        }
-        this.staticVariables = [
-          ...variables.filter((v) => v.summary.numberOfProducts >= 1),
-        ];
-      } else {
-        if (!silent) {
-          this.variables = variables;
-        }
-        this.staticVariables = variables;
+    ...mapActions(["retreiveProducts"]),
+    async fetchAllAggregationItems(type) {
+      let allItems = {};
+      await this.$staticCatalog
+        .$get(`/${type}/catalog`)
+        .then((response) => {
+          response.links
+            .filter((l) => l.rel === "child")
+            .forEach((v) => {
+              const variableId = v.href.substring(
+                v.href.indexOf("./") + 2,
+                v.href.indexOf("/catalog.json")
+              );
+              allItems[variableId] = {
+                id: variableId,
+                name: v.title,
+                products: {},
+                years: {},
+              };
+            });
+        })
+        .catch((err) => console.error(err));
+      this.allAggregationItems = allItems;
+      const metrics = this.createMetrics(this.items);
+      if (this.showEmptyItems) {
+        metrics[this.aggregationProperty] = {
+          ...this.allAggregationItems,
+          ...metrics[this.aggregationProperty],
+        };
       }
+      this.metrics = metrics;
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-.v-tabs {
-  ::v-deep {
-    .v-tab {
-      min-width: 0;
-      text-transform: unset;
-      padding: 0 10px;
-      font-size: 80%;
-    }
-    .v-tabs-slider-wrapper {
-      transition: none;
-    }
-    .v-tabs-bar--is-mobile > .v-slide-group__prev,
-    .v-tabs-bar--is-mobile > .v-slide-group__next {
-      display: none !important;
-    }
-  }
+<style>
+eox-itemfilter::part(details-filter) {
+  background: #fff;
+  border-radius: 4px;
+  border: thin solid #0004;
+  line-height: 1.4;
+}
+eox-itemfilter::part(input-search) {
+  background: #fff;
+  border-radius: 4px;
+  border: thin solid #0004;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.v-list-item__title {
+  text-transform: capitalize;
 }
 </style>

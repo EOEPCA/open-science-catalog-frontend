@@ -90,7 +90,6 @@ export default {
       if (this.map && feature && feature.geometry) {
         const highlightFeature = this.vectorSource.getFeatureById(feature.id);
         highlightFeature.setStyle(this.highlightStyle);
-        console.log(highlightFeature.getGeometry().getExtent());
         this.map.getView().fit(highlightFeature.getGeometry().getExtent(), {
           padding: this.defaultPadding,
           duration: 500,

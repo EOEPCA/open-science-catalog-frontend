@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark style="overflow: hidden; height: 100vh">
     <v-navigation-drawer v-model="drawer" color="background" dark fixed app>
       <v-list class="pt-0">
         <div
@@ -22,7 +22,25 @@
           </v-list-item-content>
         </v-list-item>
 
-        <client-only>
+        <v-list-item
+          to="/catalog"
+          router
+          :class="{
+            'v-list-item--active':
+              $route.path.includes('/catalog') ||
+              $route.path.includes('/collection'),
+          }"
+          @click="catalogClick"
+        >
+          <v-list-item-action>
+            <v-icon>mdi-compass</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title> Catalog </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <!-- <client-only>
           <v-list-group
             v-if="$auth.loggedIn"
             prepend-icon="mdi-plus-circle-outline"
@@ -58,7 +76,7 @@
               <v-list-item-title> Status </v-list-item-title>
             </v-list-item>
           </v-list-group>
-        </client-only>
+        </client-only> -->
 
         <v-list-item to="/metrics" router exact>
           <v-list-item-action>
@@ -150,7 +168,7 @@
         <img :src="withBase('/img/ESA_Logo.svg')" />
       </a>
     </v-app-bar>
-    <v-main>
+    <v-main class="fill-height">
       <Nuxt />
     </v-main>
     <v-footer color="primary" dark fixed app class="justify-center">
@@ -205,6 +223,17 @@ export default {
   },
   computed: {
     ...mapState(["appVersion"]),
+  },
+  methods: {
+    catalogClick() {
+      const loadedIframe = document.querySelector("iframe#stacBrowser");
+      if (loadedIframe) {
+        // if the stac browser iframe is already shown, force a refresh
+        // allowing the user to return to catalog root on menu entry click
+        // eslint-disable-next-line no-self-assign
+        loadedIframe.src = loadedIframe.src;
+      }
+    },
   },
 };
 </script>

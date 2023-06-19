@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="overflow-y: auto; max-height: 100%">
     <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-0' : 'pa-2'">
       <v-row class="pt-5 pb-0">
         <v-col>
@@ -41,6 +41,7 @@
               label
               :color="$typeColor('theme')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/themes/catalog"
             >
               Themes </v-chip
             >,
@@ -50,6 +51,7 @@
               label
               :color="$typeColor('project')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/projects/catalog"
             >
               Projects </v-chip
             >,
@@ -59,6 +61,7 @@
               label
               :color="$typeColor('variable')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/variables/catalog"
             >
               Variables
             </v-chip>
@@ -69,15 +72,23 @@
               label
               :color="$typeColor('product')"
               class="mb-2 mb-sm-0 text-uppercase"
+              to="/products/catalog"
             >
               Products </v-chip
             >.
           </p>
           <p>
-            Choose a theme below to get started or access the
+            Choose a theme below to explore available products/projects or
+            programmatically access the catalog via the
             <a :href="$dynamicCatalog.defaults.baseURL" target="_blank"
               >API Documentation</a
             >!
+          </p>
+          <p>
+            To suggest changes and/or contribute to continuously growing number
+            of available products, you can
+            <router-link to="/login">register here</router-link>, and make your
+            contribution to the catalog!
           </p>
           <p>
             If you have any questions or feedback regarding Open Science
@@ -102,12 +113,16 @@
       <v-row justify="center" align="center" no-gutters>
         <v-col
           v-for="theme in themes"
-          :key="theme.name"
+          :key="theme.title"
           cols="12"
           md="4"
           class="pa-1"
         >
-          <nuxt-link :to="`/themes/${slugify(theme.name)}`">
+          <nuxt-link
+            :to="`/themes/${theme.href
+              .substring(theme.href.indexOf('/theme/'))
+              .replace('.json', '')}`"
+          >
             <div
               class="d-flex align-center elevation-2 rounded"
               style="
@@ -117,13 +132,9 @@
                 border-bottom: 0.25em solid rgb(51, 94, 111);
               "
             >
-              <v-img
-                :src="`${$staticCatalog.defaults.baseURL}/themes/${theme.image}`"
-                width="100%"
-                height="100%"
-              >
+              <v-img :src="theme.image" width="100%" height="100%">
                 <span class="h1 imageLabel elevation-2">
-                  {{ theme.name.replace("_", " ") }}
+                  {{ theme.title.replace("_", " ") }}
                 </span>
               </v-img>
             </div>
@@ -135,21 +146,37 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-
 export default {
   name: "IndexPage",
+  data: () => ({
+    themes: [],
+  }),
   head: {
     titleTemplate: "ESA Open Science Catalog",
   },
-  computed: {
-    ...mapState("staticCatalog", ["themes"]),
-  },
-  async created() {
-    await this.$store.dispatch("staticCatalog/retreiveMetrics");
-  },
-  methods: {
-    ...mapActions("staticCatalog", ["retreiveMetrics"]),
+  async mounted() {
+    const themes = await this.$staticCatalog.$get("/themes/catalog");
+    const themesLinks = themes.links.filter((l) => l.rel === "child");
+    for (let t of themesLinks) {
+      const i = await this.$axios.$get(
+        t.href.includes("./")
+          ? `${this.$staticCatalog.defaults.baseURL}/themes${t.href.replace(
+              "./",
+              "/"
+            )}`
+          : t.href
+      );
+      t.image = i.links.find((l) => l.rel === "preview").href;
+      if (t.image.includes("./")) {
+        t.image = t.image.replace(
+          "./",
+          `${this.$staticCatalog.defaults.baseURL}/themes${t.href
+            .replace("./", "/")
+            .replace("/catalog.json", "/")}`
+        );
+      }
+    }
+    this.themes = themesLinks;
   },
 };
 </script>
