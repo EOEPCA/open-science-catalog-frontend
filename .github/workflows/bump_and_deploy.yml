@@ -76,4 +76,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: eoepca/open-science-catalog-frontend
-          tags: "v${{ needs.bump-version.outputs.current-version }}-${{ github.head_ref || github.ref_name }}"
+          tags: "${{ needs.bump-version.outputs.current-version }}-${{ github.head_ref || github.ref_name }}"
