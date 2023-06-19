@@ -39,6 +39,7 @@
     <v-row class="d-flex flex-grow-1" style="overflow: hidden">
       <MetricsTable
         v-if="metrics"
+        :aggregation-property="aggregationProperty"
         :headers="Object.keys(metrics.years)"
         :items="
           Object.values(metrics[aggregationProperty])

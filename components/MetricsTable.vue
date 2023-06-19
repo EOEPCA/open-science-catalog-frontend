@@ -146,7 +146,7 @@
         <template #activator="{ on }">
           <nuxt-link
             style="cursor: pointer; font-size: 12px; text-decoration: none"
-            :to="`variables/${item.id}/catalog`"
+            :to="`${aggregationProperty}/${item.id}/catalog`"
             v-on="on"
           >
             {{ item.name }}
@@ -176,6 +176,10 @@ export default {
     Coverage,
   },
   props: {
+    aggregationProperty: {
+      type: String,
+      default: "variables",
+    },
     filteredProducts: {
       type: Array,
       default: () => [],
