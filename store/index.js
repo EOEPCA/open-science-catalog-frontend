@@ -50,7 +50,7 @@ export const actions = {
       .filter((i) => i["osc:type"] === "product")
       .map((i) => ({
         ...i,
-        theme: i.themes[0].concepts.map((c) => c.id),
+        theme: i["osc:themes"],
         variable: i["osc:variables"],
         project: i["osc:project"],
         "eo-mission": i["osc:missions"],
