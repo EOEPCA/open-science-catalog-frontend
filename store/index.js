@@ -55,6 +55,19 @@ export const actions = {
         project: i["osc:project"],
         "eo-mission": i["osc:missions"],
         region: i["osc:region"],
+        geometry: i.extent?.spatial?.bbox
+          ? {
+              type: "Polygon",
+              coordinates: [
+                [
+                  [i.extent.spatial.bbox[0][0], i.extent.spatial.bbox[0][1]],
+                  [i.extent.spatial.bbox[0][2], i.extent.spatial.bbox[0][1]],
+                  [i.extent.spatial.bbox[0][2], i.extent.spatial.bbox[0][3]],
+                  [i.extent.spatial.bbox[0][0], i.extent.spatial.bbox[0][3]],
+                ],
+              ],
+            }
+          : undefined,
       }))
       .sort((a, b) =>
         a.title.localeCompare(b.title, "en", {

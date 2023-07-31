@@ -9,7 +9,9 @@
         ? 'pa-0'
         : 'pa-4'
     "
-    style="height: 100%"
+    :style="`height: 100%; ${
+      $vuetify.breakpoint.smAndDown ? 'overflow-y: auto' : ''
+    }`"
   >
     <v-row
       v-if="
@@ -129,7 +131,8 @@ export default {
         { key: "variable" },
         { key: "project" },
         { key: "eo-mission" },
-        { key: "region" },
+        // { key: "region" },
+        { key: "geometry", type: "spatial" },
       ],
       enableSearch: true,
       // enableHighlighting: true,
@@ -194,5 +197,8 @@ eox-itemfilter::part(input-search) {
   border: thin solid #0004;
   font-size: 1rem;
   line-height: 1.7;
+}
+eox-itemfilter::part(spatial-filter-map) {
+  height: 300px;
 }
 </style>
