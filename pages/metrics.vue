@@ -187,34 +187,41 @@ export default {
     const items = await this.retreiveProducts();
     const itemFilter = document.querySelector("eox-itemfilter");
     itemFilter.config = {
+      inlineMode: true,
       titleProperty: "title",
       filterProperties: [
-        { key: "theme" },
-        { key: "variable" },
-        { key: "project" },
-        { key: "eo-mission" },
+        { id: "theme", key: "theme", title: "Theme" },
+        { id: "variable", key: "variable", title: "Variable" },
+        { id: "project", key: "project", title: "Project" },
+        { id: "mission", key: "eo-mission", title: "EO Mission" },
         // { key: "region" },
-        { key: "geometry", type: "spatial" },
+        { id: "geometry", key: "geometry", type: "spatial", title: "Geometry" },
+        {
+          id: "search",
+          keys: ["title", "themes"],
+          title: "Freetext search",
+          type: "text",
+        },
       ],
-      enableSearch: true,
+      // enableSearch: true,
       // enableHighlighting: true,
       // aggregateResults: "osc:variables",
       showResults: false,
-      inlineMode: true,
-      fuseConfig: {
-        keys: [
-          "title",
-          "theme",
-          "variable",
-          "project",
-          "description",
-          "eo-mission",
-          "region",
-        ],
-        // threshold: 0.4,
-        // distance: 100,
-      },
-      onSearch: (items) => {
+      // inlineMode: true,
+      // fuseConfig: {
+      //   keys: [
+      //     "title",
+      //     "theme",
+      //     "variable",
+      //     "project",
+      //     "description",
+      //     "eo-mission",
+      //     "region",
+      //   ],
+      //   // threshold: 0.4,
+      //   // distance: 100,
+      // },
+      onFilter: (items) => {
         const metrics = this.createMetrics(items);
         if (this.showEmptyItems) {
           metrics[this.aggregationProperty] = {
@@ -282,19 +289,6 @@ export default {
 </script>
 
 <style>
-eox-itemfilter::part(details-filter) {
-  background: #fff;
-  border-radius: 4px;
-  border: thin solid #0004;
-  line-height: 1.4;
-}
-eox-itemfilter::part(input-search) {
-  background: #fff;
-  border-radius: 4px;
-  border: thin solid #0004;
-  font-size: 1rem;
-  line-height: 1.7;
-}
 .v-list-item__title {
   text-transform: capitalize;
 }

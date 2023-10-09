@@ -127,51 +127,66 @@ export default {
     itemFilter.config = {
       titleProperty: "title",
       filterProperties: [
+        { key: "geometry", type: "spatial", title: "Region", expanded: true },
+        { keys: ["title", "themes"], title: "Search", type: "text" },
         { key: "theme" },
         { key: "variable" },
         { key: "project" },
         { key: "eo-mission" },
         // { key: "region" },
-        { key: "geometry", type: "spatial" },
       ],
-      enableSearch: true,
+      // enableSearch: true,
       // enableHighlighting: true,
       showResults: false,
       // aggregateResults: "osc:variables",
       // inlineMode: true,
-      fuseConfig: {
-        includeScore: true,
-        keys: [
-          "title",
-          "theme",
-          "variable",
-          "project",
-          "description",
-          "eo-mission",
-          "region",
-        ],
-        // threshold: 0.4,
-        // distance: 100,
-      },
-      onSearch: (items) => {
+      // fuseConfig: {
+      //   includeScore: true,
+      //   keys: [
+      //     "title",
+      //     "theme",
+      //     "variable",
+      //     "project",
+      //     "description",
+      //     "eo-mission",
+      //     "region",
+      //   ],
+      //   // threshold: 0.4,
+      //   // distance: 100,
+      // },
+      onFilter: (items) => {
         this.results = items;
         // this.aggregateItems(items);
       },
       // externalSearch: (input, filters) => {
-      //     const base = 'https://resource-catalogue.testing.opensciencedata.esa.int/collections/metadata:main/items?type=collection&f=json'
-      //     if (filters) {
-      //       let filterString = ''
-      //       Object.keys(filters).forEach((filter) => Object.entries(filters[filter]).forEach(([key, value]) => {
-      //         if (value) {
-      //           filterString += `${filter.replace('s', '')}:${key}`
-      //         }
-      //       }))
-      //       console.log(filterString)
-      //       return `${base}&q=${input}&filter=keywords%20ILIKE%20%27%${filterString}%%27`
-      //     } else {
-      //       return `${base}&q=${input}`
-      //     }
+      //   const base =
+      //     "https://resource-catalogue.staging.opensciencedata.esa.int/collections/metadata:main/items?type=collection&f=json";
+      //   if (filters) {
+      //     let filterString = "";
+      //     Object.keys(filters).forEach((filter) => {
+      //       if (filter !== "bbox") {
+      //         Object.entries(filters[filter])
+      //           .filter((k) => k[0] === "keys")
+      //           .forEach((filterItem) => {
+      //             Object.entries(filterItem[1]).forEach(([filterKey, filterValue]) => {
+      //               if (filterValue) {
+      //                 console.log(filter);
+      //                 console.log(filterKey);
+      //                 filterString += `${filter}:${filterKey.toLowerCase()}`;
+      //               }
+      //             });
+      //           });
+      //       }
+      //     });
+      //     return `${base}&q=${input}${
+      //       filterString.length > 0
+      //         ? `&filter=keywords%20ILIKE%20%27%${filterString}%%27`
+      //         : ""
+      //     }${filters.bbox?.bbox ? `&bbox=${filters.bbox.bbox}` : ""}`;
+      //   } else {
+      //     return `${base}&q=${input}`;
       //   }
+      // },
     };
     itemFilter.apply(items);
     // this.aggregateItems(items);
