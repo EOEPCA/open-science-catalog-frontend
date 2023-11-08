@@ -128,7 +128,7 @@ export default {
       titleProperty: "title",
       filterProperties: [
         { key: "geometry", type: "spatial", title: "Region", expanded: true },
-        { keys: ["title", "themes"], title: "Search", type: "text" },
+        { keys: ["title", "themes","variable"], title: "Search", type: "text" },
         { key: "theme" },
         { key: "variable" },
         { key: "project" },
