@@ -198,7 +198,7 @@ export default {
         { id: "geometry", key: "geometry", type: "spatial", title: "Geometry" },
         {
           id: "search",
-          keys: ["title", "themes","variable"],
+          keys: ["title", "themes", "variable"],
           title: "Freetext search",
           type: "text",
         },

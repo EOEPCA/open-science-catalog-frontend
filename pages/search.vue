@@ -46,13 +46,13 @@
       <v-col
         cols="12"
         md="3"
-        class="order-2 order-md-3"
+        class="fill-height order-2 order-md-3"
         style="position: relative"
       >
-        <v-row>
+        <v-row style="overflow-y: auto; max-height: 100%">
           <v-col cols="12">
             <eox-itemfilter
-              class="row mb-4"
+              class="row mb-4 fill-height"
               style="position: relative; z-index: 1"
             ></eox-itemfilter>
           </v-col>
@@ -128,7 +128,11 @@ export default {
       titleProperty: "title",
       filterProperties: [
         { key: "geometry", type: "spatial", title: "Region", expanded: true },
-        { keys: ["title", "themes","variable"], title: "Search", type: "text" },
+        {
+          keys: ["title", "themes", "variable"],
+          title: "Search",
+          type: "text",
+        },
         { key: "theme" },
         { key: "variable" },
         { key: "project" },
