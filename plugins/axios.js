@@ -7,8 +7,8 @@ export default function (
       staticBaseToReplace,
       dynamicEndpoint,
       backendEndpoint,
+      processingEndpoints,
     },
-    store,
   },
   inject
 ) {
@@ -60,22 +60,17 @@ export default function (
       return;
     }
     try {
-      const currentParams =
-        store.state.processing.processingEndpoints[0].auth.params;
+      const currentParams = processingEndpoints[0].auth.params;
       const params = new URLSearchParams();
       Object.keys(currentParams).forEach((param) => {
         params.append(param, currentParams[param]);
       });
-      const auth = await $axios.post(
-        store.state.processing.processingEndpoints[0].auth.url,
-        params,
-        {
-          headers: {
-            "Cache-Control": "no-cache",
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      const auth = await $axios.post(processingEndpoints[0].auth.url, params, {
+        headers: {
+          "Cache-Control": "no-cache",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
       processingBackend.setHeader("Accept", "application/json");
       processingBackend.setHeader("Content-Type", "application/json");
       processingBackend.setHeader("X-User-Id", auth.data.id_token);

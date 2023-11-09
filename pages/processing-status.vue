@@ -41,7 +41,7 @@
               color="primary"
               plain
               small
-              :href="`${processingEndpoints[0].root}${item.statusLink}`"
+              :href="`${$config.processingEndpoints[0].root}${item.statusLink}`"
               target="_blank"
               class="px-0"
             >
@@ -64,7 +64,9 @@
               target="_blank"
               class="px-0"
               @click="
-                fetchItem(`${processingEndpoints[0].root}${item.resultLink}`)
+                fetchItem(
+                  `${$config.processingEndpoints[0].root}${item.resultLink}`
+                )
               "
             >
               <v-icon small left> mdi-cloud-download-outline </v-icon>
@@ -84,8 +86,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
   data: () => ({
     jobs: null,
@@ -124,13 +124,10 @@ export default {
       },
     ],
   }),
-  computed: {
-    ...mapState("processing", ["processingEndpoints"]),
-  },
   async created() {
     try {
       const response = await this.$processingBackend.$get(
-        `/${this.processingEndpoints[0].id}/jobs`
+        `/${this.$config.processingEndpoints[0].id}/jobs`
       );
       this.jobs = response.jobs
         .map((job) => ({

@@ -88,7 +88,7 @@
           <v-stepper-content step="3">
             <v-autocomplete
               v-model="selectedEndpoint"
-              :items="processingEndpoints"
+              :items="$config.processingEndpoints"
               item-text="title"
               return-object
               outlined
@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   data: () => ({
@@ -189,9 +189,6 @@ export default {
     return {
       title: "New process",
     };
-  },
-  computed: {
-    ...mapState("processing", ["processingEndpoints"]),
   },
   watch: {
     selectedProcess(newProcess) {
