@@ -1,5 +1,6 @@
 <template>
   <div>
+    <item-grid :items="items" :show-empty-items="showEmptyItems" />
     <v-row>
       <v-col cols="12" class="text-center">
         <v-pagination
