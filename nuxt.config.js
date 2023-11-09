@@ -10,19 +10,19 @@ export default {
     devMode: process.env.NODE_ENV !== "production",
     staticEndpoint:
       process.env.STATIC_ENDPOINT ||
-      "https://metadata.testing.opensciencedata.esa.int/open-science-catalog-metadata-testing",
+      "https://metadata.staging.opensciencedata.esa.int/open-science-catalog-metadata-staging",
     staticBaseToReplace:
       process.env.STATIC_BASE_TO_REPLACE ||
-      "https://eoepca.github.io/open-science-catalog-metadata-testing",
+      "https://eoepca.github.io/open-science-catalog-metadata-staging",
     githubDataRoot:
       process.env.GITHUB_DATA_ROOT ||
-      "https://github.com/EOEPCA/open-science-catalog-metadata-testing/blob/main",
+      "https://github.com/EOEPCA/open-science-catalog-metadata-staging/blob/main",
     dynamicEndpoint:
       process.env.DYNAMIC_ENDPOINT ||
-      "https://resource-catalogue.testing.opensciencedata.esa.int",
+      "https://resource-catalogue.staging.opensciencedata.esa.int",
     backendEndpoint:
       process.env.BACKEND_ENDPOINT ||
-      "https://backend-api.testing.opensciencedata.esa.int",
+      "https://backend-api.staging.opensciencedata.esa.int",
     authEnabled: process.env.ENABLE_AUTH || true,
     auth: {
       strategies: {
