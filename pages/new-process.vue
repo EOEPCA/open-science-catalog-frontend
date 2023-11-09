@@ -56,7 +56,6 @@
                   selectedProcessDetails.$graph[0].inputs
                 )"
               >
-                <!-- <div v-if="input.title === 'Product'"></div> -->
                 <v-text-field
                   :key="inputId"
                   v-model="selectedParameters[inputId]"
@@ -81,20 +80,22 @@
           </v-stepper-content>
 
           <v-stepper-step :complete="currentStep > 3" step="3">
-            Select cloud<span v-if="selectedCloud" class="grey--text">
-              - {{ selectedCloud }}</span
+            Select cloud<span v-if="selectedEndpoint" class="grey--text">
+              - {{ selectedEndpoint.title }}</span
             >
           </v-stepper-step>
 
           <v-stepper-content step="3">
             <v-autocomplete
-              v-model="selectedCloud"
-              :items="['Space Applications Services', 'Terradue']"
+              v-model="selectedEndpoint"
+              :items="processingEndpoints"
+              item-text="title"
+              return-object
               outlined
             ></v-autocomplete>
             <v-btn
               color="primary"
-              :disabled="!selectedCloud"
+              :disabled="!selectedEndpoint"
               @click="currentStep++"
             >
               Continue
@@ -125,10 +126,9 @@
                 {{ selectedParameters[parameter] }}
               </li>
             </ul>
-            <p v-if="selectedProduct">
-              <strong>Product:</strong> {{ selectedProduct.properties.title }}
+            <p v-if="selectedEndpoint">
+              <strong>Cloud:</strong> {{ selectedEndpoint.title }}
             </p>
-            <p><strong>Cloud:</strong> {{ selectedCloud }}</p>
             <v-checkbox
               v-model="tosAgreed"
               label="I agree to the processing Terms of Service"
@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data: () => ({
@@ -178,14 +178,7 @@ export default {
     selectedProcess: null,
     selectedProcessDetails: {},
     selectedParameters: {},
-    products: [],
-    productsSearch: "",
-    productsFilterSortBy: "title",
-    productsFilterOrder: "Ascending",
-    page: 1,
-    numberOfPages: 1,
-    selectedProduct: null,
-    selectedCloud: null,
+    selectedEndpoint: null,
     tosAgreed: null,
     processingStarted: null,
     processingError: null,
@@ -197,16 +190,17 @@ export default {
       title: "New process",
     };
   },
+  computed: {
+    ...mapState("processing", ["processingEndpoints"]),
+  },
   watch: {
     selectedProcess(newProcess) {
       this.getProcessDetails(newProcess);
     },
   },
-  created() {},
   async mounted() {
-    this.filterProducts();
     try {
-      const result = await this.fetchApplications("metadata:main");
+      const result = await this.fetchApplications();
       if (result.features) {
         result.features.forEach((process) => {
           this.$set(this.availableProcesses, process.id, process);
@@ -215,39 +209,20 @@ export default {
     } catch (error) {
       console.error(error);
     }
-    const { process, product } = this.$route.query;
-    if (process && product) {
+    const { process } = this.$route.query;
+    if (process) {
       this.selectedProcess = process;
-      this.selectedProduct = { properties: { title: product } };
       this.currentStep = 3;
     }
   },
   methods: {
     ...mapActions("dynamicCatalog", ["fetchApplications"]),
-    filterProducts(init) {
-      if (typeof init === "number") {
-        this.page = init;
-      }
-      this.$nextTick(() => {
-        if (
-          this.productsFilterSortBy &&
-          this.productsFilterOrder &&
-          this.$refs.searchBox
-        ) {
-          this.$refs.searchBox.filterProducts(init);
-        }
-      });
-    },
-    handleSearchEmit(result) {
-      this.products = result.items;
-      this.numberOfPages = result.numberOfPages;
-    },
     async getProcessDetails(processId) {
       if (!this.availableProcesses[processId]?.inputs) {
         try {
           this.availableProcessesLoading = true;
           this.selectedProcessDetails = await this.$axios.$get(
-            `https://backend-api.staging.opensciencedata.esa.int/applications/${this.selectedProcess}`
+            `${this.$config.backendEndpoint}/applications/${this.selectedProcess}`
           );
           if (
             this.selectedProcessDetails &&
@@ -274,16 +249,11 @@ export default {
 
       try {
         await this.$processingBackend.$post(
-          `/processes/${this.selectedProcess}/execution`,
+          `/${this.selectedEndpoint.id}/processes/${this.selectedProcess}/execution`,
           {
             inputs: {
               ...this.selectedParameters,
             },
-            // outputs: {
-            //   wf_outputs: {
-            //     transmissionMode: "value",
-            //   },
-            // },
           }
         );
 

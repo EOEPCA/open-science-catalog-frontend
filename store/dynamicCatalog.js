@@ -18,10 +18,10 @@ export const actions = {
       return error;
     }
   },
-  async fetchApplications(_, { projectID, page }) {
+  async fetchApplications() {
     try {
       const response = await this.$dynamicCatalog.$get(
-        `/collections/${projectID}/items?type=application&offset=${page}`
+        `/collections/metadata:main/items?type=application`
       );
       return response;
     } catch (error) {

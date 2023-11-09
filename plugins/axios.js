@@ -8,6 +8,7 @@ export default function (
       dynamicEndpoint,
       backendEndpoint,
     },
+    store,
   },
   inject
 ) {
@@ -51,9 +52,7 @@ export default function (
   inject("metadataBackend", metadataBackend);
 
   const processingBackend = $axios.create();
-  processingBackend.setBaseURL(
-    `${backendEndpoint}/processing/eoepca-staging-spaceapplications`
-  );
+  processingBackend.setBaseURL(`${backendEndpoint}/processing`);
   // TEMP until this comes from the auth layer
   // TODO remove hardcoded auth info!
   processingBackend.onRequest(async (config) => {
@@ -61,14 +60,14 @@ export default function (
       return;
     }
     try {
+      const currentParams =
+        store.state.processing.processingEndpoints[0].auth.params;
       const params = new URLSearchParams();
-      params.append("scope", "openid user_name");
-      params.append("grant_type", "password");
-      params.append("username", "<user>");
-      params.append("password", "<pass>");
-      params.append("client_id", "asb-staging-client");
+      Object.keys(currentParams).forEach((param) => {
+        params.append(param, currentParams[param]);
+      });
       const auth = await $axios.post(
-        "https://auth.eoepca-staging.spaceapplications.com/realms/master/protocol/openid-connect/token",
+        store.state.processing.processingEndpoints[0].auth.url,
         params,
         {
           headers: {
