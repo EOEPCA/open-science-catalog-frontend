@@ -1,11 +1,5 @@
 <template>
   <div>
-    <item-grid
-      :items="items"
-      :show-empty-items="showEmptyItems"
-      :selection-mode="selectionMode"
-      @selectItem="(item) => $emit('selectItem', item)"
-    />
     <v-row>
       <v-col cols="12" class="text-center">
         <v-pagination
@@ -34,9 +28,6 @@ export default {
     numberOfPages: {
       type: Number,
       default: () => 1,
-    },
-    selectionMode: {
-      type: Boolean,
     },
   },
   data() {

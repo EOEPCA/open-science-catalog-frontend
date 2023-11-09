@@ -109,9 +109,6 @@ export default {
       type: Boolean,
       default: () => false,
     },
-    selectionMode: {
-      type: Boolean,
-    },
   },
   computed: {
     nonEmptyItems() {
