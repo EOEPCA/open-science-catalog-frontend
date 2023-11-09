@@ -63,15 +63,15 @@
             <v-btn text @click="navigateParent('/')"> Cancel </v-btn>
           </v-stepper-content>
 
-          <v-stepper-step :complete="currentStep > 2" step="2">
+          <!-- <v-stepper-step :complete="currentStep > 2" step="2">
             Select a product<span v-if="selectedProduct" class="grey--text">
               - {{ selectedProduct.properties.title }}</span
             >
           </v-stepper-step>
 
           <v-stepper-content step="2">
-            <template v-if="!selectedProduct">
-              <search-combobox
+            <template v-if="!selectedProduct"> -->
+              <!--<search-combobox
                 ref="searchBox"
                 embedded-mode
                 :current-page="page"
@@ -131,26 +131,25 @@
                     selectedProduct = item;
                   }
                 "
-              />
-            </template>
+              />-->
+            <!-- </template>
             <p v-else>
               {{ selectedProduct.properties.title }}
             </p>
             <v-btn
               color="primary"
-              :disabled="!selectedProduct"
               @click="currentStep++"
             >
               Continue
             </v-btn>
             <v-btn text @click="currentStep--"> Back </v-btn>
-          </v-stepper-content>
+          </v-stepper-content> -->
 
-          <v-stepper-step :complete="currentStep > 3" step="3">
+          <v-stepper-step :complete="currentStep > 2" step="2">
             Select Input parameters
           </v-stepper-step>
 
-          <v-stepper-content step="3">
+          <v-stepper-content step="2">
             <template v-if="selectedProcess && !availableProcessesLoading">
               <template
                 v-for="[inputId, input] in Object.entries(
@@ -159,7 +158,6 @@
               >
                 <!-- <div v-if="input.title === 'Product'"></div> -->
                 <v-text-field
-                  v-if="input.type === 'number' || input.type === 'string'"
                   :key="inputId"
                   v-model="selectedParameters[inputId]"
                   :label="input.label"
@@ -167,6 +165,7 @@
                   :placeholder="input.label"
                   :type="input.type"
                   outlined
+                  class="mt-2"
                 ></v-text-field>
               </template>
             </template>
@@ -181,13 +180,13 @@
             <v-btn text @click="currentStep--"> Back </v-btn>
           </v-stepper-content>
 
-          <v-stepper-step :complete="currentStep > 4" step="4">
+          <v-stepper-step :complete="currentStep > 3" step="3">
             Select cloud<span v-if="selectedCloud" class="grey--text">
               - {{ selectedCloud }}</span
             >
           </v-stepper-step>
 
-          <v-stepper-content step="4">
+          <v-stepper-content step="3">
             <v-autocomplete
               v-model="selectedCloud"
               :items="['Space Applications Services', 'Terradue']"
@@ -203,10 +202,10 @@
             <v-btn text @click="currentStep--"> Back </v-btn>
           </v-stepper-content>
 
-          <v-stepper-step step="5">
+          <v-stepper-step step="4">
             Review and start processing
           </v-stepper-step>
-          <v-stepper-content step="5">
+          <v-stepper-content step="4">
             <h1>Summary</h1>
             <p v-if="selectedProcess">
               <strong>Process:</strong>
@@ -306,7 +305,7 @@ export default {
       const result = await this.fetchApplications();
       if (result.features) {
         result.features.forEach((process) => {
-          this.availableProcesses[process.id] = process;
+          this.$set(this.availableProcesses, process.id, process);
         });
       }
     } catch (error) {
@@ -346,6 +345,13 @@ export default {
           this.selectedProcessDetails = await this.$axios.$get(
             `https://backend-api.staging.opensciencedata.esa.int/applications/${this.selectedProcess}`
           );
+          if (this.selectedProcessDetails && this.selectedProcessDetails.$graph[0].inputs) {
+            Object.entries(this.selectedProcessDetails.$graph[0].inputs).forEach(([inputId, input]) => {
+              if (input.default) {
+                this.selectedParameters[inputId] = input.default;
+              }
+            })
+          }
           this.availableProcessesLoading = false;
         } catch (error) {
           console.error(console.error);

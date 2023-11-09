@@ -62,13 +62,13 @@ export default function (
     }
     try {
       const params = new URLSearchParams();
-      params.append("scope", "openid user_name is_operator");
+      params.append("scope", "openid user_name");
       params.append("grant_type", "password");
-      params.append("username", "osc");
-      params.append("password", "OSCClientPassword!");
-      params.append("client_id", "eba82eb7-5cb0-4f5e-99ab-3830eef383e2");
+      params.append("username", "<user>");
+      params.append("password", "<pass>");
+      params.append("client_id", "asb-staging-client");
       const auth = await $axios.post(
-        "https://auth.eoepca-staging.spaceapplications.com/oxauth/restv1/token",
+        "https://auth.eoepca-staging.spaceapplications.com/realms/master/protocol/openid-connect/token",
         params,
         {
           headers: {

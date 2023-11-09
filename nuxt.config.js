@@ -16,7 +16,8 @@ export default {
       "https://eoepca.github.io/open-science-catalog-metadata-staging",
     githubDataRoot:
       process.env.GITHUB_DATA_ROOT ||
-      "https://github.com/EOEPCA/open-science-catalog-metadata-staging/tree/main/data",
+      //"https://github.com/EOEPCA/open-science-catalog-metadata-staging/tree/main/data",
+      "https://github.com/EOEPCA/open-science-catalog-metadata-staging/blob/main",
     dynamicEndpoint:
       process.env.DYNAMIC_ENDPOINT ||
       "https://resource-catalogue.staging.opensciencedata.esa.int",
