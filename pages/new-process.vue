@@ -217,7 +217,7 @@
                 v-for="parameter in Object.keys(selectedParameters)"
                 :key="parameter"
               >
-                {{ selectedProcessDetails.$graph[0].inputs[parameter].label }}:
+                <span v-if="selectedProcessDetails.$graph[0].inputs[parameter]">{{ selectedProcessDetails.$graph[0].inputs[parameter].label }}:</span>
                 {{ selectedParameters[parameter] }}
               </li>
             </ul>
