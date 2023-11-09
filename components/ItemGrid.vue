@@ -8,23 +8,13 @@
       md="4"
       lg="3"
     >
-      <v-card
-        :to="
-          selectionMode
-            ? null
-            : `/${getType(item)}s/${
-                getType(item) === 'variable'
-                  ? slugify(item.name)
-                  : $extractSlug(item)
-              }`
-        "
+      <!-- <v-card
+        :to="`/${getType(item)}s/${
+          getType(item) === 'variable' ? slugify(item.name) : $extractSlug(item)
+        }`"
         outlined
-        @click="
-          () => {
-            selectionMode ? $emit('selectItem', item) : null;
-          }
-        "
-      >
+      > -->
+      <v-card :to="`/${getType(item)}s/${item.id}/collection`" outlined>
         <v-card-title>
           <v-chip
             small
@@ -39,31 +29,28 @@
           <template v-if="getType(item) === 'project'">
             <div class="projectDate">
               <v-icon small> mdi-calendar-today </v-icon>
-              <small>{{ item.properties.start_datetime.split(" ")[0] }}</small>
+              <small>{{ item.start_datetime.split(" ")[0] }}</small>
               -
             </div>
             <div class="projectDate">
               <v-icon small> mdi-calendar </v-icon>
-              <small>{{ item.properties.end_datetime.split(" ")[0] }}</small>
+              <small>{{ item.end_datetime.split(" ")[0] }}</small>
             </div>
           </template>
         </v-card-title>
         <v-card-title class="text-subtitle-2 text-uppercase">
-          {{ getType(item) === "variable" ? item.name : item.properties.title }}
+          {{ getType(item) === "variable" ? item.name : item.title }}
         </v-card-title>
         <v-card-subtitle v-if="getType(item) === 'project'">
-          <span
-            v-for="consort in item.properties['osc:consortium']"
-            :key="consort"
-          >
+          <span v-for="consort in item['osc:consortium']" :key="consort">
             {{ consort }}
           </span>
         </v-card-subtitle>
         <v-card-text>
           <p v-if="getType(item) === 'project' || getType(item) === 'product'">
             {{
-              item.properties.description
-                ? `${item.properties.description.substring(0, 100)}...`
+              item.description
+                ? `${item.description.substring(0, 100)}...`
                 : "No description"
             }}
           </p>
@@ -86,12 +73,12 @@
           <div
             v-if="
               getType(item) === 'product' &&
-              item.properties.keywords.find((el) => el.includes('theme:'))
+              item.keywords.find((el) => el.includes('theme:'))
             "
             class="mt-2"
           >
             <v-chip
-              v-for="theme in item.properties.keywords.filter((el) =>
+              v-for="theme in item.keywords.filter((el) =>
                 el.includes('theme:')
               )"
               :key="theme"
@@ -143,15 +130,16 @@ export default {
   },
   methods: {
     getType(item) {
-      let type;
-      if (item.properties?.["osc:type"]) {
-        type = item.properties["osc:type"].toLowerCase();
-      } else if (item.properties?.type) {
-        type = item.properties.type === "dataset" ? "product" : "project";
-      } else {
-        type = "variable";
-      }
-      return type;
+      // let type;
+      // if (item.properties?.["osc:type"]) {
+      //   type = item.properties["osc:type"].toLowerCase();
+      // } else if (item.properties?.type) {
+      //   type = item.properties.type === "dataset" ? "product" : "project";
+      // } else {
+      //   type = "variable";
+      // }
+      // return type;
+      return item["osc:type"].toLowerCase();
     },
   },
 };

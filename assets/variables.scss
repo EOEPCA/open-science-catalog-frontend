@@ -28,6 +28,7 @@ $heading-font-family: "NotesESABold";
 .v-toolbar__title,
 .v-card__title,
 .v-tab,
-.v-chip {
+.v-chip,
+eox-itemfilter::part(details-filter) {
   font-family: $heading-font-family, sans-serif;
 }
