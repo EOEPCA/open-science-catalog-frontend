@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
-    "build:browser": "git clone https://github.com/A-Behairi/open-science-catalog-stac-browser.git && cd open-science-catalog-stac-browser && npm i && npm run build && cp -r dist/* ../static/stac-browser/&& cd .. && cp -r static/stac-browser-config.js static/stac-browser/config.js && rm -r open-science-catalog-stac-browser",
+    "build:browser": "git clone https://github.com/A-Behairi/open-science-catalog-stac-browser.git && cd open-science-catalog-stac-browser && npm i && npm run build && cp -r dist/* ../static/stac-browser/ && cd .. && cp -r static/stac-browser/stac-browser-config.js static/stac-browser/config.js && rm -r open-science-catalog-stac-browser",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint . --ext js,vue",

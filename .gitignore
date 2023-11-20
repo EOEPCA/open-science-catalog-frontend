@@ -2,6 +2,7 @@
 
 #stac-browser
 static/stac-browser/*
+!static/stac-browser/stac-browser-config.js
 
 ### Node template
 # Logs
