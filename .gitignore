@@ -1,4 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
+
+#stac-browser
+static/stac-browser/*
+
 ### Node template
 # Logs
 /logs

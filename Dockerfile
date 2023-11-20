@@ -1,4 +1,5 @@
 FROM node:16-alpine3.14
+RUN apk --no-cache add git
 
 ENV NUXT_VERSION=2.15.8
 
@@ -7,6 +8,7 @@ WORKDIR /app
 ADD . ./
 RUN : \
   && npm install \
+  && npm run build:browser \
   && npm run build --standalone \
   # && rm -rf node_modules \
   # && rm package.json \
