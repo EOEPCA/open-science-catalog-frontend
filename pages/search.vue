@@ -54,7 +54,9 @@
             <eox-itemfilter
               class="row mb-4 fill-height"
               style="position: relative; z-index: 1"
-            ></eox-itemfilter>
+            >
+              <span slot="filterstitle"><br /><br /></span>
+            </eox-itemfilter>
           </v-col>
         </v-row>
       </v-col>
