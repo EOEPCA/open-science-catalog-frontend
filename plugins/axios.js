@@ -7,6 +7,7 @@ export default function (
       staticBaseToReplace,
       dynamicEndpoint,
       backendEndpoint,
+      processingEndpoints,
     },
   },
   inject
@@ -49,4 +50,39 @@ export default function (
     }
   });
   inject("metadataBackend", metadataBackend);
+
+  const processingBackend = $axios.create();
+  processingBackend.setBaseURL(`${backendEndpoint}/processing`);
+  // TEMP until this comes from the auth layer
+  // TODO remove hardcoded auth info!
+  processingBackend.onRequest(async (config) => {
+    if (!app.$auth?.loggedIn) {
+      return;
+    }
+    try {
+      const currentParams = processingEndpoints[0].auth.params;
+      const params = new URLSearchParams();
+      Object.keys(currentParams).forEach((param) => {
+        params.append(param, currentParams[param]);
+      });
+      const auth = await $axios.post(processingEndpoints[0].auth.url, params, {
+        headers: {
+          "Cache-Control": "no-cache",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+      processingBackend.setHeader("Accept", "application/json");
+      processingBackend.setHeader("Content-Type", "application/json");
+      processingBackend.setHeader("X-User-Id", auth.data.id_token);
+      processingBackend.setHeader(
+        "Authorization",
+        `Bearer ${auth.data.id_token}`
+      );
+      processingBackend.setHeader("Prefer", `respond-async`);
+    } catch (error) {
+      console.error(error);
+    }
+    return config;
+  });
+  inject("processingBackend", processingBackend);
 }

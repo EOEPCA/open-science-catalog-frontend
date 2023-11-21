@@ -18,4 +18,14 @@ export const actions = {
       return error;
     }
   },
+  async fetchApplications() {
+    try {
+      const response = await this.$dynamicCatalog.$get(
+        `/collections/metadata:main/items?type=application`
+      );
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
 };
