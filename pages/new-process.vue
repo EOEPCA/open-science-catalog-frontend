@@ -200,28 +200,18 @@ export default {
       const result = await this.fetchApplications();
       if (result.features) {
         result.features.forEach((process) => {
+          console.log(process);
           this.$set(this.availableProcesses, process.id, process);
         });
       }
     } catch (error) {
       console.error(error);
     }
-    const { process,title } = this.$route.query;
+    const { process } = this.$route.query;
     if (process) {
       this.selectedProcess = process;
+      console.log(this.selectedProcess);
       this.currentStep = 3;
-    }
-    if (title) {
-      this.selectedProcess = Object.keys(this.availableProcesses).find(key=>{
-        if(this.availableProcesses[key].properties.title.toLowerCase() == title.replaceAll('%20',' ').toLowerCase()){
-        return key
-      }
-    })
-      if (this.selectedProcess) {
-        this.currentStep = 3;
-      }else{
-        console.error('no process found')
-      }
     }
   },
   methods: {
