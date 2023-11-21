@@ -1,5 +1,8 @@
 <template>
-  <v-container :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'">
+  <v-container
+    :class="$vuetify.breakpoint.lgAndUp ? 'px-15 pt-8' : 'pa-4'"
+    style="max-height: 100%; overflow-y: auto"
+  >
     <v-row>
       <v-col cols="12">
         <nuxt-content :document="parsedContent" />
