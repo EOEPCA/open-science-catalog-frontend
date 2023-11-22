@@ -1,3 +1,4 @@
 window.STAC_BROWSER_CONFIG = {
-  catalogUrl:process.env.STATIC_ENDPOINT
+  //check dockerfile and docker-entry.sh before editing
+  catalogUrl: process.env.STATIC_ENDPOINT
 }

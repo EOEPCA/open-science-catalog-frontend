@@ -17,9 +17,7 @@ export default {
     firstLoadDone: false,
   }),
   mounted() {
-    this.iframeSrc = `/stac-browser/?external=${this.prepareEndpoint(
-      this.$config.staticEndpoint
-    )}${this.$route.path}.json`;
+    this.iframeSrc = `/stac-browser`;
     window.addEventListener("message", (evt) => {
       if (evt.data && evt.data.navigate && this.firstLoadDone) {
         const stringToReplace = `/external/${this.prepareEndpoint(
