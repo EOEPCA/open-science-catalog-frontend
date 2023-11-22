@@ -15,7 +15,7 @@ ENV NUXT_VERSION=2.15.8
 WORKDIR /app
 
 ADD . ./
-COPY --from=browser /open-science-catalog-stac-browser/dist/* /static/stac-browser/
+COPY --from=browser /open-science-catalog-stac-browser/dist/ static/stac-browser/
 COPY  static/stac-browser/stac-browser-config.js static/stac-browser/config.js
 
 RUN : \
@@ -26,8 +26,8 @@ RUN : \
   # && npm install "nuxt-start@${NUXT_VERSION}" \
   && npm cache clean –force \
   && :
-
+RUN chmod +x ./docker-entrypoint.sh
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
 EXPOSE 3000
-ENTRYPOINT ["npx", "nuxt", "start"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
