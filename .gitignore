@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 
 #stac-browser
+open-science-catalog-stac-browser
 static/stac-browser/*
 !static/stac-browser/stac-browser-config.js
 

@@ -1,7 +1,7 @@
 FROM node:16-alpine3.14 as browser
 RUN apk --no-cache add git
 
-RUN git clone https://github.com/A-Behairi/open-science-catalog-stac-browser.git
+RUN git clone https://github.com/EOEPCA/open-science-catalog-stac-browser.git
 WORKDIR /open-science-catalog-stac-browser
 RUN \
 npm i \
