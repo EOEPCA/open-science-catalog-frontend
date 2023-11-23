@@ -1,4 +1,4 @@
-name: Bump version and static deploy
+name: Bump version
 
 on:
   push:
@@ -6,8 +6,11 @@ on:
       - "dev"
 
 jobs:
-  bump-and-deploy:
+  bump-version:
     runs-on: ${{ matrix.os }}
+
+    outputs:
+      current-version: ${{ steps.version-bump.outputs.newTag }}
 
     strategy:
       matrix:
@@ -21,13 +24,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup node env 🏗
-        uses: actions/setup-node@v3.1.0
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
 
       - name: Cache node_modules 📦
-        uses: actions/cache@v3.0.1
+        uses: actions/cache@v3.3.1
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -55,12 +58,3 @@ jobs:
         env:
           NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
         run: echo "new tag $NEW_TAG"
-
-      - name: Generate ⚙️
-        run: ROUTER_BASE=/${{ github.event.repository.name }}/ BUILD_MODE=STATIC NODE_ENV=development npm run generate
-
-      - name: Deploy 🚀
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist

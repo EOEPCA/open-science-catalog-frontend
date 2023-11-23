@@ -1,9 +1,6 @@
-name: Build and push Docker Image
+name: Build and push Docker Image for branches for development
 
-on:
-  push:
-    branches:
-      - "main"
+on: workflow_dispatch
 
 jobs:
   push_to_registry:
@@ -18,10 +15,10 @@ jobs:
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v1
         with:
           path: ./
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: eoepca/open-science-catalog-frontend
-          tags: "v${{ steps.package-version.outputs.current-version }}"
+          tags: "v${{ steps.package-version.outputs.current-version }}-${{ github.head_ref || github.ref_name }}"

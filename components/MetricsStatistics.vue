@@ -14,13 +14,7 @@
     <v-card-text class="py-4 black--text px-0 px-md-6">
       <v-container>
         <div class="d-flex mx-6">
-          <span
-            >Number of projects: {{ metrics.summary.numberOfProjects }}</span
-          >
-          <v-spacer />
-          <span
-            >Number of products: {{ metrics.summary.numberOfProducts }}</span
-          >
+          <span>Number of products: {{ metrics.numberOfProducts }}</span>
         </div>
 
         <div style="text-align: center" class="ma-6">Temporal coverage</div>
@@ -37,8 +31,8 @@
               <strong>Variable list</strong>
               <v-list dense style="max-height: 400px" class="overflow-y-auto">
                 <v-list-item
-                  v-for="variable in nonEmptyVariables"
-                  :key="variable.id"
+                  v-for="variable in sortedVariables"
+                  :key="variable.name"
                   class="px-0"
                 >
                   <v-list-item-icon class="mr-2">
@@ -46,7 +40,7 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     {{ variable.name }}:
-                    {{ variable.summary.numberOfProducts }} products
+                    {{ Object.keys(variable.products).length }} products
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
@@ -83,7 +77,7 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   {{ mission.name }}:
-                  {{ mission.summary.numberOfProducts }} products
+                  {{ Object.keys(mission.products).length }} products
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -133,12 +127,11 @@ export default {
     };
   },
   computed: {
-    nonEmptyVariables() {
-      return this.variables
-        .filter((variable) => variable.summary.numberOfProducts > 0)
-        .sort(
-          (a, b) => b.summary.numberOfProducts - a.summary.numberOfProducts
-        );
+    sortedVariables() {
+      return Object.values(this.metrics.variables).sort(
+        (a, b) =>
+          Object.keys(b.products).length - Object.keys(a.products).length
+      );
     },
   },
   mounted() {
@@ -157,29 +150,15 @@ export default {
   },
   methods: {
     async fetchVariables() {
-      // chart breaks if this is removed :D
-      await this.$staticCatalog.$get("/metrics");
-
-      // Number of products bar chart setup
-      const productsDataset = {};
-      this.variables.forEach((product) => {
-        product.summary.years.forEach((year) => {
-          if (productsDataset[year]) {
-            productsDataset[year] += 1;
-          } else {
-            productsDataset[year] = 1;
-          }
-        });
-      });
-
+      // here lied a useless line of code that broke the chart if deleted, today we don't need it anymore 🎉
       this.productsChart = new Chart(document.getElementById("productsChart"), {
         type: "bar",
         data: {
-          labels: this.metrics.summary.years,
+          labels: Object.keys(this.metrics.years),
           datasets: [
             {
               label: "Number of products",
-              data: Object.values(productsDataset),
+              data: Object.values(this.metrics.years),
               backgroundColor: [this.$vuetify.theme.themes.light.applications],
               borderWidth: 1,
             },
@@ -196,8 +175,8 @@ export default {
 
       // Variable distribution doughnut chart setup
       const variableDataset = {};
-      this.nonEmptyVariables.forEach((item) => {
-        variableDataset[item.name] = item.summary.numberOfProducts;
+      this.sortedVariables.forEach((item) => {
+        variableDataset[item.name] = Object.keys(item.products).length;
       });
       let sortedVariables = Object.values(variableDataset);
       sortedVariables = sortedVariables.sort((a, b) => {
@@ -209,7 +188,7 @@ export default {
         type: "doughnut",
         data: {
           id: "variablePie",
-          labels: Object.keys(variableDataset),
+          labels: Object.keys(this.metrics.variables),
           datasets: [
             {
               data: sortedVariables,
@@ -250,18 +229,20 @@ export default {
       });
 
       // Satellite mission doughnut chart setup
-      this.sortedMissions = [...this.metrics.missions].sort((a, b) => {
-        if (a.summary.numberOfProducts < b.summary.numberOfProducts) {
+      this.sortedMissions = [
+        ...Object.values(this.metrics["eo-missions"]),
+      ].sort((a, b) => {
+        if (Object.keys(a.products).length < Object.keys(b.products).length) {
           return 1;
         }
-        if (a.summary.numberOfProducts > b.summary.numberOfProducts) {
+        if (Object.keys(a.products).length > Object.keys(b.products).length) {
           return -1;
         }
         return 0;
       });
       const missionDataset = {};
       this.sortedMissions.forEach((mission) => {
-        missionDataset[mission.name] = mission.summary.numberOfProducts;
+        missionDataset[mission.name] = Object.keys(mission.products).length;
       });
       const missionLabels = Object.values(missionDataset);
 
@@ -373,7 +354,7 @@ export default {
             variablesNumberLabel
               ? `${(
                   (variablesNumberLabel * 100) /
-                  this.metrics.summary.numberOfProducts
+                  this.metrics.numberOfProducts
                 ).toFixed(2)}%`
               : "",
             width / 2,

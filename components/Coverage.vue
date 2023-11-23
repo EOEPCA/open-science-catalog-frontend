@@ -25,9 +25,7 @@
         </v-icon>
         <span
           >{{
-            products.length === 1
-              ? products[0].properties.title
-              : variable && variable.name
+            products.length === 1 ? products[0].name : variable && variable.name
           }}
           Coverage</span
         >
@@ -47,7 +45,11 @@
                 <v-subheader class="px-0"> Products </v-subheader>
                 <v-divider />
                 <v-list-item
-                  v-for="product in products"
+                  v-for="product in [...products].sort((a, b) => {
+                    return a.name.localeCompare(b.name, 'en', {
+                      sensitivity: 'base',
+                    });
+                  })"
                   :key="product.id"
                   class="px-0"
                   style="cursor: pointer"
@@ -55,23 +57,21 @@
                   @mouseleave="currentHighlight = null"
                 >
                   <v-list-item-content>
-                    <v-list-item-title>{{
-                      product.properties.title
-                    }}</v-list-item-title>
+                    <v-list-item-title>{{ product.name }}</v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action class="flex-row">
                     <v-btn
                       v-if="variable"
                       icon
                       color="primary"
-                      :disabled="!product.geometry"
+                      :disabled="!product.coverage"
                     >
                       <v-icon>mdi-map-marker</v-icon>
                     </v-btn>
                     <v-btn
                       icon
                       color="primary"
-                      :to="`/products/${$extractSlug(product)}`"
+                      :to="`/products/${product.id}/collection`"
                       target="_blank"
                     >
                       <v-icon>mdi-open-in-new</v-icon>
@@ -82,19 +82,19 @@
               <template v-else-if="products[0]">
                 <div><strong>Name</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties.title }}
+                  {{ products[0].name }}
                 </div>
                 <div><strong>Region</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties["osc:region"] }}
+                  {{ products[0].region }}
                 </div>
                 <div><strong>Satellite missions</strong></div>
                 <div class="mb-2">
-                  {{ products[0].properties["osc:missions"].join(", ") }}
+                  {{ products[0].missions.join(", ") }}
                 </div>
                 <div><strong>BBOX</strong></div>
                 <div class="mb-2">
-                  {{ products[0].bbox }}
+                  {{ products[0].coverage }}
                 </div>
               </template>
             </v-col>
@@ -103,8 +103,10 @@
                 <CoverageMap
                   v-if="products"
                   ref="map"
-                  :features="products"
-                  :highlight="currentHighlight"
+                  :features="products.map((product) => createGeometry(product))"
+                  :highlight="
+                    currentHighlight ? createGeometry(currentHighlight) : null
+                  "
                 />
               </client-only>
             </v-col>
@@ -158,6 +160,27 @@ export default {
           this.$emit("loadProducts");
         }
       }
+    },
+  },
+  methods: {
+    createGeometry(product) {
+      return {
+        ...product,
+        geometry: {
+          bbox: product.coverage[0],
+          coordinates: [
+            [
+              [product.coverage[0][0], product.coverage[0][1]],
+              [product.coverage[0][2], product.coverage[0][1]],
+              [product.coverage[0][2], product.coverage[0][3]],
+              [product.coverage[0][0], product.coverage[0][3]],
+              [product.coverage[0][0], product.coverage[0][1]],
+            ],
+          ],
+          type: "Polygon",
+        },
+        type: "Feature",
+      };
     },
   },
 };
