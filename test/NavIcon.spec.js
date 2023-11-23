@@ -25,6 +25,7 @@ describe("DefaultLayout", () => {
         $dynamicCatalog: { defaults: { baseURL: "#" } },
         $auth: { loggedIn: true, user: { name: "FooBar" } },
         $config: {},
+        $route: { path: "/home" },
       },
       localVue,
       store: mockStore,
