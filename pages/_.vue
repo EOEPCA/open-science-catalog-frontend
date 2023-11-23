@@ -17,16 +17,14 @@ export default {
     firstLoadDone: false,
   }),
   mounted() {
-    this.iframeSrc = `/stac-browser`;
+    this.iframeSrc = `/stac-browser/${this.$route.hash}`;
     window.addEventListener("message", (evt) => {
       if (evt.data && evt.data.navigate && this.firstLoadDone) {
-        const stringToReplace = `/external/${this.prepareEndpoint(
-          this.$config.staticEndpoint
-        )}`;
-        const parsedPath = evt.data.navigate
-          .replace(stringToReplace, "")
-          .replace(".json", "");
-        history.replaceState({}, null, parsedPath);
+        const path =
+          this.$route.path.at(-1) == "/"
+            ? this.$route.path.slice(0, -1)
+            : this.$route.path;
+        history.replaceState({}, null, `${path}/#${evt.data.navigate}`);
       } else {
         this.firstLoadDone = true;
       }
