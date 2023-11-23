@@ -1,4 +1,4 @@
-name: Bump version and Build and push Docker image to Docker Hub
+name: Bump version
 
 on:
   push:
