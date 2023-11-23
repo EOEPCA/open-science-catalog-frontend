@@ -17,14 +17,16 @@ export default {
     firstLoadDone: false,
   }),
   mounted() {
-    this.iframeSrc = `/stac-browser/${this.$route.hash}`;
+    this.iframeSrc = this.stacBrowserPath(this.$route.fullPath);
+
     window.addEventListener("message", (evt) => {
       if (evt.data && evt.data.navigate && this.firstLoadDone) {
-        const path =
-          this.$route.path.at(-1) == "/"
-            ? this.$route.path.slice(0, -1)
-            : this.$route.path;
-        history.replaceState({}, null, `${path}/#${evt.data.navigate}`);
+        const innerPath = evt.data.navigate.replace(".json", "");
+        history.replaceState(
+          {},
+          null,
+          `${innerPath.length > 1 ? innerPath : "/catalog"}`
+        );
       } else {
         this.firstLoadDone = true;
       }
@@ -33,6 +35,10 @@ export default {
   methods: {
     prepareEndpoint(src) {
       return src.replace("https://", "").replace("http://", "");
+    },
+    stacBrowserPath(path) {
+      let hashPath = path.length > 1 ? path + ".json" : "";
+      return `/stac-browser/#${hashPath}`;
     },
   },
 };
