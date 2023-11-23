@@ -1,4 +1,4 @@
-name: [Dev] Build and push Docker Image for branches
+name: Build and push Docker Image for branches for development
 
 on: workflow_dispatch
 
