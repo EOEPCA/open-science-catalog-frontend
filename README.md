@@ -33,37 +33,48 @@ These endpoints are primarily used within the application [central store](./stor
 ## Development Setup
 
 ### Install dependencies
+
 ```bash
 $ npm install
 ```
-### Build and configure [Open Science Catalog STAC-Browser](https://github.com/EOEPCA/open-science-catalog-stac-browser) locally
-find STAC-Browser [runtime configuration](https://github.com/radiantearth/stac-browser/blob/v3.1.0-rc.1/docs/options.md) in
-`static/stac-browser/config.js` 
+
+### Build and configure [Open Science Catalog STAC Browser](https://github.com/EOEPCA/open-science-catalog-stac-browser) locally
+
+Find STAC Browser [runtime configuration](https://github.com/radiantearth/stac-browser/blob/v3.1.0-rc.1/docs/options.md) in
+`static/stac-browser/config.js`
+
 ```bash
 $ npm run build:browser
 ```
+
 ### Serve with hot reload at localhost:3000
+
 ```bash
 $ npm run dev
 ```
 
 ### Build for production and launch server
+
 ```bash
 $ npm run build
 $ npm run start
 ```
 
 ### Generate static project
+
 ```bash
 $ npm run generate
 ```
 
 ### Lint
+
 ```bash
 $ npm run lint #linting only
 $ npm run lint:fix #lint and fix
 ```
+
 ### Test
+
 ```bash
 $ npm run test
 ```
