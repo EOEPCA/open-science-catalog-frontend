@@ -17,18 +17,16 @@ export default {
     firstLoadDone: false,
   }),
   mounted() {
-    this.iframeSrc = `/stac-browser/?external=${this.prepareEndpoint(
-      this.$config.staticEndpoint
-    )}${this.$route.path}.json`;
+    this.iframeSrc = this.stacBrowserPath(this.$route.fullPath);
+
     window.addEventListener("message", (evt) => {
       if (evt.data && evt.data.navigate && this.firstLoadDone) {
-        const stringToReplace = `/external/${this.prepareEndpoint(
-          this.$config.staticEndpoint
-        )}`;
-        const parsedPath = evt.data.navigate
-          .replace(stringToReplace, "")
-          .replace(".json", "");
-        history.replaceState({}, null, parsedPath);
+        const innerPath = evt.data.navigate.replace(".json", "");
+        history.replaceState(
+          {},
+          null,
+          `${innerPath.length > 1 ? innerPath : "/catalog"}`
+        );
       } else {
         this.firstLoadDone = true;
       }
@@ -37,6 +35,10 @@ export default {
   methods: {
     prepareEndpoint(src) {
       return src.replace("https://", "").replace("http://", "");
+    },
+    stacBrowserPath(path) {
+      let hashPath = path.length > 1 ? path + ".json" : "";
+      return `/stac-browser/#${hashPath}`;
     },
   },
 };
