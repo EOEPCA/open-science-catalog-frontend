@@ -19,18 +19,19 @@ jobs:
 
     steps:
       - name: Checkout 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup node env 🏗
-        uses: actions/setup-node@v3.1.0
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: ${{ matrix.node }}
           check-latest: true
 
       - name: Cache node_modules 📦
         uses: actions/cache@v3.3.2
+
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
