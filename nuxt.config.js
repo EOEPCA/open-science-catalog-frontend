@@ -163,7 +163,7 @@ export default {
         },
       }),
     ],
-    transpile: ["@eox/itemfilter", "@eox/map",'ol/renderer/webgl/PointsLayer'],
+    transpile: ["@eox/itemfilter", "@eox/map","ol"],
   },
 
   auth: {
