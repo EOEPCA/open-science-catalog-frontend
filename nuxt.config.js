@@ -163,7 +163,7 @@ export default {
         },
       }),
     ],
-    transpile: ["@eox/itemfilter", "@eox/map"],
+    transpile: ["@eox/itemfilter", "@eox/map", "ol"],
   },
 
   auth: {
