@@ -174,6 +174,7 @@ export default {
       "ol/format/Feature",
       "ol/expr/gpu",
       "ol/style/RegularShape",
+      "marked/lib/marked",
     ],
   },
 
