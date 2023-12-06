@@ -1,7 +1,7 @@
 {
   "name": "open-science-catalog-frontend",
   "author": "EOX-A",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -16,7 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@eox/itemfilter": "^0.10.1",
+    "@eox/itemfilter": "^0.11.1",
     "@eox/map": "^0.2.0",
     "@nuxt/content": "^1.15.1",
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
@@ -27,9 +27,9 @@
     "marked": "^4.3.0",
     "md5": "^2.3.0",
     "nuxt": "^2.15.8",
-    "ol": "^7.1.0",
+    "ol": "^8.2.0",
     "vue": "^2.7.14",
-    "vue-server-renderer": "^2.7.14",
+    "vue-server-renderer": "^2.7.15",
     "vue-template-compiler": "^2.7.14",
     "vuetify": "^2.7.1",
     "webpack": "^4.46.0"
