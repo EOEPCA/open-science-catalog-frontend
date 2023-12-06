@@ -13,12 +13,12 @@ jobs:
 
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v5
         with:
           path: ./
           username: ${{ secrets.DOCKER_USERNAME }}
