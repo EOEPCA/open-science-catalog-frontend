@@ -163,7 +163,18 @@ export default {
         },
       }),
     ],
-    transpile: ["@eox/itemfilter", "@eox/map"],
+    transpile: [
+      "@eox/itemfilter",
+      "@eox/map",
+      "color-parse",
+      "ol/renderer/webgl/PointsLayer",
+      "ol/structs/LRUCache",
+      "ol/style/Style",
+      "ol/geom/LineString",
+      "ol/format/Feature",
+      "ol/expr/gpu",
+      "ol/style/RegularShape",
+    ],
   },
 
   auth: {
