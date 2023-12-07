@@ -173,7 +173,7 @@ export default {
       "ol/expr/gpu",
       "ol/style/RegularShape",
       "marked/lib/marked",
-      "chart.js"
+      "chart.js",
     ],
   },
 
