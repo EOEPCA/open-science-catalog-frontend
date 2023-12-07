@@ -21,10 +21,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: .
-          load: true
-          tags: "v${{ steps.package-version.outputs.current-version }}-${{ github.head_ref || github.ref_name }}"
+          push: true
+          tags: "eoepca/open-science-catalog-frontend:v${{ steps.package-version.outputs.current-version }}-${{ github.head_ref || github.ref_name }}"
