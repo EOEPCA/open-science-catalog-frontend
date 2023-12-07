@@ -1,4 +1,4 @@
-FROM node:16-alpine3.14 as browser
+FROM node:20-alpine3.18 as browser
 RUN apk --no-cache add git
 
 RUN git clone https://github.com/EOEPCA/open-science-catalog-stac-browser.git
@@ -9,7 +9,7 @@ npm i \
 
 
 
-FROM node:16-alpine3.14
+FROM node:20-alpine3.18
 ENV NUXT_VERSION=2.15.8
 
 WORKDIR /app
