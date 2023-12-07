@@ -117,8 +117,6 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/typescript
-    "@nuxt/typescript-build",
     // https://go.nuxtjs.dev/vuetify
     "@nuxtjs/vuetify",
   ],
@@ -175,6 +173,7 @@ export default {
       "ol/expr/gpu",
       "ol/style/RegularShape",
       "marked/lib/marked",
+      "chart.js"
     ],
   },
 
