@@ -117,8 +117,6 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    // https://go.nuxtjs.dev/typescript
-    "@nuxt/typescript-build",
     // https://go.nuxtjs.dev/vuetify
     "@nuxtjs/vuetify",
   ],
@@ -163,7 +161,20 @@ export default {
         },
       }),
     ],
-    transpile: ["@eox/itemfilter", "@eox/map"],
+    transpile: [
+      "@eox/itemfilter",
+      "@eox/map",
+      "color-parse",
+      "ol/renderer/webgl/PointsLayer",
+      "ol/structs/LRUCache",
+      "ol/style/Style",
+      "ol/geom/LineString",
+      "ol/format/Feature",
+      "ol/expr/gpu",
+      "ol/style/RegularShape",
+      "marked/lib/marked",
+      "chart.js",
+    ],
   },
 
   auth: {
