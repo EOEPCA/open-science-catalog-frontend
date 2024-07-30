@@ -52,6 +52,10 @@
         <v-row style="overflow-y: auto; max-height: 100%">
           <v-col cols="12">
             <eox-itemfilter
+              v-show="results"
+              :filterProperties.prop="filterProperties"
+              :showResults.prop="false"
+              :items.prop="items"
               class="row mb-4 fill-height"
               style="position: relative; z-index: 1"
             >
@@ -122,82 +126,35 @@ export default {
     // years: [],
     items: null,
     results: null,
+    filterProperties: [
+      {
+        key: "geometry",
+        type: "spatial",
+        title: "Region",
+        expanded: true,
+      },
+      {
+        keys: ["title", "themes", "variable"],
+        title: "Freetext search",
+        placeholder: "Type something...",
+        type: "text",
+      },
+      { key: "theme" },
+      { key: "variable" },
+      { key: "project" },
+      { key: "eo-mission" },
+    ],
   }),
   async mounted() {
     const items = await this.retreiveProducts();
-    const itemFilter = document.querySelector("eox-itemfilter");
-    itemFilter.config = {
-      titleProperty: "title",
-      filterProperties: [
-        { key: "geometry", type: "spatial", title: "Region", expanded: true },
-        {
-          keys: ["title", "themes", "variable"],
-          title: "Search",
-          type: "text",
-        },
-        { key: "theme" },
-        { key: "variable" },
-        { key: "project" },
-        { key: "eo-mission" },
-        // { key: "region" },
-      ],
-      // enableSearch: true,
-      // enableHighlighting: true,
-      showResults: false,
-      // aggregateResults: "osc:variables",
-      // inlineMode: true,
-      // fuseConfig: {
-      //   includeScore: true,
-      //   keys: [
-      //     "title",
-      //     "theme",
-      //     "variable",
-      //     "project",
-      //     "description",
-      //     "eo-mission",
-      //     "region",
-      //   ],
-      //   // threshold: 0.4,
-      //   // distance: 100,
-      // },
-      onFilter: (items) => {
-        this.results = items;
-        // this.aggregateItems(items);
-      },
-      // externalSearch: (input, filters) => {
-      //   const base =
-      //     "https://resource-catalogue.staging.opensciencedata.esa.int/collections/metadata:main/items?type=collection&f=json";
-      //   if (filters) {
-      //     let filterString = "";
-      //     Object.keys(filters).forEach((filter) => {
-      //       if (filter !== "bbox") {
-      //         Object.entries(filters[filter])
-      //           .filter((k) => k[0] === "keys")
-      //           .forEach((filterItem) => {
-      //             Object.entries(filterItem[1]).forEach(([filterKey, filterValue]) => {
-      //               if (filterValue) {
-      //                 console.log(filter);
-      //                 console.log(filterKey);
-      //                 filterString += `${filter}:${filterKey.toLowerCase()}`;
-      //               }
-      //             });
-      //           });
-      //       }
-      //     });
-      //     return `${base}&q=${input}${
-      //       filterString.length > 0
-      //         ? `&filter=keywords%20ILIKE%20%27%${filterString}%%27`
-      //         : ""
-      //     }${filters.bbox?.bbox ? `&bbox=${filters.bbox.bbox}` : ""}`;
-      //   } else {
-      //     return `${base}&q=${input}`;
-      //   }
-      // },
-    };
-    itemFilter.apply(items);
-    // this.aggregateItems(items);
     this.items = items;
     this.results = items;
+    this.$nextTick(() => {
+      const itemFilter = document.querySelector("eox-itemfilter");
+      itemFilter.addEventListener("filter", (event) => {
+        this.results = event.detail.results;
+      });
+    });
   },
   methods: {
     ...mapActions(["retreiveProducts"]),

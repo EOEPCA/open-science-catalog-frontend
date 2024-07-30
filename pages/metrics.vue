@@ -31,6 +31,11 @@
     <v-row class="white flex-grow-0">
       <v-col cols="12">
         <eox-itemfilter
+          v-show="metrics"
+          inline-mode
+          :showResults.prop="false"
+          :filterProperties.prop="filterProperties"
+          :items.prop="items"
           class="row"
           style="position: relative; z-index: 5"
         ></eox-itemfilter>
@@ -164,6 +169,20 @@ export default {
     tableZoom: 1,
     showEmptyItems: false,
     filteredMetrics: {},
+    filterProperties: [
+      { id: "theme", key: "theme", title: "Theme" },
+      { id: "variable", key: "variable", title: "Variable" },
+      { id: "project", key: "project", title: "Project" },
+      { id: "mission", key: "eo-mission", title: "EO Mission" },
+      { id: "geometry", key: "geometry", type: "spatial", title: "Geometry" },
+      {
+        id: "search",
+        keys: ["title", "themes", "variable"],
+        title: "Freetext search",
+        placeholder: "Type something...",
+        type: "text",
+      },
+    ],
   }),
   watch: {
     aggregationProperty() {
@@ -185,44 +204,12 @@ export default {
   },
   async mounted() {
     const items = await this.retreiveProducts();
-    const itemFilter = document.querySelector("eox-itemfilter");
-    itemFilter.config = {
-      inlineMode: true,
-      titleProperty: "title",
-      filterProperties: [
-        { id: "theme", key: "theme", title: "Theme" },
-        { id: "variable", key: "variable", title: "Variable" },
-        { id: "project", key: "project", title: "Project" },
-        { id: "mission", key: "eo-mission", title: "EO Mission" },
-        // { key: "region" },
-        { id: "geometry", key: "geometry", type: "spatial", title: "Geometry" },
-        {
-          id: "search",
-          keys: ["title", "themes", "variable"],
-          title: "Freetext search",
-          type: "text",
-        },
-      ],
-      // enableSearch: true,
-      // enableHighlighting: true,
-      // aggregateResults: "osc:variables",
-      showResults: false,
-      // inlineMode: true,
-      // fuseConfig: {
-      //   keys: [
-      //     "title",
-      //     "theme",
-      //     "variable",
-      //     "project",
-      //     "description",
-      //     "eo-mission",
-      //     "region",
-      //   ],
-      //   // threshold: 0.4,
-      //   // distance: 100,
-      // },
-      onFilter: (items) => {
-        const metrics = this.createMetrics(items);
+    this.metrics = this.createMetrics(items);
+    this.items = items;
+    this.$nextTick(() => {
+      const itemFilter = document.querySelector("eox-itemfilter");
+      itemFilter.addEventListener("filter", (event) => {
+        const metrics = this.createMetrics(event.detail.results);
         if (this.showEmptyItems) {
           metrics[this.aggregationProperty] = {
             ...this.allAggregationItems,
@@ -230,27 +217,8 @@ export default {
           };
         }
         this.metrics = metrics;
-      },
-      // externalSearch: (input, filters) => {
-      //     const base = 'https://resource-catalogue.testing.opensciencedata.esa.int/collections/metadata:main/items?type=collection&f=json'
-      //     if (filters) {
-      //       let filterString = ''
-      //       Object.keys(filters).forEach((filter) => Object.entries(filters[filter]).forEach(([key, value]) => {
-      //         if (value) {
-      //           filterString += `${filter.replace('s', '')}:${key}`
-      //         }
-      //       }))
-      //       console.log(filterString)
-      //       return `${base}&q=${input}&filter=keywords%20ILIKE%20%27%${filterString}%%27`
-      //     } else {
-      //       return `${base}&q=${input}`
-      //     }
-      //   }
-    };
-    itemFilter.apply(items);
-    this.metrics = this.createMetrics(items);
-    this.items = items;
-  },
+      });
+    something...  },
   methods: {
     ...mapActions(["retreiveProducts"]),
     async fetchAllAggregationItems(type) {
