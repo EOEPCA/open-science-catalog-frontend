@@ -218,7 +218,8 @@ export default {
         }
         this.metrics = metrics;
       });
-    something...  },
+    });
+  },
   methods: {
     ...mapActions(["retreiveProducts"]),
     async fetchAllAggregationItems(type) {
