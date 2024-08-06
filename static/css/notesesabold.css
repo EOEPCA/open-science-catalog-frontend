@@ -1,0 +1,9 @@
+@font-face {
+  font-family: "NotesESAbold";
+  src: url("./fonts/notesesabold/NotesESAbold.eot");
+  src: url("./fonts/notesesabold/NotesESAbold.woff") format("woff"),
+    url("./fonts/notesesabold/NotesESAbold.ttf") format("truetype"),
+    url("./fonts/notesesabold/NotesESAbold.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
