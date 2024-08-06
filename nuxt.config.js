@@ -95,7 +95,11 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ["@/assets/global.scss", "./static/css/materialdesignicons.min.css"],
+  css: [
+    "@/assets/global.scss",
+    "./static/css/materialdesignicons.min.css",
+    "./static/css/notesesabold.css",
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
