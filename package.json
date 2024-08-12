@@ -24,7 +24,7 @@
     "chart.js": "^4.4.1",
     "chartjs-plugin-annotation": "^3.0.1",
     "core-js": "^3.33.3",
-    "marked": "^11.0.1",
+    "marked": "^14.0.0",
     "md5": "^2.3.0",
     "nuxt": "^2.15.8",
     "ol": "^8.2.0",
