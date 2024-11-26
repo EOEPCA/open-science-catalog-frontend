@@ -126,14 +126,14 @@
                 <v-icon small color="success"> mdi-check-decagram </v-icon>
               </p>
             </template>
-            <v-btn
+            <!-- <v-btn
               color="secondary"
               block
               :to="$auth.loggedIn ? '/logout' : '/login'"
             >
               <v-icon left> mdi-account-outline </v-icon>
               {{ $auth.loggedIn ? "Log out" : "Log in" }}
-            </v-btn>
+            </v-btn> -->
           </div>
         </client-only>
       </template>
