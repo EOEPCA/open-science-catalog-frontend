@@ -1,7 +1,7 @@
 {
   "name": "open-science-catalog-frontend",
   "author": "EOX-A",
-  "version": "2.2.10",
+  "version": "2.3.1",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@eox/itemfilter": "^1.0.1",
-    "@eox/map": "^1.11.1",
+    "@eox/map": "^1.16.1",
     "@nuxt/content": "^1.15.1",
     "@nuxtjs/auth-next": "5.0.0-1667386184.dfbbb54",
     "@nuxtjs/axios": "^5.13.6",
