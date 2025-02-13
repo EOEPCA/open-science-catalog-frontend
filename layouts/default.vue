@@ -261,7 +261,7 @@ export default {
       ) {
         document.querySelector("esa-cookies").style.display = "block";
       }
-    })
+    });
   },
   methods: {
     catalogClick() {
