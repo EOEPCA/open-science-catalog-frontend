@@ -113,6 +113,7 @@ export default {
     "~/plugins/item",
     "~/plugins/metrics",
     "~/plugins/eox-itemfilter.client",
+    "~/plugins/esa-cookies.client",
     { src: "~plugins/ol", ssr: false },
   ],
 

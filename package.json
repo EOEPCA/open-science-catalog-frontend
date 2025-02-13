@@ -16,6 +16,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@eox/esa-ui": "^1.11.1",
     "@eox/itemfilter": "^1.0.1",
     "@eox/map": "^1.16.1",
     "@nuxt/content": "^1.15.1",
