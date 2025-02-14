@@ -205,11 +205,11 @@
           />
         </a>
       </small>
-      <esa-cookies
-        link="https://www.esa.int/Services/Cookies_notice"
-        style="display: none"
-      ></esa-cookies>
     </v-footer>
+    <esa-cookies
+      link="https://www.esa.int/Services/Cookies_notice"
+      style="display: none"
+    ></esa-cookies>
   </v-app>
 </template>
 
