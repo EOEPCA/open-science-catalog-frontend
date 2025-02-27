@@ -206,6 +206,10 @@
         </a>
       </small>
     </v-footer>
+    <esa-cookies
+      link="https://www.esa.int/Services/Cookies_notice"
+      style="display: none"
+    ></esa-cookies>
   </v-app>
 </template>
 
@@ -223,6 +227,41 @@ export default {
   },
   computed: {
     ...mapState(["appVersion"]),
+  },
+  mounted() {
+    setTimeout(() => {
+      var _paq = (window._paq = window._paq || []);
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(["requireCookieConsent"]);
+      _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+      _paq.push(["trackPageView"]);
+      _paq.push(["enableLinkTracking"]);
+      (function () {
+        var u = "https://nix.eox.at/piwik/";
+        _paq.push(["setTrackerUrl", u + "matomo.php"]);
+        _paq.push(["setSiteId", "13"]);
+        var d = document,
+          g = d.createElement("script"),
+          s = d.getElementsByTagName("script")[0];
+        g.async = true;
+        g.src = u + "matomo.js";
+        s.parentNode.insertBefore(g, s);
+      })();
+      document.querySelector("esa-cookies").addEventListener("accept", () => {
+        _paq.push(["rememberCookieConsentGiven"]);
+      });
+      document.querySelector("esa-cookies").addEventListener("decline", () => {
+        _paq.push(["forgetCookieConsentGiven"]);
+        _paq.push(["optUserOut"]);
+      });
+
+      if (
+        !document.cookie.includes("mtm_cookie_consent") &&
+        !document.cookie.includes("mtm_consent_removed")
+      ) {
+        document.querySelector("esa-cookies").style.display = "block";
+      }
+    });
   },
   methods: {
     catalogClick() {
