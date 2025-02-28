@@ -228,14 +228,25 @@ export default {
   computed: {
     ...mapState(["appVersion"]),
   },
+  watch: {
+    $route(to) {
+      window._paq.push(["setCustomUrl", to.fullPath]);
+      window._paq.push([
+        "setDocumentTitle",
+        document.domain + "/" + document.title,
+      ]);
+      window._paq.push(["trackPageView"]);
+      window._paq.push(["enableLinkTracking"]);
+    },
+  },
   mounted() {
     this.$nextTick(() => {
       document.querySelector("esa-cookies").addEventListener("accept", () => {
-        _paq.push(["rememberCookieConsentGiven"]);
+        window._paq.push(["rememberCookieConsentGiven"]);
       });
       document.querySelector("esa-cookies").addEventListener("decline", () => {
-        _paq.push(["forgetCookieConsentGiven"]);
-        _paq.push(["optUserOut"]);
+        window._paq.push(["forgetCookieConsentGiven"]);
+        window._paq.push(["optUserOut"]);
       });
 
       if (
@@ -245,14 +256,6 @@ export default {
         document.querySelector("esa-cookies").style.display = "block";
       }
     });
-  },
-  watch: {
-    $route(to, from) {
-      _paq.push(["setCustomUrl", to.fullPath]);
-      _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
-      _paq.push(["trackPageView"]);
-      _paq.push(["enableLinkTracking"]);
-    },
   },
   methods: {
     catalogClick() {
