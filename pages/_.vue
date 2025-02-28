@@ -18,8 +18,13 @@ export default {
   }),
   mounted() {
     this.iframeSrc = this.stacBrowserPath(this.$route.fullPath);
-
-    window.addEventListener("message", (evt) => {
+    window.addEventListener("message", this.navigationListener);
+  },
+  beforeDestroy() {
+    window.removeEventListener("message", this.navigationListener);
+  },
+  methods: {
+    navigationListener(evt) {
       if (evt.data && evt.data.navigate && this.firstLoadDone) {
         const innerPath = evt.data.navigate.replace(".json", "");
         history.replaceState(
@@ -27,12 +32,17 @@ export default {
           null,
           `${innerPath.length > 1 ? innerPath : "/catalog"}`
         );
+        window._paq.push(["setCustomUrl", innerPath]);
+        window._paq.push([
+          "setDocumentTitle",
+          document.domain + "/" + document.title,
+        ]);
+        window._paq.push(["trackPageView"]);
+        window._paq.push(["enableLinkTracking"]);
       } else {
         this.firstLoadDone = true;
       }
-    });
-  },
-  methods: {
+    },
     prepareEndpoint(src) {
       return src.replace("https://", "").replace("http://", "");
     },
