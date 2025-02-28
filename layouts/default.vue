@@ -228,31 +228,25 @@ export default {
   computed: {
     ...mapState(["appVersion"]),
   },
+  watch: {
+    $route(to) {
+      window._paq.push(["setCustomUrl", to.fullPath]);
+      window._paq.push([
+        "setDocumentTitle",
+        document.domain + "/" + document.title,
+      ]);
+      window._paq.push(["trackPageView"]);
+      window._paq.push(["enableLinkTracking"]);
+    },
+  },
   mounted() {
-    setTimeout(() => {
-      var _paq = (window._paq = window._paq || []);
-      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-      _paq.push(["requireCookieConsent"]);
-      _paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
-      _paq.push(["trackPageView"]);
-      _paq.push(["enableLinkTracking"]);
-      (function () {
-        var u = "https://nix.eox.at/piwik/";
-        _paq.push(["setTrackerUrl", u + "matomo.php"]);
-        _paq.push(["setSiteId", "13"]);
-        var d = document,
-          g = d.createElement("script"),
-          s = d.getElementsByTagName("script")[0];
-        g.async = true;
-        g.src = u + "matomo.js";
-        s.parentNode.insertBefore(g, s);
-      })();
+    this.$nextTick(() => {
       document.querySelector("esa-cookies").addEventListener("accept", () => {
-        _paq.push(["rememberCookieConsentGiven"]);
+        window._paq.push(["rememberCookieConsentGiven"]);
       });
       document.querySelector("esa-cookies").addEventListener("decline", () => {
-        _paq.push(["forgetCookieConsentGiven"]);
-        _paq.push(["optUserOut"]);
+        window._paq.push(["forgetCookieConsentGiven"]);
+        window._paq.push(["optUserOut"]);
       });
 
       if (

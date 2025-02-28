@@ -92,6 +92,7 @@ export default {
     link: [
       { rel: "icon", type: "image/x-icon", href: `${routerBase}favicon.ico` },
     ],
+    script: [{ src: "/js/matomo.js" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
