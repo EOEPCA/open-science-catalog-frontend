@@ -1,7 +1,7 @@
 {
   "name": "open-science-catalog-frontend",
   "author": "EOX-A",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "private": true,
   "scripts": {
     "dev": "nuxt",
