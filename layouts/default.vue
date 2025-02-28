@@ -230,6 +230,10 @@ export default {
   },
   watch: {
     $route(to) {
+      // exclude catalog routes as they are tracked in _.vue
+      if (to.fullPath.startsWith("/catalog")) {
+        return;
+      }
       window._paq.push(["setCustomUrl", to.fullPath]);
       window._paq.push([
         "setDocumentTitle",
