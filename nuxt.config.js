@@ -10,13 +10,13 @@ export default {
     devMode: process.env.NODE_ENV !== "production",
     staticEndpoint:
       process.env.STATIC_ENDPOINT ||
-      "https://metadata.testing.opensciencedata.esa.int/open-science-catalog-metadata-testing",
+      "https://app-reverse-proxy.osc.earthcode.eox.at/open-science-catalog-metadata",
     staticBaseToReplace:
       process.env.STATIC_BASE_TO_REPLACE ||
-      "https://eoepca.github.io/open-science-catalog-metadata-testing",
+      "https://esa-earthcode.github.io/open-science-catalog-metadata",
     githubDataRoot:
       process.env.GITHUB_DATA_ROOT ||
-      "https://github.com/EOEPCA/open-science-catalog-metadata-testing/blob/main",
+      "https://github.com/ESA-EarthCODE/open-science-catalog-metadata/tree/main",
     dynamicEndpoint:
       process.env.DYNAMIC_ENDPOINT ||
       "https://resource-catalogue.testing.opensciencedata.esa.int",
@@ -24,6 +24,9 @@ export default {
       process.env.BACKEND_ENDPOINT ||
       "https://backend-api.testing.opensciencedata.esa.int",
     authEnabled: process.env.ENABLE_AUTH || true,
+    workspaceRoot:
+      process.env.WORKSPACE_ROOT ||
+      "https://dashboard.earthcode-staging.earthcode.eox.at",
     auth: {
       strategies: {
         oidc: {
