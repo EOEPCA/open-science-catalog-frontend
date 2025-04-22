@@ -10,7 +10,7 @@ export default {
     devMode: process.env.NODE_ENV !== "production",
     staticEndpoint:
       process.env.STATIC_ENDPOINT ||
-      "https://app-reverse-proxy.osc.earthcode.eox.at/open-science-catalog-metadata",
+      "https://esa-earthcode.github.io/open-science-catalog-metadata/",
     staticBaseToReplace:
       process.env.STATIC_BASE_TO_REPLACE ||
       "https://esa-earthcode.github.io/open-science-catalog-metadata",
