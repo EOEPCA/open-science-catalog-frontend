@@ -35,47 +35,13 @@
           </p>
           <p>
             Explore the catalog, consisting of
-            <v-chip
-              dark
-              small
-              label
-              :color="$typeColor('theme')"
-              class="mb-2 mb-sm-0 text-uppercase"
-              to="/themes/catalog"
-            >
-              Themes </v-chip
-            >,
-            <v-chip
-              dark
-              small
-              label
-              :color="$typeColor('project')"
-              class="mb-2 mb-sm-0 text-uppercase"
-              to="/projects/catalog"
-            >
-              Projects </v-chip
-            >,
-            <v-chip
-              dark
-              small
-              label
-              :color="$typeColor('variable')"
-              class="mb-2 mb-sm-0 text-uppercase"
-              to="/variables/catalog"
-            >
-              Variables
-            </v-chip>
-            and
-            <v-chip
-              dark
-              small
-              label
-              :color="$typeColor('product')"
-              class="mb-2 mb-sm-0 text-uppercase"
-              to="/products/catalog"
-            >
-              Products </v-chip
-            >.
+            <router-link to="/eo-missions/catalog">EO Missions</router-link>,
+            <router-link to="/experiments/catalog">Experiments</router-link>,
+            <router-link to="/products/catalog">Products</router-link>,
+            <router-link to="/projects/catalog">Projects</router-link>,
+            <router-link to="/themes/catalog">Themes</router-link>,
+            <router-link to="/variables/catalog">Variables</router-link> and
+            <router-link to="/workflows/catalog">Workflows</router-link>.
           </p>
           <p>
             Choose a theme below to explore available products/projects or
