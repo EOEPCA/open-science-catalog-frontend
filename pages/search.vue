@@ -26,7 +26,7 @@
         <h1
           :class="$vuetify.breakpoint.mdAndUp ? 'text-h2 mt-0' : 'text-h4 mt-5'"
         >
-          Search
+          Product Search
         </h1>
       </v-col>
     </v-row>
