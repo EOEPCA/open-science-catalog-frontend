@@ -67,10 +67,10 @@
               <v-icon left> mdi-poll </v-icon>
               Metrics
             </v-btn>
-            <v-btn dark small color="primary" to="/search">
+            <!-- <v-btn dark small color="primary" to="/search">
               <v-icon left> mdi-magnify </v-icon>
               Search
-            </v-btn>
+            </v-btn> -->
           </p>
         </v-col>
       </v-row>
