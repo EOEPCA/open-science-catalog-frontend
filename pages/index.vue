@@ -39,8 +39,9 @@
             <router-link to="/experiments/catalog">Experiments</router-link>,
             <router-link to="/products/catalog">Products</router-link>,
             <router-link to="/projects/catalog">Projects</router-link>,
-            <router-link to="/data-collections/catalog">Data Collections</router-link>,
-            <router-link to="/themes/catalog">Themes</router-link>,
+            <router-link to="/data-collections/catalog"
+              >Data Collections</router-link
+            >, <router-link to="/themes/catalog">Themes</router-link>,
             <router-link to="/variables/catalog">Variables</router-link> and
             <router-link to="/workflows/catalog">Workflows</router-link>.
           </p>
