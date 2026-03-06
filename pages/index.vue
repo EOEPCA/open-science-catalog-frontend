@@ -39,22 +39,28 @@
             <router-link to="/experiments/catalog">Experiments</router-link>,
             <router-link to="/products/catalog">Products</router-link>,
             <router-link to="/projects/catalog">Projects</router-link>,
-            <router-link to="/themes/catalog">Themes</router-link>,
+            <router-link to="/data-collections/catalog"
+              >Data Collections</router-link
+            >, <router-link to="/themes/catalog">Themes</router-link>,
             <router-link to="/variables/catalog">Variables</router-link> and
             <router-link to="/workflows/catalog">Workflows</router-link>.
           </p>
           <p>
-            Choose a theme below to explore available products/projects or
+            Choose a theme below to explore available products/projects<!--or
             programmatically access the catalog via the
             <a :href="$dynamicCatalog.defaults.baseURL" target="_blank"
               >API Documentation</a
-            >!
+            >-->!
           </p>
           <p>
-            To suggest changes and/or contribute to continuously growing number
-            of available products, you can
-            <router-link to="/login">register here</router-link>, and make your
-            contribution to the catalog!
+            To suggest changes and/or contribute to the continuously growing
+            number of available products, you can do so directly via the
+            <a
+              href="https://github.com/ESA-EarthCODE/open-science-catalog-metadata"
+              target="_blank"
+              >STAC catalog hosted on GitHub</a
+            >, or use the tools and services provided by
+            <a href="https://earthcode.esa.int/" target="_blank">EarthCODE</a>.
           </p>
           <p>
             If you have any questions or feedback regarding Open Science
@@ -67,10 +73,10 @@
               <v-icon left> mdi-poll </v-icon>
               Metrics
             </v-btn>
-            <v-btn dark small color="primary" to="/search">
+            <!-- <v-btn dark small color="primary" to="/search">
               <v-icon left> mdi-magnify </v-icon>
               Search
-            </v-btn>
+            </v-btn> -->
           </p>
         </v-col>
       </v-row>
