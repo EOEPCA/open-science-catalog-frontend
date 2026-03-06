@@ -53,10 +53,14 @@
             >-->!
           </p>
           <p>
-            To suggest changes and/or contribute to continuously growing number
-            of available products, you can
-            <router-link to="/login">register here</router-link>, and make your
-            contribution to the catalog!
+            To suggest changes and/or contribute to the continuously growing
+            number of available products, you can do so directly via the
+            <a
+              href="https://github.com/ESA-EarthCODE/open-science-catalog-metadata"
+              target="_blank"
+              >STAC catalog hosted on GitHub</a
+            >, or use the tools and services provided by
+            <a href="https://earthcode.esa.int/" target="_blank">EarthCODE</a>.
           </p>
           <p>
             If you have any questions or feedback regarding Open Science
