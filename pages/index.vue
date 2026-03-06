@@ -44,11 +44,11 @@
             <router-link to="/workflows/catalog">Workflows</router-link>.
           </p>
           <p>
-            Choose a theme below to explore available products/projects or
+            Choose a theme below to explore available products/projects<!--or
             programmatically access the catalog via the
             <a :href="$dynamicCatalog.defaults.baseURL" target="_blank"
               >API Documentation</a
-            >!
+            >-->!
           </p>
           <p>
             To suggest changes and/or contribute to continuously growing number
@@ -67,10 +67,10 @@
               <v-icon left> mdi-poll </v-icon>
               Metrics
             </v-btn>
-            <v-btn dark small color="primary" to="/search">
+            <!-- <v-btn dark small color="primary" to="/search">
               <v-icon left> mdi-magnify </v-icon>
               Search
-            </v-btn>
+            </v-btn> -->
           </p>
         </v-col>
       </v-row>
