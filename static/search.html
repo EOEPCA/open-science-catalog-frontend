@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eox-itemfilter OSC Search</title>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/itemfilter/dist/eox-itemfilter.js"
+    ></script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/map/dist/eox-map.js"
+    ></script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/layout/dist/eox-layout.js"
+    ></script>
+    <style>
+      @font-face {
+        font-family: "NotesESAbold";
+        src: url("https://cdn.jsdelivr.net/npm/@eox/esa-ui@1.19.0/fonts/notesesabol.ttf")
+          format("truetype");
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background: #f0f2f5;
+        height: 100dvh;
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: 350px;
+        min-width: 350px;
+        height: 100dvh;
+        background: white;
+        border-right: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 20px;
+        box-sizing: border-box;
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+      }
+      .main-content {
+        flex-grow: 1;
+        height: 100dvh;
+        overflow-y: auto;
+        padding: 20px;
+        box-sizing: border-box;
+        position: relative;
+      }
+      .mobile-header {
+        display: none;
+        padding: 10px 20px;
+        background: white;
+        border-bottom: 1px solid #ddd;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 90;
+      }
+      .mobile-header h1 {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      #filter-toggle {
+        color: #003247;
+        background: transparent;
+        border: 1px solid currentColor;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        cursor: pointer;
+      }
+      #filter-toggle:hover {
+        background: #003247;
+        color: white;
+      }
+      .sidebar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+      }
+      .close-sidebar {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #003247;
+        padding: 0;
+        line-height: 1;
+      }
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+        .sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          transform: translateX(-100%);
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .main-content {
+          padding-top: 10px;
+        }
+        .mobile-header {
+          display: flex;
+        }
+        .close-sidebar {
+          display: block;
+        }
+        #results {
+          grid-template-columns: 1fr;
+        }
+      }
+      .sidebar [slot="filterstitle"] {
+        display: flex;
+        align-items: center;
+        height: calc(32px + 1rem);
+      }
+      .sidebar [slot="filterstitle"] p {
+        line-height: 32px;
+        font-size: 1rem;
+        margin: 0;
+      }
+      #status {
+        margin-bottom: 1rem;
+        color: #335e6f;
+        font-size: 0.9rem;
+      }
+      h1 {
+        font-family: "NotesESAbold", sans-serif;
+        color: #003247;
+        margin: 0;
+        font-size: 2rem;
+      }
+      eox-itemfilter {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border: none;
+        --eox-body-font-family: Arial, sans-serif;
+        --padding: 0 !important;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      eox-itemfilter.ready {
+        opacity: 1;
+      }
+      #results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 8px;
+      }
+      .card {
+        background: white;
+        border-radius: 4px;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: transform 0.2s;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+      }
+      .card:hover .card-title {
+        text-decoration: underline;
+      }
+      .card-content {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 12px;
+      }
+      .card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .chip {
+        border: 1px solid #003247;
+        color: #003247;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        white-space: nowrap;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card-title {
+        font-family: "NotesESAbold", sans-serif;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #003247;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0;
+        line-height: 1.2;
+      }
+      .card-description {
+        font-size: 0.9em;
+        line-height: 1.4;
+        color: #444;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin: 0;
+      }
+      .card-date {
+        font-size: small;
+        color: #335e6f;
+        margin-top: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mobile-header">
+      <h1>Search</h1>
+      <button id="filter-toggle">Filters</button>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h1>Search</h1>
+        <button class="close-sidebar">&times;</button>
+      </div>
+      <eox-itemfilter id="itemfilter">
+        <div slot="filterstitle">
+          <p><strong>OSC Products</strong></p>
+        </div>
+      </eox-itemfilter>
+    </div>
+    <div class="main-content">
+      <div id="status"></div>
+      <div id="results"></div>
+    </div>
+
+    <script type="module">
+      const itemFilterEl = document.querySelector("#itemfilter");
+      const resultsEl = document.querySelector("#results");
+      const statusEl = document.querySelector("#status");
+      const mainContent = document.querySelector(".main-content");
+      const filterToggle = document.querySelector("#filter-toggle");
+      const closeSidebar = document.querySelector(".close-sidebar");
+      const sidebar = document.querySelector(".sidebar");
+
+      const BASE_URL =
+        "https://esa-earthcode.github.io/open-science-catalog-metadata/";
+      const API_URL =
+        "https://eoapi.workspace.earthcode-staging.earthcode.eox.at/stac";
+      const CATEGORIES = ["themes", "variables", "eo-missions", "projects"];
+
+      let nextUrl = null;
+      let lastUrl = null;
+      let isLoading = false;
+      let filterData = {};
+
+      /**
+       * Fetches catalog children for a given path
+       */
+      const fetchCatalogItems = async (path) => {
+        try {
+          const response = await fetch(`${BASE_URL}${path}/catalog.json`);
+          if (!response.ok) throw new Error(`Failed to fetch ${path}`);
+          const { links } = await response.json();
+          return links
+            .filter((l) => l.rel === "child")
+            .map((l) => ({ id: l.href.split("/").at(-2), title: l.title }));
+        } catch (error) {
+          console.error(error);
+          return [];
+        }
+      };
+
+      /**
+       * Formats a date string to a human-readable format
+       */
+      const formatDate = (dateString) => {
+        if (!dateString) return "present";
+        const date = new Date(dateString);
+        if (isNaN(date)) return "..";
+        return (
+          date.toLocaleString("en-US", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true,
+            timeZone: "UTC",
+          }) + " UTC"
+        );
+      };
+
+      /**
+       * Renders a single collection item as an HTML string
+       */
+      const renderItem = (item) => `
+        <a class="card" href="https://opensciencedata.esa.int/products/${item.id}/collection" target="_blank">
+          <div class="card-content">
+            <div class="card-title" title="${item.title}">${item.title}</div>
+            <p class="card-description" title="${item.description || ""}">
+              ${item.description || ""}
+            </p>
+            ${
+              item.filteredKeywords?.length
+                ? `
+              <div class="card-tags">
+                ${item.filteredKeywords
+                  .slice(0, 8)
+                  .map((kw) => `<span class="chip" title="${kw}">${kw}</span>`)
+                  .join("")}
+              </div>
+            `
+                : ""
+            }
+            ${item.dateRange ? `<div class="card-date">${item.dateRange}</div>` : ""}
+          </div>
+        </a>
+      `;
+
+      /**
+       * Formats raw collection items for rendering
+       */
+      const formatItems = (collections = []) =>
+        collections.map((c) => ({
+          ...c,
+          dateRange:
+            c.extent?.temporal?.interval?.[0]
+              ?.map((d) => formatDate(d))
+              .join(" – ") || "",
+          filteredKeywords: (c.keywords || []).filter(
+            (kw) =>
+              !["variable_", "project_", "theme_", "eo-mission_"].some(
+                (prefix) => kw.startsWith(prefix),
+              ),
+          ),
+        }));
+
+      /**
+       * Loads next page of results when scrolling
+       */
+      const handleScroll = async () => {
+        if (isLoading || !nextUrl) return;
+
+        const { scrollTop, clientHeight, scrollHeight } = mainContent;
+        if (scrollTop + clientHeight >= scrollHeight - 100) {
+          isLoading = true;
+          try {
+            const response = await fetch(nextUrl);
+            const { collections, links } = await response.json();
+            nextUrl = links.find((l) => l.rel === "next")?.href;
+            const items = formatItems(collections);
+            resultsEl.insertAdjacentHTML(
+              "beforeend",
+              items.map(renderItem).join(""),
+            );
+          } catch (error) {
+            console.error("Error loading more items:", error);
+          } finally {
+            isLoading = false;
+          }
+        }
+      };
+
+      /**
+       * Generates CQL filters for text search
+       */
+      const getCqlTextFilters = (text, fields) => {
+        if (!text) return "";
+        const esc = text.replace(/'/g, "''");
+        const variations = [
+          ...new Set([
+            esc,
+            esc.toLowerCase(),
+            esc.charAt(0).toUpperCase() + esc.slice(1),
+          ]),
+        ];
+        const fieldFilters = fields.flatMap((f) =>
+          variations.map((v) => `${f} LIKE '%${v}%'`),
+        );
+        return `(${fieldFilters.join(" OR ")})`;
+      };
+
+      /**
+       * Initialization
+       */
+      const init = async () => {
+        const dataPromise = Promise.all(CATEGORIES.map(fetchCatalogItems));
+        await customElements.whenDefined("eox-itemfilter");
+
+        const data = await dataPromise;
+        filterData = {
+          themes: data[0],
+          variables: data[1],
+          missions: data[2],
+          projects: data[3],
+        };
+
+        Object.assign(itemFilterEl, {
+          titleProperty: "title",
+          showResults: false,
+          filterProperties: [
+            {
+              keys: ["title", "description", "keywords"],
+              title: "Freetext search",
+              type: "text",
+              placeholder: "Search in titles, descriptions and keywords",
+              expanded: true,
+            },
+            ...["themes", "variables", "missions", "projects"].map(
+              (key, i) => ({
+                key,
+                title: key
+                  .replace(/^\w/, (c) => c.toUpperCase())
+                  .replace("Missions", "EO Missions"),
+                type: "multiselect",
+                filterKeys: data[i].map((d) => d.title),
+              }),
+            ),
+            {
+              key: "keywords",
+              title: "Keywords",
+              type: "text",
+              placeholder: "Search for keywords",
+            },
+            {
+              key: "datetime",
+              title: "Date Range",
+              type: "range",
+              format: "date",
+              min: new Date("2000-01-01") / 1000,
+              max: new Date("2025-12-31") / 1000,
+            },
+            {
+              key: "geometry",
+              title: "Area of Interest",
+              type: "spatial",
+              dirty: false,
+              state: { mode: "intersects" },
+            },
+          ],
+        });
+        itemFilterEl.classList.add("ready");
+
+        itemFilterEl.externalFilter = (input, filters) => {
+          const params = new URLSearchParams();
+          const cql = [];
+
+          // Text Search
+          const text = filters["title|description|keywords"]?.stringifiedState;
+          const textCql = getCqlTextFilters(text, [
+            "title",
+            "description",
+            "keywords",
+          ]);
+          if (textCql) cql.push(textCql);
+
+          // Keywords Search
+          const kwText = filters["keywords"]?.stringifiedState;
+          const kwCql = getCqlTextFilters(kwText, ["keywords"]);
+          if (kwCql) cql.push(kwCql);
+
+          // Categories (themes, variables, etc.)
+          ["themes", "variables", "missions", "projects"].forEach((k) => {
+            const selected = Object.entries(filters[k]?.state || {})
+              .filter(([_, s]) => s)
+              .map(([t, _]) => {
+                const item = filterData[k].find((d) => d.title === t);
+                const keyword = `${
+                  (k === "missions" ? "eo-" : "") + k.slice(0, -1) + "_"
+                }${item?.id || t}`;
+                return `keywords LIKE '%${keyword}%'`;
+              });
+            if (selected.length > 0) {
+              cql.push(`(${selected.join(" OR ")})`);
+            }
+          });
+
+          // Spatial Filter
+          const spat = filters["geometry"]?.state;
+          if (spat) {
+            let bbox = Array.isArray(spat) ? spat : null;
+            let geom =
+              spat.geometry ||
+              (["Polygon", "Feature"].includes(spat.type) ? spat : null);
+            if (geom?.type === "Feature") geom = geom.geometry;
+
+            if (!bbox && geom?.coordinates) {
+              const coords =
+                geom.type === "Polygon"
+                  ? geom.coordinates[0]
+                  : geom.coordinates.flat(1);
+              const lons = coords.map((c) => c[0]);
+              const lats = coords.map((c) => c[1]);
+              bbox = [
+                Math.min(...lons),
+                Math.min(...lats),
+                Math.max(...lons),
+                Math.max(...lats),
+              ];
+            }
+
+            if (
+              (spat.mode || "intersects") === "within" &&
+              geom?.type === "Polygon"
+            ) {
+              cql.push(
+                `S_WITHIN(geometry, POLYGON((${geom.coordinates[0].map((c) => c.join(" ")).join(", ")})))`,
+              );
+            } else if (bbox) {
+              params.set("bbox", bbox.map((v) => v.toFixed(4)).join(","));
+            }
+          }
+
+          // Temporal Filter
+          const temp = filters["datetime"]?.state;
+          if (temp) {
+            const iso = (v) => (v ? new Date(v * 1000).toISOString() : "..");
+            params.set("datetime", `${iso(temp.min)}/${iso(temp.max)}`);
+          }
+
+          if (cql.length) {
+            params.set("filter", cql.join(" AND "));
+            params.set("filter-lang", "cql2-text");
+          }
+
+          const url = `${API_URL}/collections?${params}`;
+          if (url === lastUrl) return { url, fetchFn: () => {} };
+          lastUrl = url;
+
+          return {
+            url,
+            fetchFn: async (u) => {
+              try {
+                const response = await fetch(u);
+                const { collections, links, numberMatched } =
+                  await response.json();
+                nextUrl = links.find((l) => l.rel === "next")?.href;
+                const items = formatItems(collections);
+
+                statusEl.textContent =
+                  numberMatched !== undefined ? `${numberMatched} results` : "";
+                resultsEl.innerHTML = items.map(renderItem).join("");
+                return items;
+              } catch (error) {
+                console.error("Error fetching collections:", error);
+                statusEl.textContent = "Error loading results";
+                return [];
+              }
+            },
+          };
+        };
+
+        itemFilterEl.items = [];
+        mainContent.addEventListener("scroll", handleScroll);
+
+        filterToggle.addEventListener("click", () =>
+          sidebar.classList.toggle("open"),
+        );
+        closeSidebar.addEventListener("click", () =>
+          sidebar.classList.toggle("open"),
+        );
+
+        itemFilterEl.addEventListener("filter", () => {
+          if (window.innerWidth <= 768) sidebar.classList.remove("open");
+        });
+      };
+
+      init();
+    </script>
+  </body>
+</html>

@@ -87,14 +87,14 @@
           </v-list-item-content>
         </v-list-item>
 
-        <!--<v-list-item to="/search" router exact>
+        <v-list-item to="/search" router exact>
           <v-list-item-action>
             <v-icon>mdi-magnify</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title> Search </v-list-item-title>
           </v-list-item-content>
-        </v-list-item>-->
+        </v-list-item>
 
         <!--<v-list-item :href="$dynamicCatalog.defaults.baseURL" target="_blank">
           <v-list-item-action>
