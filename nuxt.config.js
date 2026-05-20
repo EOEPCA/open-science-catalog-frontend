@@ -22,11 +22,11 @@ export default {
       "https://resource-catalogue.testing.opensciencedata.esa.int",
     backendEndpoint:
       process.env.BACKEND_ENDPOINT ||
-      "https://backend-api.testing.opensciencedata.esa.int",
+      "https://eoapi.workspace.earthcode-staging.earthcode.eox.at/stac",
     authEnabled: process.env.ENABLE_AUTH || true,
     workspaceRoot:
       process.env.WORKSPACE_ROOT ||
-      "https://dashboard.earthcode-staging.earthcode.eox.at",
+      "https://workspace.earthcode-staging.earthcode.eox.at",
     auth: {
       strategies: {
         oidc: {
