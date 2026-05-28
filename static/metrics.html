@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OSC Metrics Dashboard</title>
+    <!-- Material Design Icons CDN (for absolute reliability) + Local fallback -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="css/materialdesignicons.min.css" />
+    <!-- ESA Custom Fonts -->
+    <link rel="stylesheet" href="css/notesesabold.css" />
+    
+    <!-- EOx Custom Web Components -->
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/itemfilter/dist/eox-itemfilter.js"
+    ></script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/map/dist/eox-map.js"
+    ></script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/timecontrol/dist/eox-timecontrol.js"
+    ></script>
+
+    <style>
+      /* --- EXACT COLOR AND DESIGN TOKENS --- */
+      :root {
+        --primary-color: #003247;       /* ESA Deep Blue */
+        --secondary-color: #335E6F;     /* ESA Grey-Blue / Table main progress timeline */
+        --applications-color: #00B19D;  /* ESA Teal / Stats button, coverage icons, sub progress timeline */
+        --background-color: #ffffff;
+        --border-color: rgba(0, 0, 0, 0.12);
+        --border-radius: 4px;
+        --font-family: Arial, sans-serif;
+        --header-font: "NotesESAbold", sans-serif;
+        --hover-bg: #eee;
+        --expanded-bg: #ffffff;
+        
+        /* Dynamic table cell width (controlled by JS zoom slider) */
+        --table-cell: 28px;
+        
+        /* Modal variables */
+        --modal-z-index: 1000;
+      }
+
+      body {
+        font-family: var(--font-family);
+        margin: 0;
+        background: var(--background-color);
+        height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      /* --- PAGE CONTAINER (MATCHES px-15 pt-8 FROM OLD METRICS.VUE) --- */
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        padding: 32px 60px 24px 60px; /* Equivalent to px-15 pt-8 */
+        box-sizing: border-box;
+        overflow: hidden;
+        gap: 16px;
+      }
+
+      @media (max-width: 960px) {
+        .app-container {
+          padding: 16px;
+          overflow-y: auto;
+          height: auto;
+          gap: 12px;
+        }
+      }
+
+      /* --- HEADER ROW --- */
+      .metrics-header {
+        flex-shrink: 0;
+      }
+
+      .metrics-header h1 {
+        font-family: var(--header-font);
+        color: var(--primary-color);
+        margin: 0;
+        font-size: 2.5rem; /* Matches Vuetify text-h2 */
+        font-weight: normal;
+      }
+
+      @media (max-width: 960px) {
+        .metrics-header h1 {
+          font-size: 1.8rem;
+        }
+      }
+
+      /* --- INLINE EOX-ITEMFILTER AREA (ALWAYS TOP INLINE-MODE, NO SIDEBAR) --- */
+      .filter-row {
+        flex-shrink: 0;
+        background: var(--background-color);
+        position: relative;
+        z-index: 5;
+        width: 100%;
+      }
+
+      eox-itemfilter {
+        width: 100%;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        --eox-body-font-family: var(--font-family);
+        --padding: 0 !important;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      eox-itemfilter.ready {
+        opacity: 1;
+      }
+
+      /* --- TABLE CONTAINER (MIDDLE SCROLLABLE AREA) --- */
+      .table-row {
+        flex-grow: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        max-height: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+      }
+
+      .metrics-table-container {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        position: relative;
+      }
+
+      .metrics-table {
+        width: 100%;
+        /* 
+          Using border-collapse: separate instead of collapse, combined with border-spacing: 0.
+          This is the standard industry practice to avoid browser rendering bugs with sticky columns,
+          such as borders flickering, disappearing, or the leftmost/sticky column getting cut off when scrolling.
+        */
+        border-collapse: separate; 
+        border-spacing: 0;         
+        font-size: 14px;
+        font-weight: 700;
+        position: relative;
+      }
+
+      /* Base Header Cell Styles */
+      .metrics-table thead tr {
+        background: #ffffff; /* Row background holds white color */
+      }
+
+      .metrics-table th {
+        background: transparent; /* Cells are transparent relative to each other so text can overflow */
+        color: var(--primary-color);
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 1; /* Stay underneath sticky column headers */
+        padding: 0 10px !important;
+        border-bottom: 2px solid var(--border-color);
+        text-transform: capitalize;
+        white-space: nowrap; /* Prevents text cutting off by wrapping vertically */
+      }
+
+      .metrics-table th span {
+        white-space: nowrap;
+        display: inline-block;
+        overflow: visible; /* Allows year text to overflow into neighboring hidden year columns */
+      }
+
+      /* --- PERFECT STICKY COLUMNS FOR BOTH MAIN & SUB TABLES --- */
+      /* Column 1 (Expand control): Sticky Left */
+      .metrics-table th:first-child,
+      .metrics-table td:first-child,
+      .sub-products-table td:first-child {
+        position: sticky;
+        left: 0;
+        width: 70px;
+        min-width: 70px;
+        max-width: 70px;
+        background: #ffffff !important; /* Solid opaque white background */
+        z-index: 3;
+        text-align: center;
+        padding: 0 10px !important;
+      }
+      .metrics-table th:first-child {
+        z-index: 4; /* Higher than regular table headers (z-index 1) */
+      }
+
+      /* Column 2 (Name): Sticky Left with offset */
+      .metrics-table th:nth-child(2),
+      .metrics-table td:nth-child(2),
+      .sub-products-table td:nth-child(2),
+      .variable-name-cell,
+      .product-name-cell {
+        position: sticky;
+        left: 70px;
+        width: 136px;
+        min-width: 136px;
+        max-width: 136px;
+        background: #ffffff !important; /* Solid opaque white background */
+        z-index: 3;
+        border-right: 1px solid var(--border-color);
+        /* 
+          Text-align left, line height reduced, and right-padding added 
+          to break text gracefully and look exceptionally elegant without overlapping.
+          Now bound explicitly via .variable-name-cell and .product-name-cell classes to guarantee
+          flawless rendering on both variables (main row) and products (sub rows) alike!
+        */
+        text-align: left !important;
+        line-height: 1.25 !important;
+        padding: 8px 16px !important; /* PERFECT MATCH FOR px-4 py-2 IN ORIGINAL NUXT APP */
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+      }
+      .metrics-table th:nth-child(2) {
+        z-index: 4; /* Higher than regular table headers (z-index 1) */
+      }
+
+      /* Column Last (Coverage): Sticky Right */
+      .metrics-table th:last-child,
+      .metrics-table td:last-child,
+      .sub-products-table td:last-child {
+        position: sticky;
+        /*
+          Using right: -1px instead of right: 0px.
+          This pulls the column slightly to the right by 1px, sealing any sub-pixel rounding gap
+          created by high-DPI browsers and stopping year cells/timeline bars from "peeking through".
+        */
+        right: -1px;
+        width: 100px;
+        min-width: 100px;
+        max-width: 100px;
+        background: #ffffff !important; /* Solid opaque white background */
+        z-index: 3;
+        border-left: 1px solid var(--border-color);
+        text-align: center;
+        padding: 0 10px !important;
+      }
+      .metrics-table th:last-child {
+        z-index: 4; /* Higher than regular table headers (z-index 1) */
+      }
+
+      /* --- EXACT 1PX HORIZONTAL SCROLL SHIFT COMPENSATION FOR NESTED STICKY COLUMNS --- */
+      /* Since the inner table is nested within colspan, browser borders create a tiny 1px shift to the right. */
+      /* We use transform: translateX(-1px) to pull them exactly 1px to the left for pixel-perfect vertical alignment! */
+      .sub-products-table td:first-child {
+        left: 0 !important;
+        transform: translateX(-1px);
+        padding: 0 10px !important; /* Removed vertical padding conflict to center cov-btn vertically */
+        vertical-align: middle !important;
+      }
+      .sub-products-table td:nth-child(2),
+      .sub-products-table .product-name-cell {
+        left: 70px !important;
+        transform: translateX(-1px);
+      }
+      .sub-products-table td:last-child {
+        padding: 0 10px !important; /* Removed vertical padding conflict to center cov-btn vertically */
+        vertical-align: middle !important;
+      }
+
+      /* --- TABLE COLS & PREVENT YEAR OVERLAP MODES --- */
+      /* Dynamic year columns (No padding to eliminate gaps!) */
+      .metrics-table th:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell),
+      .metrics-table td:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell),
+      .sub-products-table td:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell) {
+        text-align: center;
+        width: var(--table-cell);
+        min-width: var(--table-cell);
+        max-width: var(--table-cell);
+        padding: 0 !important; /* EXACTLY 0 padding to ensure seamless blocks */
+        margin: 0 !important;
+      }
+
+      /* --- HIGH FIDELITY EMPTY MARGIN SPACER COLUMNS --- */
+      /* Base styles for breathing room margins */
+      .metrics-table th.table-spacer-cell,
+      .metrics-table td.table-spacer-cell,
+      .sub-products-table td.table-spacer-cell {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      /* --- DYNAMIC COMFORTABLE BREATHING ROOM SPACER WIDTHS BY ZOOM --- */
+      /* Under Zoom 1: Spacers are 4px so they don't combine with empty cell buffers to create massive odd gaps */
+      .metrics-table.zoom-1 .table-spacer-cell,
+      .sub-products-table.zoom-1 .table-spacer-cell {
+        width: 4px !important;
+        min-width: 4px !important;
+        max-width: 4px !important;
+      }
+      /* Under Zoom 2: Spacers are 10px */
+      .metrics-table.zoom-2 .table-spacer-cell,
+      .sub-products-table.zoom-2 .table-spacer-cell {
+        width: 10px !important;
+        min-width: 10px !important;
+        max-width: 10px !important;
+      }
+      /* Under Zoom 3: Spacers scale up to full 16px to give luxurious breathing space */
+      .metrics-table.zoom-3 .table-spacer-cell,
+      .sub-products-table.zoom-3 .table-spacer-cell {
+        width: 16px !important;
+        min-width: 16px !important;
+        max-width: 16px !important;
+      }
+
+      /* --- EXACT HIDE-EVEN LOGIC FROM ORIGINAL METRICSTABLE.VUE --- */
+      /* When zoom is < 3, hide every second year's label so text stays side-by-side without wrapping or clipping */
+      /* Note: index 3 is Column 3 (the table-spacer-cell is index 2), so year cells start at index 3. nth-child(even) handles odd years perfectly */
+      .metrics-table.hide-even th:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell):nth-child(even) > span {
+        visibility: hidden;
+      }
+
+      .metrics-table th, .metrics-table td, .sub-products-table td {
+        border-bottom: 1px solid var(--border-color);
+        box-sizing: border-box;
+        height: 38px;
+        vertical-align: middle !important; /* Force browser's vertical centering on all rows */
+      }
+
+      .metrics-table tbody tr {
+        background: #ffffff;
+      }
+
+      /* Hover states - matching old metrics table hovering exactly */
+      .metrics-table tbody tr:hover:not(.expanded-row) {
+        background: #eee !important;
+      }
+
+      /* Column-based hover highlighting (vertical tracking effect) */
+      .metrics-table td.hoverCell,
+      .sub-products-table td.hoverCell {
+        background-color: #eee !important;
+      }
+
+      /* --- TIMELINE PROGRESS BARS (EXACT ROUNDING, NO GAPS) --- */
+      .timeline-bar {
+        height: 15px; /* Matches height="15" exactly */
+        width: 100%;
+        display: block;
+        box-sizing: border-box;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: var(--secondary-color); /* Variables timeline color: #335E6F */
+        border-radius: 0;
+      }
+
+      .timeline-bar.sub-bar {
+        background-color: var(--applications-color); /* Products timeline color: #00B19D */
+      }
+
+      /* Border radius logic - rounding left of first item and right of last item only */
+      .timeline-bar.cap-left {
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+      }
+
+      .timeline-bar.cap-right {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
+
+      .timeline-bar.single {
+        border-radius: 5px;
+      }
+
+      /* --- EXPANDED SUB-TABLES --- */
+      .metrics-table tr.expanded-row {
+        background: #ffffff !important;
+      }
+
+      /*
+        Using direct child combinator (tr.expanded-row > td) instead of descendant selector (tr.expanded-row td).
+        This restricts the padding: 0 !important rule exclusively to the parent cell containing the sub-table,
+        preventing it from leaking down and wiping out the padding on .product-name-cell inside the sub-table!
+        
+        Also set border-bottom: none !important so we don't create double bottom borders when sub-table holds its own borders.
+      */
+      .metrics-table tr.expanded-row > td {
+        padding: 0 !important;
+        z-index: 0 !important;
+        border-bottom: none !important; /* Eliminates the outer parent double border! */
+      }
+
+      .sub-products-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      .sub-products-table tr {
+        line-height: 3;
+        background: #ffffff;
+      }
+
+      .sub-products-table tr:hover {
+        background: #eee !important;
+      }
+
+      /* The bottom border is cleanly held by the sub-products cells instead of creating a double border */
+      .sub-products-table tr:last-child td {
+        border-bottom: 1px solid var(--border-color) !important;
+      }
+
+      /* Link/text colors in table - harmonized to beautiful blue from metrics.vue */
+      .metrics-table a, .sub-products-table a {
+        color: var(--secondary-color) !important; /* Blue variable/product text: #335E6F */
+        text-decoration: none;
+      }
+
+      .metrics-table a:hover, .sub-products-table a:hover {
+        text-decoration: underline;
+      }
+
+      /* --- BUTTONS & CONTROLS --- */
+      /* Harmonized all circular buttons in the table (expand arrows, planets, pins, and collection links) to be exactly 32px by 32px */
+      .chevron-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--secondary-color);
+        font-size: 24px;
+        width: 32px;  /* Unified to 32px diameter */
+        height: 32px; /* Unified to 32px diameter */
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+        padding: 0;
+      }
+
+      .chevron-toggle:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .noAvailableProduct {
+        font-size: 10px;
+        margin: 4px auto;
+        padding: 3px;
+        background: rgb(182, 126, 52);
+        border-radius: 5px;
+        color: white;
+        width: 50px;
+        text-align: center;
+        font-weight: normal;
+        line-height: initial;
+      }
+
+      /* Harmonized Planet and Pin icons sizes precisely */
+      .v-btn-icon-mock i,
+      .cov-btn i,
+      .chevron-toggle i {
+        font-size: 20px !important;
+      }
+
+      /* 
+        Visually offsets the icon glyph inside circular buttons down by exactly 1px.
+        This neutralizes the natural font baseline offset, centering the icons perfectly inside the circular outlines.
+      */
+      .v-btn-icon-mock i,
+      .cov-btn i,
+      .chevron-toggle i {
+        position: relative;
+        top: 1px; 
+      }
+
+      /* Unified main row planet button to exact same 32px by 32px dimensions as sub-buttons and chevron toggles! */
+      .v-btn-icon-mock {
+        background: none;
+        border: none;
+        border-radius: 50%;
+        width: 32px;  /* Unified to 32px diameter */
+        height: 32px; /* Unified to 32px diameter */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--secondary-color);
+        transition: background-color 0.2s;
+        margin: 0 auto; /* Horizontally center */
+      }
+
+      .v-btn-icon-mock:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .cov-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--applications-color);
+        width: 32px;  /* Unified to 32px diameter */
+        height: 32px; /* Unified to 32px diameter */
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        vertical-align: middle; /* Center inline within table cell */
+        margin: 0 auto; /* Horizontally center */
+      }
+
+      .cov-btn:hover {
+        background: rgba(0,0,0,0.05);
+      }
+
+      /* --- BOTTOM CONTROLS BAR (EXACTLY MATCHING OLD METRICS.VUE) --- */
+      .bottom-row {
+        flex-shrink: 0;
+        background: var(--background-color);
+        padding: 8px 0;
+        box-sizing: border-box;
+      }
+
+      .v-container-mock {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .controls-left, .controls-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      /* Button exactly styled as Vuetify dark button with "applications" color (#00B19D) */
+      .v-btn-mock {
+        background-color: var(--applications-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0 16px;
+        font-size: 14px;
+        /* Typography matches heading-font-family exactly from assets/variables.scss */
+        font-family: var(--header-font), var(--font-family) !important;
+        font-weight: normal !important; /* NotesESAbold is built-in bold */
+        text-transform: uppercase;
+        height: 36px;
+        letter-spacing: 1.25px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 
+                    0px 2px 2px 0px rgba(0,0,0,0.14), 
+                    0px 1px 5px 0px rgba(0,0,0,0.12);
+        transition: background-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+      }
+
+      .v-btn-mock:hover {
+        background-color: #009685;
+        box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 
+                    0px 4px 5px 0px rgba(0,0,0,0.14), 
+                    0px 1px 10px 0px rgba(0,0,0,0.12);
+      }
+
+      .v-btn-icon-mock {
+        background: none;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--secondary-color);
+        font-size: 24px;
+        transition: background-color 0.2s;
+      }
+
+      .v-btn-icon-mock:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      /* Vuetify styled Outlined Select dropdown with floating label appearance */
+      .v-select-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .v-select-label {
+        position: absolute;
+        top: -8px;
+        left: 10px;
+        background: white;
+        padding: 0 4px;
+        font-size: 11px;
+        color: var(--secondary-color);
+        font-weight: 500;
+        z-index: 2;
+      }
+
+      .v-select-mock {
+        font-family: var(--font-family);
+        font-size: 14px;
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.87);
+        padding: 8px 32px 8px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.38);
+        border-radius: 4px;
+        height: 40px;
+        background: white;
+        outline: none;
+        cursor: pointer;
+        min-width: 180px;
+        text-transform: capitalize;
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path fill='%23335E6F' d='M7,10L12,15L17,10H7Z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 24px;
+      }
+
+      .v-select-mock:focus {
+        border-color: var(--applications-color);
+        border-width: 2px;
+      }
+
+      /* Slider layout exactly matching old Metrics view slider */
+      .v-slider-mock-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--secondary-color);
+        width: 260px;
+      }
+
+      .v-slider-mock-container i {
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--secondary-color);
+        user-select: none;
+      }
+
+      .v-slider-mock-container i:hover {
+        color: var(--primary-color);
+      }
+
+      .v-slider-mock {
+        appearance: none;
+        width: 100%;
+        height: 2px; /* Super thin linear line of Vuetify slider */
+        background: rgba(0, 0, 0, 0.26);
+        outline: none;
+        position: relative;
+      }
+
+      .v-slider-mock::-webkit-slider-thumb {
+        appearance: none;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--secondary-color);
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+
+      .v-slider-mock::-webkit-slider-thumb:hover {
+        transform: scale(1.3);
+      }
+
+      /* --- MODALS (DIALOGS) --- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none; /* Controlled by JS/CSS class .open */
+        align-items: center;
+        justify-content: center;
+        z-index: var(--modal-z-index);
+      }
+
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal-container {
+        background: #ffffff;
+        border-radius: 4px;
+        width: 90%;
+        max-width: 1000px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 
+                    0px 24px 38px 3px rgba(0,0,0,0.14), 
+                    0px 9px 46px 8px rgba(0,0,0,0.12);
+        overflow: hidden;
+      }
+
+      .modal-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h3 {
+        font-family: var(--font-family);
+        color: var(--primary-color);
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modal-close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: var(--secondary-color);
+        cursor: pointer;
+        padding: 0;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .modal-close-btn:hover {
+        background-color: rgba(0,0,0,0.05);
+      }
+
+      .modal-body {
+        padding: 24px;
+        overflow-y: auto;
+        flex-grow: 1;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .modal-footer {
+        padding: 8px 16px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      /* --- STATISTICS MODAL --- */
+      .stats-summary {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.87);
+        margin-bottom: 24px;
+        font-weight: normal;
+      }
+
+      .chart-section-title {
+        text-align: center;
+        margin: 24px 0;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      .stats-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 24px;
+      }
+
+      .stats-col-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      .stats-list {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+      }
+
+      .stats-list-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .stats-list-item:last-child {
+        border-bottom: none;
+      }
+
+      .stats-list-item i {
+        font-size: 18px;
+        margin-right: 8px;
+      }
+
+      .chart-mock-box {
+        width: 100%;
+        height: 250px;
+        background: #fafafa;
+        border: 1px dashed var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--secondary-color);
+        border-radius: 4px;
+      }
+
+      /* --- COVERAGE MODAL --- */
+      .coverage-split {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 20px;
+        height: 500px;
+      }
+
+      .cov-list {
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        overflow-y: auto;
+        padding: 12px;
+        background: #fafafa;
+      }
+
+      .cov-list-title {
+        font-size: 12px;
+        font-weight: 500;
+        color: rgba(0,0,0,0.54);
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 12px;
+      }
+
+      .cov-item {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+
+      .cov-item:hover {
+        border-color: var(--applications-color);
+      }
+
+      .cov-item.active {
+        background-color: rgba(0, 177, 157, 0.05);
+        border-color: var(--applications-color);
+      }
+
+      .cov-item-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: rgba(0,0,0,0.87);
+        margin-bottom: 6px;
+      }
+
+      .cov-item-meta {
+        font-size: 12px;
+        color: rgba(0,0,0,0.54);
+        margin-top: 4px;
+      }
+
+      .cov-item-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      /* --- RESPONSIVE ADAPTATIONS --- */
+      @media (max-width: 960px) {
+        .bottom-row {
+          padding: 12px;
+        }
+
+        .v-container-mock {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .controls-left, .controls-right {
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .v-select-mock {
+          flex-grow: 1;
+        }
+
+        .coverage-split {
+          grid-template-columns: 1fr;
+          grid-template-rows: 200px 1fr;
+          height: auto;
+        }
+
+        .cov-map-container {
+          height: 300px;
+        }
+
+        /* Responsive Table Sticky Offsets for small screens */
+        .metrics-table th:nth-child(2),
+        .metrics-table td:nth-child(2),
+        .sub-products-table td:nth-child(2),
+        .variable-name-cell,
+        .product-name-cell {
+          left: 40px;
+          width: 90px;
+          min-width: 90px;
+          max-width: 90px;
+        }
+
+        .metrics-table th:first-child,
+        .metrics-table td:first-child,
+        .sub-products-table td:first-child {
+          width: 40px;
+          min-width: 40px;
+          max-width: 40px;
+        }
+
+        .metrics-table th:last-child,
+        .metrics-table td:last-child,
+        .sub-products-table td:last-child {
+          width: 60px;
+          min-width: 60px;
+          max-width: 60px;
+        }
+
+        /* Compensate 1px shift on mobile screens too! */
+        .sub-products-table td:first-child {
+          left: 0 !important;
+          transform: translateX(-1px);
+        }
+        .sub-products-table td:nth-child(2),
+        .sub-products-table .product-name-cell {
+          left: 40px !important;
+          transform: translateX(-1px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- MAIN SCREEN CONTAINER -->
+    <div class="app-container">
+      
+      <!-- TITLE ROW -->
+      <div class="metrics-header">
+        <h1>Metrics</h1>
+      </div>
+
+      <!-- INLINE EOX-ITEMFILTER (TOP ROW, NO SIDEBAR LAYOUT) -->
+      <div class="filter-row">
+        <eox-itemfilter id="itemfilter" inline-mode></eox-itemfilter>
+      </div>
+
+      <!-- SCROLLABLE TABLE ROW -->
+      <div class="table-row">
+        <div class="metrics-table-container">
+          <table id="metrics-table" class="metrics-table">
+            <thead>
+              <!-- Headers will be generated dynamically to cover 1960 to 2026 -->
+              <tr>
+                <th scope="col" aria-label="Expand column"></th>
+                <th scope="col">Name</th>
+                <!-- Populated dynamically -->
+                <th scope="col">Coverage</th>
+              </tr>
+            </thead>
+            <tbody id="metrics-table-body">
+              <!-- Populated dynamically with exact years 1960 to 2026 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BOTTOM CONTROL ROW (EXACTLY MATCHING OLD VERSION) -->
+      <div class="bottom-row">
+        <div class="v-container-mock">
+          <!-- Left Controls -->
+          <div class="controls-left">
+            <button id="btn-stats-open" class="v-btn-mock">
+              <i class="mdi mdi-poll"></i> Statistics
+            </button>
+            
+            <div class="v-select-container">
+              <span class="v-select-label">Aggregate by</span>
+              <select id="aggregation-select" class="v-select-mock">
+                <option value="variables" selected>variables</option>
+                <option value="projects">projects</option>
+                <option value="eo-missions">eo-missions</option>
+                <option value="themes">themes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Right Controls -->
+          <div class="controls-right">
+            <!-- Empty Toggle Button (Defaults to hiding empty) -->
+            <button id="btn-toggle-empty" class="v-btn-icon-mock" title="Show empty variables">
+              <i class="mdi mdi-archive-cancel-outline"></i>
+            </button>
+
+            <!-- Zoom slider control matching old MetricsTable styling -->
+            <div class="v-slider-mock-container" title="Table Zoom">
+              <i class="mdi mdi-magnify-minus-outline" id="zoom-out-trigger"></i>
+              <input type="range" id="zoom-slider" min="1" max="3" value="1" step="1" class="v-slider-mock" aria-label="Table zoom slider" />
+              <i class="mdi mdi-magnify-plus-outline" id="zoom-in-trigger"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STATISTICS DIALOG OVERLAY -->
+    <div class="modal-overlay" id="modal-statistics" aria-modal="true" role="dialog">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="mdi mdi-poll" style="color: var(--applications-color);"></i> All stats</h3>
+          <button class="modal-close-btn" id="btn-stats-close" aria-label="Close Statistics Dialog">
+            <i class="mdi mdi-close"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="stats-summary">
+            Number of products: <span id="stats-total-products">123</span>
+          </div>
+
+          <div class="chart-section-title">Temporal coverage</div>
+          <div class="chart-mock-box">
+            <!-- Visual mock for bar chart -->
+            <canvas id="productsChart" style="display: none;"></canvas>
+            <div style="font-size: 13px; color: #666;">[Temporal Bar Chart Area - Chart.js placeholder]</div>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;" />
+
+          <div class="stats-two-col">
+            <!-- Left: Variable distribution list & Pie chart -->
+            <div>
+              <div class="stats-col-title">Variable distribution</div>
+              <div style="display: flex; gap: 16px;">
+                <div class="stats-list" style="flex: 1;">
+                  <div class="stats-list-item">
+                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
+                    <span>Sea Surface Temperature: 45 products</span>
+                  </div>
+                  <div class="stats-list-item">
+                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
+                    <span>Soil Moisture: 32 products</span>
+                  </div>
+                </div>
+                <div style="width: 150px; height: 150px; border: 1px dashed var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center;">
+                  <canvas id="variablePie" style="display: none;"></canvas>
+                  [Pie Chart]
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Satellite mission distribution list & Pie chart -->
+            <div>
+              <div class="stats-col-title">Satellite mission distribution</div>
+              <div style="display: flex; gap: 16px;">
+                <div class="stats-list" style="flex: 1;">
+                  <div class="stats-list-item">
+                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
+                    <span>Sentinel-3: 54 products</span>
+                  </div>
+                  <div class="stats-list-item">
+                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
+                    <span>CryoSat-2: 31 products</span>
+                  </div>
+                </div>
+                <div style="width: 150px; height: 150px; border: 1px dashed var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center;">
+                  <canvas id="missionPie" style="display: none;"></canvas>
+                  [Pie Chart]
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="v-btn-mock" id="btn-stats-footer-close" style="background-color: transparent; color: var(--applications-color); border: 1px solid var(--applications-color); box-shadow: none;">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COVERAGE MAP DIALOG OVERLAY -->
+    <div class="modal-overlay" id="modal-coverage" aria-modal="true" role="dialog">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3>
+            <i class="mdi mdi-earth" style="color: var(--applications-color);"></i> 
+            <span id="coverage-modal-title">Sea Surface Temperature Coverage</span>
+          </h3>
+          <button class="modal-close-btn" id="btn-coverage-close" aria-label="Close Coverage Dialog">
+            <i class="mdi mdi-close"></i>
+          </button>
+        </div>
+        <div class="modal-body" style="padding: 16px;">
+          <div class="coverage-split">
+            <!-- Left Panel: Products under the selected variable -->
+            <div class="cov-list">
+              <div class="cov-list-title">Products</div>
+              <div id="coverage-products-list">
+                <!-- Mock Product Item 1 -->
+                <div class="cov-item active">
+                  <div class="cov-item-name">ESA SST CCI v3.0</div>
+                  <div class="cov-item-meta">Region: Global</div>
+                  <div class="cov-item-meta">Missions: Sentinel-3, ENVISAT</div>
+                  <div class="cov-item-actions">
+                    <button class="cov-btn" title="Highlight bounds on map"><i class="mdi mdi-map-marker"></i></button>
+                    <a href="#" target="_blank" class="cov-btn" title="Open Product Catalog Detail"><i class="mdi mdi-open-in-new"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Panel: Geospatial Map Area -->
+            <div class="cov-map-container">
+              <!-- EOx-Map Component template -->
+              <eox-map id="coverage-eox-map" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;"></eox-map>
+              <div style="color: var(--secondary-color); text-align: center; font-weight: 600; font-size: 14px; padding: 20px; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
+                <i class="mdi mdi-map-search-outline" style="font-size: 40px; display: block; margin-bottom: 8px; color: var(--applications-color);"></i>
+                Map Component Area<br/>
+                <span style="font-size: 11px; font-weight: 400; color: #666;">(eox-map placeholder)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="v-btn-mock" id="btn-coverage-footer-close" style="background-color: transparent; color: var(--applications-color); border: 1px solid var(--applications-color); box-shadow: none;">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORE SCRIPTS FOR INTERACTION -->
+    <script type="module">
+      const itemFilterEl = document.querySelector("#itemfilter");
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const fontUrl =
+        urlParams.get("fontUrl") ||
+        "https://cdn.jsdelivr.net/npm/@eox/esa-ui@1.19.0/fonts/notesesabol.ttf";
+
+      const fontStyle = document.createElement("style");
+      fontStyle.textContent = `
+        @font-face {
+          font-family: "NotesESAbold";
+          src: url("${fontUrl}") format("truetype");
+        }
+      `;
+      document.head.appendChild(fontStyle);
+
+      // --- GENERATE DUMMY DATA FROM 1960 TO 2026 ---
+      const startYear = 1960;
+      const endYear = 2026;
+      const yearsList = [];
+      for (let y = startYear; y <= endYear; y++) {
+        yearsList.push(y);
+      }
+
+      // Generate Table Headers with odd/even tracking index and empty margins at the start and end
+      const tableEl = document.getElementById("metrics-table");
+      const theadRow = tableEl.querySelector("thead tr");
+      theadRow.innerHTML = `
+        <th scope="col" aria-label="Expand column"></th>
+        <th scope="col">Name</th>
+        <th class="table-spacer-cell"></th> <!-- Spacer column for breathing room at table start -->
+        ${yearsList.map(y => {
+          return `<th scope="col"><span>${y}</span></th>`;
+        }).join("")}
+        <th class="table-spacer-cell"></th> <!-- Spacer column for breathing room at table end -->
+        <th scope="col">Coverage</th>
+      `;
+
+      // Define Mock Data Sets
+      const mockRows = [
+        {
+          id: "sst",
+          name: "Sea Surface Temperature",
+          activeYears: yearsList.filter(y => y >= 1978), // active 1978-2026
+          hasProducts: true,
+          products: [
+            {
+              id: "sst-cci",
+              name: "ESA SST CCI v3.0",
+              activeYears: yearsList.filter(y => y >= 1981 && y <= 2025),
+              region: "Global",
+              missions: ["Sentinel-3", "ENVISAT"]
+            },
+            {
+              id: "sst-slstr",
+              name: "Sentinel-3 SLSTR Daily SST",
+              activeYears: yearsList.filter(y => y >= 2016),
+              region: "Global",
+              missions: ["Sentinel-3"]
+            }
+          ]
+        },
+        {
+          id: "soil-moisture",
+          name: "Soil Moisture",
+          activeYears: yearsList.filter(y => (y >= 1991 && y <= 2015) || (y >= 2018 && y <= 2024)),
+          hasProducts: true,
+          products: [
+            {
+              id: "smos-l4",
+              name: "SMOS L4 Soil Moisture",
+              activeYears: yearsList.filter(y => y >= 2010 && y <= 2023),
+              region: "Global",
+              missions: ["SMOS"]
+            },
+            {
+              id: "cci-sm",
+              name: "CCI Soil Moisture v8.1",
+              activeYears: yearsList.filter(y => y >= 1978 && y <= 2022),
+              region: "Global",
+              missions: ["Sentinel-3"]
+            }
+          ]
+        },
+        {
+          id: "ocean-alkalinity",
+          name: "Ocean Alkalinity",
+          activeYears: [],
+          hasProducts: false,
+          products: []
+        }
+      ];
+
+      // Render timeline progress bars with exact rounding logic and 0px spacing
+      const renderTimelineCells = (activeYears, isSub = false) => {
+        return yearsList.map((y, index) => {
+          const isActive = activeYears.includes(y);
+          if (!isActive) {
+            return `<td class="year-cell"></td>`;
+          }
+          
+          // Rounded edges matching the bounds of the active years
+          const prevActive = index > 0 && activeYears.includes(yearsList[index - 1]);
+          const nextActive = index < yearsList.length - 1 && activeYears.includes(yearsList[index + 1]);
+          
+          let radiusClass = "middle";
+          if (!prevActive && !nextActive) {
+            radiusClass = "single";
+          } else if (!prevActive) {
+            radiusClass = "cap-left";
+          } else if (!nextActive) {
+            radiusClass = "cap-right";
+          }
+          
+          const subClass = isSub ? "sub-bar" : "";
+          
+          return `
+            <td class="year-cell">
+              <span class="timeline-bar ${subClass} ${radiusClass}"></span>
+            </td>
+          `;
+        }).join("");
+      };
+
+      // Populate Table Body dynamically
+      const tbody = document.getElementById("metrics-table-body");
+      tbody.innerHTML = mockRows.map(row => {
+        if (!row.hasProducts) {
+          return `
+            <tr>
+              <td>
+                <div class="noAvailableProduct">No products available</div>
+              </td>
+              <td class="variable-name-cell">
+                <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
+              </td>
+              <td class="table-spacer-cell"></td> <!-- Spacer start -->
+              ${renderTimelineCells(row.activeYears)}
+              <td class="table-spacer-cell"></td> <!-- Spacer end -->
+              <td>
+                <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);" disabled>
+                  <i class="mdi mdi-earth"></i>
+                </button>
+              </td>
+            </tr>
+          `;
+        }
+        
+        return `
+          <tr class="parent-row" data-id="${row.id}">
+            <td>
+              <button class="chevron-toggle" aria-label="Expand Variable Details">
+                <i class="mdi mdi-chevron-down"></i>
+              </button>
+            </td>
+            <td class="variable-name-cell">
+              <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
+            </td>
+            <td class="table-spacer-cell"></td> <!-- Spacer start -->
+            ${renderTimelineCells(row.activeYears)}
+            <td class="table-spacer-cell"></td> <!-- Spacer end -->
+            <td>
+              <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);">
+                <i class="mdi mdi-earth"></i>
+              </button>
+            </td>
+          </tr>
+          <tr class="expanded-row" id="expanded-${row.id}" style="display: none;">
+            <!-- colspan expanded from +2 to +4 to seamlessly cover the spacer columns too -->
+            <td colspan="${yearsList.length + 4}">
+              <table class="sub-products-table">
+                <tbody>
+                  ${row.products.map(prod => `
+                    <tr>
+                      <td>
+                        <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);">
+                          <i class="mdi mdi-open-in-new"></i>
+                        </button>
+                      </td>
+                      <td class="product-name-cell">
+                        <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${prod.name}</a>
+                      </td>
+                      <td class="table-spacer-cell"></td> <!-- Spacer start -->
+                      ${renderTimelineCells(prod.activeYears, true)}
+                      <td class="table-spacer-cell"></td> <!-- Spacer end -->
+                      <td>
+                        <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);">
+                          <i class="mdi mdi-map-marker"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        `;
+      }).join("");
+
+      // --- DIALOG OPEN/CLOSE LOGIC ---
+      const setupModal = (overlayId, openTriggerId, closeTriggerIds) => {
+        const overlay = document.getElementById(overlayId);
+        const openBtn = document.getElementById(openTriggerId);
+        
+        if (openBtn) {
+          openBtn.addEventListener("click", () => {
+            overlay.classList.add("open");
+          });
+        }
+        
+        closeTriggerIds.forEach(id => {
+          const btn = document.getElementById(id);
+          if (btn) {
+            btn.addEventListener("click", () => {
+              overlay.classList.remove("open");
+            });
+          }
+        });
+
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) {
+            overlay.classList.remove("open");
+          }
+        });
+      };
+
+      setupModal("modal-statistics", "btn-stats-open", ["btn-stats-close", "btn-stats-footer-close"]);
+
+      // Hook up coverage button handlers (delegate to tbody for dynamic elements)
+      tbody.addEventListener("click", (e) => {
+        const earthBtn = e.target.closest("button.v-btn-icon-mock:not([disabled])");
+        if (earthBtn) {
+          document.getElementById("modal-coverage").classList.add("open");
+        }
+      });
+      setupModal("modal-coverage", null, ["btn-coverage-close", "btn-coverage-footer-close"]);
+
+      // --- ZOOM SLIDER BINDING (WITH EXACT ORIGINAL HIDE-EVEN CONDITIONAL CLASS) ---
+      const zoomSlider = document.getElementById("zoom-slider");
+      const root = document.documentElement;
+      
+      const updateZoom = (val) => {
+        zoomSlider.value = val;
+        // Matches the original width scaling: Zoom 1 -> 28px, Zoom 2 -> 42px, Zoom 3 -> 56px per year column.
+        // Prevents year label cut off as it scales dynamically based on the exact 28px minimum width!
+        const zoomMap = { "1": "28px", "2": "42px", "3": "56px" };
+        root.style.setProperty("--table-cell", zoomMap[val]);
+
+        // Replicates EXACT conditional class from original view: :class="tableZoom < 3 ? 'hide-even' : ''"
+        if (parseInt(val) < 3) {
+          tableEl.classList.add("hide-even");
+        } else {
+          tableEl.classList.remove("hide-even");
+        }
+
+        // Add dynamic zoom-X class to main and nested tables to let spacer cells shrink adaptively when zoomed out!
+        tableEl.classList.remove("zoom-1", "zoom-2", "zoom-3");
+        tableEl.classList.add(`zoom-${val}`);
+        
+        document.querySelectorAll(".sub-products-table").forEach(subTable => {
+          subTable.classList.remove("zoom-1", "zoom-2", "zoom-3");
+          subTable.classList.add(`zoom-${val}`);
+        });
+      };
+
+      zoomSlider.addEventListener("input", (e) => {
+        updateZoom(e.target.value);
+      });
+
+      document.getElementById("zoom-out-trigger").addEventListener("click", () => {
+        const currentVal = parseInt(zoomSlider.value);
+        if (currentVal > 1) updateZoom(currentVal - 1);
+      });
+
+      document.getElementById("zoom-in-trigger").addEventListener("click", () => {
+        const currentVal = parseInt(zoomSlider.value);
+        if (currentVal < 3) updateZoom(currentVal + 1);
+      });
+
+      // Set initial zoom level
+      updateZoom("1");
+
+      // --- VERTICAL HOVER HIGH-FIDELITY TRACKING EFFECT (EXACTLY MATCHES ORIGINAL) ---
+      const handleCellHover = (e) => {
+        const cell = e.target.closest("td");
+        if (!cell || cell.classList.contains("table-spacer-cell")) return; // Don't track spacer columns
+        
+        const parentRow = cell.parentNode;
+        const allCells = Array.from(parentRow.children);
+        const colIndex = allCells.indexOf(cell);
+        
+        // Remove hover class from all columns in both tables
+        document.querySelectorAll(".hoverCell").forEach(c => c.classList.remove("hoverCell"));
+        
+        // Only apply vertical hover if we are inside a year cell (column index > 2 and < last-column - 1 to exclude spacer columns)
+        if (colIndex > 2 && colIndex < allCells.length - 2) {
+          // Add hover highlight to corresponding column cells of both main table and sub-tables
+          document.querySelectorAll(`.metrics-table td:nth-child(${colIndex + 1}), .sub-products-table td:nth-child(${colIndex + 1})`).forEach(c => {
+            c.classList.add("hoverCell");
+          });
+        }
+      };
+
+      const handleCellLeave = () => {
+        document.querySelectorAll(".hoverCell").forEach(c => c.classList.remove("hoverCell"));
+      };
+
+      // Register vertical hover listeners
+      tableEl.addEventListener("mouseover", handleCellHover);
+      tableEl.addEventListener("mouseleave", handleCellLeave);
+
+      // Show/Hide empty items toggle simulation
+      const emptyToggleBtn = document.getElementById("btn-toggle-empty");
+      emptyToggleBtn.addEventListener("click", () => {
+        const icon = emptyToggleBtn.querySelector("i");
+        if (icon.classList.contains("mdi-archive-cancel-outline")) {
+          icon.className = "mdi mdi-archive-check-outline";
+          emptyToggleBtn.title = "Hide empty variables";
+        } else {
+          icon.className = "mdi mdi-archive-cancel-outline";
+          emptyToggleBtn.title = "Show empty variables";
+        }
+      });
+
+      // --- INTERACTIVE ROW EXPAND/COLLAPSE FUNCTIONALITY ---
+      tbody.addEventListener("click", (e) => {
+        const btn = e.target.closest(".chevron-toggle");
+        if (!btn) return;
+
+        const parentRow = btn.closest("tr");
+        const nextRow = parentRow.nextElementSibling;
+        const icon = btn.querySelector("i");
+        
+        if (nextRow && nextRow.classList.contains("expanded-row")) {
+          if (nextRow.style.display === "none") {
+            nextRow.style.display = "table-row";
+            icon.className = "mdi mdi-chevron-up";
+          } else {
+            nextRow.style.display = "none";
+            icon.className = "mdi mdi-chevron-down";
+          }
+        }
+      });
+
+      // Simulate EOx itemfilter ready
+      setTimeout(() => {
+        itemFilterEl.classList.add("ready");
+      }, 200);
+    </script>
+  </body>
+</html>
