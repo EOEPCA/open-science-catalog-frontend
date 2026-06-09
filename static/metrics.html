@@ -2046,8 +2046,39 @@
         let productsToDisplay = [];
         if (productId) {
           // Single product mode
-          const prod = products.find((p) => p.id === productId);
-          if (!prod) return;
+          const rawProd = products.find((p) => p.id === productId);
+          if (!rawProd) return;
+          const currentYears = {};
+          if (
+            rawProd.extent &&
+            rawProd.extent.temporal &&
+            rawProd.extent.temporal.interval &&
+            rawProd.extent.temporal.interval[0]
+          ) {
+            const getYear = (string) => {
+              if (!string) return null;
+              return parseInt(string.substring(0, string.indexOf("-")));
+            };
+            const yearStart = getYear(rawProd.extent.temporal.interval[0][0]);
+            const yearEnd = getYear(rawProd.extent.temporal.interval[0][1]);
+            if (yearStart !== null && yearEnd !== null) {
+              for (let year = yearStart; year <= yearEnd; year++) {
+                currentYears[year] = 1;
+              }
+            }
+          }
+          const prod = {
+            id: rawProd.id,
+            name: rawProd.title,
+            years: currentYears,
+            coverage:
+              rawProd.extent && rawProd.extent.spatial
+                ? rawProd.extent.spatial.bbox
+                : null,
+            region: rawProd["osc:region"] || rawProd.region,
+            missions: rawProd["osc:missions"] || [],
+            project: rawProd["osc:project"] || rawProd.project,
+          };
           modalTitle.textContent = `${prod.name} Coverage`;
           productsToDisplay = [prod];
         } else {
