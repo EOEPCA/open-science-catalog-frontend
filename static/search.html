@@ -215,9 +215,48 @@
         color: #335e6f;
         margin-top: auto;
       }
+
+      /* --- LOADING OVERLAY --- */
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.4s ease, visibility 0.4s ease;
+      }
+      .loading-overlay.fade-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+      .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(0, 50, 71, 0.1);
+        border-radius: 50%;
+        border-top-color: #003247;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
     </style>
   </head>
   <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-spinner"></div>
+    </div>
+
     <div class="sidebar">
       <div class="sidebar-header">
         <h1>Search <span class="mobile-only">OSC Products</span></h1>
@@ -234,6 +273,21 @@
     </div>
 
     <script type="module">
+      let safetyTimeout;
+      const hideLoader = () => {
+        if (safetyTimeout) {
+          clearTimeout(safetyTimeout);
+          safetyTimeout = null;
+        }
+        const loadingOverlay = document.getElementById("loading-overlay");
+        if (loadingOverlay) {
+          loadingOverlay.classList.add("fade-out");
+          setTimeout(() => {
+            loadingOverlay.remove();
+          }, 400);
+        }
+      };
+
       const itemFilterEl = document.querySelector("#itemfilter");
       const resultsEl = document.querySelector("#results");
       const statusEl = document.querySelector("#status");
@@ -434,6 +488,8 @@
        * Initialization
        */
       const init = async () => {
+        safetyTimeout = setTimeout(hideLoader, 8000);
+
         const dataPromise = Promise.all(
           CATEGORY_CONFIG.map((config) => fetchCatalogItems(config.path))
         );
@@ -601,6 +657,8 @@
                 console.error("Error fetching collections:", error);
                 statusEl.textContent = "Error loading results";
                 return [];
+              } finally {
+                hideLoader();
               }
             },
           };
