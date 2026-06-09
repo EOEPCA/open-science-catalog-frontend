@@ -10,7 +10,7 @@
     <!-- ESA Custom Fonts -->
     <link rel="stylesheet" href="css/notesesabold.css" />
     
-    <!-- EOx Custom Web Components -->
+    <!-- EOxElements -->
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/@eox/itemfilter/dist/eox-itemfilter.js"
@@ -21,7 +21,15 @@
     ></script>
     <script
       type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/map/dist/eox-map-advanced-layers-and-sources.js"
+    ></script>
+    <script
+      type="module"
       src="https://cdn.jsdelivr.net/npm/@eox/timecontrol/dist/eox-timecontrol.js"
+    ></script>
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@eox/chart/dist/eox-chart.js"
     ></script>
 
     <style>
@@ -1056,10 +1064,8 @@
           </div>
 
           <div class="chart-section-title">Temporal coverage</div>
-          <div class="chart-mock-box">
-            <!-- Visual mock for bar chart -->
-            <canvas id="productsChart" style="display: none;"></canvas>
-            <div style="font-size: 13px; color: #666;">[Temporal Bar Chart Area - Chart.js placeholder]</div>
+          <div class="chart-mock-box" style="height: 250px; position: relative; border: none; background: transparent;">
+            <eox-chart id="productsChart" style="width: 100%; height: 100%;"></eox-chart>
           </div>
 
           <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;" />
@@ -1069,19 +1075,10 @@
             <div>
               <div class="stats-col-title">Variable distribution</div>
               <div style="display: flex; gap: 16px;">
-                <div class="stats-list" style="flex: 1;">
-                  <div class="stats-list-item">
-                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
-                    <span>Sea Surface Temperature: 45 products</span>
-                  </div>
-                  <div class="stats-list-item">
-                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
-                    <span>Soil Moisture: 32 products</span>
-                  </div>
+                <div class="stats-list" id="stats-variables-list" style="flex: 1;">
                 </div>
-                <div style="width: 150px; height: 150px; border: 1px dashed var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center;">
-                  <canvas id="variablePie" style="display: none;"></canvas>
-                  [Pie Chart]
+                <div style="width: 150px; height: 150px; position: relative;">
+                  <eox-chart id="variablePie" style="width: 100%; height: 100%;"></eox-chart>
                 </div>
               </div>
             </div>
@@ -1090,19 +1087,10 @@
             <div>
               <div class="stats-col-title">Satellite mission distribution</div>
               <div style="display: flex; gap: 16px;">
-                <div class="stats-list" style="flex: 1;">
-                  <div class="stats-list-item">
-                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
-                    <span>Sentinel-3: 54 products</span>
-                  </div>
-                  <div class="stats-list-item">
-                    <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
-                    <span>CryoSat-2: 31 products</span>
-                  </div>
+                <div class="stats-list" id="stats-missions-list" style="flex: 1;">
                 </div>
-                <div style="width: 150px; height: 150px; border: 1px dashed var(--border-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center;">
-                  <canvas id="missionPie" style="display: none;"></canvas>
-                  [Pie Chart]
+                <div style="width: 150px; height: 150px; position: relative;">
+                  <eox-chart id="missionPie" style="width: 100%; height: 100%;"></eox-chart>
                 </div>
               </div>
             </div>
@@ -1132,28 +1120,13 @@
             <div class="cov-list">
               <div class="cov-list-title">Products</div>
               <div id="coverage-products-list">
-                <!-- Mock Product Item 1 -->
-                <div class="cov-item active">
-                  <div class="cov-item-name">ESA SST CCI v3.0</div>
-                  <div class="cov-item-meta">Region: Global</div>
-                  <div class="cov-item-meta">Missions: Sentinel-3, ENVISAT</div>
-                  <div class="cov-item-actions">
-                    <button class="cov-btn" title="Highlight bounds on map"><i class="mdi mdi-map-marker"></i></button>
-                    <a href="#" target="_blank" class="cov-btn" title="Open Product Catalog Detail"><i class="mdi mdi-open-in-new"></i></a>
-                  </div>
-                </div>
               </div>
             </div>
 
             <!-- Right Panel: Geospatial Map Area -->
-            <div class="cov-map-container">
+            <div class="cov-map-container" style="position: relative; height: 100%; border: 1px solid var(--border-color); border-radius: 4px;">
               <!-- EOx-Map Component template -->
-              <eox-map id="coverage-eox-map" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none;"></eox-map>
-              <div style="color: var(--secondary-color); text-align: center; font-weight: 600; font-size: 14px; padding: 20px; z-index: 2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
-                <i class="mdi mdi-map-search-outline" style="font-size: 40px; display: block; margin-bottom: 8px; color: var(--applications-color);"></i>
-                Map Component Area<br/>
-                <span style="font-size: 11px; font-weight: 400; color: #666;">(eox-map placeholder)</span>
-              </div>
+              <eox-map id="coverage-eox-map" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></eox-map>
             </div>
           </div>
         </div>
@@ -1381,12 +1354,13 @@
       };
 
       // --- DIALOG OPEN/CLOSE LOGIC ---
-      const setupModal = (overlayId, openTriggerId, closeTriggerIds) => {
+      const setupModal = (overlayId, openTriggerId, closeTriggerIds, onOpen = null) => {
         const overlay = document.getElementById(overlayId);
         const openBtn = document.getElementById(openTriggerId);
         
         if (openBtn) {
           openBtn.addEventListener("click", () => {
+            if (onOpen) onOpen();
             overlay.classList.add("open");
           });
         }
@@ -1407,15 +1381,373 @@
         });
       };
 
-      setupModal("modal-statistics", "btn-stats-open", ["btn-stats-close", "btn-stats-footer-close"]);
+      // --- COLOR HASHING UTILITY ---
+      const textToHex = (str) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        let color = "#";
+        for (let i = 0; i < 3; i++) {
+          const value = (hash >> (i * 8)) & 0xff;
+          color += ("00" + value.toString(16)).slice(-2);
+        }
+        return color;
+      };
+
+      // --- STATS DIALOG POPULATION & CHART CONFIGURATION ---
+      const openStatisticsModal = () => {
+        if (!metrics) return;
+
+        // Populate total count
+        document.getElementById("stats-total-products").textContent = metrics.numberOfProducts || 0;
+
+        // Sort variables
+        const sortedVariables = Object.values(metrics.variables || {}).sort(
+          (a, b) => Object.keys(b.products).length - Object.keys(a.products).length
+        );
+
+        // Populate variables distribution list
+        const varListEl = document.getElementById("stats-variables-list");
+        if (varListEl) {
+          varListEl.innerHTML = sortedVariables.map(v => `
+            <div class="stats-list-item">
+              <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
+              <span>${v.name}: ${Object.keys(v.products).length} products</span>
+            </div>
+          `).join("");
+        }
+
+        // Sort missions
+        const sortedMissions = Object.values(metrics["eo-missions"] || {}).sort(
+          (a, b) => Object.keys(b.products).length - Object.keys(a.products).length
+        );
+
+        // Populate missions list
+        const missionListEl = document.getElementById("stats-missions-list");
+        if (missionListEl) {
+          missionListEl.innerHTML = sortedMissions.map(m => `
+            <div class="stats-list-item">
+              <i class="mdi mdi-circle-medium" style="color: ${textToHex(m.name)};"></i>
+              <span>${m.name}: ${Object.keys(m.products).length} products</span>
+            </div>
+          `).join("");
+        }
+
+        // --- CONFIGURE EOX-CHARTS ---
+        const productsChartEl = document.getElementById("productsChart");
+        const yearsKeys = Object.keys(metrics.years || {});
+        
+        productsChartEl.spec = {
+          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+          data: {
+            values: yearsKeys.map(year => ({
+              year: year,
+              count: metrics.years[year]
+            }))
+          },
+          mark: { type: "bar", color: "#00B19D" },
+          encoding: {
+            x: { field: "year", type: "ordinal", title: "Year", axis: { labelAngle: -45 } },
+            y: { field: "count", type: "quantitative", title: "Number of products" }
+          },
+          config: {
+            view: { stroke: null }
+          }
+        };
+
+        const variablePieEl = document.getElementById("variablePie");
+        variablePieEl.spec = {
+          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+          data: {
+            values: sortedVariables.map(v => ({
+              name: v.name,
+              count: Object.keys(v.products).length
+            }))
+          },
+          mark: { type: "arc", innerRadius: 25 },
+          encoding: {
+            theta: { field: "count", type: "quantitative" },
+            color: {
+              field: "name",
+              type: "nominal",
+              scale: { range: ["#00B19D", "#003247", "#335E6F", "#a1c4fd", "#c2e9fb"] },
+              legend: null
+            },
+            tooltip: [
+              { field: "name", type: "nominal", title: "Variable" },
+              { field: "count", type: "quantitative", title: "Products" }
+            ]
+          }
+        };
+
+        const missionPieEl = document.getElementById("missionPie");
+        missionPieEl.spec = {
+          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+          data: {
+            values: sortedMissions.map(m => ({
+              name: m.name,
+              count: Object.keys(m.products).length
+            }))
+          },
+          mark: { type: "arc", innerRadius: 25 },
+          encoding: {
+            theta: { field: "count", type: "quantitative" },
+            color: {
+              field: "name",
+              type: "nominal",
+              scale: {
+                range: sortedMissions.map(m => textToHex(m.name))
+              },
+              legend: null
+            },
+            tooltip: [
+              { field: "name", type: "nominal", title: "Mission" },
+              { field: "count", type: "quantitative", title: "Products" }
+            ]
+          }
+        };
+      };
+
+      setupModal("modal-statistics", "btn-stats-open", ["btn-stats-close", "btn-stats-footer-close"], openStatisticsModal);
+
+      // --- COVERAGE DIALOG POPULATION & EOX-MAP CONFIGURATION ---
+      const createGeometry = (product) => {
+        if (!product || !product.coverage || !product.coverage[0]) {
+          return null;
+        }
+        const bbox = product.coverage[0];
+        return {
+          type: "Feature",
+          id: product.id,
+          properties: {
+            product_id: product.id,
+            name: product.name
+          },
+          geometry: {
+            type: "Polygon",
+            coordinates: [
+              [
+                [bbox[0], bbox[1]],
+                [bbox[2], bbox[1]],
+                [bbox[2], bbox[3]],
+                [bbox[0], bbox[3]],
+                [bbox[0], bbox[1]]
+              ]
+            ]
+          }
+        };
+      };
+
+      const openCoverageModal = (variableId, productId = null) => {
+        const modal = document.getElementById("modal-coverage");
+        const modalTitle = document.getElementById("coverage-modal-title");
+        const productsListEl = document.getElementById("coverage-products-list");
+        const mapEl = document.getElementById("coverage-eox-map");
+
+        // Set up layers dynamically if not already configured
+        if (!mapEl.layers || mapEl.layers.length === 0) {
+          mapEl.layers = [
+            {
+              type: "Tile",
+              properties: { id: "terrain" },
+              source: {
+                type: "WMTSCapabilities",
+                url: "https://tiles.maps.eox.at/wmts/1.0.0/WMTSCapabilities.xml",
+                layer: "terrain-light_3857",
+              }
+            },
+            {
+              type: "Vector",
+              properties: { id: "products", multipleFeatures: true },
+              source: { type: "Vector" },
+              style: {
+                "stroke-color": "rgba(0, 50, 71, 0.5)",
+                "stroke-width": 3,
+                "fill-color": "rgba(0, 50, 71, 0.1)"
+              },
+              interactions: [
+                {
+                  type: "select",
+                  options: {
+                    id: "selectInteraction",
+                    condition: "pointermove",
+                    style: {
+                      "stroke-color": "rgba(20, 100, 91, 1)",
+                      "stroke-width": 3,
+                      "fill-color": "rgba(0, 200, 71, 0.4)"
+                    }
+                  }
+                }
+              ]
+            }
+          ];
+        }
+
+        let productsToDisplay = [];
+        if (productId) {
+          // Single product mode
+          const prod = products.find(p => p.id === productId);
+          if (!prod) return;
+          modalTitle.textContent = `${prod.name} Coverage`;
+          productsToDisplay = [prod];
+        } else {
+          // Variable mode
+          const rowData = metrics[aggregationProperty][variableId];
+          if (!rowData) return;
+          modalTitle.textContent = `${rowData.name} Coverage`;
+          productsToDisplay = Object.values(rowData.products || {});
+        }
+
+        // Alphabetical sort
+        productsToDisplay.sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
+
+        // Populate side panel product list
+        productsListEl.innerHTML = productsToDisplay.map(prod => {
+          const isActive = productId ? prod.id === productId : false;
+          const region = prod.region || "Global";
+          const missions = prod.missions ? prod.missions.join(", ") : "None";
+          
+          return `
+            <div class="cov-item ${isActive ? 'active' : ''}" data-prod-id="${prod.id}">
+              <div class="cov-item-name">${prod.name}</div>
+              <div class="cov-item-meta">Region: ${region}</div>
+              <div class="cov-item-meta">Missions: ${missions}</div>
+              <div class="cov-item-actions">
+                <button class="cov-btn highlight-btn" title="Highlight bounds on map" data-prod-id="${prod.id}"><i class="mdi mdi-map-marker"></i></button>
+                <a href="https://opensciencedata.esa.int/products/${prod.id}/collection" target="_blank" class="cov-btn" title="Open Product Catalog Detail"><i class="mdi mdi-open-in-new"></i></a>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        // Build features
+        const features = [];
+        productsToDisplay.forEach(prod => {
+          const geom = createGeometry(prod);
+          if (geom) {
+            features.push(geom);
+          }
+        });
+
+        const geojson = {
+          type: "FeatureCollection",
+          features: features
+        };
+
+        // Open Dialog
+        modal.classList.add("open");
+
+        // Parse features to eox-map
+        setTimeout(() => {
+          if (mapEl.map) {
+            mapEl.map.updateSize();
+          }
+          const vectorLayer = mapEl.getLayerById("products");
+          if (vectorLayer && features.length > 0) {
+            mapEl.parseTextToFeature(JSON.stringify(geojson), vectorLayer, mapEl, true);
+          }
+        }, 120);
+
+        // Bind clicking and hovering highlights
+        productsListEl.onclick = (e) => {
+          const item = e.target.closest(".cov-item");
+          if (!item) return;
+          const prodId = item.dataset.prodId;
+          
+          // Toggle active class
+          productsListEl.querySelectorAll(".cov-item").forEach(el => el.classList.remove("active"));
+          item.classList.add("active");
+
+          const selectInteraction = mapEl.selectInteractions["selectInteraction"];
+          if (selectInteraction) {
+            const vectorLayer = mapEl.getLayerById("products");
+            if (vectorLayer) {
+              const features = vectorLayer.getSource().getFeatures();
+              const feature = features.find(
+                f => f.get("product_id") === prodId
+              );
+
+              if (feature) {
+                const olId = feature.getId();
+                selectInteraction.highlightById([olId], { duration: 500, padding: [50, 50, 50, 50] });
+              }
+            }
+          }
+        };
+
+        productsListEl.onmouseover = (e) => {
+          const item = e.target.closest(".cov-item");
+          if (!item) return;
+          const prodId = item.dataset.prodId;
+          
+          const selectInteraction = mapEl.selectInteractions["selectInteraction"];
+          if (selectInteraction) {
+            const vectorLayer = mapEl.getLayerById("products");
+            if (vectorLayer) {
+              const feature = vectorLayer.getSource().getFeatures().find(
+                f => f.get("product_id") === prodId
+              );
+              if (feature) {
+                const olId = feature.getId();
+                selectInteraction.highlightById([olId], { duration: 300, padding: [50, 50, 50, 50] });
+              }
+            }
+          }
+        };
+
+        productsListEl.onmouseleave = () => {
+          const selectInteraction = mapEl.selectInteractions["selectInteraction"];
+          if (selectInteraction) {
+            const activeItem = productsListEl.querySelector(".cov-item.active");
+            if (activeItem) {
+              const prodId = activeItem.dataset.prodId;
+              const vectorLayer = mapEl.getLayerById("products");
+              if (vectorLayer) {
+                const feature = vectorLayer.getSource().getFeatures().find(
+                  f => f.get("product_id") === prodId
+                );
+                if (feature) {
+                  const olId = feature.getId();
+                  selectInteraction.highlightById([olId], { duration: 300, padding: [50, 50, 50, 50] });
+                  return;
+                }
+              }
+            }
+
+            selectInteraction.highlightById([], {});
+            const vectorLayer = mapEl.getLayerById("products");
+            if (vectorLayer) {
+              const source = vectorLayer.getSource();
+              if (source.getFeatures().length > 0) {
+                mapEl.map.getView().fit(source.getExtent(), {
+                  padding: [50, 50, 50, 50],
+                  duration: 300
+                });
+              }
+            }
+          }
+        };
+      };
 
       // Hook up coverage button handlers (delegate to tbody for dynamic elements)
       tbody.addEventListener("click", (e) => {
         const earthBtn = e.target.closest("button.v-btn-icon-mock:not([disabled])");
         if (earthBtn) {
-          document.getElementById("modal-coverage").classList.add("open");
+          const parentRow = earthBtn.closest("tr.parent-row");
+          if (parentRow) {
+            const rowId = parentRow.dataset.id;
+            openCoverageModal(rowId);
+          }
+        }
+
+        const markerBtn = e.target.closest("button.cov-btn[title*='map']");
+        if (markerBtn) {
+          const prodId = markerBtn.dataset.prodId;
+          openCoverageModal(null, prodId);
         }
       });
+
       setupModal("modal-coverage", null, ["btn-coverage-close", "btn-coverage-footer-close"]);
 
       // --- ZOOM SLIDER BINDING (WITH EXACT ORIGINAL HIDE-EVEN CONDITIONAL CLASS) ---
