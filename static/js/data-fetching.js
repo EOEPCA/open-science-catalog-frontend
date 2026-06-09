@@ -10,24 +10,15 @@
 export async function fetchProducts(apiUrl) {
   let items = [];
   try {
-    // If the apiUrl doesn't end with /collections or /collections/, append it
-    let targetUrl = apiUrl;
-    if (!targetUrl.includes("/collections")) {
-      targetUrl = targetUrl.endsWith("/") 
-        ? `${targetUrl}collections` 
-        : `${targetUrl}/collections`;
-    }
-
-    const separator = targetUrl.includes("?") ? "&" : "?";
-    const firstUrl = `${targetUrl}${separator}limit=500&f=json`;
+    const separator = apiUrl.includes("?") ? "&" : "?";
+    const firstUrl = `${apiUrl}${separator}limit=500&f=json`;
     const response = await fetch(firstUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const responseData = await response.json();
     
-    // Support both /collections (returns .collections) and /collections/metadata:main/items (returns .features)
-    let fetchedItems = responseData.collections || responseData.features || [];
+    let fetchedItems = responseData.collections || [];
     const totalMatched = responseData.numberMatched || fetchedItems.length;
     const returnedCount = responseData.numberReturned || fetchedItems.length;
     
@@ -35,11 +26,11 @@ export async function fetchProducts(apiUrl) {
       const additionalPages = Math.ceil(totalMatched / 500);
       for (let page = 2; page <= additionalPages; page++) {
         const offset = (page - 1) * 500;
-        const pageUrl = `${targetUrl}${separator}limit=500&offset=${offset}&f=json`;
+        const pageUrl = `${apiUrl}${separator}limit=500&offset=${offset}&f=json`;
         const pageResponse = await fetch(pageUrl);
         if (pageResponse.ok) {
           const pageData = await pageResponse.json();
-          const pageItems = pageData.collections || pageData.features || [];
+          const pageItems = pageData.collections || [];
           fetchedItems = [...fetchedItems, ...pageItems];
         }
       }
