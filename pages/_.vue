@@ -32,13 +32,15 @@ export default {
           null,
           `${innerPath.length > 1 ? innerPath : "/catalog"}`
         );
-        window._paq.push(["setCustomUrl", innerPath]);
-        window._paq.push([
-          "setDocumentTitle",
-          document.domain + "/" + document.title,
-        ]);
-        window._paq.push(["trackPageView"]);
-        window._paq.push(["enableLinkTracking"]);
+        if (window._paq) {
+          window._paq.push(["setCustomUrl", innerPath]);
+          window._paq.push([
+            "setDocumentTitle",
+            document.domain + "/" + document.title,
+          ]);
+          window._paq.push(["trackPageView"]);
+          window._paq.push(["enableLinkTracking"]);
+        }
       } else {
         this.firstLoadDone = true;
       }
