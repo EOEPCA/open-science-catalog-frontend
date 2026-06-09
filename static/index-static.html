@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ESA Open Science Catalog</title>
+    <!-- Material Design Icons CDN + Local fallback -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css"
+    />
+    <link rel="stylesheet" href="css/materialdesignicons.min.css" />
+    <!-- ESA Custom Fonts -->
+    <link rel="stylesheet" href="css/notesesabold.css" />
+
+    <style>
+      :root {
+        --primary-color: #003247; /* ESA Deep Blue */
+        --secondary-color: #335e6f; /* ESA Grey-Blue */
+        --background-color: #ffffff;
+        --border-color: rgba(0, 0, 0, 0.12);
+        --border-radius: 4px;
+        --font-family: Arial, sans-serif;
+        --header-font: "NotesESAbold", sans-serif;
+      }
+
+      body {
+        font-family: var(--font-family);
+        margin: 0;
+        background: var(--background-color);
+        box-sizing: border-box;
+        overflow-x: hidden;
+      }
+
+      /* Container padding matches Vuetify px-15 pt-0 and pa-2 */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 60px;
+        box-sizing: border-box;
+      }
+
+      @media (max-width: 960px) {
+        .container {
+          padding: 0 16px;
+        }
+      }
+
+      .welcome-section {
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+
+      h1.welcome-title {
+        font-family: var(--header-font);
+        color: var(--primary-color);
+        margin: 20px 0 15px 0;
+        font-size: 3rem;
+        line-height: 1.15;
+      }
+
+      @media (max-width: 960px) {
+        h1.welcome-title {
+          font-size: 2rem;
+        }
+      }
+
+      p {
+        color: rgba(0, 0, 0, 0.87);
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
+
+      p strong {
+        color: rgba(0, 0, 0, 0.87);
+      }
+
+      a {
+        color: var(--secondary-color);
+        text-decoration: underline;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      a:hover {
+        color: var(--primary-color);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white !important;
+        text-decoration: none !important;
+        padding: 8px 16px;
+        border-radius: var(--border-radius);
+        font-size: 0.875rem;
+        font-weight: bold;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s, box-shadow 0.2s;
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+        color: white !important;
+        text-decoration: none !important;
+        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+          0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+      }
+
+      .btn-primary i {
+        font-size: 1.125rem;
+      }
+
+      /* Grid Section */
+      .themes-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding-top: 10px;
+        padding-bottom: 40px;
+      }
+
+      @media (max-width: 960px) {
+        .themes-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .theme-card {
+        display: block;
+        text-decoration: none !important;
+        color: inherit;
+        outline: none;
+      }
+
+      .theme-card-content {
+        position: relative;
+        height: 300px;
+        overflow: hidden;
+        border-radius: var(--border-radius);
+        border-bottom: 0.25em solid var(--secondary-color);
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+        transition: box-shadow 0.3s ease;
+      }
+
+      .theme-card:hover .theme-card-content {
+        box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+          0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+          0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+      }
+
+      .theme-image-wrapper {
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      .theme-card:hover .theme-image-wrapper {
+        transform: scale(1.05);
+      }
+
+      .imageLabel {
+        background: #003247;
+        color: white;
+        position: absolute;
+        text-transform: uppercase;
+        padding: 1px 10px;
+        top: 37%;
+        left: 15%;
+        font-size: 21px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        pointer-events: none; /* Let clicks pass through if any */
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Skeleton loader styles */
+      .skeleton-card {
+        height: 300px;
+        background: #f0f0f0;
+        border-radius: var(--border-radius);
+        position: relative;
+        overflow: hidden;
+        border-bottom: 0.25em solid #ccc;
+      }
+
+      .skeleton-card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.2) 20%,
+          rgba(255, 255, 255, 0.5) 60%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: shimmer 1.5s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .error-message {
+        color: #d32f2f;
+        background-color: #ffebee;
+        padding: 16px;
+        border-radius: var(--border-radius);
+        margin-top: 16px;
+        border: 1px solid #ffcdd2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container welcome-section">
+      <h1 class="welcome-title">Welcome to the Open Science Catalog</h1>
+
+      <p>
+        A catalog of publicly available geoscience products, datasets and
+        resources developed in the frame of scientific research Projects funded
+        by ESA EO (Earth Observation). Products vary in geographical and
+        temporal extent, production methodology, validation and quality. Please
+        refer to the documentation of each product for details.
+      </p>
+
+      <p>
+        <strong>What products can I find here?</strong>
+      </p>
+
+      <p>
+        The majority of pages on opensciencedata.esa.int only hold metadata for
+        each product and project. The actual data and its documentation are
+        maintained and accessible at the data providers, outside of esa.int, for
+        the majority of cases. This catalog provides the metadata and links to
+        the data as it exists in those many other locations.
+      </p>
+
+      <p>
+        Explore the catalog, consisting of
+        <a href="/eo-missions/catalog" target="_parent">EO Missions</a>,
+        <a href="/experiments/catalog" target="_parent">Experiments</a>,
+        <a href="/products/catalog" target="_parent">Products</a>,
+        <a href="/projects/catalog" target="_parent">Projects</a>,
+        <a href="/data-collections/catalog" target="_parent">Data Collections</a
+        >, <a href="/themes/catalog" target="_parent">Themes</a>,
+        <a href="/variables/catalog" target="_parent">Variables</a> and
+        <a href="/workflows/catalog" target="_parent">Workflows</a>.
+      </p>
+
+      <p>Choose a theme below to explore available products/projects!</p>
+
+      <p>
+        To suggest changes and/or contribute to the continuously growing number
+        of available products, you can do so directly via the
+        <a
+          href="https://github.com/ESA-EarthCODE/open-science-catalog-metadata"
+          target="_blank"
+          >STAC catalog hosted on GitHub</a
+        >, or use the tools and services provided by
+        <a href="https://earthcode.esa.int/" target="_blank">EarthCODE</a>.
+      </p>
+
+      <p>
+        If you have any questions or feedback regarding Open Science Catalog,
+        please contact us at
+        <a href="mailto:opensciencedata@esa.int">opensciencedata@esa.int</a>.
+      </p>
+
+      <p>
+        <a href="/metrics" target="_parent" class="btn-primary">
+          <i class="mdi mdi-poll"></i>
+          Metrics
+        </a>
+      </p>
+    </div>
+
+    <div class="container">
+      <div id="themes-container" class="themes-grid">
+        <!-- Skeleton Loaders -->
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+
+    <script>
+      (async function () {
+        const themesContainer = document.getElementById("themes-container");
+
+        try {
+          // Parse query parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const baseUrl =
+            urlParams.get("baseUrl") ||
+            "https://esa-earthcode.github.io/open-science-catalog-metadata/";
+          const baseCatalogUrl = baseUrl.endsWith("/")
+            ? baseUrl
+            : baseUrl + "/";
+
+          // Fetch the themes catalog
+          const catalogResponse = await fetch(
+            `${baseCatalogUrl}themes/catalog.json`
+          );
+          if (!catalogResponse.ok) {
+            throw new Error(
+              `Failed to fetch themes catalog (${catalogResponse.status})`
+            );
+          }
+          const catalogData = await catalogResponse.json();
+          const themeLinks = catalogData.links.filter(
+            (link) => link.rel === "child"
+          );
+
+          // Fetch details for each theme to get the preview image
+          const themesWithImages = await Promise.all(
+            themeLinks.map(async (themeLink) => {
+              try {
+                // Resolve relative/absolute URL
+                let themeUrl;
+                if (
+                  themeLink.href.startsWith("./") ||
+                  !themeLink.href.startsWith("http")
+                ) {
+                  const relativePath = themeLink.href.replace(/^\.\//, "");
+                  themeUrl = `${baseCatalogUrl}themes/${relativePath}`;
+                } else {
+                  themeUrl = themeLink.href;
+                }
+
+                const themeResponse = await fetch(themeUrl);
+                if (!themeResponse.ok) {
+                  return { ...themeLink, image: "" };
+                }
+
+                const themeData = await themeResponse.json();
+                const previewLink = themeData.links.find(
+                  (l) => l.rel === "preview"
+                );
+                let imageUrl = "";
+
+                if (previewLink) {
+                  const previewHref = previewLink.href;
+                  if (previewHref.startsWith("./")) {
+                    const folderUrl = themeUrl.substring(
+                      0,
+                      themeUrl.lastIndexOf("/") + 1
+                    );
+                    imageUrl = folderUrl + previewHref.replace(/^\.\//, "");
+                  } else {
+                    imageUrl = previewHref;
+                  }
+                }
+
+                return {
+                  ...themeLink,
+                  image: imageUrl,
+                };
+              } catch (err) {
+                console.error(`Error loading theme ${themeLink.title}:`, err);
+                return { ...themeLink, image: "" };
+              }
+            })
+          );
+
+          // Clear skeleton loaders
+          themesContainer.innerHTML = "";
+
+          // Render the cards
+          themesWithImages.forEach((theme) => {
+            // Get router-compatible theme path: e.g. /themes/atmosphere/catalog or atmosphere/catalog
+            let themePath = theme.href;
+            if (themePath.startsWith("./")) {
+              themePath = themePath.replace(/^\.\//, "");
+            }
+            themePath = themePath.replace(".json", "");
+
+            const cardLink = document.createElement("a");
+            cardLink.className = "theme-card";
+            cardLink.href = `/themes/${themePath}`;
+            cardLink.setAttribute("target", "_parent");
+
+            const formattedTitle = theme.title
+              ? theme.title.replace(/_/g, " ")
+              : "";
+
+            cardLink.innerHTML = `
+              <div class="theme-card-content">
+                <div class="theme-image-wrapper" style="background-image: url('${
+                  theme.image || ""
+                }')"></div>
+                <span class="imageLabel">${formattedTitle}</span>
+              </div>
+            `;
+
+            themesContainer.appendChild(cardLink);
+          });
+        } catch (error) {
+          console.error("Error in index rendering:", error);
+          themesContainer.innerHTML = `
+            <div class="error-message" style="grid-column: 1 / -1;">
+              <strong>Error loading themes:</strong> ${error.message}. Please refresh or try again later.
+            </div>
+          `;
+        }
+      })();
+    </script>
+  </body>
+</html>
