@@ -1281,14 +1281,43 @@
         }).join("");
       };
 
+      // State variables
+      let showEmptyItems = false;
+
       // Populate Table Body dynamically
       const tbody = document.getElementById("metrics-table-body");
-      tbody.innerHTML = mockRows.map(row => {
-        if (!row.hasProducts) {
+
+      const renderTable = () => {
+        const filteredRows = mockRows.filter(row => showEmptyItems ? true : row.hasProducts);
+
+        tbody.innerHTML = filteredRows.map(row => {
+          if (!row.hasProducts) {
+            return `
+              <tr>
+                <td>
+                  <div class="noAvailableProduct">No products available</div>
+                </td>
+                <td class="variable-name-cell">
+                  <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
+                </td>
+                <td class="table-spacer-cell"></td> <!-- Spacer start -->
+                ${renderTimelineCells(row.activeYears)}
+                <td class="table-spacer-cell"></td> <!-- Spacer end -->
+                <td>
+                  <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);" disabled>
+                    <i class="mdi mdi-earth"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+          }
+          
           return `
-            <tr>
+            <tr class="parent-row" data-id="${row.id}">
               <td>
-                <div class="noAvailableProduct">No products available</div>
+                <button class="chevron-toggle" aria-label="Expand Variable Details">
+                  <i class="mdi mdi-chevron-down"></i>
+                </button>
               </td>
               <td class="variable-name-cell">
                 <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
@@ -1297,64 +1326,46 @@
               ${renderTimelineCells(row.activeYears)}
               <td class="table-spacer-cell"></td> <!-- Spacer end -->
               <td>
-                <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);" disabled>
+                <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);">
                   <i class="mdi mdi-earth"></i>
                 </button>
               </td>
             </tr>
+            <tr class="expanded-row" id="expanded-${row.id}" style="display: none;">
+              <!-- colspan expanded from +2 to +4 to seamlessly cover the spacer columns too -->
+              <td colspan="${yearsList.length + 4}">
+                <table class="sub-products-table">
+                  <tbody>
+                    ${row.products.map(prod => `
+                      <tr>
+                        <td>
+                          <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);">
+                            <i class="mdi mdi-open-in-new"></i>
+                          </button>
+                        </td>
+                        <td class="product-name-cell">
+                          <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${prod.name}</a>
+                        </td>
+                        <td class="table-spacer-cell"></td> <!-- Spacer start -->
+                        ${renderTimelineCells(prod.activeYears, true)}
+                        <td class="table-spacer-cell"></td> <!-- Spacer end -->
+                        <td>
+                          <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);">
+                            <i class="mdi mdi-map-marker"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    `).join("")}
+                  </tbody>
+                </table>
+              </td>
+            </tr>
           `;
-        }
-        
-        return `
-          <tr class="parent-row" data-id="${row.id}">
-            <td>
-              <button class="chevron-toggle" aria-label="Expand Variable Details">
-                <i class="mdi mdi-chevron-down"></i>
-              </button>
-            </td>
-            <td class="variable-name-cell">
-              <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
-            </td>
-            <td class="table-spacer-cell"></td> <!-- Spacer start -->
-            ${renderTimelineCells(row.activeYears)}
-            <td class="table-spacer-cell"></td> <!-- Spacer end -->
-            <td>
-              <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);">
-                <i class="mdi mdi-earth"></i>
-              </button>
-            </td>
-          </tr>
-          <tr class="expanded-row" id="expanded-${row.id}" style="display: none;">
-            <!-- colspan expanded from +2 to +4 to seamlessly cover the spacer columns too -->
-            <td colspan="${yearsList.length + 4}">
-              <table class="sub-products-table">
-                <tbody>
-                  ${row.products.map(prod => `
-                    <tr>
-                      <td>
-                        <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);">
-                          <i class="mdi mdi-open-in-new"></i>
-                        </button>
-                      </td>
-                      <td class="product-name-cell">
-                        <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${prod.name}</a>
-                      </td>
-                      <td class="table-spacer-cell"></td> <!-- Spacer start -->
-                      ${renderTimelineCells(prod.activeYears, true)}
-                      <td class="table-spacer-cell"></td> <!-- Spacer end -->
-                      <td>
-                        <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);">
-                          <i class="mdi mdi-map-marker"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  `).join("")}
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        `;
-      }).join("");
+        }).join("");
+      };
+
+      // Initial table render
+      renderTable();
 
       // --- DIALOG OPEN/CLOSE LOGIC ---
       const setupModal = (overlayId, openTriggerId, closeTriggerIds) => {
@@ -1398,6 +1409,15 @@
       const zoomSlider = document.getElementById("zoom-slider");
       const root = document.documentElement;
       
+      const tableContainer = document.querySelector(".metrics-table-container");
+      const scrollToLatestYears = () => {
+        if (tableContainer) {
+          requestAnimationFrame(() => {
+            tableContainer.scrollLeft = 10000;
+          });
+        }
+      };
+
       const updateZoom = (val) => {
         zoomSlider.value = val;
         // Matches the original width scaling: Zoom 1 -> 28px, Zoom 2 -> 42px, Zoom 3 -> 56px per year column.
@@ -1420,6 +1440,9 @@
           subTable.classList.remove("zoom-1", "zoom-2", "zoom-3");
           subTable.classList.add(`zoom-${val}`);
         });
+
+        // Auto-scroll to the end of the temporal timeline on zoom
+        scrollToLatestYears();
       };
 
       zoomSlider.addEventListener("input", (e) => {
@@ -1468,17 +1491,19 @@
       tableEl.addEventListener("mouseover", handleCellHover);
       tableEl.addEventListener("mouseleave", handleCellLeave);
 
-      // Show/Hide empty items toggle simulation
+      // Show/Hide empty items toggle
       const emptyToggleBtn = document.getElementById("btn-toggle-empty");
       emptyToggleBtn.addEventListener("click", () => {
         const icon = emptyToggleBtn.querySelector("i");
-        if (icon.classList.contains("mdi-archive-cancel-outline")) {
+        showEmptyItems = !showEmptyItems;
+        if (showEmptyItems) {
           icon.className = "mdi mdi-archive-check-outline";
           emptyToggleBtn.title = "Hide empty variables";
         } else {
           icon.className = "mdi mdi-archive-cancel-outline";
           emptyToggleBtn.title = "Show empty variables";
         }
+        renderTable();
       });
 
       // --- INTERACTIVE ROW EXPAND/COLLAPSE FUNCTIONALITY ---
