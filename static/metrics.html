@@ -153,6 +153,13 @@
       }
 
       /* Base Header Cell Styles */
+      .metrics-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        background: #ffffff;
+      }
+
       .metrics-table thead tr {
         background: #ffffff; /* Row background holds white color */
       }
@@ -179,7 +186,7 @@
       /* --- PERFECT STICKY COLUMNS FOR BOTH MAIN & SUB TABLES --- */
       /* Column 1 (Expand control): Sticky Left */
       .metrics-table th:first-child,
-      .metrics-table td:first-child,
+      .metrics-table tr:not(.expanded-row) > td:first-child,
       .sub-products-table td:first-child {
         position: sticky;
         left: 0;
@@ -197,7 +204,7 @@
 
       /* Column 2 (Name): Sticky Left with offset */
       .metrics-table th:nth-child(2),
-      .metrics-table td:nth-child(2),
+      .metrics-table tr:not(.expanded-row) > td:nth-child(2),
       .sub-products-table td:nth-child(2),
       .variable-name-cell,
       .product-name-cell {
@@ -227,7 +234,7 @@
 
       /* Column Last (Coverage): Sticky Right */
       .metrics-table th:last-child,
-      .metrics-table td:last-child,
+      .metrics-table tr:not(.expanded-row) > td:last-child,
       .sub-products-table td:last-child {
         position: sticky;
         /*
@@ -391,6 +398,7 @@
         padding: 0 !important;
         z-index: 0 !important;
         border-bottom: none !important; /* Eliminates the outer parent double border! */
+        height: auto !important; /* Allow expanded row cell to grow to fit the sub-table! */
       }
 
       .sub-products-table {
@@ -921,7 +929,7 @@
 
         /* Responsive Table Sticky Offsets for small screens */
         .metrics-table th:nth-child(2),
-        .metrics-table td:nth-child(2),
+        .metrics-table tr:not(.expanded-row) > td:nth-child(2),
         .sub-products-table td:nth-child(2),
         .variable-name-cell,
         .product-name-cell {
@@ -932,7 +940,7 @@
         }
 
         .metrics-table th:first-child,
-        .metrics-table td:first-child,
+        .metrics-table tr:not(.expanded-row) > td:first-child,
         .sub-products-table td:first-child {
           width: 40px;
           min-width: 40px;
@@ -940,7 +948,7 @@
         }
 
         .metrics-table th:last-child,
-        .metrics-table td:last-child,
+        .metrics-table tr:not(.expanded-row) > td:last-child,
         .sub-products-table td:last-child {
           width: 60px;
           min-width: 60px;
@@ -1311,8 +1319,8 @@
               </td>
             </tr>
             <tr class="expanded-row" id="expanded-${row.id}" style="display: none;">
-              <!-- colspan expanded from +2 to +4 to seamlessly cover the spacer columns too -->
-              <td colspan="${yearsList.length + 4}">
+              <!-- colspan expanded from +2 to +5 to seamlessly cover the spacer columns too -->
+              <td colspan="${yearsList.length + 5}">
                 <table class="sub-products-table">
                   <tbody>
                     ${productsList.map(prod => {
