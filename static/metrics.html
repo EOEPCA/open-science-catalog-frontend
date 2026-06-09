@@ -1157,9 +1157,18 @@
 
     <!-- CORE SCRIPTS FOR INTERACTION -->
     <script type="module">
+      import { createMetrics } from "./js/metrics-engine.js";
+      import { fetchProducts, fetchAllAggregationItems } from "./js/data-fetching.js";
+
       const itemFilterEl = document.querySelector("#itemfilter");
       
       const urlParams = new URLSearchParams(window.location.search);
+      const BASE_URL =
+        urlParams.get("baseUrl") ||
+        "https://esa-earthcode.github.io/open-science-catalog-metadata/";
+      const API_URL =
+        urlParams.get("apiUrl") ||
+        "https://eoapi.workspace.earthcode-staging.earthcode.eox.at/stac";
       const fontUrl =
         urlParams.get("fontUrl") ||
         "https://cdn.jsdelivr.net/npm/@eox/esa-ui@1.19.0/fonts/notesesabol.ttf";
@@ -1195,60 +1204,30 @@
         <th scope="col">Coverage</th>
       `;
 
-      // Define Mock Data Sets
-      const mockRows = [
+      // State variables
+      let products = [];
+      let filteredProducts = [];
+      let metrics = null;
+      let aggregationProperty = "variables";
+      let showEmptyItems = false;
+      let allAggregationItems = null;
+
+      // Populate EOx Itemfilter properties
+      itemFilterEl.filterProperties = [
+        { id: "theme", key: "theme", title: "Theme" },
+        { id: "variable", key: "variable", title: "Variable" },
+        { id: "project", key: "project", title: "Project" },
+        { id: "mission", key: "eo-mission", title: "EO Mission" },
+        { id: "geometry", key: "geometry", type: "spatial", title: "Geometry" },
         {
-          id: "sst",
-          name: "Sea Surface Temperature",
-          activeYears: yearsList.filter(y => y >= 1978), // active 1978-2026
-          hasProducts: true,
-          products: [
-            {
-              id: "sst-cci",
-              name: "ESA SST CCI v3.0",
-              activeYears: yearsList.filter(y => y >= 1981 && y <= 2025),
-              region: "Global",
-              missions: ["Sentinel-3", "ENVISAT"]
-            },
-            {
-              id: "sst-slstr",
-              name: "Sentinel-3 SLSTR Daily SST",
-              activeYears: yearsList.filter(y => y >= 2016),
-              region: "Global",
-              missions: ["Sentinel-3"]
-            }
-          ]
+          id: "search",
+          keys: ["title", "themes", "variable"],
+          title: "Freetext search",
+          placeholder: "Type something...",
+          type: "text",
         },
-        {
-          id: "soil-moisture",
-          name: "Soil Moisture",
-          activeYears: yearsList.filter(y => (y >= 1991 && y <= 2015) || (y >= 2018 && y <= 2024)),
-          hasProducts: true,
-          products: [
-            {
-              id: "smos-l4",
-              name: "SMOS L4 Soil Moisture",
-              activeYears: yearsList.filter(y => y >= 2010 && y <= 2023),
-              region: "Global",
-              missions: ["SMOS"]
-            },
-            {
-              id: "cci-sm",
-              name: "CCI Soil Moisture v8.1",
-              activeYears: yearsList.filter(y => y >= 1978 && y <= 2022),
-              region: "Global",
-              missions: ["Sentinel-3"]
-            }
-          ]
-        },
-        {
-          id: "ocean-alkalinity",
-          name: "Ocean Alkalinity",
-          activeYears: [],
-          hasProducts: false,
-          products: []
-        }
       ];
+      itemFilterEl.showResults = false;
 
       // Render timeline progress bars with exact rounding logic and 0px spacing
       const renderTimelineCells = (activeYears, isSub = false) => {
@@ -1281,17 +1260,15 @@
         }).join("");
       };
 
-      // State variables
-      let showEmptyItems = false;
-
       // Populate Table Body dynamically
       const tbody = document.getElementById("metrics-table-body");
 
-      const renderTable = () => {
-        const filteredRows = mockRows.filter(row => showEmptyItems ? true : row.hasProducts);
+      const renderTable = (rows) => {
+        tbody.innerHTML = rows.map(row => {
+          const hasProducts = row.products && Object.keys(row.products).length > 0;
+          const activeYearsList = row.years ? Object.keys(row.years).map(Number) : [];
 
-        tbody.innerHTML = filteredRows.map(row => {
-          if (!row.hasProducts) {
+          if (!hasProducts) {
             return `
               <tr>
                 <td>
@@ -1301,7 +1278,7 @@
                   <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
                 </td>
                 <td class="table-spacer-cell"></td> <!-- Spacer start -->
-                ${renderTimelineCells(row.activeYears)}
+                ${renderTimelineCells(activeYearsList)}
                 <td class="table-spacer-cell"></td> <!-- Spacer end -->
                 <td>
                   <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);" disabled>
@@ -1312,6 +1289,8 @@
             `;
           }
           
+          const productsList = Object.values(row.products);
+
           return `
             <tr class="parent-row" data-id="${row.id}">
               <td>
@@ -1323,7 +1302,7 @@
                 <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
               </td>
               <td class="table-spacer-cell"></td> <!-- Spacer start -->
-              ${renderTimelineCells(row.activeYears)}
+              ${renderTimelineCells(activeYearsList)}
               <td class="table-spacer-cell"></td> <!-- Spacer end -->
               <td>
                 <button class="v-btn-icon-mock" title="View variable coverage on map" style="color: var(--secondary-color);">
@@ -1336,26 +1315,29 @@
               <td colspan="${yearsList.length + 4}">
                 <table class="sub-products-table">
                   <tbody>
-                    ${row.products.map(prod => `
-                      <tr>
-                        <td>
-                          <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);">
-                            <i class="mdi mdi-open-in-new"></i>
-                          </button>
-                        </td>
-                        <td class="product-name-cell">
-                          <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${prod.name}</a>
-                        </td>
-                        <td class="table-spacer-cell"></td> <!-- Spacer start -->
-                        ${renderTimelineCells(prod.activeYears, true)}
-                        <td class="table-spacer-cell"></td> <!-- Spacer end -->
-                        <td>
-                          <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);">
-                            <i class="mdi mdi-map-marker"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    `).join("")}
+                    ${productsList.map(prod => {
+                      const prodYears = prod.years ? Object.keys(prod.years).map(Number) : [];
+                      return `
+                        <tr>
+                          <td>
+                            <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);" data-prod-id="${prod.id}">
+                              <i class="mdi mdi-open-in-new"></i>
+                            </button>
+                          </td>
+                          <td class="product-name-cell">
+                            <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${prod.name}</a>
+                          </td>
+                          <td class="table-spacer-cell"></td> <!-- Spacer start -->
+                          ${renderTimelineCells(prodYears, true)}
+                          <td class="table-spacer-cell"></td> <!-- Spacer end -->
+                          <td>
+                            <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);" data-prod-id="${prod.id}">
+                              <i class="mdi mdi-map-marker"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      `;
+                    }).join("")}
                   </tbody>
                 </table>
               </td>
@@ -1364,8 +1346,31 @@
         }).join("");
       };
 
-      // Initial table render
-      renderTable();
+      const updateView = async () => {
+        if (!metrics) return;
+
+        let rows = Object.values(metrics[aggregationProperty] || {});
+
+        if (showEmptyItems) {
+          if (!allAggregationItems) {
+            allAggregationItems = await fetchAllAggregationItems(BASE_URL, aggregationProperty);
+          }
+          const merged = {
+            ...allAggregationItems,
+            ...metrics[aggregationProperty]
+          };
+          rows = Object.values(merged);
+        }
+
+        // Sort rows alphabetically by name
+        rows.sort((a, b) => {
+          const nameA = a.name || "";
+          const nameB = b.name || "";
+          return nameA.localeCompare(nameB, "en", { sensitivity: "base" });
+        });
+
+        renderTable(rows);
+      };
 
       // --- DIALOG OPEN/CLOSE LOGIC ---
       const setupModal = (overlayId, openTriggerId, closeTriggerIds) => {
@@ -1498,12 +1503,36 @@
         showEmptyItems = !showEmptyItems;
         if (showEmptyItems) {
           icon.className = "mdi mdi-archive-check-outline";
-          emptyToggleBtn.title = "Hide empty variables";
+          emptyToggleBtn.title = `Hide empty ${aggregationProperty}`;
         } else {
           icon.className = "mdi mdi-archive-cancel-outline";
-          emptyToggleBtn.title = "Show empty variables";
+          emptyToggleBtn.title = `Show empty ${aggregationProperty}`;
         }
-        renderTable();
+        updateView();
+      });
+
+      // Aggregation selector change
+      const aggregationSelect = document.getElementById("aggregation-select");
+      aggregationSelect.addEventListener("change", (e) => {
+        aggregationProperty = e.target.value;
+        allAggregationItems = null; // Reset static cache for new property
+        
+        // Update empty items toggle button tooltip
+        if (showEmptyItems) {
+          emptyToggleBtn.title = `Hide empty ${aggregationProperty}`;
+        } else {
+          emptyToggleBtn.title = `Show empty ${aggregationProperty}`;
+        }
+
+        updateView();
+      });
+
+      // Listen to filter events from EOx Itemfilter
+      itemFilterEl.addEventListener("filter", (event) => {
+        const results = event.detail.results;
+        filteredProducts = results;
+        metrics = createMetrics(results);
+        updateView();
       });
 
       // --- INTERACTIVE ROW EXPAND/COLLAPSE FUNCTIONALITY ---
@@ -1526,10 +1555,29 @@
         }
       });
 
-      // Simulate EOx itemfilter ready
-      setTimeout(() => {
-        itemFilterEl.classList.add("ready");
-      }, 200);
+      // Initial data fetching and page setup
+      const init = async () => {
+        try {
+          products = await fetchProducts(API_URL);
+          filteredProducts = [...products];
+          
+          // Bind items to filter component
+          itemFilterEl.items = products;
+          
+          // Calculate initial metrics
+          metrics = createMetrics(products);
+          
+          // Update view
+          await updateView();
+          
+          // EOx itemfilter ready class
+          itemFilterEl.classList.add("ready");
+        } catch (err) {
+          console.error("Initialization failed:", err);
+        }
+      };
+
+      init();
     </script>
   </body>
 </html>
