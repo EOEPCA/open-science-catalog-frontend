@@ -793,8 +793,8 @@
       }
 
       .stats-two-col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 24px;
         margin-top: 24px;
       }
@@ -803,6 +803,23 @@
         font-weight: 700;
         font-size: 14px;
         margin-bottom: 8px;
+      }
+
+      .stats-flex-container {
+        display: flex;
+        gap: 16px;
+        align-items: stretch;
+      }
+
+      .stats-flex-container .stats-list {
+        flex: 1;
+      }
+
+      .pie-chart-container {
+        width: 450px;
+        height: 450px;
+        position: relative;
+        flex-shrink: 0;
       }
 
       .stats-list {
@@ -905,6 +922,13 @@
         margin-top: 10px;
       }
 
+      .cov-map-container {
+        position: relative;
+        height: 100%;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+      }
+
       /* --- RESPONSIVE ADAPTATIONS --- */
       @media (max-width: 960px) {
         .bottom-row {
@@ -925,14 +949,39 @@
           flex-grow: 1;
         }
 
+        /* stats-two-col removed because it is a flex column by default */
+
+        .stats-flex-container {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .stats-list {
+          max-height: 200px;
+        }
+
+        .pie-chart-container {
+          width: 100%;
+          max-width: 300px;
+          height: 300px;
+          margin: 0 auto;
+        }
+
         .coverage-split {
-          grid-template-columns: 1fr;
-          grid-template-rows: 200px 1fr;
+          display: flex;
+          flex-direction: column;
           height: auto;
+          gap: 16px;
+        }
+
+        .cov-list {
+          height: 250px;
+          flex-shrink: 0;
         }
 
         .cov-map-container {
-          height: 300px;
+          height: 350px;
+          flex-shrink: 0;
         }
 
         /* Responsive Table Sticky Offsets for small screens */
@@ -1074,22 +1123,24 @@
             <!-- Left: Variable distribution list & Pie chart -->
             <div>
               <div class="stats-col-title">Variable distribution</div>
-              <div style="display: flex; gap: 16px;">
-                <div class="stats-list" id="stats-variables-list" style="flex: 1;">
+              <div class="stats-flex-container">
+                <div class="stats-list" id="stats-variables-list">
                 </div>
-                <div style="width: 150px; height: 150px; position: relative;">
+                <div class="pie-chart-container">
                   <eox-chart id="variablePie" style="width: 100%; height: 100%;"></eox-chart>
                 </div>
               </div>
             </div>
 
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;" />
+
             <!-- Right: Satellite mission distribution list & Pie chart -->
             <div>
               <div class="stats-col-title">Satellite mission distribution</div>
-              <div style="display: flex; gap: 16px;">
-                <div class="stats-list" id="stats-missions-list" style="flex: 1;">
+              <div class="stats-flex-container">
+                <div class="stats-list" id="stats-missions-list">
                 </div>
-                <div style="width: 150px; height: 150px; position: relative;">
+                <div class="pie-chart-container">
                   <eox-chart id="missionPie" style="width: 100%; height: 100%;"></eox-chart>
                 </div>
               </div>
@@ -1124,7 +1175,7 @@
             </div>
 
             <!-- Right Panel: Geospatial Map Area -->
-            <div class="cov-map-container" style="position: relative; height: 100%; border: 1px solid var(--border-color); border-radius: 4px;">
+            <div class="cov-map-container">
               <!-- EOx-Map Component template -->
               <eox-map id="coverage-eox-map" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></eox-map>
             </div>
@@ -1395,6 +1446,159 @@
         return color;
       };
 
+      // --- VEGA DOUGHNUT CHART SPEC GENERATOR ---
+      const getDoughnutSpec = (dataValues, colorRange, defaultName, size = 450) => {
+        const innerMain = Math.round(size * 0.244);
+        const outerMain = Math.round(size * 0.355);
+        const innerHover = Math.round(size * 0.373);
+        const outerHover = Math.round(size * 0.395);
+        const titleDy = Math.round(size * -0.444);
+        const titleFontSize = size < 350 ? 12 : 14;
+        const countFontSize = size < 350 ? 14 : 18;
+        const percentFontSize = size < 350 ? 12 : 16;
+        const textLimit = size - 20;
+
+        return {
+          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
+          width: size,
+          height: size,
+          padding: 10,
+          autosize: {
+            type: "fit",
+            contains: "padding"
+          },
+          data: {
+            values: dataValues
+          },
+          layer: [
+            // Layer 1: Outer hover ring
+            {
+              mark: {
+                type: "arc",
+                innerRadius: innerHover,
+                outerRadius: outerHover,
+                stroke: "white",
+                strokeWidth: 1.5
+              },
+              encoding: {
+                opacity: {
+                  condition: { param: "hover", value: 1, empty: false },
+                  value: 0
+                }
+              }
+            },
+            // Layer 2: Main doughnut ring
+            {
+              params: [
+                {
+                  name: "hover",
+                  select: {
+                    type: "point",
+                    on: "pointerover",
+                    empty: false
+                  },
+                  value: { name: defaultName }
+                }
+              ],
+              mark: {
+                type: "arc",
+                innerRadius: innerMain,
+                outerRadius: outerMain,
+                stroke: "white",
+                strokeWidth: 1.5
+              }
+            },
+            // Layer 3: Text above the pie (hovered section name)
+            {
+              transform: [
+                { filter: { param: "hover", empty: false } }
+              ],
+              mark: {
+                type: "text",
+                dy: titleDy,
+                fontSize: titleFontSize,
+                fontWeight: "bold",
+                align: "center",
+                baseline: "middle",
+                clip: false,
+                limit: textLimit
+              },
+              encoding: {
+                text: { field: "name", type: "nominal" },
+                theta: null,
+                color: {
+                  field: "name",
+                  type: "nominal",
+                  scale: {
+                    domain: dataValues.map(d => d.name),
+                    range: colorRange
+                  },
+                  legend: null
+                }
+              }
+            },
+            // Layer 4: Text inside the ring (count of products)
+            {
+              transform: [
+                { filter: { param: "hover", empty: false } }
+              ],
+              mark: {
+                type: "text",
+                dy: -8,
+                fontSize: countFontSize,
+                fontWeight: "bold",
+                align: "center",
+                baseline: "middle"
+              },
+              encoding: {
+                text: { field: "count_label", type: "nominal" },
+                theta: null,
+                color: { value: "#000000" }
+              }
+            },
+            // Layer 5: Text inside the ring (percentage)
+            {
+              transform: [
+                { filter: { param: "hover", empty: false } }
+              ],
+              mark: {
+                type: "text",
+                dy: size < 350 ? 10 : 16,
+                fontSize: percentFontSize,
+                align: "center",
+                baseline: "middle"
+              },
+              encoding: {
+                text: { field: "percent_label", type: "nominal" },
+                theta: null,
+                color: { value: "#666666" }
+              }
+            }
+          ],
+          encoding: {
+            theta: { field: "count", type: "quantitative" },
+            color: {
+              field: "name",
+              type: "nominal",
+              scale: {
+                domain: dataValues.map(d => d.name),
+                range: colorRange
+              },
+              legend: null
+            },
+            order: {
+              field: "count",
+              type: "quantitative",
+              sort: "descending"
+            }
+          },
+          config: {
+            view: { stroke: null },
+            renderer: "svg"
+          }
+        };
+      };
+
       // --- STATS DIALOG POPULATION & CHART CONFIGURATION ---
       const openStatisticsModal = () => {
         if (!metrics) return;
@@ -1436,6 +1640,7 @@
 
         // --- CONFIGURE EOX-CHARTS ---
         const productsChartEl = document.getElementById("productsChart");
+        productsChartEl.opt = { renderer: "svg" };
         const yearsKeys = Object.keys(metrics.years || {});
         
         productsChartEl.spec = {
@@ -1448,65 +1653,62 @@
           },
           mark: { type: "bar", color: "#00B19D" },
           encoding: {
-            x: { field: "year", type: "ordinal", title: "Year", axis: { labelAngle: -45 } },
-            y: { field: "count", type: "quantitative", title: "Number of products" }
+            x: {
+              field: "year",
+              type: "ordinal",
+              title: "Year",
+              axis: {
+                labelAngle: -45,
+                labelOverlap: "greedy"
+              }
+            },
+            y: { field: "count", type: "quantitative", title: "Number of products" },
+            tooltip: [
+              { field: "year", type: "ordinal", title: "Year" },
+              { field: "count", type: "quantitative", title: "Number of products" }
+            ]
           },
           config: {
             view: { stroke: null }
           }
         };
 
+        const varColors = ["#00B19D"];
+        const variableDataValues = sortedVariables.map(v => {
+          const count = Object.keys(v.products).length;
+          const percent = metrics.numberOfProducts ? ((count * 100) / metrics.numberOfProducts).toFixed(2) : "0.00";
+          return {
+            name: v.name,
+            count: count,
+            count_label: `${count} products`,
+            percent_label: `${percent}%`
+          };
+        });
+
+        const isMobile = window.innerWidth <= 960;
+        const chartSize = isMobile ? 280 : 450;
+
         const variablePieEl = document.getElementById("variablePie");
-        variablePieEl.spec = {
-          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-          data: {
-            values: sortedVariables.map(v => ({
-              name: v.name,
-              count: Object.keys(v.products).length
-            }))
-          },
-          mark: { type: "arc", innerRadius: 25 },
-          encoding: {
-            theta: { field: "count", type: "quantitative" },
-            color: {
-              field: "name",
-              type: "nominal",
-              scale: { range: ["#00B19D", "#003247", "#335E6F", "#a1c4fd", "#c2e9fb"] },
-              legend: null
-            },
-            tooltip: [
-              { field: "name", type: "nominal", title: "Variable" },
-              { field: "count", type: "quantitative", title: "Products" }
-            ]
-          }
-        };
+        variablePieEl.opt = { renderer: "svg" };
+        const defaultVarName = variableDataValues[0] ? variableDataValues[0].name : "";
+        variablePieEl.spec = getDoughnutSpec(variableDataValues, varColors, defaultVarName, chartSize);
+
+        const missionColors = sortedMissions.map(m => textToHex(m.name));
+        const missionDataValues = sortedMissions.map(m => {
+          const count = Object.keys(m.products).length;
+          const percent = metrics.numberOfProducts ? ((count * 100) / metrics.numberOfProducts).toFixed(2) : "0.00";
+          return {
+            name: m.name,
+            count: count,
+            count_label: `${count} products`,
+            percent_label: `${percent}%`
+          };
+        });
 
         const missionPieEl = document.getElementById("missionPie");
-        missionPieEl.spec = {
-          $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-          data: {
-            values: sortedMissions.map(m => ({
-              name: m.name,
-              count: Object.keys(m.products).length
-            }))
-          },
-          mark: { type: "arc", innerRadius: 25 },
-          encoding: {
-            theta: { field: "count", type: "quantitative" },
-            color: {
-              field: "name",
-              type: "nominal",
-              scale: {
-                range: sortedMissions.map(m => textToHex(m.name))
-              },
-              legend: null
-            },
-            tooltip: [
-              { field: "name", type: "nominal", title: "Mission" },
-              { field: "count", type: "quantitative", title: "Products" }
-            ]
-          }
-        };
+        missionPieEl.opt = { renderer: "svg" };
+        const defaultMissionName = missionDataValues[0] ? missionDataValues[0].name : "";
+        missionPieEl.spec = getDoughnutSpec(missionDataValues, missionColors, defaultMissionName, chartSize);
       };
 
       setupModal("modal-statistics", "btn-stats-open", ["btn-stats-close", "btn-stats-footer-close"], openStatisticsModal);
