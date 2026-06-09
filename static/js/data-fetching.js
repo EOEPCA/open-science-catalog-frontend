@@ -10,39 +10,98 @@
 export async function fetchProducts(apiUrl) {
   let items = [];
   try {
-    const firstUrl = `${apiUrl}/collections/metadata:main/items?type=collection&limit=500&f=json`;
+    // If the apiUrl doesn't end with /collections or /collections/, append it
+    let targetUrl = apiUrl;
+    if (!targetUrl.includes("/collections")) {
+      targetUrl = targetUrl.endsWith("/") 
+        ? `${targetUrl}collections` 
+        : `${targetUrl}/collections`;
+    }
+
+    const separator = targetUrl.includes("?") ? "&" : "?";
+    const firstUrl = `${targetUrl}${separator}limit=500&f=json`;
     const response = await fetch(firstUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const itemsResponse = await response.json();
+    const responseData = await response.json();
     
-    items = itemsResponse.features || [];
-    const totalMatched = itemsResponse.numberMatched || items.length;
-    const returnedCount = itemsResponse.numberReturned || items.length;
+    // Support both /collections (returns .collections) and /collections/metadata:main/items (returns .features)
+    let fetchedItems = responseData.collections || responseData.features || [];
+    const totalMatched = responseData.numberMatched || fetchedItems.length;
+    const returnedCount = responseData.numberReturned || fetchedItems.length;
     
     if (returnedCount > 0 && totalMatched > returnedCount) {
       const additionalPages = Math.ceil(totalMatched / 500);
       for (let page = 2; page <= additionalPages; page++) {
         const offset = (page - 1) * 500;
-        const pageUrl = `${apiUrl}/collections/metadata:main/items?type=collection&limit=500&offset=${offset}&f=json`;
+        const pageUrl = `${targetUrl}${separator}limit=500&offset=${offset}&f=json`;
         const pageResponse = await fetch(pageUrl);
         if (pageResponse.ok) {
           const pageData = await pageResponse.json();
-          if (pageData.features) {
-            items = [...items, ...pageData.features];
-          }
+          const pageItems = pageData.collections || pageData.features || [];
+          fetchedItems = [...fetchedItems, ...pageItems];
         }
       }
     }
+    items = fetchedItems;
   } catch (err) {
     console.error("Error fetching products:", err);
   }
 
-  // Preprocessing and formatting matching store/index.js
+  // Preprocessing and formatting
   const parsedProducts = items
     .filter((i) => i["osc:type"] === "product")
     .map((i) => {
+      // Replicate the links structure expected by createMetrics for collections that don't have them
+      const links = i.links ? [...i.links] : [];
+
+      const addLinkIfMissing = (prefix, id, title) => {
+        if (!id) return;
+        const hasLink = links.some(l => l.href && l.href.includes(`..${prefix}${id}`));
+        if (!hasLink) {
+          links.push({
+            rel: "parent",
+            href: `..${prefix}${id}/catalog.json`,
+            title: title || `${prefix.replace(/\//g, " ").trim()}: ${id}`
+          });
+        }
+      };
+
+      // Aggregate Theme link
+      if (i["osc:theme"]) {
+        const themeTitle = i["kb:theme:title"] || i["osc:theme"].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        addLinkIfMissing("/themes/", i["osc:theme"], `Theme: ${themeTitle}`);
+      } else if (i.themes && i.themes[0] && i.themes[0].concepts && i.themes[0].concepts[0]) {
+        const themeId = i.themes[0].concepts[0].id;
+        const themeTitle = i["kb:theme:title"] || themeId.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        addLinkIfMissing("/themes/", themeId, `Theme: ${themeTitle}`);
+      }
+
+      // Aggregate Project link
+      if (i["osc:project"]) {
+        const projectTitle = i["kb:project:title"] || i["osc:project"].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        addLinkIfMissing("/projects/", i["osc:project"], `Project: ${projectTitle}`);
+      }
+
+      // Aggregate Variables links
+      const variables = i["osc:variables"] || (i["osc:variable"] ? [i["osc:variable"]] : []);
+      variables.forEach(v => {
+        const varTitle = (v === i["osc:variable"] && i["kb:variable:title"]) 
+          ? i["kb:variable:title"] 
+          : v.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        addLinkIfMissing("/variables/", v, `Variable: ${varTitle}`);
+      });
+
+      // Aggregate Missions links
+      const missions = i["osc:missions"] || (i["osc:eo-mission"] ? [i["osc:eo-mission"]] : []);
+      missions.forEach(m => {
+        const missionTitle = (m === i["osc:eo-mission"] && i["kb:eo-mission:title"]) 
+          ? i["kb:eo-mission:title"] 
+          : m.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        addLinkIfMissing("/eo-missions/", m, `EO Mission: ${missionTitle}`);
+      });
+
       // Mapping spatial bbox to custom Polygon geometries
       let geometry = i.geometry;
       if (i.extent?.spatial?.bbox) {
@@ -61,10 +120,11 @@ export async function fetchProducts(apiUrl) {
 
       return {
         ...i,
-        theme: i["osc:themes"],
-        variable: i["osc:variables"],
+        links: links,
+        theme: i["osc:themes"] || i["osc:theme"] || (i.themes && i.themes[0] && i.themes[0].concepts && i.themes[0].concepts[0] ? i.themes[0].concepts[0].id : null),
+        variable: i["osc:variables"] || (i["osc:variable"] ? [i["osc:variable"]] : []),
         project: i["osc:project"],
-        "eo-mission": i["osc:missions"],
+        "eo-mission": i["osc:missions"] || (i["osc:eo-mission"] ? [i["osc:eo-mission"]] : []),
         region: i["osc:region"],
         geometry: geometry,
       };
