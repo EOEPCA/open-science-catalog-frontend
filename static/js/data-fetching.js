@@ -10,7 +10,7 @@
 export async function fetchProducts(apiUrl) {
   let items = [];
   try {
-    const firstUrl = `${apiUrl}/collections/metadata:main/items?type=collection&limit=500`;
+    const firstUrl = `${apiUrl}/collections/metadata:main/items?type=collection&limit=500&f=json`;
     const response = await fetch(firstUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -25,7 +25,7 @@ export async function fetchProducts(apiUrl) {
       const additionalPages = Math.ceil(totalMatched / 500);
       for (let page = 2; page <= additionalPages; page++) {
         const offset = (page - 1) * 500;
-        const pageUrl = `${apiUrl}/collections/metadata:main/items?type=collection&limit=500&offset=${offset}`;
+        const pageUrl = `${apiUrl}/collections/metadata:main/items?type=collection&limit=500&offset=${offset}&f=json`;
         const pageResponse = await fetch(pageUrl);
         if (pageResponse.ok) {
           const pageData = await pageResponse.json();
