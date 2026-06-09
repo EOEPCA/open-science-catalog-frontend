@@ -17,11 +17,11 @@ export async function fetchProducts(apiUrl) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const responseData = await response.json();
-    
+
     let fetchedItems = responseData.collections || [];
     const totalMatched = responseData.numberMatched || fetchedItems.length;
     const returnedCount = responseData.numberReturned || fetchedItems.length;
-    
+
     if (returnedCount > 0 && totalMatched > returnedCount) {
       const additionalPages = Math.ceil(totalMatched / 500);
       for (let page = 2; page <= additionalPages; page++) {
@@ -49,47 +49,72 @@ export async function fetchProducts(apiUrl) {
 
       const addLinkIfMissing = (prefix, id, title) => {
         if (!id) return;
-        const hasLink = links.some(l => l.href && l.href.includes(`..${prefix}${id}`));
+        const hasLink = links.some(
+          (l) => l.href && l.href.includes(`..${prefix}${id}`)
+        );
         if (!hasLink) {
           links.push({
             rel: "parent",
             href: `..${prefix}${id}/catalog.json`,
-            title: title || `${prefix.replace(/\//g, " ").trim()}: ${id}`
+            title: title || `${prefix.replace(/\//g, " ").trim()}: ${id}`,
           });
         }
       };
 
       // Aggregate Theme link
       if (i["osc:theme"]) {
-        const themeTitle = i["kb:theme:title"] || i["osc:theme"].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        const themeTitle =
+          i["kb:theme:title"] ||
+          i["osc:theme"]
+            .replace(/-/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
         addLinkIfMissing("/themes/", i["osc:theme"], `Theme: ${themeTitle}`);
-      } else if (i.themes && i.themes[0] && i.themes[0].concepts && i.themes[0].concepts[0]) {
+      } else if (
+        i.themes &&
+        i.themes[0] &&
+        i.themes[0].concepts &&
+        i.themes[0].concepts[0]
+      ) {
         const themeId = i.themes[0].concepts[0].id;
-        const themeTitle = i["kb:theme:title"] || themeId.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        const themeTitle =
+          i["kb:theme:title"] ||
+          themeId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
         addLinkIfMissing("/themes/", themeId, `Theme: ${themeTitle}`);
       }
 
       // Aggregate Project link
       if (i["osc:project"]) {
-        const projectTitle = i["kb:project:title"] || i["osc:project"].replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-        addLinkIfMissing("/projects/", i["osc:project"], `Project: ${projectTitle}`);
+        const projectTitle =
+          i["kb:project:title"] ||
+          i["osc:project"]
+            .replace(/-/g, " ")
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+        addLinkIfMissing(
+          "/projects/",
+          i["osc:project"],
+          `Project: ${projectTitle}`
+        );
       }
 
       // Aggregate Variables links
-      const variables = i["osc:variables"] || (i["osc:variable"] ? [i["osc:variable"]] : []);
-      variables.forEach(v => {
-        const varTitle = (v === i["osc:variable"] && i["kb:variable:title"]) 
-          ? i["kb:variable:title"] 
-          : v.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const variables =
+        i["osc:variables"] || (i["osc:variable"] ? [i["osc:variable"]] : []);
+      variables.forEach((v) => {
+        const varTitle =
+          v === i["osc:variable"] && i["kb:variable:title"]
+            ? i["kb:variable:title"]
+            : v.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
         addLinkIfMissing("/variables/", v, `Variable: ${varTitle}`);
       });
 
       // Aggregate Missions links
-      const missions = i["osc:missions"] || (i["osc:eo-mission"] ? [i["osc:eo-mission"]] : []);
-      missions.forEach(m => {
-        const missionTitle = (m === i["osc:eo-mission"] && i["kb:eo-mission:title"]) 
-          ? i["kb:eo-mission:title"] 
-          : m.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const missions =
+        i["osc:missions"] || (i["osc:eo-mission"] ? [i["osc:eo-mission"]] : []);
+      missions.forEach((m) => {
+        const missionTitle =
+          m === i["osc:eo-mission"] && i["kb:eo-mission:title"]
+            ? i["kb:eo-mission:title"]
+            : m.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
         addLinkIfMissing("/eo-missions/", m, `EO Mission: ${missionTitle}`);
       });
 
@@ -112,10 +137,21 @@ export async function fetchProducts(apiUrl) {
       return {
         ...i,
         links: links,
-        theme: i["osc:themes"] || i["osc:theme"] || (i.themes && i.themes[0] && i.themes[0].concepts && i.themes[0].concepts[0] ? i.themes[0].concepts[0].id : null),
-        variable: i["osc:variables"] || (i["osc:variable"] ? [i["osc:variable"]] : []),
+        theme:
+          i["osc:themes"] ||
+          i["osc:theme"] ||
+          (i.themes &&
+          i.themes[0] &&
+          i.themes[0].concepts &&
+          i.themes[0].concepts[0]
+            ? i.themes[0].concepts[0].id
+            : null),
+        variable:
+          i["osc:variables"] || (i["osc:variable"] ? [i["osc:variable"]] : []),
         project: i["osc:project"],
-        "eo-mission": i["osc:missions"] || (i["osc:eo-mission"] ? [i["osc:eo-mission"]] : []),
+        "eo-mission":
+          i["osc:missions"] ||
+          (i["osc:eo-mission"] ? [i["osc:eo-mission"]] : []),
         region: i["osc:region"],
         geometry: geometry,
       };
@@ -155,15 +191,22 @@ export async function fetchAllAggregationItems(baseUrl, type) {
             variableId = href.substring(2);
           }
           if (variableId.endsWith("/catalog.json")) {
-            variableId = variableId.substring(0, variableId.indexOf("/catalog.json"));
+            variableId = variableId.substring(
+              0,
+              variableId.indexOf("/catalog.json")
+            );
           } else if (variableId.endsWith("/collection.json")) {
-            variableId = variableId.substring(0, variableId.indexOf("/collection.json"));
+            variableId = variableId.substring(
+              0,
+              variableId.indexOf("/collection.json")
+            );
           }
 
           const separatorIndex = v.title ? v.title.indexOf(": ") : -1;
-          const propTitle = separatorIndex !== -1 
-            ? v.title.substring(separatorIndex + 2)
-            : v.title || variableId;
+          const propTitle =
+            separatorIndex !== -1
+              ? v.title.substring(separatorIndex + 2)
+              : v.title || variableId;
 
           allItems[variableId] = {
             id: variableId,

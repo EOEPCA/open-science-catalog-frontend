@@ -25,7 +25,12 @@ export function createMetrics(items) {
       return parseInt(string.substring(0, string.indexOf("-")));
     };
 
-    if (item.extent && item.extent.temporal && item.extent.temporal.interval && item.extent.temporal.interval[0]) {
+    if (
+      item.extent &&
+      item.extent.temporal &&
+      item.extent.temporal.interval &&
+      item.extent.temporal.interval[0]
+    ) {
       const yearStart = getYear(item.extent.temporal.interval[0][0]);
       const yearEnd = getYear(item.extent.temporal.interval[0][1]);
       const currentYears = {};
@@ -49,9 +54,9 @@ export function createMetrics(items) {
       // aggregated properties
       const aggregateProperty = (propertyCheck, target) => {
         if (!item.links) return;
-        
-        const currentProperties = item.links.filter((l) =>
-          l.href && l.href.includes(`..${propertyCheck}`)
+
+        const currentProperties = item.links.filter(
+          (l) => l.href && l.href.includes(`..${propertyCheck}`)
         );
         for (let propI = 0; propI < currentProperties.length; propI++) {
           const propId = currentProperties[propI].href.substring(
@@ -62,13 +67,14 @@ export function createMetrics(items) {
               currentProperties[propI].href.indexOf("/collection.json")
             )
           );
-          
+
           let propTitle = "";
           if (currentProperties[propI].title) {
             const separatorIndex = currentProperties[propI].title.indexOf(": ");
-            propTitle = separatorIndex !== -1 
-              ? currentProperties[propI].title.substring(separatorIndex + 2)
-              : currentProperties[propI].title;
+            propTitle =
+              separatorIndex !== -1
+                ? currentProperties[propI].title.substring(separatorIndex + 2)
+                : currentProperties[propI].title;
           }
 
           target[propId] = {
@@ -76,14 +82,17 @@ export function createMetrics(items) {
             name: propTitle,
             years: {
               ...(target[propId]?.years
-                ? Object.keys(currentYears).reduce((acc, currY) => {
-                    if (acc[currY]) {
-                      acc[currY] = acc[currY] + currentYears[currY];
-                    } else {
-                      acc[currY] = currentYears[currY];
-                    }
-                    return acc;
-                  }, { ...target[propId].years })
+                ? Object.keys(currentYears).reduce(
+                    (acc, currY) => {
+                      if (acc[currY]) {
+                        acc[currY] = acc[currY] + currentYears[currY];
+                      } else {
+                        acc[currY] = currentYears[currY];
+                      }
+                      return acc;
+                    },
+                    { ...target[propId].years }
+                  )
                 : currentYears),
             },
             products: {

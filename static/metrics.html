@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OSC Metrics Dashboard</title>
     <!-- Material Design Icons CDN (for absolute reliability) + Local fallback -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css"
+    />
     <link rel="stylesheet" href="css/materialdesignicons.min.css" />
     <!-- ESA Custom Fonts -->
     <link rel="stylesheet" href="css/notesesabold.css" />
-    
+
     <!-- EOxElements -->
     <script
       type="module"
@@ -35,9 +38,9 @@
     <style>
       /* --- EXACT COLOR AND DESIGN TOKENS --- */
       :root {
-        --primary-color: #003247;       /* ESA Deep Blue */
-        --secondary-color: #335E6F;     /* ESA Grey-Blue / Table main progress timeline */
-        --applications-color: #00B19D;  /* ESA Teal / Stats button, coverage icons, sub progress timeline */
+        --primary-color: #003247; /* ESA Deep Blue */
+        --secondary-color: #335e6f; /* ESA Grey-Blue / Table main progress timeline */
+        --applications-color: #00b19d; /* ESA Teal / Stats button, coverage icons, sub progress timeline */
         --background-color: #ffffff;
         --border-color: rgba(0, 0, 0, 0.12);
         --border-radius: 4px;
@@ -45,10 +48,10 @@
         --header-font: "NotesESAbold", sans-serif;
         --hover-bg: #eee;
         --expanded-bg: #ffffff;
-        
+
         /* Dynamic table cell width (controlled by JS zoom slider) */
         --table-cell: 28px;
-        
+
         /* Modal variables */
         --modal-z-index: 1000;
       }
@@ -153,8 +156,8 @@
           This is the standard industry practice to avoid browser rendering bugs with sticky columns,
           such as borders flickering, disappearing, or the leftmost/sticky column getting cut off when scrolling.
         */
-        border-collapse: separate; 
-        border-spacing: 0;         
+        border-collapse: separate;
+        border-spacing: 0;
         font-size: 14px;
         font-weight: 700;
         position: relative;
@@ -285,9 +288,12 @@
 
       /* --- TABLE COLS & PREVENT YEAR OVERLAP MODES --- */
       /* Dynamic year columns (No padding to eliminate gaps!) */
-      .metrics-table th:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell),
-      .metrics-table td:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell),
-      .sub-products-table td:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell) {
+      .metrics-table
+        th:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell),
+      .metrics-table
+        td:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell),
+      .sub-products-table
+        td:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell) {
         text-align: center;
         width: var(--table-cell);
         min-width: var(--table-cell);
@@ -333,11 +339,20 @@
       /* --- EXACT HIDE-EVEN LOGIC FROM ORIGINAL METRICSTABLE.VUE --- */
       /* When zoom is < 3, hide every second year's label so text stays side-by-side without wrapping or clipping */
       /* Note: index 3 is Column 3 (the table-spacer-cell is index 2), so year cells start at index 3. nth-child(even) handles odd years perfectly */
-      .metrics-table.hide-even th:not(:first-child, :nth-child(2), :last-child, .table-spacer-cell):nth-child(even) > span {
+      .metrics-table.hide-even
+        th:not(
+          :first-child,
+          :nth-child(2),
+          :last-child,
+          .table-spacer-cell
+        ):nth-child(even)
+        > span {
         visibility: hidden;
       }
 
-      .metrics-table th, .metrics-table td, .sub-products-table td {
+      .metrics-table th,
+      .metrics-table td,
+      .sub-products-table td {
         border-bottom: 1px solid var(--border-color);
         box-sizing: border-box;
         height: 38px;
@@ -367,12 +382,16 @@
         box-sizing: border-box;
         margin: 0 !important;
         padding: 0 !important;
-        background-color: var(--secondary-color); /* Variables timeline color: #335E6F */
+        background-color: var(
+          --secondary-color
+        ); /* Variables timeline color: #335E6F */
         border-radius: 0;
       }
 
       .timeline-bar.sub-bar {
-        background-color: var(--applications-color); /* Products timeline color: #00B19D */
+        background-color: var(
+          --applications-color
+        ); /* Products timeline color: #00B19D */
       }
 
       /* Border radius logic - rounding left of first item and right of last item only */
@@ -430,12 +449,16 @@
       }
 
       /* Link/text colors in table - harmonized to beautiful blue from metrics.vue */
-      .metrics-table a, .sub-products-table a {
-        color: var(--secondary-color) !important; /* Blue variable/product text: #335E6F */
+      .metrics-table a,
+      .sub-products-table a {
+        color: var(
+          --secondary-color
+        ) !important; /* Blue variable/product text: #335E6F */
         text-decoration: none;
       }
 
-      .metrics-table a:hover, .sub-products-table a:hover {
+      .metrics-table a:hover,
+      .sub-products-table a:hover {
         text-decoration: underline;
       }
 
@@ -447,7 +470,7 @@
         cursor: pointer;
         color: var(--secondary-color);
         font-size: 24px;
-        width: 32px;  /* Unified to 32px diameter */
+        width: 32px; /* Unified to 32px diameter */
         height: 32px; /* Unified to 32px diameter */
         border-radius: 50%;
         display: inline-flex;
@@ -489,7 +512,7 @@
       .cov-btn i,
       .chevron-toggle i {
         position: relative;
-        top: 1px; 
+        top: 1px;
       }
 
       /* Unified main row planet button to exact same 32px by 32px dimensions as sub-buttons and chevron toggles! */
@@ -497,7 +520,7 @@
         background: none;
         border: none;
         border-radius: 50%;
-        width: 32px;  /* Unified to 32px diameter */
+        width: 32px; /* Unified to 32px diameter */
         height: 32px; /* Unified to 32px diameter */
         display: inline-flex;
         align-items: center;
@@ -517,7 +540,7 @@
         border: none;
         cursor: pointer;
         color: var(--applications-color);
-        width: 32px;  /* Unified to 32px diameter */
+        width: 32px; /* Unified to 32px diameter */
         height: 32px; /* Unified to 32px diameter */
         border-radius: 50%;
         display: inline-flex;
@@ -528,7 +551,7 @@
       }
 
       .cov-btn:hover {
-        background: rgba(0,0,0,0.05);
+        background: rgba(0, 0, 0, 0.05);
       }
 
       /* --- BOTTOM CONTROLS BAR (EXACTLY MATCHING OLD METRICS.VUE) --- */
@@ -548,7 +571,8 @@
         gap: 16px;
       }
 
-      .controls-left, .controls-right {
+      .controls-left,
+      .controls-right {
         display: flex;
         align-items: center;
         gap: 16px;
@@ -572,18 +596,18 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2), 
-                    0px 2px 2px 0px rgba(0,0,0,0.14), 
-                    0px 1px 5px 0px rgba(0,0,0,0.12);
+        box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+          0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 5px 0px rgba(0, 0, 0, 0.12);
         transition: background-color 0.2s, box-shadow 0.2s;
         box-sizing: border-box;
       }
 
       .v-btn-mock:hover {
         background-color: #009685;
-        box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2), 
-                    0px 4px 5px 0px rgba(0,0,0,0.14), 
-                    0px 1px 10px 0px rgba(0,0,0,0.12);
+        box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+          0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+          0px 1px 10px 0px rgba(0, 0, 0, 0.12);
       }
 
       .v-btn-icon-mock {
@@ -719,9 +743,9 @@
         max-height: 90vh;
         display: flex;
         flex-direction: column;
-        box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 
-                    0px 24px 38px 3px rgba(0,0,0,0.14), 
-                    0px 9px 46px 8px rgba(0,0,0,0.12);
+        box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+          0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+          0px 9px 46px 8px rgba(0, 0, 0, 0.12);
         overflow: hidden;
       }
 
@@ -760,7 +784,7 @@
       }
 
       .modal-close-btn:hover {
-        background-color: rgba(0,0,0,0.05);
+        background-color: rgba(0, 0, 0, 0.05);
       }
 
       .modal-body {
@@ -877,7 +901,7 @@
       .cov-list-title {
         font-size: 12px;
         font-weight: 500;
-        color: rgba(0,0,0,0.54);
+        color: rgba(0, 0, 0, 0.54);
         padding-bottom: 8px;
         border-bottom: 1px solid var(--border-color);
         margin-bottom: 12px;
@@ -905,13 +929,13 @@
       .cov-item-name {
         font-size: 14px;
         font-weight: 600;
-        color: rgba(0,0,0,0.87);
+        color: rgba(0, 0, 0, 0.87);
         margin-bottom: 6px;
       }
 
       .cov-item-meta {
         font-size: 12px;
-        color: rgba(0,0,0,0.54);
+        color: rgba(0, 0, 0, 0.54);
         margin-top: 4px;
       }
 
@@ -940,7 +964,8 @@
           align-items: stretch;
         }
 
-        .controls-left, .controls-right {
+        .controls-left,
+        .controls-right {
           justify-content: space-between;
           width: 100%;
         }
@@ -1028,7 +1053,6 @@
   <body>
     <!-- MAIN SCREEN CONTAINER -->
     <div class="app-container">
-      
       <!-- TITLE ROW -->
       <div class="metrics-header">
         <h1>Metrics</h1>
@@ -1067,7 +1091,7 @@
             <button id="btn-stats-open" class="v-btn-mock">
               <i class="mdi mdi-poll"></i> Statistics
             </button>
-            
+
             <div class="v-select-container">
               <span class="v-select-label">Aggregate by</span>
               <select id="aggregation-select" class="v-select-mock">
@@ -1082,28 +1106,58 @@
           <!-- Right Controls -->
           <div class="controls-right">
             <!-- Empty Toggle Button (Defaults to hiding empty) -->
-            <button id="btn-toggle-empty" class="v-btn-icon-mock" title="Show empty variables">
+            <button
+              id="btn-toggle-empty"
+              class="v-btn-icon-mock"
+              title="Show empty variables"
+            >
               <i class="mdi mdi-archive-cancel-outline"></i>
             </button>
 
             <!-- Zoom slider control matching old MetricsTable styling -->
             <div class="v-slider-mock-container" title="Table Zoom">
-              <i class="mdi mdi-magnify-minus-outline" id="zoom-out-trigger"></i>
-              <input type="range" id="zoom-slider" min="1" max="3" value="1" step="1" class="v-slider-mock" aria-label="Table zoom slider" />
+              <i
+                class="mdi mdi-magnify-minus-outline"
+                id="zoom-out-trigger"
+              ></i>
+              <input
+                type="range"
+                id="zoom-slider"
+                min="1"
+                max="3"
+                value="1"
+                step="1"
+                class="v-slider-mock"
+                aria-label="Table zoom slider"
+              />
               <i class="mdi mdi-magnify-plus-outline" id="zoom-in-trigger"></i>
             </div>
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- STATISTICS DIALOG OVERLAY -->
-    <div class="modal-overlay" id="modal-statistics" aria-modal="true" role="dialog">
+    <div
+      class="modal-overlay"
+      id="modal-statistics"
+      aria-modal="true"
+      role="dialog"
+    >
       <div class="modal-container">
         <div class="modal-header">
-          <h3><i class="mdi mdi-poll" style="color: var(--applications-color);"></i> All stats</h3>
-          <button class="modal-close-btn" id="btn-stats-close" aria-label="Close Statistics Dialog">
+          <h3>
+            <i
+              class="mdi mdi-poll"
+              style="color: var(--applications-color)"
+            ></i>
+            All stats
+          </h3>
+          <button
+            class="modal-close-btn"
+            id="btn-stats-close"
+            aria-label="Close Statistics Dialog"
+          >
             <i class="mdi mdi-close"></i>
           </button>
         </div>
@@ -1113,76 +1167,147 @@
           </div>
 
           <div class="chart-section-title">Temporal coverage</div>
-          <div class="chart-mock-box" style="height: 250px; position: relative; border: none; background: transparent;">
-            <eox-chart id="productsChart" style="width: 100%; height: 100%;"></eox-chart>
+          <div
+            class="chart-mock-box"
+            style="
+              height: 250px;
+              position: relative;
+              border: none;
+              background: transparent;
+            "
+          >
+            <eox-chart
+              id="productsChart"
+              style="width: 100%; height: 100%"
+            ></eox-chart>
           </div>
 
-          <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 24px 0;" />
+          <hr
+            style="
+              border: 0;
+              border-top: 1px solid var(--border-color);
+              margin: 24px 0;
+            "
+          />
 
           <div class="stats-two-col">
             <!-- Left: Variable distribution list & Pie chart -->
             <div>
               <div class="stats-col-title">Variable distribution</div>
               <div class="stats-flex-container">
-                <div class="stats-list" id="stats-variables-list">
-                </div>
+                <div class="stats-list" id="stats-variables-list"></div>
                 <div class="pie-chart-container">
-                  <eox-chart id="variablePie" style="width: 100%; height: 100%;"></eox-chart>
+                  <eox-chart
+                    id="variablePie"
+                    style="width: 100%; height: 100%"
+                  ></eox-chart>
                 </div>
               </div>
             </div>
 
-            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 8px 0;" />
+            <hr
+              style="
+                border: 0;
+                border-top: 1px solid var(--border-color);
+                margin: 8px 0;
+              "
+            />
 
             <!-- Right: Satellite mission distribution list & Pie chart -->
             <div>
               <div class="stats-col-title">Satellite mission distribution</div>
               <div class="stats-flex-container">
-                <div class="stats-list" id="stats-missions-list">
-                </div>
+                <div class="stats-list" id="stats-missions-list"></div>
                 <div class="pie-chart-container">
-                  <eox-chart id="missionPie" style="width: 100%; height: 100%;"></eox-chart>
+                  <eox-chart
+                    id="missionPie"
+                    style="width: 100%; height: 100%"
+                  ></eox-chart>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="v-btn-mock" id="btn-stats-footer-close" style="background-color: transparent; color: var(--applications-color); border: 1px solid var(--applications-color); box-shadow: none;">Close</button>
+          <button
+            class="v-btn-mock"
+            id="btn-stats-footer-close"
+            style="
+              background-color: transparent;
+              color: var(--applications-color);
+              border: 1px solid var(--applications-color);
+              box-shadow: none;
+            "
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
 
     <!-- COVERAGE MAP DIALOG OVERLAY -->
-    <div class="modal-overlay" id="modal-coverage" aria-modal="true" role="dialog">
+    <div
+      class="modal-overlay"
+      id="modal-coverage"
+      aria-modal="true"
+      role="dialog"
+    >
       <div class="modal-container">
         <div class="modal-header">
           <h3>
-            <i class="mdi mdi-earth" style="color: var(--applications-color);"></i> 
-            <span id="coverage-modal-title">Sea Surface Temperature Coverage</span>
+            <i
+              class="mdi mdi-earth"
+              style="color: var(--applications-color)"
+            ></i>
+            <span id="coverage-modal-title"
+              >Sea Surface Temperature Coverage</span
+            >
           </h3>
-          <button class="modal-close-btn" id="btn-coverage-close" aria-label="Close Coverage Dialog">
+          <button
+            class="modal-close-btn"
+            id="btn-coverage-close"
+            aria-label="Close Coverage Dialog"
+          >
             <i class="mdi mdi-close"></i>
           </button>
         </div>
-        <div class="modal-body" style="padding: 16px;">
+        <div class="modal-body" style="padding: 16px">
           <div class="coverage-split">
             <!-- Left Panel: Products under the selected variable -->
             <div class="cov-list">
               <div class="cov-list-title">Products</div>
-              <div id="coverage-products-list">
-              </div>
+              <div id="coverage-products-list"></div>
             </div>
 
             <!-- Right Panel: Geospatial Map Area -->
             <div class="cov-map-container">
               <!-- EOx-Map Component template -->
-              <eox-map id="coverage-eox-map" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></eox-map>
+              <eox-map
+                id="coverage-eox-map"
+                style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                "
+              ></eox-map>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="v-btn-mock" id="btn-coverage-footer-close" style="background-color: transparent; color: var(--applications-color); border: 1px solid var(--applications-color); box-shadow: none;">Close</button>
+          <button
+            class="v-btn-mock"
+            id="btn-coverage-footer-close"
+            style="
+              background-color: transparent;
+              color: var(--applications-color);
+              border: 1px solid var(--applications-color);
+              box-shadow: none;
+            "
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -1190,10 +1315,13 @@
     <!-- CORE SCRIPTS FOR INTERACTION -->
     <script type="module">
       import { createMetrics } from "./js/metrics-engine.js";
-      import { fetchProducts, fetchAllAggregationItems } from "./js/data-fetching.js";
+      import {
+        fetchProducts,
+        fetchAllAggregationItems,
+      } from "./js/data-fetching.js";
 
       const itemFilterEl = document.querySelector("#itemfilter");
-      
+
       const urlParams = new URLSearchParams(window.location.search);
       const BASE_URL =
         urlParams.get("baseUrl") ||
@@ -1229,9 +1357,11 @@
         <th scope="col" aria-label="Expand column"></th>
         <th scope="col">Name</th>
         <th class="table-spacer-cell"></th> <!-- Spacer column for breathing room at table start -->
-        ${yearsList.map(y => {
-          return `<th scope="col"><span>${y}</span></th>`;
-        }).join("")}
+        ${yearsList
+          .map((y) => {
+            return `<th scope="col"><span>${y}</span></th>`;
+          })
+          .join("")}
         <th class="table-spacer-cell"></th> <!-- Spacer column for breathing room at table end -->
         <th scope="col">Coverage</th>
       `;
@@ -1263,51 +1393,62 @@
 
       // Render timeline progress bars with exact rounding logic and 0px spacing
       const renderTimelineCells = (activeYears, isSub = false) => {
-        return yearsList.map((y, index) => {
-          const isActive = activeYears.includes(y);
-          if (!isActive) {
-            return `<td class="year-cell"></td>`;
-          }
-          
-          // Rounded edges matching the bounds of the active years
-          const prevActive = index > 0 && activeYears.includes(yearsList[index - 1]);
-          const nextActive = index < yearsList.length - 1 && activeYears.includes(yearsList[index + 1]);
-          
-          let radiusClass = "middle";
-          if (!prevActive && !nextActive) {
-            radiusClass = "single";
-          } else if (!prevActive) {
-            radiusClass = "cap-left";
-          } else if (!nextActive) {
-            radiusClass = "cap-right";
-          }
-          
-          const subClass = isSub ? "sub-bar" : "";
-          
-          return `
+        return yearsList
+          .map((y, index) => {
+            const isActive = activeYears.includes(y);
+            if (!isActive) {
+              return `<td class="year-cell"></td>`;
+            }
+
+            // Rounded edges matching the bounds of the active years
+            const prevActive =
+              index > 0 && activeYears.includes(yearsList[index - 1]);
+            const nextActive =
+              index < yearsList.length - 1 &&
+              activeYears.includes(yearsList[index + 1]);
+
+            let radiusClass = "middle";
+            if (!prevActive && !nextActive) {
+              radiusClass = "single";
+            } else if (!prevActive) {
+              radiusClass = "cap-left";
+            } else if (!nextActive) {
+              radiusClass = "cap-right";
+            }
+
+            const subClass = isSub ? "sub-bar" : "";
+
+            return `
             <td class="year-cell">
               <span class="timeline-bar ${subClass} ${radiusClass}"></span>
             </td>
           `;
-        }).join("");
+          })
+          .join("");
       };
 
       // Populate Table Body dynamically
       const tbody = document.getElementById("metrics-table-body");
 
       const renderTable = (rows) => {
-        tbody.innerHTML = rows.map(row => {
-          const hasProducts = row.products && Object.keys(row.products).length > 0;
-          const activeYearsList = row.years ? Object.keys(row.years).map(Number) : [];
+        tbody.innerHTML = rows
+          .map((row) => {
+            const hasProducts =
+              row.products && Object.keys(row.products).length > 0;
+            const activeYearsList = row.years
+              ? Object.keys(row.years).map(Number)
+              : [];
 
-          if (!hasProducts) {
-            return `
+            if (!hasProducts) {
+              return `
               <tr>
                 <td>
                   <div class="noAvailableProduct">No products available</div>
                 </td>
                 <td class="variable-name-cell">
-                  <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
+                  <a href="#" style="font-size: 12px; font-weight: 700;">${
+                    row.name
+                  }</a>
                 </td>
                 <td class="table-spacer-cell"></td> <!-- Spacer start -->
                 ${renderTimelineCells(activeYearsList)}
@@ -1319,11 +1460,11 @@
                 </td>
               </tr>
             `;
-          }
-          
-          const productsList = Object.values(row.products);
+            }
 
-          return `
+            const productsList = Object.values(row.products);
+
+            return `
             <tr class="parent-row" data-id="${row.id}">
               <td>
                 <button class="chevron-toggle" aria-label="Expand Variable Details">
@@ -1331,7 +1472,9 @@
                 </button>
               </td>
               <td class="variable-name-cell">
-                <a href="#" style="font-size: 12px; font-weight: 700;">${row.name}</a>
+                <a href="#" style="font-size: 12px; font-weight: 700;">${
+                  row.name
+                }</a>
               </td>
               <td class="table-spacer-cell"></td> <!-- Spacer start -->
               ${renderTimelineCells(activeYearsList)}
@@ -1342,40 +1485,53 @@
                 </button>
               </td>
             </tr>
-            <tr class="expanded-row" id="expanded-${row.id}" style="display: none;">
+            <tr class="expanded-row" id="expanded-${
+              row.id
+            }" style="display: none;">
               <!-- colspan expanded from +2 to +5 to seamlessly cover the spacer columns too -->
               <td colspan="${yearsList.length + 5}">
                 <table class="sub-products-table">
                   <tbody>
-                    ${productsList.map(prod => {
-                      const prodYears = prod.years ? Object.keys(prod.years).map(Number) : [];
-                      return `
+                    ${productsList
+                      .map((prod) => {
+                        const prodYears = prod.years
+                          ? Object.keys(prod.years).map(Number)
+                          : [];
+                        return `
                         <tr>
                           <td>
-                            <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);" data-prod-id="${prod.id}">
+                            <button class="cov-btn" title="Go to product collection" style="color: var(--applications-color);" data-prod-id="${
+                              prod.id
+                            }">
                               <i class="mdi mdi-open-in-new"></i>
                             </button>
                           </td>
                           <td class="product-name-cell">
-                            <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${prod.name}</a>
+                            <a href="#" style="font-size: 12px; cursor: pointer; font-weight: 700;">${
+                              prod.name
+                            }</a>
                           </td>
                           <td class="table-spacer-cell"></td> <!-- Spacer start -->
                           ${renderTimelineCells(prodYears, true)}
                           <td class="table-spacer-cell"></td> <!-- Spacer end -->
                           <td>
-                            <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);" data-prod-id="${prod.id}">
+                            <button class="cov-btn" title="View product coverage map" style="color: var(--applications-color);" data-prod-id="${
+                              prod.id
+                            }">
                               <i class="mdi mdi-map-marker"></i>
                             </button>
                           </td>
                         </tr>
                       `;
-                    }).join("")}
+                      })
+                      .join("")}
                   </tbody>
                 </table>
               </td>
             </tr>
           `;
-        }).join("");
+          })
+          .join("");
       };
 
       const updateView = async () => {
@@ -1385,11 +1541,14 @@
 
         if (showEmptyItems) {
           if (!allAggregationItems) {
-            allAggregationItems = await fetchAllAggregationItems(BASE_URL, aggregationProperty);
+            allAggregationItems = await fetchAllAggregationItems(
+              BASE_URL,
+              aggregationProperty
+            );
           }
           const merged = {
             ...allAggregationItems,
-            ...metrics[aggregationProperty]
+            ...metrics[aggregationProperty],
           };
           rows = Object.values(merged);
         }
@@ -1405,18 +1564,23 @@
       };
 
       // --- DIALOG OPEN/CLOSE LOGIC ---
-      const setupModal = (overlayId, openTriggerId, closeTriggerIds, onOpen = null) => {
+      const setupModal = (
+        overlayId,
+        openTriggerId,
+        closeTriggerIds,
+        onOpen = null
+      ) => {
         const overlay = document.getElementById(overlayId);
         const openBtn = document.getElementById(openTriggerId);
-        
+
         if (openBtn) {
           openBtn.addEventListener("click", () => {
             if (onOpen) onOpen();
             overlay.classList.add("open");
           });
         }
-        
-        closeTriggerIds.forEach(id => {
+
+        closeTriggerIds.forEach((id) => {
           const btn = document.getElementById(id);
           if (btn) {
             btn.addEventListener("click", () => {
@@ -1447,7 +1611,12 @@
       };
 
       // --- VEGA DOUGHNUT CHART SPEC GENERATOR ---
-      const getDoughnutSpec = (dataValues, colorRange, defaultName, size = 450) => {
+      const getDoughnutSpec = (
+        dataValues,
+        colorRange,
+        defaultName,
+        size = 450
+      ) => {
         const innerMain = Math.round(size * 0.244);
         const outerMain = Math.round(size * 0.355);
         const innerHover = Math.round(size * 0.373);
@@ -1465,10 +1634,10 @@
           padding: 10,
           autosize: {
             type: "fit",
-            contains: "padding"
+            contains: "padding",
           },
           data: {
-            values: dataValues
+            values: dataValues,
           },
           layer: [
             // Layer 1: Outer hover ring
@@ -1478,14 +1647,14 @@
                 innerRadius: innerHover,
                 outerRadius: outerHover,
                 stroke: "white",
-                strokeWidth: 1.5
+                strokeWidth: 1.5,
               },
               encoding: {
                 opacity: {
                   condition: { param: "hover", value: 1, empty: false },
-                  value: 0
-                }
-              }
+                  value: 0,
+                },
+              },
             },
             // Layer 2: Main doughnut ring
             {
@@ -1495,24 +1664,22 @@
                   select: {
                     type: "point",
                     on: "pointerover",
-                    empty: false
+                    empty: false,
                   },
-                  value: { name: defaultName }
-                }
+                  value: { name: defaultName },
+                },
               ],
               mark: {
                 type: "arc",
                 innerRadius: innerMain,
                 outerRadius: outerMain,
                 stroke: "white",
-                strokeWidth: 1.5
-              }
+                strokeWidth: 1.5,
+              },
             },
             // Layer 3: Text above the pie (hovered section name)
             {
-              transform: [
-                { filter: { param: "hover", empty: false } }
-              ],
+              transform: [{ filter: { param: "hover", empty: false } }],
               mark: {
                 type: "text",
                 dy: titleDy,
@@ -1521,7 +1688,7 @@
                 align: "center",
                 baseline: "middle",
                 clip: false,
-                limit: textLimit
+                limit: textLimit,
               },
               encoding: {
                 text: { field: "name", type: "nominal" },
@@ -1530,50 +1697,46 @@
                   field: "name",
                   type: "nominal",
                   scale: {
-                    domain: dataValues.map(d => d.name),
-                    range: colorRange
+                    domain: dataValues.map((d) => d.name),
+                    range: colorRange,
                   },
-                  legend: null
-                }
-              }
+                  legend: null,
+                },
+              },
             },
             // Layer 4: Text inside the ring (count of products)
             {
-              transform: [
-                { filter: { param: "hover", empty: false } }
-              ],
+              transform: [{ filter: { param: "hover", empty: false } }],
               mark: {
                 type: "text",
                 dy: -8,
                 fontSize: countFontSize,
                 fontWeight: "bold",
                 align: "center",
-                baseline: "middle"
+                baseline: "middle",
               },
               encoding: {
                 text: { field: "count_label", type: "nominal" },
                 theta: null,
-                color: { value: "#000000" }
-              }
+                color: { value: "#000000" },
+              },
             },
             // Layer 5: Text inside the ring (percentage)
             {
-              transform: [
-                { filter: { param: "hover", empty: false } }
-              ],
+              transform: [{ filter: { param: "hover", empty: false } }],
               mark: {
                 type: "text",
                 dy: size < 350 ? 10 : 16,
                 fontSize: percentFontSize,
                 align: "center",
-                baseline: "middle"
+                baseline: "middle",
               },
               encoding: {
                 text: { field: "percent_label", type: "nominal" },
                 theta: null,
-                color: { value: "#666666" }
-              }
-            }
+                color: { value: "#666666" },
+              },
+            },
           ],
           encoding: {
             theta: { field: "count", type: "quantitative" },
@@ -1581,21 +1744,21 @@
               field: "name",
               type: "nominal",
               scale: {
-                domain: dataValues.map(d => d.name),
-                range: colorRange
+                domain: dataValues.map((d) => d.name),
+                range: colorRange,
               },
-              legend: null
+              legend: null,
             },
             order: {
               field: "count",
               type: "quantitative",
-              sort: "descending"
-            }
+              sort: "descending",
+            },
           },
           config: {
             view: { stroke: null },
-            renderer: "svg"
-          }
+            renderer: "svg",
+          },
         };
       };
 
@@ -1604,52 +1767,65 @@
         if (!metrics) return;
 
         // Populate total count
-        document.getElementById("stats-total-products").textContent = metrics.numberOfProducts || 0;
+        document.getElementById("stats-total-products").textContent =
+          metrics.numberOfProducts || 0;
 
         // Sort variables
         const sortedVariables = Object.values(metrics.variables || {}).sort(
-          (a, b) => Object.keys(b.products).length - Object.keys(a.products).length
+          (a, b) =>
+            Object.keys(b.products).length - Object.keys(a.products).length
         );
 
         // Populate variables distribution list
         const varListEl = document.getElementById("stats-variables-list");
         if (varListEl) {
-          varListEl.innerHTML = sortedVariables.map(v => `
+          varListEl.innerHTML = sortedVariables
+            .map(
+              (v) => `
             <div class="stats-list-item">
               <i class="mdi mdi-circle-medium" style="color: var(--applications-color);"></i>
               <span>${v.name}: ${Object.keys(v.products).length} products</span>
             </div>
-          `).join("");
+          `
+            )
+            .join("");
         }
 
         // Sort missions
         const sortedMissions = Object.values(metrics["eo-missions"] || {}).sort(
-          (a, b) => Object.keys(b.products).length - Object.keys(a.products).length
+          (a, b) =>
+            Object.keys(b.products).length - Object.keys(a.products).length
         );
 
         // Populate missions list
         const missionListEl = document.getElementById("stats-missions-list");
         if (missionListEl) {
-          missionListEl.innerHTML = sortedMissions.map(m => `
+          missionListEl.innerHTML = sortedMissions
+            .map(
+              (m) => `
             <div class="stats-list-item">
-              <i class="mdi mdi-circle-medium" style="color: ${textToHex(m.name)};"></i>
+              <i class="mdi mdi-circle-medium" style="color: ${textToHex(
+                m.name
+              )};"></i>
               <span>${m.name}: ${Object.keys(m.products).length} products</span>
             </div>
-          `).join("");
+          `
+            )
+            .join("");
         }
 
         // --- CONFIGURE EOX-CHARTS ---
         const productsChartEl = document.getElementById("productsChart");
         productsChartEl.opt = { renderer: "svg" };
         const yearsKeys = Object.keys(metrics.years || {});
-        
+
         productsChartEl.spec = {
           $schema: "https://vega.github.io/schema/vega-lite/v5.json",
           data: {
-            values: yearsKeys.map(year => ({
+            values: yearsKeys.map((year) => ({
               year: year,
-              count: metrics.years[year]
-            }))
+              count: metrics.years[year],
+            })),
           },
           mark: { type: "bar", color: "#00B19D" },
           encoding: {
@@ -1659,29 +1835,39 @@
               title: "Year",
               axis: {
                 labelAngle: -45,
-                labelOverlap: "greedy"
-              }
+                labelOverlap: "greedy",
+              },
             },
-            y: { field: "count", type: "quantitative", title: "Number of products" },
+            y: {
+              field: "count",
+              type: "quantitative",
+              title: "Number of products",
+            },
             tooltip: [
               { field: "year", type: "ordinal", title: "Year" },
-              { field: "count", type: "quantitative", title: "Number of products" }
-            ]
+              {
+                field: "count",
+                type: "quantitative",
+                title: "Number of products",
+              },
+            ],
           },
           config: {
-            view: { stroke: null }
-          }
+            view: { stroke: null },
+          },
         };
 
         const varColors = ["#00B19D"];
-        const variableDataValues = sortedVariables.map(v => {
+        const variableDataValues = sortedVariables.map((v) => {
           const count = Object.keys(v.products).length;
-          const percent = metrics.numberOfProducts ? ((count * 100) / metrics.numberOfProducts).toFixed(2) : "0.00";
+          const percent = metrics.numberOfProducts
+            ? ((count * 100) / metrics.numberOfProducts).toFixed(2)
+            : "0.00";
           return {
             name: v.name,
             count: count,
             count_label: `${count} products`,
-            percent_label: `${percent}%`
+            percent_label: `${percent}%`,
           };
         });
 
@@ -1690,28 +1876,49 @@
 
         const variablePieEl = document.getElementById("variablePie");
         variablePieEl.opt = { renderer: "svg" };
-        const defaultVarName = variableDataValues[0] ? variableDataValues[0].name : "";
-        variablePieEl.spec = getDoughnutSpec(variableDataValues, varColors, defaultVarName, chartSize);
+        const defaultVarName = variableDataValues[0]
+          ? variableDataValues[0].name
+          : "";
+        variablePieEl.spec = getDoughnutSpec(
+          variableDataValues,
+          varColors,
+          defaultVarName,
+          chartSize
+        );
 
-        const missionColors = sortedMissions.map(m => textToHex(m.name));
-        const missionDataValues = sortedMissions.map(m => {
+        const missionColors = sortedMissions.map((m) => textToHex(m.name));
+        const missionDataValues = sortedMissions.map((m) => {
           const count = Object.keys(m.products).length;
-          const percent = metrics.numberOfProducts ? ((count * 100) / metrics.numberOfProducts).toFixed(2) : "0.00";
+          const percent = metrics.numberOfProducts
+            ? ((count * 100) / metrics.numberOfProducts).toFixed(2)
+            : "0.00";
           return {
             name: m.name,
             count: count,
             count_label: `${count} products`,
-            percent_label: `${percent}%`
+            percent_label: `${percent}%`,
           };
         });
 
         const missionPieEl = document.getElementById("missionPie");
         missionPieEl.opt = { renderer: "svg" };
-        const defaultMissionName = missionDataValues[0] ? missionDataValues[0].name : "";
-        missionPieEl.spec = getDoughnutSpec(missionDataValues, missionColors, defaultMissionName, chartSize);
+        const defaultMissionName = missionDataValues[0]
+          ? missionDataValues[0].name
+          : "";
+        missionPieEl.spec = getDoughnutSpec(
+          missionDataValues,
+          missionColors,
+          defaultMissionName,
+          chartSize
+        );
       };
 
-      setupModal("modal-statistics", "btn-stats-open", ["btn-stats-close", "btn-stats-footer-close"], openStatisticsModal);
+      setupModal(
+        "modal-statistics",
+        "btn-stats-open",
+        ["btn-stats-close", "btn-stats-footer-close"],
+        openStatisticsModal
+      );
 
       // --- COVERAGE DIALOG POPULATION & EOX-MAP CONFIGURATION ---
       const createGeometry = (product) => {
@@ -1724,7 +1931,7 @@
           id: product.id,
           properties: {
             product_id: product.id,
-            name: product.name
+            name: product.name,
           },
           geometry: {
             type: "Polygon",
@@ -1734,17 +1941,19 @@
                 [bbox[2], bbox[1]],
                 [bbox[2], bbox[3]],
                 [bbox[0], bbox[3]],
-                [bbox[0], bbox[1]]
-              ]
-            ]
-          }
+                [bbox[0], bbox[1]],
+              ],
+            ],
+          },
         };
       };
 
       const openCoverageModal = (variableId, productId = null) => {
         const modal = document.getElementById("modal-coverage");
         const modalTitle = document.getElementById("coverage-modal-title");
-        const productsListEl = document.getElementById("coverage-products-list");
+        const productsListEl = document.getElementById(
+          "coverage-products-list"
+        );
         const mapEl = document.getElementById("coverage-eox-map");
 
         // Set up layers dynamically if not already configured
@@ -1757,7 +1966,7 @@
                 type: "WMTSCapabilities",
                 url: "https://tiles.maps.eox.at/wmts/1.0.0/WMTSCapabilities.xml",
                 layer: "terrain-light_3857",
-              }
+              },
             },
             {
               type: "Vector",
@@ -1766,7 +1975,7 @@
               style: {
                 "stroke-color": "rgba(0, 50, 71, 0.5)",
                 "stroke-width": 3,
-                "fill-color": "rgba(0, 50, 71, 0.1)"
+                "fill-color": "rgba(0, 50, 71, 0.1)",
               },
               interactions: [
                 {
@@ -1777,19 +1986,19 @@
                     style: {
                       "stroke-color": "rgba(20, 100, 91, 1)",
                       "stroke-width": 3,
-                      "fill-color": "rgba(0, 200, 71, 0.4)"
-                    }
-                  }
-                }
-              ]
-            }
+                      "fill-color": "rgba(0, 200, 71, 0.4)",
+                    },
+                  },
+                },
+              ],
+            },
           ];
         }
 
         let productsToDisplay = [];
         if (productId) {
           // Single product mode
-          const prod = products.find(p => p.id === productId);
+          const prod = products.find((p) => p.id === productId);
           if (!prod) return;
           modalTitle.textContent = `${prod.name} Coverage`;
           productsToDisplay = [prod];
@@ -1802,30 +2011,40 @@
         }
 
         // Alphabetical sort
-        productsToDisplay.sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
+        productsToDisplay.sort((a, b) =>
+          a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+        );
 
         // Populate side panel product list
-        productsListEl.innerHTML = productsToDisplay.map(prod => {
-          const isActive = productId ? prod.id === productId : false;
-          const region = prod.region || "Global";
-          const missions = prod.missions ? prod.missions.join(", ") : "None";
-          
-          return `
-            <div class="cov-item ${isActive ? 'active' : ''}" data-prod-id="${prod.id}">
+        productsListEl.innerHTML = productsToDisplay
+          .map((prod) => {
+            const isActive = productId ? prod.id === productId : false;
+            const region = prod.region || "Global";
+            const missions = prod.missions ? prod.missions.join(", ") : "None";
+
+            return `
+            <div class="cov-item ${isActive ? "active" : ""}" data-prod-id="${
+              prod.id
+            }">
               <div class="cov-item-name">${prod.name}</div>
               <div class="cov-item-meta">Region: ${region}</div>
               <div class="cov-item-meta">Missions: ${missions}</div>
               <div class="cov-item-actions">
-                <button class="cov-btn highlight-btn" title="Highlight bounds on map" data-prod-id="${prod.id}"><i class="mdi mdi-map-marker"></i></button>
-                <a href="https://opensciencedata.esa.int/products/${prod.id}/collection" target="_blank" class="cov-btn" title="Open Product Catalog Detail"><i class="mdi mdi-open-in-new"></i></a>
+                <button class="cov-btn highlight-btn" title="Highlight bounds on map" data-prod-id="${
+                  prod.id
+                }"><i class="mdi mdi-map-marker"></i></button>
+                <a href="https://opensciencedata.esa.int/products/${
+                  prod.id
+                }/collection" target="_blank" class="cov-btn" title="Open Product Catalog Detail"><i class="mdi mdi-open-in-new"></i></a>
               </div>
             </div>
           `;
-        }).join("");
+          })
+          .join("");
 
         // Build features
         const features = [];
-        productsToDisplay.forEach(prod => {
+        productsToDisplay.forEach((prod) => {
           const geom = createGeometry(prod);
           if (geom) {
             features.push(geom);
@@ -1834,7 +2053,7 @@
 
         const geojson = {
           type: "FeatureCollection",
-          features: features
+          features: features,
         };
 
         // Open Dialog
@@ -1847,7 +2066,12 @@
           }
           const vectorLayer = mapEl.getLayerById("products");
           if (vectorLayer && features.length > 0) {
-            mapEl.parseTextToFeature(JSON.stringify(geojson), vectorLayer, mapEl, true);
+            mapEl.parseTextToFeature(
+              JSON.stringify(geojson),
+              vectorLayer,
+              mapEl,
+              true
+            );
           }
         }, 120);
 
@@ -1856,23 +2080,29 @@
           const item = e.target.closest(".cov-item");
           if (!item) return;
           const prodId = item.dataset.prodId;
-          
+
           // Toggle active class
-          productsListEl.querySelectorAll(".cov-item").forEach(el => el.classList.remove("active"));
+          productsListEl
+            .querySelectorAll(".cov-item")
+            .forEach((el) => el.classList.remove("active"));
           item.classList.add("active");
 
-          const selectInteraction = mapEl.selectInteractions["selectInteraction"];
+          const selectInteraction =
+            mapEl.selectInteractions["selectInteraction"];
           if (selectInteraction) {
             const vectorLayer = mapEl.getLayerById("products");
             if (vectorLayer) {
               const features = vectorLayer.getSource().getFeatures();
               const feature = features.find(
-                f => f.get("product_id") === prodId
+                (f) => f.get("product_id") === prodId
               );
 
               if (feature) {
                 const olId = feature.getId();
-                selectInteraction.highlightById([olId], { duration: 500, padding: [50, 50, 50, 50] });
+                selectInteraction.highlightById([olId], {
+                  duration: 500,
+                  padding: [50, 50, 50, 50],
+                });
               }
             }
           }
@@ -1882,36 +2112,46 @@
           const item = e.target.closest(".cov-item");
           if (!item) return;
           const prodId = item.dataset.prodId;
-          
-          const selectInteraction = mapEl.selectInteractions["selectInteraction"];
+
+          const selectInteraction =
+            mapEl.selectInteractions["selectInteraction"];
           if (selectInteraction) {
             const vectorLayer = mapEl.getLayerById("products");
             if (vectorLayer) {
-              const feature = vectorLayer.getSource().getFeatures().find(
-                f => f.get("product_id") === prodId
-              );
+              const feature = vectorLayer
+                .getSource()
+                .getFeatures()
+                .find((f) => f.get("product_id") === prodId);
               if (feature) {
                 const olId = feature.getId();
-                selectInteraction.highlightById([olId], { duration: 300, padding: [50, 50, 50, 50] });
+                selectInteraction.highlightById([olId], {
+                  duration: 300,
+                  padding: [50, 50, 50, 50],
+                });
               }
             }
           }
         };
 
         productsListEl.onmouseleave = () => {
-          const selectInteraction = mapEl.selectInteractions["selectInteraction"];
+          const selectInteraction =
+            mapEl.selectInteractions["selectInteraction"];
           if (selectInteraction) {
             const activeItem = productsListEl.querySelector(".cov-item.active");
             if (activeItem) {
               const prodId = activeItem.dataset.prodId;
               const vectorLayer = mapEl.getLayerById("products");
               if (vectorLayer) {
-                const feature = vectorLayer.getSource().getFeatures().find(
-                  f => f.get("product_id") === prodId
-                );
+                const feature = vectorLayer
+                  .getSource()
+                  .getFeatures()
+                  .find((f) => f.get("product_id") === prodId);
                 if (feature) {
                   const olId = feature.getId();
-                  selectInteraction.highlightById([olId], { duration: 300, padding: [50, 50, 50, 50] });
+                  selectInteraction.highlightById([olId], {
+                    duration: 300,
+                    padding: [50, 50, 50, 50],
+                  });
                   return;
                 }
               }
@@ -1924,7 +2164,7 @@
               if (source.getFeatures().length > 0) {
                 mapEl.map.getView().fit(source.getExtent(), {
                   padding: [50, 50, 50, 50],
-                  duration: 300
+                  duration: 300,
                 });
               }
             }
@@ -1934,7 +2174,9 @@
 
       // Hook up coverage button handlers (delegate to tbody for dynamic elements)
       tbody.addEventListener("click", (e) => {
-        const earthBtn = e.target.closest("button.v-btn-icon-mock:not([disabled])");
+        const earthBtn = e.target.closest(
+          "button.v-btn-icon-mock:not([disabled])"
+        );
         if (earthBtn) {
           const parentRow = earthBtn.closest("tr.parent-row");
           if (parentRow) {
@@ -1950,12 +2192,15 @@
         }
       });
 
-      setupModal("modal-coverage", null, ["btn-coverage-close", "btn-coverage-footer-close"]);
+      setupModal("modal-coverage", null, [
+        "btn-coverage-close",
+        "btn-coverage-footer-close",
+      ]);
 
       // --- ZOOM SLIDER BINDING (WITH EXACT ORIGINAL HIDE-EVEN CONDITIONAL CLASS) ---
       const zoomSlider = document.getElementById("zoom-slider");
       const root = document.documentElement;
-      
+
       const tableContainer = document.querySelector(".metrics-table-container");
       const scrollToLatestYears = () => {
         if (tableContainer) {
@@ -1969,7 +2214,7 @@
         zoomSlider.value = val;
         // Matches the original width scaling: Zoom 1 -> 28px, Zoom 2 -> 42px, Zoom 3 -> 56px per year column.
         // Prevents year label cut off as it scales dynamically based on the exact 28px minimum width!
-        const zoomMap = { "1": "28px", "2": "42px", "3": "56px" };
+        const zoomMap = { 1: "28px", 2: "42px", 3: "56px" };
         root.style.setProperty("--table-cell", zoomMap[val]);
 
         // Replicates EXACT conditional class from original view: :class="tableZoom < 3 ? 'hide-even' : ''"
@@ -1982,8 +2227,8 @@
         // Add dynamic zoom-X class to main and nested tables to let spacer cells shrink adaptively when zoomed out!
         tableEl.classList.remove("zoom-1", "zoom-2", "zoom-3");
         tableEl.classList.add(`zoom-${val}`);
-        
-        document.querySelectorAll(".sub-products-table").forEach(subTable => {
+
+        document.querySelectorAll(".sub-products-table").forEach((subTable) => {
           subTable.classList.remove("zoom-1", "zoom-2", "zoom-3");
           subTable.classList.add(`zoom-${val}`);
         });
@@ -1996,15 +2241,19 @@
         updateZoom(e.target.value);
       });
 
-      document.getElementById("zoom-out-trigger").addEventListener("click", () => {
-        const currentVal = parseInt(zoomSlider.value);
-        if (currentVal > 1) updateZoom(currentVal - 1);
-      });
+      document
+        .getElementById("zoom-out-trigger")
+        .addEventListener("click", () => {
+          const currentVal = parseInt(zoomSlider.value);
+          if (currentVal > 1) updateZoom(currentVal - 1);
+        });
 
-      document.getElementById("zoom-in-trigger").addEventListener("click", () => {
-        const currentVal = parseInt(zoomSlider.value);
-        if (currentVal < 3) updateZoom(currentVal + 1);
-      });
+      document
+        .getElementById("zoom-in-trigger")
+        .addEventListener("click", () => {
+          const currentVal = parseInt(zoomSlider.value);
+          if (currentVal < 3) updateZoom(currentVal + 1);
+        });
 
       // Set initial zoom level
       updateZoom("1");
@@ -2013,25 +2262,35 @@
       const handleCellHover = (e) => {
         const cell = e.target.closest("td");
         if (!cell || cell.classList.contains("table-spacer-cell")) return; // Don't track spacer columns
-        
+
         const parentRow = cell.parentNode;
         const allCells = Array.from(parentRow.children);
         const colIndex = allCells.indexOf(cell);
-        
+
         // Remove hover class from all columns in both tables
-        document.querySelectorAll(".hoverCell").forEach(c => c.classList.remove("hoverCell"));
-        
+        document
+          .querySelectorAll(".hoverCell")
+          .forEach((c) => c.classList.remove("hoverCell"));
+
         // Only apply vertical hover if we are inside a year cell (column index > 2 and < last-column - 1 to exclude spacer columns)
         if (colIndex > 2 && colIndex < allCells.length - 2) {
           // Add hover highlight to corresponding column cells of both main table and sub-tables
-          document.querySelectorAll(`.metrics-table td:nth-child(${colIndex + 1}), .sub-products-table td:nth-child(${colIndex + 1})`).forEach(c => {
-            c.classList.add("hoverCell");
-          });
+          document
+            .querySelectorAll(
+              `.metrics-table td:nth-child(${
+                colIndex + 1
+              }), .sub-products-table td:nth-child(${colIndex + 1})`
+            )
+            .forEach((c) => {
+              c.classList.add("hoverCell");
+            });
         }
       };
 
       const handleCellLeave = () => {
-        document.querySelectorAll(".hoverCell").forEach(c => c.classList.remove("hoverCell"));
+        document
+          .querySelectorAll(".hoverCell")
+          .forEach((c) => c.classList.remove("hoverCell"));
       };
 
       // Register vertical hover listeners
@@ -2058,7 +2317,7 @@
       aggregationSelect.addEventListener("change", (e) => {
         aggregationProperty = e.target.value;
         allAggregationItems = null; // Reset static cache for new property
-        
+
         // Update empty items toggle button tooltip
         if (showEmptyItems) {
           emptyToggleBtn.title = `Hide empty ${aggregationProperty}`;
@@ -2085,7 +2344,7 @@
         const parentRow = btn.closest("tr");
         const nextRow = parentRow.nextElementSibling;
         const icon = btn.querySelector("i");
-        
+
         if (nextRow && nextRow.classList.contains("expanded-row")) {
           if (nextRow.style.display === "none") {
             nextRow.style.display = "table-row";
@@ -2102,16 +2361,16 @@
         try {
           products = await fetchProducts(API_URL);
           filteredProducts = [...products];
-          
+
           // Bind items to filter component
           itemFilterEl.items = products;
-          
+
           // Calculate initial metrics
           metrics = createMetrics(products);
-          
+
           // Update view
           await updateView();
-          
+
           // EOx itemfilter ready class
           itemFilterEl.classList.add("ready");
         } catch (err) {
