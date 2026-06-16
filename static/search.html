@@ -297,7 +297,7 @@
 
       const BASE_URL =
         urlParams.get("baseUrl") ||
-        "https://esa-earthcode.github.io/open-science-catalog-metadata/";
+        "https://esa-earthcode.github.io/open-science-catalog-metadata";
       const API_URL =
         urlParams.get("apiUrl") ||
         "https://eoapi.workspace.earthcode-staging.earthcode.eox.at/stac";
@@ -354,7 +354,7 @@
        */
       const fetchCatalogItems = async (path) => {
         try {
-          const response = await fetch(`${BASE_URL}${path}/catalog.json`);
+          const response = await fetch(`${BASE_URL}/${path}/catalog.json`);
           if (!response.ok) throw new Error(`Failed to fetch ${path}`);
           const { links } = await response.json();
           return links
