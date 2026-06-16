@@ -305,6 +305,14 @@
         urlParams.get("fontUrl") ||
         "https://cdn.jsdelivr.net/npm/@eox/esa-ui@1.19.0/fonts/notesesabol.ttf";
 
+      let productBaseUrl =
+        urlParams.get("productBaseUrl") ||
+        urlParams.get("siteUrl") ||
+        "https://opensciencedata.esa.int/";
+      if (!productBaseUrl.endsWith("/")) {
+        productBaseUrl += "/";
+      }
+
       const fontStyle = document.createElement("style");
       fontStyle.textContent = `
         @font-face {
@@ -383,9 +391,9 @@
        * Renders a single collection item as an HTML string
        */
       const renderItem = (item) => `
-        <a class="card" href="https://opensciencedata.esa.int/products/${
-          item.id
-        }/collection" target="_blank">
+        <a class="card" href="${productBaseUrl}products/${
+        item.id
+      }/collection" target="_parent">
           <div class="card-content">
             <div class="card-title" title="${item.title}">${item.title}</div>
             <p class="card-description" title="${item.description || ""}">

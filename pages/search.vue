@@ -16,6 +16,11 @@ import fontUrl from "~/static/css/fonts/notesesabold/NotesESAbold.ttf";
 
 export default {
   name: "SearchPage",
+  data() {
+    return {
+      productBaseUrl: "",
+    };
+  },
   computed: {
     iframeSrc() {
       const baseUrl = this.$config.staticEndpoint || "";
@@ -27,8 +32,16 @@ export default {
         fontUrl,
       });
 
+      if (this.productBaseUrl) {
+        params.set("productBaseUrl", this.productBaseUrl);
+      }
+
       return `/search.html?${params.toString()}`;
     },
+  },
+  mounted() {
+    this.productBaseUrl =
+      window.location.origin + (this.$router?.options?.base || "/");
   },
 };
 </script>
