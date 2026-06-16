@@ -301,6 +301,11 @@
           <i class="mdi mdi-magnify"></i>
           Search
         </a>
+        <a id="api-access-btn" href="#" target="_blank" class="btn-primary">
+          <i class="mdi mdi-xml"></i>
+          API Access
+          <i class="mdi mdi-open-in-new"></i>
+        </a>
       </p>
     </div>
 
@@ -326,6 +331,14 @@
           const baseCatalogUrl = baseUrl.endsWith("/")
             ? baseUrl
             : baseUrl + "/";
+
+          const apiUrl =
+            urlParams.get("apiUrl") ||
+            "https://eoapi.workspace.earthcode-staging.earthcode.eox.at/stac";
+          const apiAccessBtn = document.getElementById("api-access-btn");
+          if (apiAccessBtn) {
+            apiAccessBtn.href = apiUrl + "/api.html";
+          }
 
           // Fetch the themes catalog
           const catalogResponse = await fetch(

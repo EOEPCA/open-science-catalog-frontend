@@ -96,7 +96,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <!--<v-list-item :href="$dynamicCatalog.defaults.baseURL" target="_blank">
+        <v-list-item :href="$config.backendEndpoint + `/api.html`" target="_blank">
           <v-list-item-action>
             <v-icon>mdi-xml</v-icon>
           </v-list-item-action>
@@ -106,7 +106,7 @@
           <v-list-item-action>
             <v-icon>mdi-open-in-new</v-icon>
           </v-list-item-action>
-        </v-list-item>-->
+        </v-list-item>
       </v-list>
       <template #append>
         <client-only>
