@@ -645,6 +645,9 @@
             params.set("filter-lang", "cql2-text");
           }
 
+          // Get 20 items per page so also large screens have scroll
+          params.set("limit", 20);
+
           const url = `${API_URL}/collections?${params}`;
           if (url === lastUrl) return { url, fetchFn: () => {} };
           lastUrl = url;
