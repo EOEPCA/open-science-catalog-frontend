@@ -4,36 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>OSC Metrics Dashboard</title>
-    <!-- Material Design Icons CDN (for absolute reliability) + Local fallback -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css"
-    />
     <link rel="stylesheet" href="css/materialdesignicons.min.css" />
     <!-- ESA Custom Fonts -->
     <link rel="stylesheet" href="css/notesesabold.css" />
 
     <!-- EOxElements -->
+    <script type="module" src="eox/eox-itemfilter.js"></script>
+    <script type="module" src="eox/eox-map.js"></script>
     <script
       type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/itemfilter/dist/eox-itemfilter.js"
+      src="eox/eox-map-advanced-layers-and-sources.js"
     ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/map/dist/eox-map.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/map/dist/eox-map-advanced-layers-and-sources.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/timecontrol/dist/eox-timecontrol.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/chart/dist/eox-chart.js"
-    ></script>
+    <script type="module" src="eox/eox-timecontrol.js"></script>
+    <script type="module" src="eox/eox-chart.js"></script>
 
     <style>
       /* --- EXACT COLOR AND DESIGN TOKENS --- */
@@ -1377,18 +1360,6 @@
         apiUrlParam = apiUrlParam.replace(/\/?$/, "/collections");
       }
       const API_URL = apiUrlParam;
-      const fontUrl =
-        urlParams.get("fontUrl") ||
-        "https://cdn.jsdelivr.net/npm/@eox/esa-ui@1.19.0/fonts/notesesabol.ttf";
-
-      const fontStyle = document.createElement("style");
-      fontStyle.textContent = `
-        @font-face {
-          font-family: "NotesESAbold";
-          src: url("${fontUrl}") format("truetype");
-        }
-      `;
-      document.head.appendChild(fontStyle);
 
       // --- GENERATE DUMMY DATA FROM 1960 TO 2026 ---
       const startYear = 1960;

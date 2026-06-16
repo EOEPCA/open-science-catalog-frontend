@@ -1,5 +1,6 @@
 **/*.min.*
 static/stac-browser
+static/eox
 .nuxt
 coverage
 .github

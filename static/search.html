@@ -4,18 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>eox-itemfilter OSC Search</title>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/itemfilter/dist/eox-itemfilter.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/map/dist/eox-map.js"
-    ></script>
-    <script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/@eox/timecontrol/dist/eox-timecontrol.js"
-    ></script>
+    <!-- ESA Custom Fonts -->
+    <link rel="stylesheet" href="css/notesesabold.css" />
+    <script type="module" src="eox/eox-itemfilter.js"></script>
+    <script type="module" src="eox/eox-map.js"></script>
+    <script type="module" src="eox/eox-timecontrol.js"></script>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -303,10 +296,6 @@
       const API_URL =
         urlParams.get("apiUrl") ||
         "https://eoapi.workspace.earthcode-staging.earthcode.eox.at/stac";
-      const fontUrl =
-        urlParams.get("fontUrl") ||
-        "https://cdn.jsdelivr.net/npm/@eox/esa-ui@1.19.0/fonts/notesesabol.ttf";
-
       let productBaseUrl =
         urlParams.get("productBaseUrl") ||
         urlParams.get("siteUrl") ||
@@ -314,15 +303,6 @@
       if (!productBaseUrl.endsWith("/")) {
         productBaseUrl += "/";
       }
-
-      const fontStyle = document.createElement("style");
-      fontStyle.textContent = `
-        @font-face {
-          font-family: "NotesESAbold";
-          src: url("${fontUrl}") format("truetype");
-        }
-      `;
-      document.head.appendChild(fontStyle);
 
       const CATEGORY_CONFIG = [
         { key: "themes", path: "themes", title: "Themes", prefix: "theme_" },
