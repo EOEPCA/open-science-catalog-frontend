@@ -96,7 +96,10 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :href="$config.backendEndpoint + `/api.html`" target="_blank">
+        <v-list-item
+          :href="$config.backendEndpoint + `/api.html`"
+          target="_blank"
+        >
           <v-list-item-action>
             <v-icon>mdi-xml</v-icon>
           </v-list-item-action>
