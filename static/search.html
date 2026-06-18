@@ -328,6 +328,7 @@
 
       let nextUrl = null;
       let lastUrl = null;
+      let currentQueryUrl = null;
       let isLoading = false;
       let filterData = {};
 
@@ -441,7 +442,7 @@
           try {
             const response = await fetch(nextUrl);
             const { collections, links } = await response.json();
-            nextUrl = links.find((l) => l.rel === "next")?.href;
+            nextUrl = links?.find((l) => l.rel === "next")?.href;
             const items = formatItems(collections);
             resultsEl.insertAdjacentHTML(
               "beforeend",
@@ -449,6 +450,52 @@
             );
           } catch (error) {
             console.error("Error loading more items:", error);
+          } finally {
+            isLoading = false;
+          }
+        }
+      };
+
+      /**
+       * Checks if the main content has scroll/overflow to enable scroll lazy loading
+       */
+      const hasScrollbar = () => {
+        if (window.innerWidth <= 768) {
+          return document.documentElement.scrollHeight > window.innerHeight;
+        } else {
+          return mainContent.scrollHeight > mainContent.clientHeight;
+        }
+      };
+
+      /**
+       * Fills the page with items until a scrollbar appears or no more items are available
+       */
+      const fillPageWithItems = async (queryUrl) => {
+        // While there is no scrollbar, there is a next page, we aren't already loading,
+        // and the query URL is still the active one:
+        while (
+          !hasScrollbar() &&
+          nextUrl &&
+          !isLoading &&
+          queryUrl === currentQueryUrl
+        ) {
+          isLoading = true;
+          try {
+            const response = await fetch(nextUrl);
+            if (queryUrl !== currentQueryUrl) break;
+            const { collections, links } = await response.json();
+            if (queryUrl !== currentQueryUrl) break;
+            nextUrl = links?.find((l) => l.rel === "next")?.href;
+            const items = formatItems(collections);
+            resultsEl.insertAdjacentHTML(
+              "beforeend",
+              items.map(renderItem).join("")
+            );
+            // Wait for next frame so the browser can calculate styles and layout
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          } catch (error) {
+            console.error("Error filling page with items:", error);
+            break;
           } finally {
             isLoading = false;
           }
@@ -631,27 +678,35 @@
           const url = `${API_URL}/collections?${params}`;
           if (url === lastUrl) return { url, fetchFn: () => {} };
           lastUrl = url;
+          currentQueryUrl = url;
+          nextUrl = null;
 
           return {
             url,
             fetchFn: async (u) => {
               try {
                 const response = await fetch(u);
+                if (url !== currentQueryUrl) return [];
                 const { collections, links, numberMatched } =
                   await response.json();
+                if (url !== currentQueryUrl) return [];
                 nextUrl = links?.find((l) => l.rel === "next")?.href;
                 const items = formatItems(collections);
 
                 statusEl.textContent =
                   numberMatched !== undefined ? `${numberMatched} results` : "";
                 resultsEl.innerHTML = items.map(renderItem).join("");
+
+                await fillPageWithItems(url);
                 return items;
               } catch (error) {
                 console.error("Error fetching collections:", error);
                 statusEl.textContent = "Error loading results";
                 return [];
               } finally {
-                hideLoader();
+                if (url === currentQueryUrl) {
+                  hideLoader();
+                }
               }
             },
           };
@@ -667,8 +722,18 @@
             itemFilterEl.removeAttribute("inline-mode");
           }
         };
+        let resizeTimeout;
+        const handleResize = () => {
+          updateInlineMode();
+          clearTimeout(resizeTimeout);
+          resizeTimeout = setTimeout(() => {
+            if (currentQueryUrl) {
+              fillPageWithItems(currentQueryUrl);
+            }
+          }, 150);
+        };
         updateInlineMode();
-        window.addEventListener("resize", updateInlineMode);
+        window.addEventListener("resize", handleResize);
         window.addEventListener("scroll", handleScroll);
         mainContent.addEventListener("scroll", handleScroll);
 
