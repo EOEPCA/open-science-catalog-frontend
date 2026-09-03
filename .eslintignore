@@ -1,2 +1,3 @@
 **/*.min.*
 static/stac-browser
+static/eox

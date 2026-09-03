@@ -1,14 +1,14 @@
 {
   "name": "open-science-catalog-frontend",
   "author": "EOX-A",
-  "version": "2.4.12",
+  "version": "2.6.4",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
+    "dev": "node scripts/download-cdns.js && nuxt",
+    "build": "node scripts/download-cdns.js && nuxt build",
     "build:browser": "git clone https://github.com/EOEPCA/open-science-catalog-stac-browser.git && cd open-science-catalog-stac-browser && npm i && npm run build && cp -r dist/* ../static/stac-browser/ && cd .. && cp -r static/stac-browser/stac-browser-config.js static/stac-browser/config.js && rm -rf open-science-catalog-stac-browser",
     "start": "nuxt start",
-    "generate": "nuxt generate",
+    "generate": "node scripts/download-cdns.js && nuxt generate",
     "lint": "eslint . --ext js,vue",
     "lint:fix": "eslint . --ext js,vue --fix",
     "format": "prettier --write .",

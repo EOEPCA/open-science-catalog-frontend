@@ -1,3 +1,5 @@
+*Deprecation notice: this frontend has been integrated into the [OSC STAC Browser fork](https://github.com/EOEPCA/open-science-catalog-stac-browser). This repository is no longer maintained.*
+
 # open-science-catalog-frontend
 
 ## The Open Science Catalog ([opensciencedata.esa.int](https://opensciencedata.esa.int/))

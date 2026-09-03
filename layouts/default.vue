@@ -87,16 +87,19 @@
           </v-list-item-content>
         </v-list-item>
 
-        <!--<v-list-item to="/search" router exact>
+        <v-list-item to="/search" router exact>
           <v-list-item-action>
             <v-icon>mdi-magnify</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title> Search </v-list-item-title>
           </v-list-item-content>
-        </v-list-item>-->
+        </v-list-item>
 
-        <!--<v-list-item :href="$dynamicCatalog.defaults.baseURL" target="_blank">
+        <v-list-item
+          :href="$config.backendEndpoint + `/api.html`"
+          target="_blank"
+        >
           <v-list-item-action>
             <v-icon>mdi-xml</v-icon>
           </v-list-item-action>
@@ -106,7 +109,7 @@
           <v-list-item-action>
             <v-icon>mdi-open-in-new</v-icon>
           </v-list-item-action>
-        </v-list-item>-->
+        </v-list-item>
       </v-list>
       <template #append>
         <client-only>
@@ -234,30 +237,43 @@ export default {
       if (to.fullPath.startsWith("/catalog")) {
         return;
       }
-      window._paq.push(["setCustomUrl", to.fullPath]);
-      window._paq.push([
-        "setDocumentTitle",
-        document.domain + "/" + document.title,
-      ]);
-      window._paq.push(["trackPageView"]);
-      window._paq.push(["enableLinkTracking"]);
+      if (window._paq) {
+        window._paq.push(["setCustomUrl", to.fullPath]);
+        window._paq.push([
+          "setDocumentTitle",
+          document.domain + "/" + document.title,
+        ]);
+        window._paq.push(["trackPageView"]);
+        window._paq.push(["enableLinkTracking"]);
+      }
     },
   },
   mounted() {
     this.$nextTick(() => {
-      document.querySelector("esa-cookies").addEventListener("accept", () => {
-        window._paq.push(["rememberCookieConsentGiven"]);
-      });
-      document.querySelector("esa-cookies").addEventListener("decline", () => {
-        window._paq.push(["forgetCookieConsentGiven"]);
-        window._paq.push(["optUserOut"]);
-      });
+      const cookiesEl = document.querySelector("esa-cookies");
+      if (cookiesEl) {
+        cookiesEl.addEventListener("accept", () => {
+          if (window._paq) {
+            window._paq.push(["rememberCookieConsentGiven"]);
+          }
+          cookiesEl.style.pointerEvents = "none";
+          cookiesEl.style.display = "none";
+        });
+        cookiesEl.addEventListener("decline", () => {
+          if (window._paq) {
+            window._paq.push(["forgetCookieConsentGiven"]);
+            window._paq.push(["optUserOut"]);
+          }
+          cookiesEl.style.pointerEvents = "none";
+          cookiesEl.style.display = "none";
+        });
 
-      if (
-        !document.cookie.includes("mtm_cookie_consent") &&
-        !document.cookie.includes("mtm_consent_removed")
-      ) {
-        document.querySelector("esa-cookies").style.display = "block";
+        if (
+          !document.cookie.includes("mtm_cookie_consent") &&
+          !document.cookie.includes("mtm_consent_removed")
+        ) {
+          cookiesEl.style.display = "block";
+        }
       }
     });
   },
